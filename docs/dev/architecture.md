@@ -12,7 +12,7 @@
 ### 兩個相機分工
 | 相機 | 用途 | 默認行為 |
 |------|------|----------|
-| `MainCamera` | 渲染玩家畫面 | 群組跟隨 4 玩家，自動縮放 |
+| `MainCamera` | 渲染玩家畫面 | 固定定點（`FixedShotBehavior`），道具可臨時覆寫 |
 | `PhotoCamera` | 拍攝 RT 用於打分 | 定點俯拍結算區域 |
 
 ### 相機控制架構
@@ -26,9 +26,9 @@ CameraController (基類)
 └── _process(): 執行棧頂行為
 
 CameraBehavior (基類)
-├── GroupFollowBehavior    # 跟隨多個目標，自動縮放
-├── SingleFollowBehavior   # 跟隨單一玩家（道具觸發）
-└── FixedShotBehavior      # 固定位置+朝向
+├── GroupFollowBehavior    # 跟隨多個目標，自動縮放（備用，當前未啟用）
+├── SingleFollowBehavior   # 跟隨單一玩家（道具觸發，TBD）
+└── FixedShotBehavior      # 固定位置+朝向（MainCamera 默認）
 ```
 
 道具只調用 `CameraSystem.push_behavior()`，不直接操作相機節點。
@@ -89,7 +89,7 @@ ItemBase (Node3D)
 
 - 攝影相機渲染到 `ViewportTexture`（RT）
 - 打分算法 **TBD**（待策劃確認後補充）
-- 接口預留：`ScoreSystem.calculate_score(rt: ViewportTexture) -> Array[PlayerScore]`
+- 接口預留：`ScoreSystem.calculate_scores(rt: ViewportTexture) -> Array[int]`
 
 ---
 
