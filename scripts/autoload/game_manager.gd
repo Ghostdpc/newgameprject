@@ -28,6 +28,7 @@ var _timer_active: bool = false
 
 func _ready() -> void:
 	config = GameConfig.new()
+	config.load_from_json()
 
 ## 從主界面進入遊戲，重置流程
 func start_game() -> void:

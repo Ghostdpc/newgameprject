@@ -95,11 +95,60 @@ ItemBase (Node3D)
 
 ## 遊戲流程
 
+### 階段枚舉（GameManager.GameStage）
+| 值 | 含義 | 默認時長 |
+|----|------|---------|
+| `MAIN_MENU` | 主界面 | — |
+| `THEME_ANNOUNCE` | 主題公布 | 0（跳過）|
+| `GRAB_CLOTHES` | 搶衣服 | 0（跳過）|
+| `BATTLE` | 倒計時混戰/搶鏡頭 | 15s |
+| `SCORING` | 系統評分 | 0（等待玩家操作）|
+
+### 推進規則
+1. 主界面「開始遊戲」→ 場景切換到 `game.tscn` → `GameManager.start_game()`
+2. 依序執行 `STAGE_ORDER`
+3. **duration = 0 → 跳過**（SCORING 除外）
+4. **SCORING 且 duration = 0 → 停留，等待 `GameManager.finish_scoring()` 呼叫**
+5. SCORING 結束 → 切換回 `main_menu.tscn`
+
+### 場景結構
 ```
-GameManager (Autoload)
-├── 狀態: Lobby → Countdown → Playing → PhotoShot → Results
-├── 信號: game_started / timer_ended / photo_taken / game_over
-└── 調用: ScoreSystem / ZoneSystem / CameraSystem
+scenes/
+├── ui/main_menu.tscn      # 主界面（開始/退出）
+└── game/game.tscn         # 遊戲場景
+    ├── HUD                # 階段名稱 + 倒計時
+    └── ResultsOverlay     # SCORING 階段顯示（返回主界面/退出遊戲）
+```
+
+### 信號流
+```
+GameManager._process()
+    → EventBus.stage_timer_updated(seconds)   ← HUD 監聽更新倒計時
+GameManager._transition_to(stage)
+    → EventBus.stage_changed(stage)           ← HUD / ResultsOverlay 監聽
+    → EventBus.battle_started()               ← 進入 BATTLE 時
+    → EventBus.battle_ended()                 ← 離開 BATTLE 時
+```
+
+---
+
+## 配置加載系統
+
+### ConfigLoader（Autoload）
+- 統一入口讀取 `data/configs/*.json`
+- 結果快取在記憶體，開發期可用 `reload()` 熱重載
+- 忽略 JSON 中的 `_comment` 保留鍵
+
+### GameConfig
+- 從 `data/configs/game_flow.json` 讀取
+- 缺失鍵使用代碼默認值，不拋出錯誤
+- `GameManager._ready()` 中調用 `config.load_from_json()`
+
+### 配置目錄
+```
+data/
+└── configs/
+    └── game_flow.json    # 遊戲流程階段時長
 ```
 
 ---
@@ -107,6 +156,7 @@ GameManager (Autoload)
 ## Autoload 列表
 | 名稱 | 路徑 | 職責 |
 |------|------|------|
+| `ConfigLoader` | `scripts/autoload/config_loader.gd` | JSON 配置讀取 + 快取 |
 | `EventBus` | `scripts/autoload/event_bus.gd` | 全局信號總線 |
 | `GameManager` | `scripts/autoload/game_manager.gd` | 遊戲流程控制 |
 | `CameraSystem` | `scripts/autoload/camera_system.gd` | 兩個相機管理入口 |
