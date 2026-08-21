@@ -29,7 +29,10 @@ func _ready() -> void:
 
 func _setup_main_camera() -> void:
 	_main_controller.init(_main_camera)
-	_main_controller.push_behavior(GroupFollowBehavior.new())
+	var fixed := FixedShotBehavior.new()
+	fixed.position = _main_camera.global_position
+	fixed.look_target = Vector3.ZERO
+	_main_controller.push_behavior(fixed)
 	CameraSystem.register_main_camera(_main_controller)
 
 func _spawn_players() -> void:
