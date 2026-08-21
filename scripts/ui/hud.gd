@@ -6,12 +6,19 @@ extends CanvasLayer
 @onready var _timer_label: Label = $VBox/TimerLabel
 @onready var _state_label: Label = $VBox/StateLabel
 @onready var _start_button: Button = $VBox/StartButton
+@onready var _photo_panel: TextureRect = $PhotoPanel
 
 func _ready() -> void:
 	EventBus.timer_updated.connect(_on_timer_updated)
 	EventBus.game_state_changed.connect(_on_game_state_changed)
 	if _start_button:
 		_start_button.pressed.connect(_on_start_pressed)
+	_bind_photo_panel()
+
+func _bind_photo_panel() -> void:
+	var viewport := get_parent().get_node_or_null("PhotoViewport") as SubViewport
+	if viewport and _photo_panel:
+		_photo_panel.texture = viewport.get_texture()
 
 func _on_timer_updated(seconds: float) -> void:
 	if _timer_label:

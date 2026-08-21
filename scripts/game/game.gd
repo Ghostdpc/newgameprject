@@ -17,14 +17,20 @@ const SPAWN_POSITIONS: Array[Vector3] = [
 	Vector3( 3.0, 1.0,  3.0),
 ]
 
+const PHOTO_CAMERA_POSITION: Vector3 = Vector3(0.0, 1.5, 8.0)
+const PHOTO_CAMERA_LOOK_TARGET: Vector3 = Vector3(0.0, 1.5, 0.0)
+
 @export var player_scene: PackedScene
 
 @onready var _players_root: Node3D = $Players
 @onready var _main_camera: Camera3D = $MainCamera
 @onready var _main_controller: CameraController = $MainCamera/CameraController
+@onready var _photo_camera: Camera3D = $PhotoViewport/PhotoCamera
+@onready var _photo_controller: CameraController = $PhotoViewport/PhotoCamera/CameraController
 
 func _ready() -> void:
 	_setup_main_camera()
+	_setup_photo_camera()
 	_spawn_players()
 
 func _setup_main_camera() -> void:
@@ -34,6 +40,14 @@ func _setup_main_camera() -> void:
 	fixed.look_target = Vector3.ZERO
 	_main_controller.push_behavior(fixed)
 	CameraSystem.register_main_camera(_main_controller)
+
+func _setup_photo_camera() -> void:
+	_photo_controller.init(_photo_camera)
+	var fixed := FixedShotBehavior.new()
+	fixed.position = PHOTO_CAMERA_POSITION
+	fixed.look_target = PHOTO_CAMERA_LOOK_TARGET
+	_photo_controller.push_behavior(fixed)
+	CameraSystem.register_photo_camera(_photo_controller)
 
 func _spawn_players() -> void:
 	if not player_scene:

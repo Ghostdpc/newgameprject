@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="2"]
@@ -63,10 +63,37 @@ transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 15, 12)
 [node name="CameraController" type="Node" parent="MainCamera"]
 script = ExtResource("2")
 
+[node name="PhotoViewport" type="SubViewport" parent="."]
+size = Vector2i(320, 180)
+transparent_bg = true
+render_target_update_mode = 4
+
+[node name="PhotoCamera" type="Camera3D" parent="PhotoViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 8)
+current = true
+fov = 40.0
+near = 0.1
+far = 100.0
+
+[node name="CameraController" type="Node" parent="PhotoViewport/PhotoCamera"]
+script = ExtResource("2")
+
 [node name="Players" type="Node3D" parent="."]
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3")
+
+[node name="PhotoPanel" type="TextureRect" parent="HUD"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 40.0
+offset_right = 160.0
+offset_bottom = 220.0
+grow_horizontal = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="VBox" type="VBoxContainer" parent="HUD"]
 offset_left = 20.0
