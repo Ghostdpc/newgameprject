@@ -4,6 +4,9 @@
 # Import cache
 *.import
 
+# Godot UID files (editor-generated)
+*.uid
+
 # Export presets (may contain paths/credentials)
 export_presets.cfg
 
