@@ -1,0 +1,86 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/game.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/ui/hud.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="4"]
+
+[sub_resource type="BoxMesh" id="5"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="BoxShape3D" id="6"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="BoxMesh" id="7"]
+size = Vector3(6, 0.4, 6)
+
+[sub_resource type="BoxShape3D" id="8"]
+size = Vector3(6, 0.4, 6)
+
+[sub_resource type="ProceduralSkyMaterial" id="9"]
+
+[sub_resource type="Sky" id="10"]
+sky_material = SubResource("9")
+
+[sub_resource type="Environment" id="11"]
+background_mode = 2
+sky = SubResource("10")
+ambient_light_source = 3
+ambient_light_energy = 0.8
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1")
+player_scene = ExtResource("4")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("11")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 10, 5)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("6")
+
+[node name="ScoringZone" type="StaticBody3D" parent="."]
+position = Vector3(0, 0.4, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="ScoringZone"]
+mesh = SubResource("7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ScoringZone"]
+shape = SubResource("8")
+
+[node name="MainCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 15, 12)
+
+[node name="CameraController" type="Node" parent="MainCamera"]
+script = ExtResource("2")
+
+[node name="Players" type="Node3D" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("3")
+
+[node name="VBox" type="VBoxContainer" parent="HUD"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = 160.0
+
+[node name="StateLabel" type="Label" parent="HUD/VBox"]
+text = "等待開始"
+theme_override_font_sizes/font_size = 24
+
+[node name="TimerLabel" type="Label" parent="HUD/VBox"]
+text = "60"
+theme_override_font_sizes/font_size = 48
+
+[node name="StartButton" type="Button" parent="HUD/VBox"]
+text = "開始遊戲"
