@@ -32,3 +32,6 @@ func update(delta: float) -> void:
 func physics_update(delta: float) -> void:
 	if _current_state:
 		_current_state.physics_update(delta)
+
+func get_current_state() -> BaseState:
+	return _current_state

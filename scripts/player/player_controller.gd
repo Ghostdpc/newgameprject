@@ -37,6 +37,17 @@ func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)
 	state_machine.physics_update(delta)
 	move_and_slide()
+	_check_dive_hit()
+
+## 飛撲狀態碰撞檢測：命中其他玩家則擊飛
+func _check_dive_hit() -> void:
+	if state_machine.current_state_name != "Dive":
+		return
+	var dive := state_machine.get_current_state() as DiveState
+	for i in get_slide_collision_count():
+		var collider := get_slide_collision(i).get_collider()
+		if collider is PlayerController:
+			dive.hit_target(collider as PlayerController)
 
 func apply_move(direction: Vector2) -> void:
 	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED

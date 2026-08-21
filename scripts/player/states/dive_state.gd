@@ -6,14 +6,18 @@ extends BaseState
 const DIVE_FORCE: float = 9.0
 const DIVE_DURATION: float = 0.4
 const RECOVER_DURATION: float = 0.5
+const HIT_FORCE: float = 14.0
+const HIT_UPWARD: float = 6.0
 
 var _timer: float = 0.0
 var _recover_timer: float = 0.0
 var _dive_direction: Vector3 = Vector3.ZERO
+var _has_hit: bool = false
 
 func enter() -> void:
 	_timer = DIVE_DURATION
 	_recover_timer = 0.0
+	_has_hit = false
 	var controller: PlayerController = _player as PlayerController
 	if controller:
 		var move_dir := controller.player_input.get_move_direction()
@@ -23,6 +27,16 @@ func enter() -> void:
 			_dive_direction = controller.global_basis.z
 		controller.velocity.x = _dive_direction.x * DIVE_FORCE
 		controller.velocity.z = _dive_direction.z * DIVE_FORCE
+
+## 擊中目標：施加飛撲方向的擊飛衝量（單次）
+func hit_target(target: PlayerController) -> void:
+	if _has_hit:
+		return
+	_has_hit = true
+	target.velocity.x = _dive_direction.x * HIT_FORCE
+	target.velocity.z = _dive_direction.z * HIT_FORCE
+	target.velocity.y = HIT_UPWARD
+	EventBus.item_used.emit(-1, null)
 
 func physics_update(delta: float) -> void:
 	var controller: PlayerController = _player as PlayerController
