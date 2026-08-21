@@ -1,60 +1,94 @@
-## 職責：遊戲流程控制（狀態機 / 倒計時 / 結算觸發）
+## 職責：遊戲整體流程控制，按 GameConfig 驅動各階段順序推進
 
+class_name GameManager
 extends Node
 
-enum GameState {
-	LOBBY,
-	COUNTDOWN,
-	PLAYING,
-	PHOTO_SHOT,
-	RESULTS
+enum GameStage {
+	MAIN_MENU,       # 主界面
+	THEME_ANNOUNCE,  # 主題公布
+	GRAB_CLOTHES,    # 搶衣服
+	BATTLE,          # 倒計時混戰（搶鏡頭）
+	SCORING,         # 系統評分
 }
 
-const ROUND_DURATION: float = 60.0
-const COUNTDOWN_DURATION: float = 3.0
+## 階段推進順序（不含 MAIN_MENU，由 start_game 觸發）
+const STAGE_ORDER: Array = [
+	GameStage.THEME_ANNOUNCE,
+	GameStage.GRAB_CLOTHES,
+	GameStage.BATTLE,
+	GameStage.SCORING,
+]
 
-var current_state: GameState = GameState.LOBBY
-var time_remaining: float = ROUND_DURATION
+var current_stage: GameStage = GameStage.MAIN_MENU
+var stage_time_remaining: float = 0.0
+var config: GameConfig
+
+var _stage_index: int = -1
+var _timer_active: bool = false
 
 func _ready() -> void:
-	EventBus.game_state_changed.connect(_on_game_state_changed)
+	config = GameConfig.new()
 
+## 從主界面進入遊戲，重置流程
 func start_game() -> void:
-	_transition_to(GameState.COUNTDOWN)
+	_stage_index = -1
+	_advance_stage()
 
-func _transition_to(new_state: GameState) -> void:
-	current_state = new_state
-	EventBus.game_state_changed.emit(new_state)
+## 結算階段由玩家手動確認結束（用於 scoring_duration = 0 的情況）
+func finish_scoring() -> void:
+	_timer_active = false
+	_advance_stage()
 
-	match new_state:
-		GameState.COUNTDOWN:
-			_run_countdown()
-		GameState.PLAYING:
-			time_remaining = ROUND_DURATION
-			EventBus.game_started.emit()
-		GameState.PHOTO_SHOT:
-			_trigger_photo()
-		GameState.RESULTS:
-			EventBus.game_over.emit()
+func _advance_stage() -> void:
+	_stage_index += 1
+	if _stage_index >= STAGE_ORDER.size():
+		_transition_to(GameStage.MAIN_MENU)
+		return
+	_transition_to(STAGE_ORDER[_stage_index])
 
-func _run_countdown() -> void:
-	await get_tree().create_timer(COUNTDOWN_DURATION).timeout
-	_transition_to(GameState.PLAYING)
+func _transition_to(stage: GameStage) -> void:
+	current_stage = stage
+	EventBus.stage_changed.emit(stage)
 
-func _trigger_photo() -> void:
-	# CameraSystem 監聽此信號，拍攝 RT 後回傳
-	EventBus.photo_taken.emit(null)
-	await get_tree().create_timer(1.5).timeout
-	_transition_to(GameState.RESULTS)
+	if stage == GameStage.MAIN_MENU:
+		_timer_active = false
+		get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+		return
+
+	if stage == GameStage.BATTLE:
+		EventBus.battle_started.emit()
+
+	var duration := _get_stage_duration(stage)
+
+	# SCORING 且 duration = 0：停留直到 finish_scoring() 被呼叫
+	if stage == GameStage.SCORING and duration <= 0.0:
+		_timer_active = false
+		return
+
+	# 其他階段 duration = 0：跳過
+	if duration <= 0.0:
+		call_deferred("_advance_stage")
+		return
+
+	stage_time_remaining = duration
+	_timer_active = true
+
+func _get_stage_duration(stage: GameStage) -> float:
+	match stage:
+		GameStage.THEME_ANNOUNCE: return config.theme_announce_duration
+		GameStage.GRAB_CLOTHES:   return config.grab_clothes_duration
+		GameStage.BATTLE:         return config.battle_duration
+		GameStage.SCORING:        return config.scoring_duration
+	return 0.0
 
 func _process(delta: float) -> void:
-	if current_state != GameState.PLAYING:
+	if not _timer_active:
 		return
-	time_remaining -= delta
-	time_remaining = maxf(time_remaining, 0.0)
-	EventBus.timer_updated.emit(time_remaining)
-	if time_remaining <= 0.0:
-		_transition_to(GameState.PHOTO_SHOT)
-
-func _on_game_state_changed(_new_state: int) -> void:
-	pass
+	stage_time_remaining -= delta
+	stage_time_remaining = maxf(stage_time_remaining, 0.0)
+	EventBus.stage_timer_updated.emit(stage_time_remaining)
+	if stage_time_remaining <= 0.0:
+		_timer_active = false
+		if current_stage == GameStage.BATTLE:
+			EventBus.battle_ended.emit()
+		_advance_stage()

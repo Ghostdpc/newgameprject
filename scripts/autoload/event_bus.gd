@@ -2,14 +2,14 @@
 
 extends Node
 
-# 遊戲流程
-signal game_state_changed(new_state: int)
-signal game_started()
-signal game_over()
-signal photo_taken(viewport_texture: ViewportTexture)
+# 遊戲階段
+signal stage_changed(stage: int)
+signal stage_timer_updated(seconds_remaining: float)
+signal battle_started()
+signal battle_ended()
 
-# 計時
-signal timer_updated(seconds_remaining: float)
+# 拍照
+signal photo_taken(viewport_texture: ViewportTexture)
 
 # 玩家
 signal player_entered_zone(player_index: int)

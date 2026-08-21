@@ -32,6 +32,7 @@ func _ready() -> void:
 	_setup_main_camera()
 	_setup_photo_camera()
 	_spawn_players()
+	GameManager.start_game()
 
 func _setup_main_camera() -> void:
 	_main_controller.init(_main_camera)
