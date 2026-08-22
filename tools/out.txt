@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+LOAD OK
+PHYS hips pos=0.20577192306519 up=(0.0, 1.0, 0.0)
+PHYS leg pos=(0.165223, 0.72103, 0.051974) up=(0.006062, 0.999448, 0.032668)
+ANIM hips up=(0.0, 1.0, 0.0) pos=(0.0, 0.205772, 0.0)
+ANIM leg up=(-0.0, -0.999396, 0.034741) pos=(0.170945, 0.319359, 0.0)
