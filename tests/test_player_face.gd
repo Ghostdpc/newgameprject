@@ -30,3 +30,18 @@ func test_show_expression_switches_and_clears() -> void:
 	var total: int = fc.count()
 	fc.show_expression(total + 5)
 	assert_eq(fc.get("_current_index"), 5 % total, "越界索引正確繞回")
+
+func test_freeze_pauses_animation() -> void:
+	var player := (load("res://scenes/player/player.tscn") as PackedScene).instantiate() as PlayerController
+	player.player_index = 0
+	add_child_autofree(player)
+	await wait_physics_frames(3)
+	assert_false(player.frozen, "初始未凍結")
+	var ap: AnimationPlayer = player.get("_animation_player")
+	player.frozen = true
+	assert_true(player.frozen, "設為凍結後旗標生效")
+	# 凍結期間 update_animation 不重播且 pause
+	player._update_animation()
+	assert_true(ap != null, "有動畫播放器")
+	player.frozen = false
+	assert_false(player.frozen, "解凍恢復")

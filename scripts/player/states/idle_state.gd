@@ -15,8 +15,10 @@ func physics_update(_delta: float) -> void:
 		controller.state_machine.transition_to("Move")
 		return
 	if controller.player_input.is_dive_just_pressed():
+		controller.cycle_face()
 		controller.state_machine.transition_to("Dive")
 		return
 	controller.apply_move(Vector2.ZERO)
 	if controller.player_input.is_jump_just_pressed() and controller.is_on_floor():
+		controller.cycle_face()
 		controller.state_machine.transition_to("Jump")
