@@ -46,11 +46,18 @@ func set_ragdoll(enabled: bool) -> void:
 		return
 	ragdoll_rig.set_ragdoll_enabled(enabled)
 
-## 擊飛：body 位移（不施加到物理骨，避免 mesh 脫離 body）
+## 擊飛：body 位移（模型跟 body，姿態由 ragdoll 提供）
 func knockback(direction: Vector3) -> void:
-	velocity.x = direction.x
-	velocity.z = direction.z
-	velocity.y = direction.y
+	velocity = direction
+
+## 站起前把 body 移到 ragdoll 倒地落點（避免站起瞬移）
+func sync_body_to_ragdoll() -> void:
+	if not ragdoll_rig:
+		return
+	var hips_pos := ragdoll_rig.get_hips_position()
+	if hips_pos == Vector3.ZERO:
+		return
+	global_position = Vector3(hips_pos.x, global_position.y, hips_pos.z)
 
 ## 倒地後站起，由調用方確保已關閉 ragdoll
 func stand_up() -> void:
@@ -93,11 +100,6 @@ func _physics_process(delta: float) -> void:
 	state_machine.physics_update(delta)
 	move_and_slide()
 	_check_dive_hit()
-	# ragdoll 時強制骨架 mesh 對齊 body，避免 mesh 滯後於擊飛
-	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
-		var model := get_node_or_null("Model")
-		if model:
-			(model as Node3D).global_position = global_position
 
 ## 飛撲狀態碰撞檢測：命中其他玩家則擊飛
 func _check_dive_hit() -> void:
