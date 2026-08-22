@@ -45,6 +45,14 @@ func is_use_item_just_pressed() -> bool:
 		return true
 	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_Y)
 
+## R 鍵抓取場景物理物件（P1=R / P2=T）。探索性功能，可刪
+func is_grab_pressed() -> bool:
+	if player_index == 0:
+		return Input.is_key_pressed(KEY_R)
+	if player_index == 1:
+		return Input.is_key_pressed(KEY_T)
+	return false
+
 func _keyboard_move(suffix: String) -> Vector2:
 	var dir := Vector2.ZERO
 	if Input.is_action_pressed("move_up%s" % suffix):    dir.y -= 1.0

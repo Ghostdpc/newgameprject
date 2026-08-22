@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/physical_prop.gd" id="1"]
+
+[sub_resource type="SphereMesh" id="2"]
+radius = 0.45
+height = 0.9
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.9, 0.3, 0.2, 1)
+
+[node name="Ball" type="RigidBody3D"]
+script = ExtResource("1")
+prop_mass = 4.0
+prop_bounce = 0.8
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("2")
+surface_material_override/0 = SubResource("3")

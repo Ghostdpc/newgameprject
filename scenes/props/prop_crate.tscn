@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/items/physical_prop.gd" id="1"]
+
+[sub_resource type="BoxMesh" id="2"]
+size = Vector3(0.8, 0.8, 0.8)
+
+[sub_resource type="StandardMaterial3D" id="3"]
+albedo_color = Color(0.55, 0.35, 0.2, 1)
+
+[node name="Crate" type="RigidBody3D"]
+script = ExtResource("1")
+prop_mass = 8.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("2")
+surface_material_override/0 = SubResource("3")
