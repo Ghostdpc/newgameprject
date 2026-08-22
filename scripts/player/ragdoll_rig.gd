@@ -223,6 +223,11 @@ func _start_sim() -> void:
 		pb.linear_damp = lin_damp
 		pb.angular_damp = ang_damp
 	_simulator.physical_bones_start_simulation(sim_bones)
+	# 啟動後清除殘留線/角速度：否則擊飛動量讓鏈末端(頭)甩開，身體被拉長
+	for bone in _simulator.find_children("*", "PhysicalBone3D", true, false):
+		var pb := bone as PhysicalBone3D
+		pb.linear_velocity = Vector3.ZERO
+		pb.angular_velocity = Vector3.ZERO
 
 ## 對全身施以衝量（僅主幹骨，避免四肢放大位移）
 func apply_impulse(direction: Vector3) -> void:
