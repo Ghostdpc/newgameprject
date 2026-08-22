@@ -1,0 +1,19 @@
+{
+  "_comment": "结算评分配置（docs/dev/scoring_system_design.md）：四维权重和恒为1；中心衰减；掩码颜色匹配容差；id_colors 为四玩家遮罩 ID 纯色",
+  "weights": {
+    "ratio": 0.25,
+    "center": 0.25,
+    "outfit": 0.25,
+    "facing": 0.25
+  },
+  "center_falloff": "linear",
+  "falloff_k": 4.0,
+  "color_tolerance": 0.06,
+  "min_visible_px": 20,
+  "id_colors": [
+    [1.0, 0.0, 0.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0],
+    [1.0, 1.0, 0.0]
+  ]
+}

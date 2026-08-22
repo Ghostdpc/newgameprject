@@ -8,11 +8,10 @@ extends CanvasLayer
 signal flow_finished(action: String)   # "restart" / "lobby"
 
 const DIM_ORDER: Array = [
-	["framing", "入镜完整度"],
-	["position", "站位优势"],
+	["ratio", "画面比例"],
+	["center", "C位"],
+	["outfit", "服装表现"],
 	["facing", "镜头朝向"],
-	["occlusion", "清晰度遮挡"],
-	["costume", "服装表现"],
 ]
 
 @onready var _root: Control = $Root
@@ -29,12 +28,15 @@ var _player_hud: PlayerHUD = null
 var _results: Dictionary = {}
 var _skip_requested: bool = false
 var _sequence_running: bool = false
+var _mask_panel: Control = null
+var _mask_rect: TextureRect = null
 
 func _ready() -> void:
 	_root.hide()
 	_restart_btn.pressed.connect(func(): flow_finished.emit("restart"))
 	_lobby_btn.pressed.connect(func(): flow_finished.emit("lobby"))
 	EventBus.stage_changed.connect(_on_stage_changed)
+	_build_mask_panel()
 
 ## 新一轮开始（重开/返回）时收起结算界面与评分面板
 func _on_stage_changed(stage: int) -> void:
@@ -42,6 +44,40 @@ func _on_stage_changed(stage: int) -> void:
 		_root.hide()
 		if _player_hud:
 			_player_hud.clear_scoreboards()
+
+## 评分 RT（ID 遮罩）调试面板：贴在结算画面右侧，方便核对像素评分
+func _build_mask_panel() -> void:
+	_mask_panel = PanelContainer.new()
+	_mask_panel.name = "MaskPanel"
+	_mask_panel.anchor_left = 1.0
+	_mask_panel.anchor_top = 0.5
+	_mask_panel.anchor_right = 1.0
+	_mask_panel.anchor_bottom = 0.5
+	_mask_panel.offset_left = -420.0
+	_mask_panel.offset_top = -220.0
+	_mask_panel.offset_right = -40.0
+	_mask_panel.offset_bottom = 40.0
+	_mask_panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	_mask_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_mask_panel.hide()
+	_root.add_child(_mask_panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	_mask_panel.add_child(vbox)
+
+	var label := Label.new()
+	label.text = "评分RT · ID遮罩（只算玩家）"
+	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_color_override("font_color", Color(0.55, 0.85, 1.0))
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(label)
+
+	_mask_rect = TextureRect.new()
+	_mask_rect.custom_minimum_size = Vector2(320, 180)
+	_mask_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_mask_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	vbox.add_child(_mask_rect)
 
 func setup(player_hud: PlayerHUD) -> void:
 	_player_hud = player_hud
@@ -52,11 +88,17 @@ func show_results(results: Dictionary) -> void:
 	_root.show()
 	_champion_box.hide()
 	_score_hint.show()
-	_dim_callout.text = "—— 系统五维评分 ——"
+	_dim_callout.text = "—— 系统四维评分 ——"
 	# 照片居中放大（S6：照片居中放很大）
 	var img: Image = results.get("photo")
 	if img and img.get_width() > 0:
 		_photo_rect.texture = ImageTexture.create_from_image(img)
+	var mask_img: Image = results.get("mask")
+	if mask_img and mask_img.get_width() > 0:
+		_mask_rect.texture = ImageTexture.create_from_image(mask_img)
+		_mask_panel.show()
+	else:
+		_mask_panel.hide()
 	_caption.text = "快门瞬间 · 主题：摄影棚乱斗"
 	_photo_rect.pivot_offset = _photo_rect.size * 0.5
 	_photo_rect.modulate.a = 0.0

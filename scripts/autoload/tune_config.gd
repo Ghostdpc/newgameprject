@@ -4,6 +4,7 @@
 extends CanvasLayer
 
 # ---- 可調參數（各狀態直接讀 TuneConfig.xxx）----
+var move_speed: float = 5.0        ## 角色移動速度
 var dive_force: float = 9.0        ## 自己飛撲衝刺速度
 var hit_force: float = 6.0         ## 擊飛目標水平力
 var hit_upward: float = 7.0        ## 擊飛目標上拋初速
@@ -14,7 +15,7 @@ var ragdoll_angular_damp: float = 0.3  ## 布娃娃角阻尼（小=擺動大）
 var stun_duration: float = 1.8         ## 倒地（Stunned）時長，秒
 
 const _DEFAULTS: Dictionary = {
-	"dive_force": 9.0, "hit_force": 6.0, "hit_upward": 7.0,
+	"move_speed": 5.0, "dive_force": 9.0, "hit_force": 6.0, "hit_upward": 7.0,
 	"stun_gravity": 45.0, "ground_brake": 30.0,
 	"ragdoll_linear_damp": 0.3, "ragdoll_angular_damp": 0.3,
 	"stun_duration": 1.8,
@@ -23,6 +24,7 @@ const _DEFAULTS: Dictionary = {
 const CONFIG_PATH: String = "res://data/configs/tune.json"
 
 var _params: Array = [
+	{"name": "move_speed", "step": 0.5, "desc": "角色移動速度（大=跑更快）"},
 	{"name": "dive_force", "step": 0.5, "desc": "自己飛撲衝刺速度（大=衝更遠）"},
 	{"name": "hit_force", "step": 0.5, "desc": "擊飛目標水平力（大=撞出更遠）"},
 	{"name": "hit_upward", "step": 0.5, "desc": "擊飛上拋初速（大=飛更高）"},

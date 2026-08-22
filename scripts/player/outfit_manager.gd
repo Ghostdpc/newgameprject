@@ -24,6 +24,8 @@ var player_color: Color = Color.WHITE:
 
 var _slots: Dictionary = {}
 var _items: Dictionary = {}
+## 槽位名 -> 装备 id（结算评分读单件加成用；未传 id 则空串）
+var _item_ids: Dictionary = {}
 
 func _ready() -> void:
 	if not character_root:
@@ -52,7 +54,7 @@ func _create_slot(slot_name: String) -> void:
 	_slots[slot_name] = slot
 
 ## 裝備物品到指定槽位（同槽位先卸載舊物）
-func equip(slot_name: String, item_scene: PackedScene) -> Node3D:
+func equip(slot_name: String, item_scene: PackedScene, item_id: String = "") -> Node3D:
 	if not _slots.has(slot_name):
 		push_error("OutfitManager: 無此槽位 '%s'" % slot_name)
 		return null
@@ -61,6 +63,7 @@ func equip(slot_name: String, item_scene: PackedScene) -> Node3D:
 	item.name = "Item"
 	_slots[slot_name].add_child(item)
 	_items[slot_name] = item
+	_item_ids[slot_name] = item_id
 	_recolor(item)
 	item_equipped.emit(slot_name, item)
 	return item
@@ -70,11 +73,20 @@ func unequip(slot_name: String) -> void:
 		return
 	var item: Node3D = _items[slot_name]
 	_items.erase(slot_name)
+	_item_ids.erase(slot_name)
 	item.queue_free()
 	item_unequipped.emit(slot_name)
 
 func get_item(slot_name: String) -> Node3D:
 	return _items.get(slot_name, null)
+
+## 当前已装备槽位数量（结算评分用）
+func equipped_slot_count() -> int:
+	return _items.size()
+
+## 槽位名 -> 装备 id 的副本（结算评分读单件加成用）
+func get_equipped_ids() -> Dictionary:
+	return _item_ids.duplicate()
 
 func clear_all() -> void:
 	for slot_name in _items.keys():

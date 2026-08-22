@@ -4,8 +4,9 @@ class_name PlayerController
 extends CharacterBody3D
 
 const GRAVITY: float = 20.0
-const MOVE_SPEED: float = 6.0
 const ACCELERATION: float = 15.0
+## 轉向速率（rad/s；大=轉得快，小=平滑慢轉）
+const TURN_RATE: float = 12.0
 ## 拾取有效距離（米）
 const PICKUP_RANGE: float = 1.5
 
@@ -40,6 +41,7 @@ var state_machine: PlayerStateMachine
 var ragdoll_rig: RagdollRig
 var outfit_manager: OutfitManager
 var character_effects: CharacterEffects
+var spring_rig: SpringBoneRig
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
@@ -67,9 +69,11 @@ func _ready() -> void:
 
 ## 開關布娃娃（被擊倒時進入物理倒地）
 func set_ragdoll(enabled: bool) -> void:
-	if not ragdoll_rig:
-		return
-	ragdoll_rig.set_ragdoll_enabled(enabled)
+	if ragdoll_rig:
+		ragdoll_rig.set_ragdoll_enabled(enabled)
+	# 布娃娃時關閉彈簧骨骼，避免與物理姿態搶寫骨架
+	if spring_rig:
+		spring_rig.set_active(not enabled)
 
 ## 擊飛：body 位移（模型跟 body，姿態由 ragdoll 提供）
 func knockback(direction: Vector3) -> void:
@@ -132,6 +136,9 @@ func clear_item() -> void:
 func _process(delta: float) -> void:
 	if is_dead():
 		return
+	if spring_rig:
+		spring_rig.velocity_hints = Vector2(velocity.x, velocity.z)
+		spring_rig.root_velocity = velocity
 	state_machine.update(delta)
 	_update_animation()
 	if player_input.is_use_item_just_pressed():
@@ -281,14 +288,20 @@ func _knocked_down_by_prop(dive: DiveState) -> void:
 	state_machine.transition_to("Stunned")
 
 func apply_move(direction: Vector2) -> void:
-	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED * speed_multiplier
+	var target_velocity := Vector3(direction.x, 0.0, direction.y) * TuneConfig.move_speed * speed_multiplier
 	velocity.x = move_toward(velocity.x, target_velocity.x, ACCELERATION * get_physics_process_delta_time())
 	velocity.z = move_toward(velocity.z, target_velocity.z, ACCELERATION * get_physics_process_delta_time())
 	if direction.length_squared() > 0.0:
-		# 模型正面朝 +Z，looking_at 讓 -Z 指向移動方向，故取反使正面朝前
-		var look_dir := Vector3(-direction.x, 0.0, -direction.y)
-		var target_basis := Basis.looking_at(look_dir, Vector3.UP)
-		global_basis = global_basis.slerp(target_basis, 0.2)
+		_turn_toward(direction)
+
+## 平滑轉身：模型正面朝 +Z，用 yaw 角度插值（避免 slerp 在 180° 退化導致瞬移）
+func _turn_toward(direction: Vector2) -> void:
+	var move_dir := Vector3(direction.x, 0.0, direction.y).normalized()
+	var target_yaw := atan2(move_dir.x, move_dir.z)
+	var cur_yaw := rotation.y
+	if is_equal_approx(cur_yaw, target_yaw):
+		return
+	rotation.y = lerp_angle(cur_yaw, target_yaw, minf(1.0, TURN_RATE * get_physics_process_delta_time()))
 
 func _apply_gravity(delta: float) -> void:
 	if is_dead():
@@ -356,6 +369,17 @@ func _setup_model() -> void:
 		var skeleton := _find_skeleton(model)
 		if skeleton and _animation_player:
 			ragdoll_rig.setup(skeleton, _animation_player)
+	# Spring Bone 彈簧骨骼：常態軟糯效果（掛本角色，高 priority 在動畫後寫回）
+	spring_rig = SpringBoneRig.new()
+	spring_rig.name = "SpringBoneRig"
+	add_child(spring_rig)
+	var skel2 := _find_skeleton(model)
+	if skel2 and _animation_player:
+		spring_rig.skeleton = skel2
+		spring_rig.animation_player = _animation_player
+		spring_rig.apply_preset("normal")
+		spring_rig.setup(skel2, _animation_player)
+		spring_rig.set_active(true)
 
 func _find_skeleton(n: Node) -> Skeleton3D:
 	if n is Skeleton3D:

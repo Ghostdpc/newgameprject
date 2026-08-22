@@ -1,76 +1,91 @@
-## 職責：快門後結算 —— 遮罩占比分析 + 六維評分框架（Demo 版）
+## 职责：快门后结算 —— visibility layer override + 四维评分
 ##
-## 流程：收到 photo_taken(貼圖) → 生成遮罩克隆 → 渲染 ID 遮罩視口 → 像素統計
-##       → 計算六維分數 → settlement_completed(results)
+## 流程：收到 photo_taken(贴图) → 给演员 mesh 追加 layer 2 + ID 材质
+##       → MaskCamera（共享主场景 world）渲一帧 → 像素统计
+##       → ScoreAnalyzer 四维评分 → settlement_completed(results)
 ##
-## 六維（策劃案 10-評分與結算）：入鏡20% / 站位20% / 朝向15% / 遮擋15% / 服裝15% / Pose15%
-## Demo 實作：入鏡（投影 bbox 裁切比）、遮擋（可見像素/預期像素）、站位（質心距畫面中心）
-## 朝向/服裝/Pose 暫以 0 分佔位（屬 Pose 系統與換裝系統負責人）
-## 正式計分演算法由 ScoreSystem 替換（待策劃確認權重與細則）
+## 四维（docs/dev/scoring_system_design.md）：画面比例 25% / C位 25% / 服装 25% / 朝向 25%
+## 各维绝对分（0~1，不做玩家间归一），加权和 ×100 得 0~100 总分。
 ##
-## 遮罩原理：快門瞬間把每個演員的網格克隆成「專屬純色」副本、場景遮擋物克隆成黑色，
-## 放入只渲染 MASK_LAYER 的獨立視口重拍一張 → 每個玩家實際可見像素一目了然，
-## 遮擋/出框自動成立（同 PhotoParty 原型驗證過的做法）
+## 遮罩原理（docs/dev/scoring_mask_fix_design.md §二）：
+##   MaskViewport 共享主场景 world_3d（不设独立 world）→ 主场景几何继续写深度缓冲。
+##   MaskCamera.cull_mask = layer 2 only → 只看演员 ID 色输出到颜色缓冲。
+##   被场景物体/其他演员挡住的片段被 GPU z-test 自然剔除。
+##   解决：T-pose（演员 mesh 在原位，骨骼动画照常驱动）+ 遮挡（深度共享）。
 
 class_name SettlementSystem
 extends Node
 
 signal settlement_completed(results: Dictionary)
 
-const MASK_LAYER: int = 2
-const MASK_SIZE := Vector2i(320, 180)
-const COLOR_TOLERANCE: float = 0.06      # 顏色匹配容差（sRGB 微偏移防護）
-const ACTOR_FILL_FACTOR: float = 0.55    # 角色填充 bbox 的估計比例（膠囊體近似）
-const MIN_VISIBLE_PX: int = 20           # 低於此像素視為完全出鏡
+const ScoreAnalyzerScript := preload("res://scripts/systems/score_analyzer.gd")
 
-const W_FRAMING := 0.20
-const W_POSITION := 0.20
-const W_FACING := 0.15
-const W_OCCLUSION := 0.15
-const W_COSTUME := 0.15
-const W_POSE := 0.15
+const MASK_LAYER: int   = 2
+const MASK_LAYER_BIT: int = 1 << (MASK_LAYER - 1)   # bit 1 = layer 2
+const MASK_SIZE := Vector2i(640, 360)
+
+## 四玩家 ID 色（纯饱和原色，与 PlayerConfig 实际色不同，避免混淆）
+## 从 score_config.json["id_colors"] 加载；此为默认值
+const DEFAULT_ID_COLORS: Array = [
+	[1.0, 0.0, 0.0],   # P1 红
+	[0.0, 1.0, 0.0],   # P2 绿
+	[0.0, 0.0, 1.0],   # P3 蓝
+	[1.0, 1.0, 0.0],   # P4 黄
+]
 
 var _mask_viewport: SubViewport
 var _mask_camera: Camera3D
-var _clones_root: Node3D
 var _busy: bool = false
+var _score_config: Dictionary = {}
+var _id_materials: Array = []   # Array[StandardMaterial3D]，按 player_index 索引
 
 func _ready() -> void:
 	EventBus.photo_taken.connect(_on_photo_taken)
+	_score_config = ConfigLoader.load_config("score_config")
 	_build_mask_viewport()
+	_build_id_materials()
+
+## ---- 初始化 ----
 
 func _build_mask_viewport() -> void:
 	_mask_viewport = SubViewport.new()
 	_mask_viewport.name = "MaskViewport"
 	_mask_viewport.size = MASK_SIZE
 	_mask_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
-	# 獨立純黑世界，避免主場景天空/光照污染像素統計
-	var world := World3D.new()
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color.BLACK
-	world.environment = env
-	_mask_viewport.world_3d = world
+	_mask_viewport.msaa_3d = Viewport.MSAA_DISABLED
+	# 不设 world_3d，继承主场景 → 主场景几何参与深度测试（解决遮挡问题）
 	add_child(_mask_viewport)
 	_mask_camera = Camera3D.new()
 	_mask_camera.name = "MaskCamera"
-	_mask_camera.cull_mask = MASK_LAYER
+	# layer 1（bit 0）= 场景几何，参与深度测试提供遮挡；layer 2（bit 1）= 演员 ID 色输出
+	# 场景物体颜色不匹配任何 ID 色，不影响像素统计
+	_mask_camera.cull_mask = 1 | MASK_LAYER_BIT
+	_mask_camera.current = true
 	_mask_viewport.add_child(_mask_camera)
+
+func _build_id_materials() -> void:
+	_id_materials.clear()
+	var raw_colors: Array = _score_config.get("id_colors", DEFAULT_ID_COLORS)
+	for i in 4:
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		if i < raw_colors.size():
+			var c = raw_colors[i]
+			mat.albedo_color = Color(float(c[0]), float(c[1]), float(c[2]))
+		else:
+			mat.albedo_color = Color.WHITE
+		_id_materials.append(mat)
+
+## ---- 主流程 ----
 
 func _on_photo_taken(texture: ViewportTexture) -> void:
 	if _busy:
 		return
-	# texture 為 null 時（無真實截圖，如 test scene 直接觸發 battle_ended）
-	# 仍繼續結算流程，_analyze_async 內部有空圖兜底
 	_busy = true
 	_analyze_async(texture)
 
 func _analyze_async(texture: ViewportTexture) -> void:
-	var photo_image := texture.get_image()
-	if photo_image == null:
-		# headless/dummy 渲染器拿不到真实画面，用空图兜底（正式环境不会触发）
-		push_warning("SettlementSystem: 截图为空（可能是 headless 渲染），像素分析降级为零")
-		photo_image = Image.create_empty(_mask_viewport.size.x, _mask_viewport.size.y, false, Image.FORMAT_RGBA8)
+	var photo_image := _photo_or_empty(texture)
 
 	var cam := _get_photo_camera()
 	if cam == null:
@@ -78,7 +93,10 @@ func _analyze_async(texture: ViewportTexture) -> void:
 		_busy = false
 		return
 
-	_spawn_mask_clones()
+	# 按 player_index 分配 ID 材质
+	var actors := _get_actors()
+	var override_table := _apply_id_overrides(actors)
+
 	_sync_mask_camera(cam)
 	_mask_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	await get_tree().process_frame
@@ -86,12 +104,61 @@ func _analyze_async(texture: ViewportTexture) -> void:
 	var mask_image := _mask_viewport.get_texture().get_image()
 	if mask_image == null:
 		mask_image = Image.create_empty(MASK_SIZE.x, MASK_SIZE.y, false, Image.FORMAT_RGBA8)
-	_clear_mask_clones()
 	_mask_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 
-	var results := _analyze(photo_image, mask_image, cam)
+	_revert_id_overrides(override_table)
+
+	var results := _analyze(photo_image, mask_image, cam, actors)
 	_busy = false
 	settlement_completed.emit(results)
+
+## ---- ID 材质 override ----
+
+## 给所有演员 mesh 追加 layer 2 + ID 材质。
+## 返回 override_table：Array[{mi, orig_layers, orig_override}]，还原用。
+func _apply_id_overrides(actors: Array) -> Array:
+	var table: Array = []
+	for actor in actors:
+		var node := actor as Node3D
+		if node == null:
+			continue
+		var idx: int = clampi(int(actor.player_index) if "player_index" in actor else 0, 0, _id_materials.size() - 1)
+		var mat: StandardMaterial3D = _id_materials[idx]
+		for mi in _collect_meshes(node):
+			table.append({
+				"mi": mi,
+				"orig_layers": mi.layers,
+				"orig_override": mi.material_override,
+			})
+			mi.layers = mi.layers | MASK_LAYER_BIT   # 追加 layer 2，保留 layer 1
+			mi.material_override = mat
+	return table
+
+## 还原所有被修改的 mesh 的 layers 和 material_override
+func _revert_id_overrides(table: Array) -> void:
+	for entry in table:
+		var mi: MeshInstance3D = entry["mi"]
+		if is_instance_valid(mi):
+			mi.layers = entry["orig_layers"]
+			mi.material_override = entry["orig_override"]
+
+## ---- 工具 ----
+
+func _get_actors() -> Array:
+	var result: Array = []
+	for actor in get_tree().get_nodes_in_group("settlement_actor"):
+		if actor is Node3D and actor.is_in_group("players"):
+			result.append(actor)
+	return result
+
+func _photo_or_empty(texture: ViewportTexture) -> Image:
+	if texture == null:
+		return Image.create_empty(MASK_SIZE.x, MASK_SIZE.y, false, Image.FORMAT_RGBA8)
+	var img := texture.get_image()
+	if img == null:
+		push_warning("SettlementSystem: 截图为空（headless 渲染降级为零）")
+		return Image.create_empty(MASK_SIZE.x, MASK_SIZE.y, false, Image.FORMAT_RGBA8)
+	return img
 
 func _get_photo_camera() -> Camera3D:
 	var controller := CameraSystem.get_photo_controller()
@@ -99,173 +166,11 @@ func _get_photo_camera() -> Camera3D:
 		return null
 	return controller.get_camera()
 
-## ---- 遮罩克隆 ----
-
-func _spawn_mask_clones() -> void:
-	_clones_root = Node3D.new()
-	_clones_root.name = "MaskClones"
-	add_child(_clones_root)
-	var actor_set: Dictionary = {}
-	for actor in get_tree().get_nodes_in_group("settlement_actor"):
-		if not (actor is Node3D):
-			continue
-		actor_set[actor] = true
-		var color: Color = actor.player_color if "player_color" in actor else Color.WHITE
-		_clone_meshes(actor as Node3D, _flat_material(color))
-	for occ in get_tree().get_nodes_in_group("photo_occluder"):
-		if actor_set.has(occ) or not (occ is Node3D):
-			continue
-		_clone_meshes(occ as Node3D, _flat_material(Color.BLACK))
-
-func _clone_meshes(source: Node3D, mat: StandardMaterial3D) -> void:
-	for mi in _collect_meshes(source):
-		if mi.mesh == null:
-			continue
-		var clone := MeshInstance3D.new()
-		clone.mesh = mi.mesh
-		clone.material_override = mat
-		clone.layers = MASK_LAYER
-		clone.global_transform = mi.global_transform
-		_clones_root.add_child(clone)
-
-func _clear_mask_clones() -> void:
-	if _clones_root:
-		_clones_root.queue_free()
-		_clones_root = null
-
-func _flat_material(color: Color) -> StandardMaterial3D:
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = color
-	return mat
-
 func _sync_mask_camera(photo_cam: Camera3D) -> void:
 	_mask_camera.global_transform = photo_cam.global_transform
 	_mask_camera.fov = photo_cam.fov
 	_mask_camera.near = photo_cam.near
 	_mask_camera.far = photo_cam.far
-
-## ---- 計分 ----
-
-func _analyze(photo: Image, mask: Image, cam: Camera3D) -> Dictionary:
-	var actors := get_tree().get_nodes_in_group("settlement_actor")
-	var vp_size := Vector2(_mask_viewport.size)
-	var total_px: int = _mask_viewport.size.x * _mask_viewport.size.y
-	var frame := Rect2(Vector2.ZERO, vp_size)
-
-	# 像素統計：按演員顏色匹配
-	var counts := {}
-	var targets := {}
-	for actor in actors:
-		var color: Color = actor.player_color if "player_color" in actor else Color.WHITE
-		counts[actor] = 0
-		targets[actor] = color
-	var w := _mask_viewport.size.x
-	var h := _mask_viewport.size.y
-	for y in h:
-		for x in w:
-			var c := mask.get_pixel(x, y)
-			for actor in targets:
-				var t: Color = targets[actor]
-				if absf(c.r - t.r) <= COLOR_TOLERANCE and absf(c.g - t.g) <= COLOR_TOLERANCE and absf(c.b - t.b) <= COLOR_TOLERANCE:
-					counts[actor] += 1
-					break
-
-	# 逐演員六維計算
-	var actor_results: Array = []
-	for actor in actors:
-		var idx: int = actor.player_index if "player_index" in actor else -1
-		var color: Color = actor.player_color if "player_color" in actor else Color.WHITE
-		var visible_px: int = counts[actor]
-		var aabb_world := _actor_world_aabb(actor as Node3D)
-		var bbox := _project_aabb(cam, aabb_world, vp_size)
-		var clipped := bbox.intersection(frame)
-		var bbox_area: float = bbox.get_area()
-		var framing: float = 0.0
-		if bbox_area > 1.0:
-			framing = clampf(clipped.get_area() / bbox_area, 0.0, 1.0)
-		var behind: bool = cam.is_position_behind(aabb_world.get_center())
-		if behind:
-			framing = 0.0
-		var position_score: float = 0.0
-		if not behind:
-			var centroid: Vector2 = cam.unproject_position(aabb_world.get_center())
-			var dist: float = (centroid - vp_size * 0.5).length()
-			position_score = clampf(1.0 - dist / (vp_size.length() * 0.5), 0.0, 1.0)
-		var expected_px: float = clipped.get_area() * ACTOR_FILL_FACTOR
-		var occlusion: float = 0.0
-		if expected_px > 1.0:
-			occlusion = clampf(float(visible_px) / expected_px, 0.0, 1.0)
-		var in_photo: bool = visible_px >= MIN_VISIBLE_PX
-
-		# 六維明細（0~100），朝向/服裝/Pose 佔位
-		var dim := {
-			"framing": {"label": "入鏡完整度", "norm": framing if in_photo else 0.0, "weight": W_FRAMING},
-			"position": {"label": "站位優勢", "norm": position_score if in_photo else 0.0, "weight": W_POSITION},
-			"facing": {"label": "鏡頭朝向", "norm": 0.0, "weight": W_FACING, "tbd": true},
-			"occlusion": {"label": "清晰度(遮擋)", "norm": occlusion if in_photo else 0.0, "weight": W_OCCLUSION},
-			"costume": {"label": "服裝表現", "norm": 0.0, "weight": W_COSTUME, "tbd": true},
-			"pose": {"label": "Pose表現", "norm": 0.0, "weight": W_POSE, "tbd": true},
-		}
-		var total: float = 0.0
-		for key in dim:
-			var d: Dictionary = dim[key]
-			d["score"] = d["norm"] * d["weight"] * 100.0
-			total += d["score"]
-		actor_results.append({
-			"player_index": idx,
-			"color": color,
-			"in_photo": in_photo,
-			"visible_px": visible_px,
-			"percent": float(visible_px) / float(total_px),
-			"dimensions": dim,
-			"total": total,
-		})
-	actor_results.sort_custom(func(a, b): return a["total"] > b["total"])
-
-	return {
-		"photo": photo,
-		"mask": mask,
-		"actors": actor_results,
-		"resolution": vp_size,
-	}
-
-func _actor_world_aabb(actor: Node3D) -> AABB:
-	var result := AABB()
-	var has := false
-	for mi in _collect_meshes(actor):
-		if mi.mesh == null:
-			continue
-		var local_aabb: AABB = mi.global_transform * mi.mesh.get_aabb()
-		if not has:
-			result = local_aabb
-			has = true
-		else:
-			result = result.merge(local_aabb)
-	if not has:
-		result = AABB(actor.global_position, Vector3(0.8, 1.8, 0.8))
-	return result
-
-func _project_aabb(cam: Camera3D, aabb: AABB, vp_size: Vector2) -> Rect2:
-	var min_v := Vector2.ONE * 1e9
-	var max_v := Vector2.ONE * -1e9
-	var any_front := false
-	for i in 8:
-		var corner := Vector3(
-			aabb.position.x if (i & 1) == 0 else aabb.end.x,
-			aabb.position.y if (i & 2) == 0 else aabb.end.y,
-			aabb.position.z if (i & 4) == 0 else aabb.end.z)
-		if cam.is_position_behind(corner):
-			continue
-		any_front = true
-		var p: Vector2 = cam.unproject_position(corner)
-		min_v = min_v.min(p)
-		max_v = max_v.max(p)
-	if not any_front:
-		return Rect2()
-	min_v = min_v.clamp(Vector2(-vp_size.x, -vp_size.y), vp_size * 2.0)
-	max_v = max_v.clamp(Vector2(-vp_size.x, -vp_size.y), vp_size * 2.0)
-	return Rect2(min_v, max_v - min_v)
 
 func _collect_meshes(root: Node) -> Array:
 	var result: Array = []
@@ -277,3 +182,61 @@ func _collect_meshes(root: Node) -> Array:
 		for c in n.get_children():
 			stack.append(c)
 	return result
+
+## ---- 计分 ----
+
+func _analyze(photo: Image, mask: Image, cam: Camera3D, actors: Array) -> Dictionary:
+	var meta: Array = []
+	for actor in actors:
+		var node := actor as Node3D
+		var idx: int = actor.player_index if "player_index" in actor else -1
+		var id_color: Color = _id_color_for(idx)
+		meta.append({
+			"player_index": idx,
+			"color": id_color,
+			"facing": _compute_facing(node, cam),
+			"outfit": _read_outfit_norm(node),
+		})
+
+	var analyzer = ScoreAnalyzerScript.new()
+	analyzer.weights = _score_config.get("weights", analyzer.weights)
+	analyzer.center_falloff = String(_score_config.get("center_falloff", "linear"))
+	analyzer.falloff_k = float(_score_config.get("falloff_k", 4.0))
+	analyzer.color_tolerance = float(_score_config.get("color_tolerance", 0.06))
+	analyzer.min_visible_px = int(_score_config.get("min_visible_px", 20))
+
+	var results := analyzer.analyze(mask, meta, MASK_SIZE)
+	results["photo"] = photo
+	results["mask"] = mask
+	return results
+
+## 按 player_index 取对应 ID 色（用于像素匹配）
+func _id_color_for(player_index: int) -> Color:
+	var idx := clampi(player_index, 0, _id_materials.size() - 1)
+	if idx < _id_materials.size():
+		return (_id_materials[idx] as StandardMaterial3D).albedo_color
+	return Color.WHITE
+
+func _compute_facing(actor: Node3D, cam: Camera3D) -> float:
+	var forward := actor.global_basis.z
+	var to_cam := cam.global_position - actor.global_position
+	return ScoreAnalyzerScript.compute_facing(forward, to_cam)
+
+func _read_outfit_norm(actor: Node3D) -> float:
+	var om := actor.get_node_or_null("OutfitManager")
+	if om == null or not om.has_method("equipped_slot_count"):
+		return 0.0
+	var count: int = om.equipped_slot_count()
+	var cfg := ConfigLoader.load_config("outfit_scoring")
+	var per_slot: float = float(cfg.get("base_per_slot", 0.33))
+	var cap: float = float(cfg.get("cap", 1.0))
+	var bonuses: Dictionary = cfg.get("item_bonuses", {})
+
+	var raw := float(count) * per_slot
+	if om.has_method("get_equipped_ids"):
+		for id in (om.get_equipped_ids() as Dictionary).values():
+			raw += float(bonuses.get(String(id), 0.0))
+	raw = clampf(raw, 0.0, cap)
+	if cap <= 0.0:
+		return 0.0
+	return raw / cap

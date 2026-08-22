@@ -108,7 +108,7 @@ func _bone_length(bone_idx: int) -> float:
 	var parent_pos: Vector3 = skeleton.get_bone_global_rest(parent_idx).origin
 	return maxf(bone_pos.distance_to(parent_pos), 0.1)
 
-## 開關布娃娃物理模拟（啟用時停止動畫驅動，交由物理接管）
+## 開關布娃娃物理模拟（啟用時停止動畫驅動，交由物理接管，mesh 由物理癱軟）
 func set_ragdoll_enabled(enabled: bool) -> void:
 	_ragdoll_enabled = enabled
 	if not _simulator:
@@ -125,24 +125,6 @@ func set_ragdoll_enabled(enabled: bool) -> void:
 	else:
 		_set_collisions_enabled(false)
 		call_deferred("_stop_sim")
-
-## 動畫+物理混合模擬（active ragdoll 弱效果）：
-## influence 0~1 = 物理佔比，其餘由動畫提供目標姿態。
-## influence 小（0.15~0.4）→ 走路時四肢帶物理彈性/遲滯，不脫離動畫
-func set_blended_simulation(influence: float) -> void:
-	_ragdoll_enabled = true
-	if not _simulator:
-		push_error("RagdollRig: setup() 尚未調用")
-		return
-	_set_collisions_enabled(true)
-	if skeleton:
-		skeleton.reset_bone_poses()
-		skeleton.force_update_all_bone_transforms()
-	# 動畫繼續播（作為目標姿態）
-	if animation_player and not animation_player.is_playing():
-		animation_player.play("Walking_A")
-	for bone_name in RIG_BONES:
-		_simulator.physical_bones_start_simulation_on_bone(bone_name, influence)
 
 ## 控制物理骨碰撞啟用（未 ragdoll 時禁用避免推擠玩家）
 func _set_collisions_enabled(enabled: bool) -> void:

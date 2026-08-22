@@ -1,0 +1,16 @@
+{
+  "_comment": "服装表现评分：每槽基础分 + 单件加成，cap 为满分上限。outfit 绝对分 = clamp(raw, 0, cap) / cap",
+  "base_per_slot": 0.33,
+  "cap": 1.0,
+  "item_bonuses": {
+    "outfit_cap": 0.05,
+    "outfit_tophat": 0.08,
+    "outfit_ribbon": 0.03,
+    "outfit_jacket": 0.05,
+    "outfit_dress": 0.08,
+    "outfit_mascot": 0.1,
+    "outfit_balloon": 0.05,
+    "outfit_wand": 0.05,
+    "outfit_camera": 0.05
+  }
+}
