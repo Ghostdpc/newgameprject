@@ -50,8 +50,9 @@ func knock_prop(prop: PhysicalProp) -> void:
 	if prop.is_frozen():
 		prop.release(force)
 	else:
-		# 用 impulse 會除以 mass（箱子重 => 飛不遠），改按質量放大衝量
-		prop.apply_central_impulse(force * prop.mass)
+		# apply_central_impulse 直接給 Δ動量（速度增量 = impulse/mass），不另乘 mass，
+		# 否則重物也獲相等速度瞬間爆飛 → 玩家碰撞被頂射亂飛
+		prop.apply_central_impulse(force)
 
 func physics_update(delta: float) -> void:
 	var controller: PlayerController = _player as PlayerController
