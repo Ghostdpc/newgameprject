@@ -24,9 +24,6 @@ func is_garment(id: String) -> bool:
 
 ## 给玩家装备服装（自动卸下同槽旧件）
 func equip_garment(player: PlayerController, garment_id: String) -> void:
-	# 暂时屏蔽衣服装备处理（结算问题排查中）
-	return
-
 	var def := _garment_config.get_garment(garment_id)
 	if def == null:
 		push_warning("GarmentSystem: unknown garment_id '%s'" % garment_id)

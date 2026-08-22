@@ -7,9 +7,9 @@ func test_player_has_face_node_and_binds() -> void:
 	add_child_autofree(player)
 	await wait_frames(3)
 	assert_not_null(player.face, "玩家掛載 PlayerFaceController")
-	assert_gt(player.face.count(), 0, "表情素材資料夾有掃到表情圖")
-	# 已綁定 head 骨（human 用 骨骼.004）→ 進入貼皮模式非 fallback
-	assert_false(player.face.get("_used_fallback"), "human 應綁定到 骨骼.004 骨（貼皮），非 fallback")
+	assert_eq(player.face.count(), 209, "表情素材(assets/textures/faces)掃到 209 張")
+	# human 綁定 head 骨（HumanBoneMap 解析）→ 貼皮非 fallback
+	assert_false(player.face.get("_used_fallback"), "應綁定 head 骨（貼皮），非 fallback")
 	var sprite: Sprite3D = player.face.get("_sprite")
 	assert_not_null(sprite, "已建立表情 Sprite3D")
 	assert_false(sprite.visible, "初始隱藏")
