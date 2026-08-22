@@ -8,6 +8,13 @@ extends Node3D
 
 # ---- 玩家 ----（由关卡子类或场景节点提供，控制靠 PlayerController 内建）
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
+
+# ---- 出界與重生（玩家順應，基類預設）----
+const FALL_Y: float = -5.0          ## 低於此高度視為出界死亡
+const RESPAWN_WAIT: float = 2.0     ## 死亡讀秒到重生
+const RESPAWN_HEIGHT: float = 8.0   ## 重生空中高度（落下）
+const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
+
 const PLAYER_COLORS: Array[Color] = [
 	Color(0.9, 0.2, 0.2),
 	Color(0.2, 0.4, 0.9),
@@ -117,6 +124,49 @@ func _spawn_players() -> void:
 		player.position = spawns[i % spawns.size()]
 		player.add_to_group("settlement_actor")
 		(_actors_root if _actors_root else self).add_child(player)
+
+# ---------------------------------------------------------------
+# 出界與重生
+# ---------------------------------------------------------------
+
+func _physics_process(_delta: float) -> void:
+	var actors := _actors_root if _actors_root else self
+	for child in actors.get_children():
+		var player := child as PlayerController
+		if player and not player.is_dead() and player.global_position.y < FALL_Y:
+			_kill_and_respawn(player)
+
+## 出界死亡 → （亮複活光柱）讀秒 → 隨機點空中落下
+func _kill_and_respawn(player: PlayerController) -> void:
+	var pos := _random_spawn_position()
+	player.configure_respawn(Vector3(pos.x, RESPAWN_HEIGHT, pos.z), RESPAWN_WAIT)
+	var marker := _create_respawn_marker(pos)
+	player.die()
+	# 讀秒結束由狀態機轉 RespawnFall，此處清理光柱
+	await get_tree().create_timer(RESPAWN_WAIT).timeout
+	marker.queue_free()
+
+## 場地範圍內隨機一點
+func _random_spawn_position() -> Vector3:
+	return Vector3(randf_range(-SPAWN_RANGE, SPAWN_RANGE), 1.0, randf_range(-SPAWN_RANGE, SPAWN_RANGE))
+
+## 讀秒期間在複活點顯示可見標記（黃色半透明光柱）
+func _create_respawn_marker(pos: Vector3) -> Node3D:
+	var m := MeshInstance3D.new()
+	var cyl := CylinderMesh.new()
+	cyl.top_radius = 0.6
+	cyl.bottom_radius = 0.6
+	cyl.height = RESPAWN_HEIGHT
+	m.mesh = cyl
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 1.0, 0.0, 0.35)
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.emission_enabled = true
+	mat.emission = Color.YELLOW
+	m.material_override = mat
+	m.position = Vector3(pos.x, RESPAWN_HEIGHT * 0.5, pos.z)
+	add_child(m)
+	return m
 
 # ---------------------------------------------------------------
 # 相机

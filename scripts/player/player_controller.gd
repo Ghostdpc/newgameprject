@@ -14,6 +14,9 @@ const ANIM_DIVE: String = "Jump_Full_Short"
 
 const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium_General.glb"
 
+## 拾取長按時長（秒，策划要求 0.8）
+const PICKUP_HOLD_TIME: float = 0.8
+
 @export var jump_force: float = 10.0
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
@@ -21,6 +24,7 @@ const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium
 signal item_picked_up(item_id: String)
 signal item_used(item_id: String)
 signal item_cleared()
+signal death_started(player: PlayerController)
 
 var player_input: PlayerInput
 var state_machine: PlayerStateMachine
@@ -33,7 +37,13 @@ var held_item_id: String = ""
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
-var is_dead: bool = false
+
+var _pickup_hold_time: float = 0.0
+
+## 是否處於死亡/復活流程（非正常對戰狀態）
+func is_dead() -> bool:
+	var st := state_machine.current_state_name
+	return st == "Death" or st == "RespawnWaiting" or st == "RespawnFall"
 
 func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
@@ -62,23 +72,18 @@ func sync_body_to_ragdoll() -> void:
 		return
 	global_position = Vector3(hips_pos.x, global_position.y, hips_pos.z)
 
-## 出界死亡：停物理、關布娃娃、清道具、隱藏（等待重生）
+## 出界死亡：進入死亡狀態（清道具、藏體、停物理）
 func die() -> void:
-	if is_dead:
+	if state_machine.current_state_name == "Death":
 		return
-	is_dead = true
-	clear_item()
-	set_ragdoll(false)
-	velocity = Vector3.ZERO
-	visible = false
+	death_started.emit(self)
+	state_machine.transition_to("Death")
 
-## 重生：移到指定位置、恢復可控
-func respawn(pos: Vector3) -> void:
-	global_position = pos
-	velocity = Vector3.ZERO
-	is_dead = false
-	visible = true
-	state_machine.transition_to("Idle")
+## 配置重生（由 LevelBase 設定復活點與讀秒時長）
+func configure_respawn(spawn_pos: Vector3, wait_duration: float) -> void:
+	var waiting := state_machine.get_state("RespawnWaiting") as RespawnWaitingState
+	if waiting:
+		waiting.configure(spawn_pos, wait_duration)
 
 ## 倒地後站起，由調用方確保已關閉 ragdoll
 func stand_up() -> void:
@@ -111,23 +116,42 @@ func clear_item() -> void:
 	item_cleared.emit()
 
 func _process(delta: float) -> void:
-	if is_dead:
+	if is_dead():
 		return
 	state_machine.update(delta)
 	_update_animation()
-	if player_input.is_use_item_just_pressed():
-		_handle_interact_key()
-
-## 處理 E 互動鍵：有道具→使用；無道具→拾取附近道具
-func _handle_interact_key() -> void:
 	if held_item_id.is_empty():
-		# 身上无道具：尝试拾取附近的道具
-		var id := _pickup_item_id()
-		if not id.is_empty():
-			pickup_item(id)
+		# 身上无道具：长按 E 拾取（可被打断）
+		_update_pickup_hold(delta)
 	else:
-		# 身上已有道具：使用它
-		use_held_item()
+		# 身上有道具：按 E 立即使用
+		if player_input.is_use_item_just_pressed():
+			use_held_item()
+
+## 长按拾取逻辑：按住 0.8s 触发；移动/受控 打断
+func _update_pickup_hold(delta: float) -> void:
+	# 拾取可被打断：移动 / 非 Idle/Move 状态
+	var st := state_machine.current_state_name
+	var can_pickup := (st == "Idle" or st == "Move") and _pickup_movement_blocked() == false
+	if not can_pickup:
+		_pickup_hold_time = 0.0
+		return
+	if player_input.is_pickup_held():
+		_pickup_hold_time += delta
+		if _pickup_hold_time >= PICKUP_HOLD_TIME:
+			_pickup_hold_time = 0.0
+			_try_pickup()
+	else:
+		_pickup_hold_time = 0.0
+
+## 拾取長按時如果正在移動則中斷（策划：移動會打斷拾取）
+func _pickup_movement_blocked() -> bool:
+	return player_input.get_move_direction().length_squared() > 0.0
+
+func _try_pickup() -> void:
+	var id := _pickup_item_id()
+	if not id.is_empty():
+		pickup_item(id)
 
 ## 拾取：讓地上道具實體自己把 id 告訴我們（實體未實現，返回空）
 func _pickup_item_id() -> String:
@@ -153,10 +177,12 @@ func _pickup_item_id() -> String:
 	return ""
 
 func _physics_process(delta: float) -> void:
-	if is_dead:
-		return
+	# 死亡/復活狀態也需物理幀推進（Death→Waiting→Fall），故不整體跳過
 	_apply_gravity(delta)
 	state_machine.physics_update(delta)
+	if is_dead():
+		move_and_slide()
+		return
 	move_and_slide()
 	_check_dive_hit()
 
@@ -181,6 +207,8 @@ func apply_move(direction: Vector2) -> void:
 		global_basis = global_basis.slerp(target_basis, 0.2)
 
 func _apply_gravity(delta: float) -> void:
+	if is_dead():
+		return
 	if not is_on_floor():
 		# Fly 階段由 FlyState 自行管理重力（可自定義下墜）
 		if state_machine.current_state_name == "Fly":
@@ -201,6 +229,9 @@ func _setup_state_machine() -> void:
 	var dive := DiveState.new()
 	var fly := FlyState.new()
 	var stunned := StunnedState.new()
+	var death := DeathState.new()
+	var respawn_waiting := RespawnWaitingState.new()
+	var respawn_fall := RespawnFallState.new()
 
 	idle.init(self)
 	move.init(self)
@@ -208,6 +239,9 @@ func _setup_state_machine() -> void:
 	dive.init(self)
 	fly.init(self)
 	stunned.init(self)
+	death.init(self)
+	respawn_waiting.init(self)
+	respawn_fall.init(self)
 
 	state_machine.register_state("Idle", idle)
 	state_machine.register_state("Move", move)
@@ -215,6 +249,9 @@ func _setup_state_machine() -> void:
 	state_machine.register_state("Dive", dive)
 	state_machine.register_state("Fly", fly)
 	state_machine.register_state("Stunned", stunned)
+	state_machine.register_state("Death", death)
+	state_machine.register_state("RespawnWaiting", respawn_waiting)
+	state_machine.register_state("RespawnFall", respawn_fall)
 
 	state_machine.start("Idle")
 
@@ -269,6 +306,8 @@ func _set_animation_looping(anim_name: String) -> void:
 ## 依當前狀態切換動畫
 func _update_animation() -> void:
 	if not _animation_player:
+		return
+	if is_dead():
 		return
 	if state_machine.current_state_name == "Stunned":
 		return
