@@ -1,4 +1,5 @@
 ## 職責：遊戲整體流程控制，按 GameConfig 驅動各階段順序推進
+# 注意：autoload 腳本不使用 class_name，避免與 autoload 單例名衝突
 
 extends Node
 
@@ -27,6 +28,7 @@ var _timer_active: bool = false
 
 func _ready() -> void:
 	config = GameConfig.new()
+	config.load_from_json()
 
 ## 從主界面進入遊戲，重置流程
 func start_game() -> void:

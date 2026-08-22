@@ -26,3 +26,9 @@ Thumbs.db
 *.tmp
 *.swp
 *~
+
+# Personal dev notes (not project docs)
+zhhw/
+
+# One-off dev verification scripts
+scripts/dev/

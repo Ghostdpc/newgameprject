@@ -10,37 +10,41 @@ func _init(index: int) -> void:
 
 func get_move_direction() -> Vector2:
 	if player_index == 0:
-		var kb := _keyboard_move()
+		var kb := _keyboard_move("_p1")
 		if kb.length_squared() > 0.0:
 			return kb
+	if player_index == 1:
+		var kb2 := _keyboard_move("_p2")
+		if kb2.length_squared() > 0.0:
+			return kb2
 	return _joy_move()
 
 func is_jump_just_pressed() -> bool:
-	if player_index == 0 and Input.is_action_just_pressed("jump_p1"):
+	if player_index >= 0 and player_index <= 1 and Input.is_action_just_pressed("jump_p%d" % (player_index + 1)):
 		return true
 	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_A)
 
 func is_dive_just_pressed() -> bool:
-	if player_index == 0 and Input.is_action_just_pressed("dive_p1"):
+	if player_index >= 0 and player_index <= 1 and Input.is_action_just_pressed("dive_p%d" % (player_index + 1)):
 		return true
 	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_X)
 
 func is_pickup_just_pressed() -> bool:
-	if player_index == 0 and Input.is_action_just_pressed("pickup_p1"):
+	if player_index >= 0 and player_index <= 1 and Input.is_action_just_pressed("pickup_p%d" % (player_index + 1)):
 		return true
 	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_B)
 
 func is_use_item_just_pressed() -> bool:
-	if player_index == 0 and Input.is_action_just_pressed("use_item_p1"):
+	if player_index >= 0 and player_index <= 1 and Input.is_action_just_pressed("use_item_p%d" % (player_index + 1)):
 		return true
 	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_Y)
 
-func _keyboard_move() -> Vector2:
+func _keyboard_move(suffix: String) -> Vector2:
 	var dir := Vector2.ZERO
-	if Input.is_action_pressed("move_up_p1"):    dir.y -= 1.0
-	if Input.is_action_pressed("move_down_p1"):  dir.y += 1.0
-	if Input.is_action_pressed("move_left_p1"):  dir.x -= 1.0
-	if Input.is_action_pressed("move_right_p1"): dir.x += 1.0
+	if Input.is_action_pressed("move_up%s" % suffix):    dir.y -= 1.0
+	if Input.is_action_pressed("move_down%s" % suffix):  dir.y += 1.0
+	if Input.is_action_pressed("move_left%s" % suffix):  dir.x -= 1.0
+	if Input.is_action_pressed("move_right%s" % suffix): dir.x += 1.0
 	return dir.normalized() if dir.length_squared() > 0.0 else Vector2.ZERO
 
 func _joy_move() -> Vector2:

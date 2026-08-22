@@ -1,0 +1,7 @@
+{
+  "_comment": "遊戲流程各階段時長（秒）。0 = 跳過；SCORING 的 0 = 等待玩家手動確認",
+  "theme_announce_duration": 0,
+  "grab_clothes_duration": 0,
+  "battle_duration": 15,
+  "scoring_duration": 0
+}
