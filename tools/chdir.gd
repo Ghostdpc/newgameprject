@@ -10,21 +10,17 @@ func _process(_delta: float) -> bool:
 	_frames += 1
 	if _frames == 50:
 		var r := root.get_node("ActiveDemo/Player/RenderModel")
-		var anchor := r.get_node("AB_hips")
 		var leg := r.get_node("AB_upperleg_l")
-		print("PHYS hips pos=", anchor.global_position.y, " up=", (anchor.global_transform.basis as Basis).y)
-		print("PHYS leg pos=", leg.global_position, " up=", (leg.global_transform.basis as Basis).y)
-		# 动画目标
-		var sk := root.get_node("ActiveDemo/Player/DriverModel/Rig_Medium/Skeleton3D")
-		if not sk:
-			sk = _find_skel(root.get_node("ActiveDemo/Player/DriverModel"))
-		if sk:
-			var hi: int = sk.find_bone("hips")
-			var li: int = sk.find_bone("upperleg.l")
-			var ht: Transform3D = sk.global_transform * sk.get_bone_global_pose(hi)
-			var lt: Transform3D = sk.global_transform * sk.get_bone_global_pose(li)
-			print("ANIM hips up=", (ht.basis as Basis).y, " pos=", ht.origin)
-			print("ANIM leg up=", (lt.basis as Basis).y, " pos=", lt.origin)
+		print("PHYS leg up=", (leg.global_transform.basis as Basis).y)
+		print("PHYS leg pos=", leg.global_position.y)
+		# render 骨架对应骨 pose（写回后）
+		var render_skel := root.get_node("ActiveDemo/Player/RenderModel/Rig_Medium/Skeleton3D")
+		if not render_skel:
+			render_skel = _find_skel(root.get_node("ActiveDemo/Player/RenderModel"))
+		if render_skel:
+			var li: int = render_skel.find_bone("upperleg.l")
+			var lp: Transform3D = render_skel.global_transform * render_skel.get_bone_global_pose(li)
+			print("RENDER leg up=", (lp.basis as Basis).y, " pos=", lp.origin)
 		quit(0)
 	return false
 

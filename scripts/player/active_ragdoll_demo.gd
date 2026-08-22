@@ -161,7 +161,9 @@ func _build_chain() -> void:
 			push_warning("ActiveRagdollDemo: bone '%s' not found" % bone_name)
 			continue
 		var body := _make_body(bone_name, 0.5)
-		body.position = _render_skel.get_bone_global_rest(_render_skel.find_bone(bone_name)).origin
+		var r_gt: Transform3D = _render_skel.get_bone_global_rest(_render_skel.find_bone(bone_name))
+		body.position = r_gt.origin
+		body.basis = r_gt.basis
 		_render_model.add_child(body)
 		_bodies[bone_name] = body
 		_attach_joint(body, parent_name)

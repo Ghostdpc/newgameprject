@@ -1,7 +1,14 @@
+ERROR: Error parsing 'c:/Users/zhanghengwei/Desktop/game/newgameprject/project.godot' at line 24: Expected value, got ''='' File might be corrupted.
+   at: _load_settings_text (core/config/project_settings.cpp:978)
+ERROR: Couldn't load file 'c:/Users/zhanghengwei/Desktop/game/newgameprject/project.godot', error code 43.
+   at: _load_settings_text_or_binary (core/config/project_settings.cpp:1027)
 Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
 
 LOAD OK
-PHYS hips pos=0.20577192306519 up=(0.0, 1.0, 0.0)
-PHYS leg pos=(0.165223, 0.72103, 0.051974) up=(0.006062, 0.999448, 0.032668)
-ANIM hips up=(0.0, 1.0, 0.0) pos=(0.0, 0.205772, 0.0)
-ANIM leg up=(-0.0, -0.999396, 0.034741) pos=(0.170945, 0.319359, 0.0)
+ERROR: ConfigFile parse error at C:/Users/zhanghengwei/Desktop/game/newgameprject/project.godot:24: Expected value, got ''=''.
+   at: _parse (core/io/config_file.cpp:293)
+ERROR: Error opening file 'C:/Users/zhanghengwei/Desktop/game/newgameprject/icon.svg'.
+   at: load_image (core/io/image_loader.cpp:91)
+PHYS leg up=(-0.0, -0.999396, 0.034741)
+PHYS leg pos=0.31935918331146
+RENDER leg up=(-0.0, -0.999396, 0.034741) pos=(0.170945, 0.319359, 0.0)
