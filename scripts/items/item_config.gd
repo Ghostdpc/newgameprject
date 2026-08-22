@@ -7,7 +7,11 @@ func _table_name() -> String:
 	return "items"
 
 func _defaults() -> Dictionary:
-	return {"items": []}
+	return {
+		"spawn_config": {"max_active": 5, "respawn_interval": 8.0},
+		"items": [],
+		"traps": [],
+	}
 
 ## 按 id 返回道具定義，不存在回傳 null
 func get_item(id: String) -> ItemDef:
@@ -24,3 +28,23 @@ func all_ids() -> Array[String]:
 		if r is Dictionary:
 			result.append(str(r.get("id", "")))
 	return result
+
+## 返回 spawn_config 字典
+func get_spawn_config() -> Dictionary:
+	return get_dict("spawn_config")
+
+## 返回所有放置物定義
+func all_trap_defs() -> Array[TrapDef]:
+	var result: Array[TrapDef] = []
+	for r in get_records("traps"):
+		if r is Dictionary:
+			result.append(TrapDef.from_dict(r))
+	return result
+
+## 按 id 返回放置物定義，不存在回傳 null
+func get_trap(id: String) -> TrapDef:
+	for r in get_records("traps"):
+		if r is Dictionary and r.get("id", "") == id:
+			return TrapDef.from_dict(r)
+	return null
+

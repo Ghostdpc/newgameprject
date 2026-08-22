@@ -18,6 +18,8 @@ signal player_exited_zone(player_index: int)
 # 道具
 signal item_picked_up(player_index: int, item_id: String)
 signal item_used(player_index: int, item_id: String)
+signal item_spawned(item_id: String, position: Vector3)
+signal trap_triggered(trap_id: String, player_index: int)
 
 # 相機
 signal camera_behavior_push_requested(camera_target: String, behavior: Object)

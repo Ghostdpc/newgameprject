@@ -30,6 +30,8 @@ var character_effects: CharacterEffects
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
+## 移速乘數（1.0 = 正常；由 player_speed_effect 臨時修改）
+var speed_multiplier: float = 1.0
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
@@ -137,7 +139,7 @@ func _check_dive_hit() -> void:
 			dive.hit_target(collider as PlayerController)
 
 func apply_move(direction: Vector2) -> void:
-	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED
+	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED * speed_multiplier
 	velocity.x = move_toward(velocity.x, target_velocity.x, ACCELERATION * get_physics_process_delta_time())
 	velocity.z = move_toward(velocity.z, target_velocity.z, ACCELERATION * get_physics_process_delta_time())
 	if direction.length_squared() > 0.0:

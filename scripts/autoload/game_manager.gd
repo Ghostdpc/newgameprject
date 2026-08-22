@@ -22,6 +22,8 @@ const STAGE_ORDER: Array = [
 
 var current_stage: GameStage = GameStage.MAIN_MENU
 var stage_time_remaining: float = 0.0
+## 倒計時速率乘數（1.0 = 正常；由 timer_scale_effect 臨時修改）
+var time_scale: float = 1.0
 var config: GameConfig
 
 var _stage_index: int = -1
@@ -86,7 +88,7 @@ func _get_stage_duration(stage: GameStage) -> float:
 func _process(delta: float) -> void:
 	if not _timer_active:
 		return
-	stage_time_remaining -= delta
+	stage_time_remaining -= delta * time_scale
 	stage_time_remaining = maxf(stage_time_remaining, 0.0)
 	EventBus.stage_timer_updated.emit(stage_time_remaining)
 	if stage_time_remaining <= 0.0:
