@@ -129,8 +129,8 @@
       "id": "bomb",
       "display_name": "炸弹",
       "icon": "item_bomb",
-      "model": "",
-      "texture": "",
+      "model": "res://assets/models/props/bomb/bomb.fbx",
+      "texture": "res://assets/models/props/bomb/bomb_basemap.png",
       "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [

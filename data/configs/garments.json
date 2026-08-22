@@ -21,7 +21,7 @@
       "display_name": "✨ 光环",
       "icon": "halo",
       "slot": "hat_slot",
-      "model": "",
+      "model": "res://assets/models/garments/halo/halo.fbx",
       "model_scale": 1.0,
       "score_bonus": 0.12,
       "effects": [
