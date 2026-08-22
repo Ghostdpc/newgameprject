@@ -4,10 +4,22 @@ class_name MainMenu
 extends Control
 
 @onready var _start_hint: Label = $Center/VBox/StartHint
+@onready var _shape_row: HBoxContainer = $Center/VBox/ShapeRow
 
 func _ready() -> void:
 	_pulse_hint()
+	_apply_shape_colors()
 	gui_input.connect(_on_gui_input)
+
+## 主界面 4 个形状图标颜色跟随玩家配色配置
+func _apply_shape_colors() -> void:
+	if not _shape_row:
+		return
+	var shapes := _shape_row.get_children()
+	for i in shapes.size():
+		var tex := shapes[i] as TextureRect
+		if tex:
+			tex.modulate = PlayerConfig.get_color(i)
 
 ## 鼠标点击任意位置也可开始（手柄/键盘走 _unhandled_input）
 func _on_gui_input(event: InputEvent) -> void:

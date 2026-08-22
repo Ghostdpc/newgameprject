@@ -9,16 +9,8 @@ extends LevelBase
 ## S5 快门慢放时长（真实毫秒）
 const SHUTTER_SLOWMO_MS := 550
 
-## 文档三重辨识配色：P1蓝 / P2橙 / P3绿 / P4紫（覆盖 LevelBase 默认色）
-const DOC_PLAYER_COLORS: Array[Color] = [
-	Color(0.25, 0.5, 0.95),
-	Color(0.95, 0.58, 0.12),
-	Color(0.25, 0.82, 0.35),
-	Color(0.65, 0.35, 0.95),
-]
-
-@onready var _hud: HUD = $HUD as HUD
-@onready var _player_hud: PlayerHUD = get_node_or_null("HUD/PlayerHUD") as PlayerHUD
+@onready var _hud: HUD = $HUD/MainLayer as HUD
+@onready var _player_hud: PlayerHUD = get_node_or_null("HUD/PlayerLayer/PlayerHUD") as PlayerHUD
 @onready var _scoring: ScoringScreen = get_node_or_null("ScoringScreen") as ScoringScreen
 
 var _slowmo_end_msec: int = 0
@@ -54,7 +46,7 @@ func _apply_doc_player_colors() -> void:
 		var player := child as PlayerController
 		if player == null:
 			continue
-		var c: Color = DOC_PLAYER_COLORS[player.player_index % DOC_PLAYER_COLORS.size()]
+		var c: Color = PlayerConfig.get_color(player.player_index)
 		player.player_color = c
 		player.apply_player_color(c)
 

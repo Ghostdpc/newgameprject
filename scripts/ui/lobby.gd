@@ -9,12 +9,6 @@
 class_name Lobby
 extends Control
 
-const PLAYER_COLORS: Array[Color] = [
-	Color(0.25, 0.5, 0.95),   # P1 蓝
-	Color(0.95, 0.58, 0.12),  # P2 橙
-	Color(0.25, 0.82, 0.35),  # P3 绿
-	Color(0.65, 0.35, 0.95),  # P4 紫
-]
 const SHAPE_IDS: Array[String] = ["shape_0", "shape_1", "shape_2", "shape_3"]
 
 var _joined: Array[bool] = [false, false, false, false]
@@ -72,7 +66,7 @@ func _build_card_content(card: PanelContainer, i: int) -> void:
 	name_label.name = "NameLabel"
 	name_label.text = "P%d" % (i + 1)
 	name_label.add_theme_font_size_override("font_size", 44)
-	name_label.add_theme_color_override("font_color", PLAYER_COLORS[i])
+	name_label.add_theme_color_override("font_color", PlayerConfig.get_color(i))
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(name_label)
 
@@ -157,14 +151,14 @@ func _refresh() -> void:
 		style.corner_radius_bottom_right = 14
 		style.corner_radius_bottom_left = 14
 		if _joined[i]:
-			style.border_color = PLAYER_COLORS[i]
+			style.border_color = PlayerConfig.get_color(i)
 			style.set_border_width_all(3)
 		else:
 			style.border_color = Color(0.35, 0.4, 0.5, 0.5)
 			style.set_border_width_all(2)
 		card.add_theme_stylebox_override("panel", style)
 		var avatar: TextureRect = card.get_node("VBox/Avatar")
-		avatar.modulate = PLAYER_COLORS[i] if _joined[i] else Color(0.35, 0.38, 0.45)
+		avatar.modulate = PlayerConfig.get_color(i) if _joined[i] else Color(0.35, 0.38, 0.45)
 		var state := _card_states[i] as Label
 		if _joined[i]:
 			state.text = "已就绪 ✓"
