@@ -36,7 +36,7 @@
           "kind": "spawn_trap",
           "target": "world",
           "duration": 0.0,
-          "params": { "trap_id": "banana_peel" }
+          "params": { "trap_id": "banana_peel", "spawn_y": 0.8 }
         }
       ]
     },
