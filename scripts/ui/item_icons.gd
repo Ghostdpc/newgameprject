@@ -15,8 +15,10 @@ const MAP: Dictionary = {
 	"slot_0": "slot_head.svg",
 	"slot_1": "slot_body.svg",
 	"slot_2": "slot_hand.svg",
-	# 装饰
-	"crown": "crown.svg",
+	# 装饰（皇冠用 v2 图集新款；旧 crown.svg 保留备用）
+	"crown": "card/crown_v2.png",
+	"icon_restart": "card/icon_restart.png",
+	"icon_exit": "card/icon_exit.png",
 	# 玩家卡片零件（player.png atlas 拆分，灰阶件走 card_tint 染色）
 	"card_bubble": "card/card_bubble.png",
 	"card_body": "card/card_body.png",

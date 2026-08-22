@@ -58,7 +58,7 @@ func _apply_orientation() -> void:
 	_bubble.flip_v = _is_bottom()
 
 	if _is_right():
-		_label.position.x = CARD_W - _label.size.x + 16.0
+		_label.position.x = CARD_W - _label.size.x + 4.0
 		_hex.position.x = CARD_W - _hex.size.x + 12.0
 	_item_icon.position = _hex.position + Vector2(
 		_hex.size.x * 0.5 - _item_icon.size.x * 0.5,
