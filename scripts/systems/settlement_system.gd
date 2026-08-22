@@ -58,9 +58,10 @@ func _build_mask_viewport() -> void:
 	_mask_viewport.add_child(_mask_camera)
 
 func _on_photo_taken(texture: ViewportTexture) -> void:
-	if texture == null or _busy:
+	if _busy:
 		return
-	print("[TRACE] Settlement 收到照片，开始遮罩分析")
+	# texture 為 null 時（無真實截圖，如 test scene 直接觸發 battle_ended）
+	# 仍繼續結算流程，_analyze_async 內部有空圖兜底
 	_busy = true
 	_analyze_async(texture)
 
