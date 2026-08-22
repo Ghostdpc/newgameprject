@@ -50,10 +50,11 @@ func _bind_photo_panel() -> void:
 	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")
 	if not rigs.is_empty():
 		rig = rigs[0]
-		var viewport: Viewport = rig.get_render_viewport()
-		if viewport:
-			_photo_rect.texture = viewport.get_texture()
-		return
+		if rig.has_method("get_render_viewport"):
+			var viewport: Viewport = rig.get_render_viewport()
+			if viewport:
+				_photo_rect.texture = viewport.get_texture()
+			return
 	# 兜底：旧结构 PhotoViewport
 	var vp := get_parent().get_node_or_null("PhotoViewport") as SubViewport
 	if vp:

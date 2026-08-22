@@ -165,6 +165,7 @@ func _create_respawn_marker(pos: Vector3) -> Node3D:
 	mat.emission_enabled = true
 	mat.emission = Color.YELLOW
 	m.material_override = mat
+	m.layers = 4  # layer 3 = UI 标识，不进拍照 RT
 	m.position = Vector3(pos.x, RESPAWN_HEIGHT * 0.5, pos.z)
 	add_child(m)
 	return m
@@ -181,6 +182,12 @@ func _setup_cameras() -> void:
 		fixed.look_target = main_cam_look
 		_main_controller.push_behavior(fixed)
 		CameraSystem.register_main_camera(_main_controller)
+		_main_camera.add_to_group("main_camera")
+
+	# 注册取景框（拍照相机 frustum 跟随它）
+	var viewfinder := get_node_or_null("HUD/MainLayer/CameraViewfinder") as Control
+	if viewfinder:
+		viewfinder.add_to_group("camera_viewfinder")
 
 	# 拍照相机 rig 自己注册（在 rig._ready 里），这里只做查找
 	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")

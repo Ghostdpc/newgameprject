@@ -1,10 +1,12 @@
 ## 职责：S1 玩家加入 + S2 人数确认（交互文档 §4 加入与识别 / 人数确认）
-## Demo 输入：
-##   - 数字键 1~4：加入 / 取消对应槽位
-##   - Enter / 空格 / 手柄 A：加入下一空位；已 >=2 人时再按 = 房主开始
-##   - Backspace：取消最后加入     - Esc：返回标题
+## 输入：
+##   - 键盘数字键 1~4：加入 / 取消对应槽位（1/2 键键盘，3/4 键手柄槽）
+##   - 键盘 Enter / 手柄 A：加入空位；已 >=2 人时再按 = 房主开始
+##   - 手柄 B：已加入者退出当前槽位；未加入者返回标题
+##   - Backspace / X：取消最后加入     - Esc：返回标题
 ##   - 鼠标：点卡片加入/取消；底部按钮开始/返回
 ## 规则：首个加入者为房主；少于 2 人不可开始（按钮置灰）
+## 手柄：按 A 加入并绑定该手柄 device id，最多支持 4 个手柄
 
 class_name Lobby
 extends Control
@@ -12,8 +14,11 @@ extends Control
 const SHAPE_IDS: Array[String] = ["shape_0", "shape_1", "shape_2", "shape_3"]
 
 var _joined: Array[bool] = [false, false, false, false]
+## 槽位綁定設備：-2 空位 / -1 鍵盤 / >=0 手柄 device id
+var _slot_devices: Array[int] = [-2, -2, -2, -2]
 var _cards: Array[PanelContainer] = []
 var _card_states: Array[Control] = []
+var _device_labels: Array[Label] = []
 
 @onready var _count_label: Label = $Header/CountLabel
 @onready var _card_row: HBoxContainer = $Center/CardRow
@@ -72,11 +77,12 @@ func _build_card_content(card: PanelContainer, i: int) -> void:
 
 	var device := Label.new()
 	device.name = "DeviceLabel"
-	device.text = "键盘 · Keyboard"
+	device.text = "等待加入"
 	device.add_theme_font_size_override("font_size", 18)
 	device.add_theme_color_override("font_color", Color(0.7, 0.76, 0.86))
 	device.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(device)
+	_device_labels.append(device)
 
 	var state_box := CenterContainer.new()
 	state_box.name = "StateBox"
@@ -88,7 +94,8 @@ func _build_card_content(card: PanelContainer, i: int) -> void:
 	vbox.add_child(state_box)
 
 	var key_label := Label.new()
-	key_label.text = "按 [%d] 加入 / 取消" % (i + 1)
+	key_label.name = "KeyLabel"
+	key_label.text = "键盘 [%d] / 手柄 A" % (i + 1)
 	key_label.add_theme_font_size_override("font_size", 16)
 	key_label.add_theme_color_override("font_color", Color(0.5, 0.58, 0.7))
 	key_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -115,29 +122,68 @@ func _first_joined_index() -> int:
 			return i
 	return -1
 
+## 找已綁定某設備的槽位（-1 表示鍵盤）
+func _slot_for_device(device: int) -> int:
+	for i in 4:
+		if _joined[i] and _slot_devices[i] == device:
+			return i
+	return -1
+
 func _toggle_slot(index: int) -> void:
 	if _joined[index]:
 		# 房主（首位加入者）不可自我取消；其余可退
 		if index == _first_joined_index() and _joined_count() > 1:
 			return
 		_joined[index] = false
+		_slot_devices[index] = -2
 	else:
 		_joined[index] = true
+		# P1/P2 键盘；P3/P4 绑定对应手柄 device（调试用，正式加入走手柄 A）
+		_slot_devices[index] = -1 if index <= 1 else index
 	_refresh()
 
-func _join_next_empty() -> void:
+## 加入下一个空位并绑定设备（-1 键盘只占 P1/P2）
+func _join_with_device(device: int) -> void:
+	if device == -1:
+		for i in [0, 1]:
+			if not _joined[i]:
+				_joined[i] = true
+				_slot_devices[i] = -1
+				_refresh()
+				return
+		return
 	for i in 4:
 		if not _joined[i]:
 			_joined[i] = true
+			_slot_devices[i] = device
 			_refresh()
 			return
+
+## 手柄玩家退出当前槽位（房主除外）
+func _leave_slot(index: int) -> void:
+	if not _joined[index]:
+		return
+	if index == _first_joined_index() and _joined_count() > 1:
+		return
+	_joined[index] = false
+	_slot_devices[index] = -2
+	_refresh()
 
 func _remove_last() -> void:
 	for i in range(3, -1, -1):
 		if _joined[i] and i != _first_joined_index():
 			_joined[i] = false
+			_slot_devices[i] = -2
 			_refresh()
 			return
+
+func _device_label(device: int) -> String:
+	if device < 0:
+		return "键盘 · Keyboard"
+	var joy_name := Input.get_joy_name(device)
+	if joy_name.is_empty():
+		joy_name = "手柄 %d" % (device + 1)
+	return "手柄 %d · %s" % [device + 1, joy_name]
 
 func _refresh() -> void:
 	var count := _joined_count()
@@ -163,42 +209,86 @@ func _refresh() -> void:
 		if _joined[i]:
 			state.text = "已就绪 ✓"
 			state.add_theme_color_override("font_color", Color(0.5, 0.95, 0.55))
+			_device_labels[i].text = _device_label(_slot_devices[i])
 		else:
 			state.text = "等待加入"
 			state.add_theme_color_override("font_color", Color(0.6, 0.65, 0.75))
+			_device_labels[i].text = "等待加入"
 	_host_hint.text = "房主：P%d（首个加入）" % (_first_joined_index() + 1) if count > 0 else "等待玩家加入…"
 	var can_start := count >= 2
 	_start_btn.disabled = not can_start
 	if can_start:
 		_start_btn.text = "开始游戏（房主确认）"
-		_start_hint.text = "人数已满足：Enter / 点击开始 → 主题展示"
+		_start_hint.text = "人数已满足：Enter / 手柄 A / 点击开始 → 主题展示"
 		_start_hint.modulate = Color(0.55, 0.95, 1.0)
 	else:
 		_start_btn.text = "至少 2 人才能开始"
-		_start_hint.text = "加入至少 2 名玩家后，房主确认开始"
+		_start_hint.text = "加入至少 2 名玩家后，房主确认开始（键盘 Enter / 手柄 A）"
 		_start_hint.modulate = Color(0.62, 0.68, 0.8)
 
 func _try_start() -> void:
 	if _joined_count() < 2:
 		return
 	GameManager.lobby_player_count = _joined_count()
+	# 按槽位顺序压缩设备列表，与出生 player_index 对齐
+	var devices: Array[int] = []
+	for i in 4:
+		if _joined[i]:
+			devices.append(_slot_devices[i])
+	GameManager.player_devices = devices
 	get_tree().change_scene_to_file("res://scenes/levels/room_battle.tscn")
 
 func _on_back() -> void:
 	GameManager.enter_title()
 
 # ---------------------------------------------------------------- 输入
+func _event_device(event: InputEvent) -> int:
+	if event is InputEventJoypadButton:
+		return (event as InputEventJoypadButton).device
+	if event is InputEventJoypadMotion:
+		return (event as InputEventJoypadMotion).device
+	return -1
+
+func _on_accept(device: int) -> void:
+	if device == -1:
+		# 键盘 Enter：先补 P1/P2 键盘槽位，已 >=2 人则开始
+		if _joined_count() >= 2:
+			_try_start()
+		else:
+			_join_with_device(-1)
+		return
+	# 手柄 A
+	var existing := _slot_for_device(device)
+	if existing >= 0:
+		# 已加入的手柄再按 A = 房主确认开始
+		if _joined_count() >= 2:
+			_try_start()
+		return
+	if _joined_count() >= 4:
+		return
+	_join_with_device(device)
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed():
+		return
+	# 手柄 A：加入或（已加入）房主开始
+	if event is InputEventJoypadButton and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A:
+		_on_accept((event as InputEventJoypadButton).device)
+		return
+	# 手柄 B：已加入则退出当前槽位，未加入则返回标题
+	if event is InputEventJoypadButton and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B:
+		var dev := (event as InputEventJoypadButton).device
+		var slot := _slot_for_device(dev)
+		if slot >= 0:
+			_leave_slot(slot)
+		else:
+			_on_back()
 		return
 	if event.is_action_pressed("ui_cancel"):
 		_on_back()
 		return
 	if event.is_action_pressed("ui_accept"):
-		if _joined_count() >= 2:
-			_try_start()
-		else:
-			_join_next_empty()
+		_on_accept(_event_device(event))
 		return
 	if event is InputEventKey:
 		var k := (event as InputEventKey).keycode

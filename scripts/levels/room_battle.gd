@@ -91,6 +91,11 @@ func _setup_cameras() -> void:
 		fixed.look_target = _main_camera.global_position + (-_main_camera.global_basis.z) * 10.0
 		_main_controller.push_behavior(fixed)
 		CameraSystem.register_main_camera(_main_controller)
+		_main_camera.add_to_group("main_camera")
+	# 注册取景框（拍照相机 frustum 跟随它）
+	var viewfinder := get_node_or_null("HUD/MainLayer/CameraViewfinder") as Control
+	if viewfinder:
+		viewfinder.add_to_group("camera_viewfinder")
 	# 拍照相机 rig 依旧走 group 查找
 	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")
 	if not rigs.is_empty():

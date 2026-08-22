@@ -30,6 +30,17 @@ func _ready() -> void:
 	_build_identity(meta["shape"], color)
 	_build_number()
 	_build_facing_ring(color)
+	_apply_ui_layer()
+
+## 玩家标识（形状/编号/光环）放 layer 3，拍照相机 cull_mask=1 排除，不进照片
+func _apply_ui_layer() -> void:
+	_set_layer_recursive(self, 4)
+
+func _set_layer_recursive(node: Node, layers: int) -> void:
+	if node is VisualInstance3D:
+		(node as VisualInstance3D).layers = layers
+	for child in node.get_children():
+		_set_layer_recursive(child, layers)
 
 ## 頭上形狀浮標 + 編號
 func _build_identity(shape: String, color: Color) -> void:

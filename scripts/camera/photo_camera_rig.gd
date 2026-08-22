@@ -1,92 +1,116 @@
-## 职责：可复用的拍照相机组件（相机模型 + 拍照机制一体）
-## 策划用法：把 PhotoCameraRig 拖进关卡场景，然后：
-##   1. 摆 rig 位置 = 相机位置
-##   2. use_rig_rotation 关闭 → 拖动 LookTarget 子节点到拍摄区域中心
-##      use_rig_rotation 开启 → 直接拖 rig 节点调朝向（与主相机所见即所得一致）
-##   3. 设置 fov / viewport_size
-## @tool：编辑器里拖 rig/LookTarget 实时更新相机朝向
-## 机制：相机持续渲染到内部 SubViewport，供 HUD 取景框实时显示 + 快门截图。
-## 相机模型与相机同位置，但放在独立 visibility layer，拍照相机 cull_mask 排除它，
-## 因此拍照画面看不到模型（无黑球遮挡），主相机能看到模型（舞台上有台相机的视觉）。
+## 职责：拍照相机（无独立摆放，frustum 严格跟随 UI 相机框）
+## 每帧同步：PhotoCamera 位置/朝向 = 主相机；用 PROJECTION_FRUSTUM 模式
+## 把近平面尺寸/偏移设为「主相机视野中相机框覆盖的区域」。
+## 效果：从主相机视角看，相机框内的画面 = 拍照画面 = 截帧 = 小 RT。
+## 预留调整接口：
+##   set_extra_offset(ndc) —— 框中心偏移（相机遥控器等）
+##   set_extra_scale(scale) —— 框范围缩放（>1 更大）
 
-@tool
 class_name PhotoCameraRig
 extends Node3D
 
-## 模型所在 visibility layer（默认 3，避开 layer 1 场景 / layer 2 结算遮罩）
-const MODEL_LAYER: int = 3
-
-@export var fov: float = 45.0
-@export var viewport_size: Vector2i = Vector2i(640, 360)
-## 拍照相机渲染的 cull_mask（默认只渲染 layer 1，排除模型）
 @export var cull_mask: int = 1
-## true = 相机朝向读 rig 节点的 rotation（拖 rig 即调朝向，与主相机一致）
-## false = 朝向读 LookTarget 子节点（拖 LookTarget 到拍摄中心，默认行为）
-@export var use_rig_rotation: bool = false
 
 @onready var _photo_viewport: SubViewport = $PhotoViewport
 @onready var _photo_camera: Camera3D = $PhotoViewport/PhotoCamera
-@onready var _controller: CameraController = $PhotoViewport/PhotoCamera/CameraController
-@onready var _look_target: Node3D = $LookTarget
-@onready var _model: Node3D = $Model
 
-var _behavior: FixedShotBehavior
+var _main_camera: Camera3D
+var _viewfinder: Control
+
+## 预留调整：NDC 单位偏移 + 缩放
+var extra_offset_ndc := Vector2.ZERO
+var extra_scale := 1.0
+
+var _last_vp_size := Vector2i.ZERO
 
 func _ready() -> void:
 	add_to_group("photo_camera_rig")
-	_apply_config()
-	_orient_model()
-
-## 运行时 + 编辑器（@tool）每帧同步：拖 rig / LookTarget 实时更新相机朝向
-func _process(_delta: float) -> void:
-	if not _behavior or not _photo_camera:
-		return
-	_behavior.position = global_position
-	_behavior.look_target = get_look_target()
-	if Engine.is_editor_hint():
-		# 编辑器预览：直接同步相机位姿（无 behavior 更新循环时）
-		_photo_camera.global_position = global_position
-		_photo_camera.look_at(get_look_target(), Vector3.UP)
-	_orient_model()
-
-func _apply_config() -> void:
-	_photo_camera.fov = fov
 	_photo_camera.cull_mask = cull_mask
-	_photo_viewport.size = viewport_size
-	_apply_model_layer(_model)
+	_photo_camera.projection = Camera3D.PROJECTION_FRUSTUM
+	_resolve_refs()
+	CameraSystem.register_photo_camera(self)
 
-	_controller.init(_photo_camera)
-	_behavior = FixedShotBehavior.new()
-	_behavior.position = global_position
-	_behavior.look_target = get_look_target()
-	_controller.push_behavior(_behavior)
-	CameraSystem.register_photo_camera(_controller)
+func _resolve_refs() -> void:
+	var mains := get_tree().get_nodes_in_group("main_camera")
+	if not mains.is_empty():
+		_main_camera = mains[0] as Camera3D
+	var vfs := get_tree().get_nodes_in_group("camera_viewfinder")
+	if not vfs.is_empty():
+		_viewfinder = vfs[0] as Control
 
-## 拍摄区域中心（世界坐标）。use_rig_rotation 时读 rig 朝向，否则用 LookTarget 子节点
-func get_look_target() -> Vector3:
-	if use_rig_rotation:
-		return global_position + (-global_basis.z) * 10.0
-	if _look_target:
-		return _look_target.global_position
-	return global_position + Vector3(0, 0, -10)
+func _process(_delta: float) -> void:
+	# group 注册可能晚于 rig._ready（关卡 _setup_cameras 才加 group），延迟重试
+	if _main_camera == null or _viewfinder == null:
+		_resolve_refs()
+	_sync_frustum()
 
-func _orient_model() -> void:
-	if _model:
-		_model.look_at(get_look_target(), Vector3.UP)
+## 核心：把 PhotoCamera 视锥对齐到主相机视野中相机框覆盖的区域
+func _sync_frustum() -> void:
+	if not _main_camera or not _viewfinder or not _photo_camera:
+		return
 
-func _apply_model_layer(node: Node) -> void:
-	if node is VisualInstance3D:
-		(node as VisualInstance3D).layers = 1 << (MODEL_LAYER - 1)
-	for child in node.get_children():
-		_apply_model_layer(child)
+	# 位置朝向严格跟随主相机
+	_photo_camera.global_transform = _main_camera.global_transform
+
+	var screen := _viewfinder.get_global_rect()
+	var vp_rect := get_viewport().get_visible_rect()
+	if vp_rect.size.x <= 0.0 or vp_rect.size.y <= 0.0:
+		return
+
+	var znear := _photo_camera.near
+	var main_fov_rad := deg_to_rad(_main_camera.fov)
+	var main_aspect := vp_rect.size.x / vp_rect.size.y
+
+	# 主相机在近平面处的半尺寸（世界单位）
+	var half_h := znear * tan(main_fov_rad * 0.5)
+	var half_w := half_h * main_aspect
+
+	# 相机框占屏幕的比例
+	var h_ratio := screen.size.y / vp_rect.size.y
+
+	# 框中心相对屏中心的 NDC 偏移（+ 预留额外偏移）
+	var center := screen.get_center()
+	var sc := vp_rect.size * 0.5
+	var ndc := Vector2(
+		(center.x - sc.x) / sc.x,
+		(center.y - sc.y) / sc.y) + extra_offset_ndc
+
+	# FRUSTUM 参数：
+	#   size = 近平面垂直尺寸（世界单位），KEEP_HEIGHT 下水平尺寸 = size * viewport_aspect
+	#   frustum_offset = 近平面中心偏移（世界单位）
+	var fsize := half_h * 2.0 * h_ratio * extra_scale
+	var foffset := Vector2(ndc.x * half_w, -ndc.y * half_h)
+
+	_photo_camera.projection = Camera3D.PROJECTION_FRUSTUM
+	_photo_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	_photo_camera.size = fsize
+	_photo_camera.frustum_offset = foffset
+
+	# SubViewport 渲染分辨率匹配框尺寸（变化时才改，避免每帧重建）
+	var new_vp := Vector2i(maxi(1, int(screen.size.x)), maxi(1, int(screen.size.y)))
+	if new_vp != _last_vp_size:
+		_last_vp_size = new_vp
+		_photo_viewport.size = new_vp
+
+# ---- 预留调整接口 ----
+
+## 框中心额外偏移（NDC 单位，1.0 = 半个屏幕宽/高）。道具如相机遥控器调用。
+func set_extra_offset(offset_ndc: Vector2) -> void:
+	extra_offset_ndc = offset_ndc
+
+## 框范围额外缩放（1.0 = 原始框大小，>1 更大范围）。
+func set_extra_scale(scale: float) -> void:
+	extra_scale = scale
+
+## 重置所有额外调整
+func reset_adjust() -> void:
+	extra_offset_ndc = Vector2.ZERO
+	extra_scale = 1.0
 
 # ---- 对外接口 ----
 
 func get_camera() -> Camera3D:
 	return _photo_camera
-
-func get_controller() -> CameraController:
-	return _controller
 
 func get_render_viewport() -> Viewport:
 	return _photo_viewport

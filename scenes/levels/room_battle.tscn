@@ -85,21 +85,6 @@ fov = 50.0
 script = ExtResource("2")
 
 [node name="PhotoCameraRig" parent="." unique_id=200494307 instance=ExtResource("8")]
-transform = Transform3D(-0.9998681, 0, 0.016243307, 0, 1, 0, -0.016243307, 0, -0.9998681, 3.5546427, 3.9304352, -12.7073555)
-fov = 45.0
-use_rig_rotation = true
-
-[node name="LookTarget" parent="PhotoCameraRig" index="0" unique_id=1650118133]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06094718, 0.20823145, -2.5437088)
-
-[node name="PhotoCamera" parent="PhotoCameraRig/PhotoViewport" parent_id_path=PackedInt32Array(200494307, 1584729222) index="0" unique_id=1696668447]
-transform = Transform3D(-1, -8.8191535e-16, -8.742278e-08, -7.802793e-09, 0.99600893, 0.08925352, 8.707387e-08, 0.08925352, -0.99600893, 3.8359137, 4.2445846, -11.7399435)
-fov = 30.0
-near = 1.0
-far = 100.0
-
-[node name="Model" parent="PhotoCameraRig" index="2" unique_id=60863782]
-transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0, 0, 0)
 
 [node name="HUD" parent="." unique_id=1466803817 instance=ExtResource("9")]
 
@@ -112,5 +97,3 @@ script = ExtResource("4")
 
 [node name="DebugVisualizer" type="Node3D" parent="." unique_id=2008755827]
 script = ExtResource("6")
-
-[editable path="PhotoCameraRig"]

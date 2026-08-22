@@ -48,10 +48,11 @@ func _build_visuals() -> void:
 	mesh_inst.name = "Mesh"
 	add_child(mesh_inst)
 
-	# 道具名 Label3D（悬浮在箱子上方）
+	# 道具名 Label3D（悬浮在箱子上方，layer 3 = UI 标识，不进拍照 RT）
 	var label := Label3D.new()
 	label.name = "NameLabel"
 	label.position = Vector3(0.0, 0.7, 0.0)
+	label.layers = 4
 	label.pixel_size = 0.005
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true

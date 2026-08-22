@@ -55,10 +55,13 @@ func _on_photo_taken(texture: ViewportTexture) -> void:
 	if texture != null:
 		return
 	var controller := _get_controller(TARGET_PHOTO)
-	if controller == null or not controller.has_method("get_render_viewport"):
+	if controller == null:
 		push_warning("CameraSystem: photo_taken 請求時沒有可用的攝影相機")
 		return
-	var vp: Viewport = controller.get_render_viewport()
-	if vp == null:
-		return
-	EventBus.photo_taken.emit(vp.get_texture())
+	# 新 rig 直接是 controller（有 get_render_viewport）；旧式 controller 也有同方法
+	if controller.has_method("get_render_viewport"):
+		var vp: Viewport = controller.get_render_viewport()
+		if vp != null:
+			EventBus.photo_taken.emit(vp.get_texture())
+			return
+	push_warning("CameraSystem: 攝影相機無 render viewport")

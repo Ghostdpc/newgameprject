@@ -32,6 +32,11 @@ var config: GameConfig
 var time_rate: float = 1.0
 ## 大厅确认的玩家数（2~4，由大厅界面写入，关卡读取）
 var lobby_player_count: int = 4
+## 每个玩家绑定的输入设备（按出生顺序，与 player_index 对齐）：
+##   -2 = 未绑定（自动：P1/P2 键盘，P3/P4 手柄）
+##   -1 = 键盘（仅 P1/P2 有效）
+##   >=0 = 手柄 device id
+var player_devices: Array[int] = [-2, -2, -2, -2]
 
 var _stage_index: int = -1
 var _timer_active: bool = false
