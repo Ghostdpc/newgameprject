@@ -83,6 +83,11 @@ func _ready() -> void:
 	if not _driver_skel or not _render_skel or not _driver_anim:
 		push_error("ActiveRagdollDemo: 模型缺 Skeleton3D 或 AnimationPlayer")
 		return
+	# 關鍵：停用 RenderModel 自己的動畫，否則它會覆蓋 _write_back_mesh 寫回的骨架姿態
+	var render_anim := _find_animation_player(_render_model)
+	if render_anim:
+		render_anim.stop()
+		render_anim.active = false
 	_build_chain()
 	_set_looping(ANIM_WALK)
 	_driver_anim.play(ANIM_WALK)
