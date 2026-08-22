@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/levels/photo_stage.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/systems/settlement_system.gd" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/results_panel.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/debug/debug_visualizer.gd" id="6"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 
@@ -138,3 +139,6 @@ visible = false
 
 [node name="SettlementSystem" type="Node" parent="."]
 script = ExtResource("4")
+
+[node name="DebugVisualizer" type="Node3D" parent="."]
+script = ExtResource("6")
