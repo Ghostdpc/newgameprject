@@ -38,12 +38,12 @@ func test_get_value_missing_key_returns_default() -> void:
 
 func test_game_config_loads_battle_duration_from_json() -> void:
 	var cfg := GameConfig.new()
-	cfg.load_from_json()
+	cfg.load()
 	assert_eq(cfg.battle_duration, 15.0, "battle_duration 應從 JSON 讀為 15.0")
 
 func test_game_config_skipped_stages_are_zero() -> void:
 	var cfg := GameConfig.new()
-	cfg.load_from_json()
+	cfg.load()
 	assert_eq(cfg.theme_announce_duration, 0.0)
 	assert_eq(cfg.grab_clothes_duration,   0.0)
 	assert_eq(cfg.scoring_duration,        0.0)

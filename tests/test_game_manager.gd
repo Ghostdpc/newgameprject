@@ -19,7 +19,7 @@ func test_stage_order_starts_with_theme_announce() -> void:
 
 func test_battle_duration_loaded_from_config() -> void:
 	var cfg := GameConfig.new()
-	cfg.load_from_json()
+	cfg.load()
 	assert_eq(cfg.battle_duration, 15.0, "battle_duration 應從 JSON 讀為 15.0")
 
 func test_score_system_returns_four_scores() -> void:

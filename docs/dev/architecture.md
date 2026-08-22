@@ -138,17 +138,25 @@ GameManager._transition_to(stage)
 - 統一入口讀取 `data/configs/*.json`
 - 結果快取在記憶體，開發期可用 `reload()` 熱重載
 - 忽略 JSON 中的 `_comment` 保留鍵
+- `has_config(name)` 區分「缺文件」與「合法空表」
+
+### ConfigTable（基類）
+- 所有配置表繼承此類，聲明 `TABLE_NAME` + `DEFAULTS`
+- 提供類型化 getter（`get_float/get_int/get_string/get_bool/get_array/get_dict`）
+- 缺失鍵自動回退 DEFAULTS 默認值，不需手寫映射
+- 集合表支持 `get_records(key)` / `get_record_by_id(key, id)`
 
 ### GameConfig
-- 從 `data/configs/game_flow.json` 讀取
-- 缺失鍵使用代碼默認值，不拋出錯誤
-- `GameManager._ready()` 中調用 `config.load_from_json()`
+- 繼承 `ConfigTable`，讀 `data/configs/game_flow.json`
+- 缺失鍵使用 DEFAULTS 默認值，不拋出錯誤
+- `GameManager._ready()` 中調用 `config.load()`
 
 ### 配置目錄
 ```
 data/
 └── configs/
-    └── game_flow.json    # 遊戲流程階段時長
+    ├── game_flow.json    # 遊戲流程階段時長
+    └── items.json        # 道具表（TBD）
 ```
 
 ---
