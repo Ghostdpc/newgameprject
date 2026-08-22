@@ -101,6 +101,9 @@ func _physics_process(delta: float) -> void:
 	_move_body(delta)
 	if not _render_skel:
 		return
+	# 手動推進動畫：保證骨架目標每幀更新（不依賴 AnimationPlayer 自身 process）
+	if _driver_anim and _driver_anim.is_playing():
+		_driver_anim.advance(delta)
 	_sample_targets()
 	_tick_muscles(delta)
 	_write_back_mesh()
