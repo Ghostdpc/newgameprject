@@ -71,14 +71,16 @@ func set_ragdoll(enabled: bool) -> void:
 func knockback(direction: Vector3) -> void:
 	velocity = direction
 
-## 站起前把 body 移到 ragdoll 倒地落點（避免站起瞬移）
+## 癱軟時 body 跟隨物理骨落點（貼地），站起前也用它對齊避免漂移
 func sync_body_to_ragdoll() -> void:
 	if not ragdoll_rig:
 		return
 	var hips_pos := ragdoll_rig.get_hips_position()
 	if hips_pos == Vector3.ZERO:
 		return
-	global_position = Vector3(hips_pos.x, global_position.y, hips_pos.z)
+	# 完全對齊 hips（含 y）並清垂直速度，讓 body 貼著癱軟身體；站起後由碰撞校正高度
+	global_position = Vector3(hips_pos.x, hips_pos.y, hips_pos.z)
+	velocity.y = 0.0
 
 ## 出界死亡：進入死亡狀態（清道具、藏體、停物理）
 func die() -> void:

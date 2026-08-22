@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/props/prop_crate.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/props/prop_ball.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/debug/debug_visualizer.gd" id="4"]
 
 [sub_resource type="BoxMesh" id="4"]
 size = Vector3(40, 0.4, 40)
@@ -62,5 +63,8 @@ transform = Transform3D(1, 0, 0, 0, 0.8805301, 0.4739902, 0, -0.4739902, 0.88053
 [node name="Hint" type="Label3D" parent="." unique_id=1502120672]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 billboard = 1
+
+[node name="DebugVisualizer" type="Node3D" parent="."]
+script = ExtResource("4")
 text = "WASD移動  空格跳  撞箱子 F飛撲  按住R抓起/鬆開拋出"
 font_size = 40

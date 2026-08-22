@@ -28,7 +28,7 @@ func physics_update(delta: float) -> void:
 		var brake := TuneConfig.ground_brake * delta
 		controller.velocity.x = move_toward(controller.velocity.x, 0.0, brake)
 		controller.velocity.z = move_toward(controller.velocity.z, 0.0, brake)
+	# 癱軟期間 body 持續跟隨物理骨落點（避免 mesh 癱軟落地而 body 懸空錯位）
+	controller.sync_body_to_ragdoll()
 	if _timer <= 0.0 and controller.is_on_floor():
-		# 站起前把 body 對齊到 ragdoll 落點，避免站起瞬移
-		controller.sync_body_to_ragdoll()
 		controller.state_machine.transition_to("Idle")
