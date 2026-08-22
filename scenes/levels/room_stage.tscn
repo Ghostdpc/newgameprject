@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://batsr4alw6826"]
 
-[ext_resource type="Script" uid="uid://dcedyelxonn4" path="res://scripts/levels/cartoon_room_styler.gd" id="1_style"]
+[ext_resource type="Script" uid="uid://birpifcx8ks7u" path="res://scripts/levels/cartoon_room_styler.gd" id="1_style"]
 [ext_resource type="PackedScene" uid="uid://crkxjlq0xv184" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb" id="2_room"]
-[ext_resource type="Shader" uid="uid://cee53ku7y8ijf" path="res://resources/shaders/toon_room_material.gdshader" id="4_piasg"]
+[ext_resource type="Shader" uid="uid://ca0o8kn6vfy52" path="res://resources/shaders/toon_room_material.gdshader" id="4_piasg"]
 [ext_resource type="Texture2D" uid="uid://b0swxbpkxefdy" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Door_D.png" id="5_nfgv6"]
 [ext_resource type="Texture2D" uid="uid://b6ajvp4ar15ix" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_CampingShelve_D.png" id="6_f4cup"]
 [ext_resource type="Texture2D" uid="uid://r7t8kpw6wqox" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Cell_Phone_D.png" id="7_r8t1p"]
@@ -3906,6 +3906,7 @@ directional_shadow_max_distance = 200.0
 
 [node name="CartoonOutline" type="CanvasLayer" parent="." unique_id=497139088]
 layer = 10
+visible = false
 
 [node name="PostProcess" type="ColorRect" parent="CartoonOutline" unique_id=184592749]
 material = ExtResource("100_outline_post")
@@ -3924,535 +3925,535 @@ light_energy = 0.38
 [node name="FortniteSkyeRoom" parent="." unique_id=964906877 instance=ExtResource("2_room")]
 transform = Transform3D(16.818626, 0, 0, 0, 16.818626, 0, 0, 0, 16.818626, 0, 0, 0)
 
-[node name="Agency_Door_01_mo" parent="FortniteSkyeRoom" index="0" unique_id=1904245283]
+[node name="Agency_Door_01_mo" parent="FortniteSkyeRoom" index="0" unique_id=532632689]
 surface_material_override/0 = SubResource("ShaderMaterial_q6di3")
 
-[node name="CampingShelve_WalkieTalkie_01_mo" parent="FortniteSkyeRoom" index="1" unique_id=977035415]
+[node name="CampingShelve_WalkieTalkie_01_mo" parent="FortniteSkyeRoom" index="1" unique_id=1206442745]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_felcu")
 
-[node name="Cell_Phone_mo" parent="FortniteSkyeRoom" index="2" unique_id=1800749969]
+[node name="Cell_Phone_mo" parent="FortniteSkyeRoom" index="2" unique_id=195595179]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_xgbhp")
 
-[node name="Cinematic_Prop_Poster_Space_mo_001" parent="FortniteSkyeRoom" index="3" unique_id=1672263342]
+[node name="Cinematic_Prop_Poster_Space_mo_001" parent="FortniteSkyeRoom" index="3" unique_id=444894739]
 transform = Transform3D(0, 0, -0.007969394, 0, 0.007969394, 0, 0.007969394, 0, 0, 4.4455147, 1.7547051, -6.452287)
 surface_material_override/0 = SubResource("ShaderMaterial_dw7u0")
 
-[node name="Cinematic_Prop_Poster_Space_mo_002" parent="FortniteSkyeRoom" index="4" unique_id=840554642]
+[node name="Cinematic_Prop_Poster_Space_mo_002" parent="FortniteSkyeRoom" index="4" unique_id=957122548]
 transform = Transform3D(0.008578016, 0, 0.00047993954, 0, 0.008591429, 0, -0.00047993954, 0, 0.008578016, 0.75732833, 1.8318859, -10.486978)
 surface_material_override/0 = SubResource("ShaderMaterial_qidwv")
 
-[node name="Cinematic_Prop_Poster_Space_mo_003" parent="FortniteSkyeRoom" index="5" unique_id=625095127]
+[node name="Cinematic_Prop_Poster_Space_mo_003" parent="FortniteSkyeRoom" index="5" unique_id=402797854]
 surface_material_override/0 = SubResource("ShaderMaterial_j1iir")
 
-[node name="Neo_Residential_DoorC_mo" parent="FortniteSkyeRoom" index="6" unique_id=781143845]
+[node name="Neo_Residential_DoorC_mo" parent="FortniteSkyeRoom" index="6" unique_id=923315282]
 surface_material_override/0 = SubResource("ShaderMaterial_myq12")
 
-[node name="Neo_Residential_Wall_01_mo" parent="FortniteSkyeRoom" index="7" unique_id=1532386887]
+[node name="Neo_Residential_Wall_01_mo" parent="FortniteSkyeRoom" index="7" unique_id=1212965319]
 surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
 
-[node name="Neo_Residential_Wall_01_mo_001" parent="FortniteSkyeRoom" index="8" unique_id=1990469641]
+[node name="Neo_Residential_Wall_01_mo_001" parent="FortniteSkyeRoom" index="8" unique_id=207465396]
 surface_material_override/0 = SubResource("ShaderMaterial_iaskv")
 
-[node name="Neo_Residential_Wall_01_mo_002" parent="FortniteSkyeRoom" index="9" unique_id=1910032644]
+[node name="Neo_Residential_Wall_01_mo_002" parent="FortniteSkyeRoom" index="9" unique_id=1400667421]
 surface_material_override/0 = SubResource("ShaderMaterial_ry04o")
 
-[node name="Neo_Residential_Wall_01_mo_003" parent="FortniteSkyeRoom" index="10" unique_id=684725761]
+[node name="Neo_Residential_Wall_01_mo_003" parent="FortniteSkyeRoom" index="10" unique_id=1894721139]
 surface_material_override/0 = SubResource("ShaderMaterial_bx2yd")
 
-[node name="Neo_Residential_Wall_01_mo_004" parent="FortniteSkyeRoom" index="11" unique_id=725275528]
+[node name="Neo_Residential_Wall_01_mo_004" parent="FortniteSkyeRoom" index="11" unique_id=1109396470]
 transform = Transform3D(0, 0, 0.007119387, 0, 0.007119387, 0, -0.0087802615, 0, 0, -2.684441, 2.7422984, -3.967187)
 surface_material_override/0 = SubResource("ShaderMaterial_yo4io")
 
-[node name="Neo_Residential_Wall_01_mo_005" parent="FortniteSkyeRoom" index="12" unique_id=148450126]
+[node name="Neo_Residential_Wall_01_mo_005" parent="FortniteSkyeRoom" index="12" unique_id=1358859116]
 surface_material_override/0 = SubResource("ShaderMaterial_ppu5y")
 
-[node name="Neo_Residential_Wall_01_mo_006" parent="FortniteSkyeRoom" index="13" unique_id=1536063659]
+[node name="Neo_Residential_Wall_01_mo_006" parent="FortniteSkyeRoom" index="13" unique_id=1180860751]
 surface_material_override/0 = SubResource("ShaderMaterial_b0fhn")
 
-[node name="Neo_SkyScraper_Window_01_mo" parent="FortniteSkyeRoom" index="14" unique_id=1404113247]
+[node name="Neo_SkyScraper_Window_01_mo" parent="FortniteSkyeRoom" index="14" unique_id=272294191]
 surface_material_override/0 = SubResource("ShaderMaterial_717w7")
 surface_material_override/1 = SubResource("ShaderMaterial_dpk8t")
 
-[node name="Neo_SkyScraper_Window_01_mo_001" parent="FortniteSkyeRoom" index="15" unique_id=11055291]
+[node name="Neo_SkyScraper_Window_01_mo_001" parent="FortniteSkyeRoom" index="15" unique_id=1844421482]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_ibkib")
 surface_material_override/1 = SubResource("ShaderMaterial_8ikp5")
 
-[node name="Neo_SkyScraper_Window_01_mo_002" parent="FortniteSkyeRoom" index="16" unique_id=747390298]
+[node name="Neo_SkyScraper_Window_01_mo_002" parent="FortniteSkyeRoom" index="16" unique_id=97712070]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_bd3ow")
 surface_material_override/1 = SubResource("ShaderMaterial_brbye")
 
-[node name="Neo_SkyScraper_Window_01_mo_003" parent="FortniteSkyeRoom" index="17" unique_id=1729243471]
+[node name="Neo_SkyScraper_Window_01_mo_003" parent="FortniteSkyeRoom" index="17" unique_id=454515408]
 surface_material_override/0 = SubResource("ShaderMaterial_j7ud4")
 surface_material_override/1 = SubResource("ShaderMaterial_1gunk")
 
-[node name="Paper_Notes_mo" parent="FortniteSkyeRoom" index="18" unique_id=896412173]
+[node name="Paper_Notes_mo" parent="FortniteSkyeRoom" index="18" unique_id=1663582820]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_vh7kc")
 
-[node name="Paper_Notes_mo_001" parent="FortniteSkyeRoom" index="19" unique_id=237998464]
+[node name="Paper_Notes_mo_001" parent="FortniteSkyeRoom" index="19" unique_id=777554334]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_tvvkq")
 
-[node name="Paper_Notes_mo_002" parent="FortniteSkyeRoom" index="20" unique_id=2065433407]
+[node name="Paper_Notes_mo_002" parent="FortniteSkyeRoom" index="20" unique_id=493473837]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_7lb3x")
 
-[node name="Paper_Notes_mo_003" parent="FortniteSkyeRoom" index="21" unique_id=835375219]
+[node name="Paper_Notes_mo_003" parent="FortniteSkyeRoom" index="21" unique_id=2124207978]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_6jpvr")
 
-[node name="Paper_Notes_mo_004" parent="FortniteSkyeRoom" index="22" unique_id=684064832]
+[node name="Paper_Notes_mo_004" parent="FortniteSkyeRoom" index="22" unique_id=2091741483]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_o6c6n")
 
-[node name="Paper_Notes_mo_005" parent="FortniteSkyeRoom" index="23" unique_id=1924840796]
+[node name="Paper_Notes_mo_005" parent="FortniteSkyeRoom" index="23" unique_id=1001993414]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_hjsew")
 
-[node name="Paper_Notes_mo_006" parent="FortniteSkyeRoom" index="24" unique_id=1381509919]
+[node name="Paper_Notes_mo_006" parent="FortniteSkyeRoom" index="24" unique_id=1416508224]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_tlklo")
 
-[node name="Pencil_mo" parent="FortniteSkyeRoom" index="25" unique_id=537614612]
+[node name="Pencil_mo" parent="FortniteSkyeRoom" index="25" unique_id=349207617]
 transform = Transform3D(0.011000001, 0, 0, 0, -1.3113023e-09, -0.011000001, 0, 0.011000001, -1.3113023e-09, 0.4335896, 0.019452132, 0.30310428)
 surface_material_override/0 = SubResource("ShaderMaterial_yhqx1")
 
-[node name="Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_mo" parent="FortniteSkyeRoom/Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_ao/Skeleton3D" parent_id_path=PackedInt32Array(964906877, 950278579) index="0" unique_id=1394854815]
+[node name="Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_mo" parent="FortniteSkyeRoom/Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_ao/Skeleton3D" parent_id_path=PackedInt32Array(964906877, 334161278) index="0" unique_id=614163795]
 surface_material_override/0 = SubResource("ShaderMaterial_s0ce3")
 
-[node name="Prop_Trash_01_Can_01_mo" parent="FortniteSkyeRoom" index="27" unique_id=930177535]
+[node name="Prop_Trash_01_Can_01_mo" parent="FortniteSkyeRoom" index="27" unique_id=1797115463]
 surface_material_override/0 = SubResource("ShaderMaterial_x7vwj")
 
-[node name="S_AG_FE_Basket_mo" parent="FortniteSkyeRoom" index="28" unique_id=796106]
+[node name="S_AG_FE_Basket_mo" parent="FortniteSkyeRoom" index="28" unique_id=54088840]
 transform = Transform3D(-0.00026464192, 0, -0.0053155073, 0, 0.0053220894, 0, 0.0053155073, 0, -0.00026464192, 3.8516073, 0, -7.155546)
 surface_material_override/0 = SubResource("ShaderMaterial_v3pdg")
 
-[node name="S_AG_FE_Footrest_mo" parent="FortniteSkyeRoom" index="29" unique_id=1265314865]
+[node name="S_AG_FE_Footrest_mo" parent="FortniteSkyeRoom" index="29" unique_id=173182931]
 transform = Transform3D(0.009573592, 0, 0, 0, 0.009573592, 0, 0, 0, 0.009573592, -1.8748984, 0.003506701, 0.76255465)
 surface_material_override/0 = SubResource("ShaderMaterial_7ihd2")
 
-[node name="S_Agency_Faction_LootCrate_01_mo" parent="FortniteSkyeRoom" index="30" unique_id=485717872]
+[node name="S_Agency_Faction_LootCrate_01_mo" parent="FortniteSkyeRoom" index="30" unique_id=889135274]
 transform = Transform3D(0.0062465975, 0, -8.382061e-05, 0, 0.0063897246, 0, 7.654962e-05, 0, 0.006839922, -0.46126786, 0.018252503, 2.070797)
 surface_material_override/0 = SubResource("ShaderMaterial_3u4xa")
 
-[node name="S_Agency_Midas_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="31" unique_id=2089163132]
+[node name="S_Agency_Midas_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="31" unique_id=1079871550]
 transform = Transform3D(-0.00905803, 0, 0.0010695718, 0, 0.009120959, 0, -0.0010695718, 0, -0.00905803, 1.9570926, 0.60663307, -10.309148)
 surface_material_override/0 = SubResource("ShaderMaterial_afne7")
 
-[node name="S_Agency_Picture_Frame_01_mo" parent="FortniteSkyeRoom" index="32" unique_id=1633897171]
+[node name="S_Agency_Picture_Frame_01_mo" parent="FortniteSkyeRoom" index="32" unique_id=1889169846]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_bsbeu")
 
-[node name="S_Agency_Poster_01_mo" parent="FortniteSkyeRoom" index="33" unique_id=1932573895]
+[node name="S_Agency_Poster_01_mo" parent="FortniteSkyeRoom" index="33" unique_id=781676504]
 transform = Transform3D(0.009799406, 0.00039850394, 0.0006201751, -0.00039929987, 0.009818978, -2.7986518e-11, -0.0006196624, -2.5199251e-05, 0.0098075, 2.9433205, 1.5659027, -10.507947)
 surface_material_override/0 = SubResource("ShaderMaterial_vv805")
 
-[node name="S_Agency_Poster_01_mo_001" parent="FortniteSkyeRoom" index="34" unique_id=237755244]
+[node name="S_Agency_Poster_01_mo_001" parent="FortniteSkyeRoom" index="34" unique_id=1805816953]
 surface_material_override/0 = SubResource("ShaderMaterial_7o0r3")
 
-[node name="S_Donut_BlackMarker_01_mo" parent="FortniteSkyeRoom" index="35" unique_id=284448815]
+[node name="S_Donut_BlackMarker_01_mo" parent="FortniteSkyeRoom" index="35" unique_id=696836793]
 transform = Transform3D(0.002987, 0, 0.010586682, 0, 0.011000003, 0, -0.010586682, 0, 0.0029870002, 2.3288147, 0.024179803, -0.09612076)
 surface_material_override/0 = SubResource("ShaderMaterial_3r2e3")
 
-[node name="S_MountainBase_WallLight_01_mo" parent="FortniteSkyeRoom" index="36" unique_id=703797771]
+[node name="S_MountainBase_WallLight_01_mo" parent="FortniteSkyeRoom" index="36" unique_id=556756099]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_2yfd5")
 
-[node name="S_MountainBase_WallLight_01_mo_001" parent="FortniteSkyeRoom" index="37" unique_id=43615288]
+[node name="S_MountainBase_WallLight_01_mo_001" parent="FortniteSkyeRoom" index="37" unique_id=1716120640]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_gki1x")
 
-[node name="S_ObjectiveBoard_MiniMap_mo" parent="FortniteSkyeRoom" index="38" unique_id=1586280737]
+[node name="S_ObjectiveBoard_MiniMap_mo" parent="FortniteSkyeRoom" index="38" unique_id=1670741499]
 transform = Transform3D(0, -0.014908944, 0.00042358777, 0.01059312, 0, 0, 0, 0.0005966416, 0.010584654, -0.87883407, 1.8116689, -10.518087)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_4yul1")
 surface_material_override/1 = SubResource("ShaderMaterial_5w3o3")
 
-[node name="S_ObjectiveBoard_Pin_A_mo" parent="FortniteSkyeRoom" index="39" unique_id=945094312]
+[node name="S_ObjectiveBoard_Pin_A_mo" parent="FortniteSkyeRoom" index="39" unique_id=2006299640]
 surface_material_override/0 = SubResource("ShaderMaterial_rtudk")
 
-[node name="S_ObjectiveBoard_Pin_A_mo_001" parent="FortniteSkyeRoom" index="40" unique_id=1465574723]
+[node name="S_ObjectiveBoard_Pin_A_mo_001" parent="FortniteSkyeRoom" index="40" unique_id=1674616189]
 surface_material_override/0 = SubResource("ShaderMaterial_inixb")
 
-[node name="S_ObjectiveBoard_Pin_B_mo" parent="FortniteSkyeRoom" index="41" unique_id=1363566879]
+[node name="S_ObjectiveBoard_Pin_B_mo" parent="FortniteSkyeRoom" index="41" unique_id=498029260]
 surface_material_override/0 = SubResource("ShaderMaterial_c1dpq")
 
-[node name="S_ObjectiveBoard_Pin_B_mo_001" parent="FortniteSkyeRoom" index="42" unique_id=1076561109]
+[node name="S_ObjectiveBoard_Pin_B_mo_001" parent="FortniteSkyeRoom" index="42" unique_id=1511404396]
 surface_material_override/0 = SubResource("ShaderMaterial_87kqu")
 
-[node name="S_ObjectiveBoard_Pin_C_mo" parent="FortniteSkyeRoom" index="43" unique_id=113070773]
+[node name="S_ObjectiveBoard_Pin_C_mo" parent="FortniteSkyeRoom" index="43" unique_id=2083199744]
 surface_material_override/0 = SubResource("ShaderMaterial_gq0ka")
 
-[node name="S_ObjectiveBoard_Pin_C_mo_001" parent="FortniteSkyeRoom" index="44" unique_id=1213924119]
+[node name="S_ObjectiveBoard_Pin_C_mo_001" parent="FortniteSkyeRoom" index="44" unique_id=1891197854]
 surface_material_override/0 = SubResource("ShaderMaterial_3dqcm")
 
-[node name="S_OilRig_TrashCan_mo" parent="FortniteSkyeRoom" index="45" unique_id=115824816]
+[node name="S_OilRig_TrashCan_mo" parent="FortniteSkyeRoom" index="45" unique_id=1761137101]
 transform = Transform3D(0.009897562, 0, -0.0035440552, 0, 0.010512952, 0, 0.0035440552, 0, 0.009897562, -0.005749958, 0.028379988, 0.70669705)
 surface_material_override/0 = SubResource("ShaderMaterial_kfx22")
 
-[node name="S_PrincessCastle_Armchair_mo" parent="FortniteSkyeRoom" index="46" unique_id=648456745]
+[node name="S_PrincessCastle_Armchair_mo" parent="FortniteSkyeRoom" index="46" unique_id=1262808629]
 transform = Transform3D(-0.005050825, 0, -0.0087298695, 0, 0.010085703, 0, 0.0087298695, 0, -0.005050825, -1.8545595, 0, -9.623293)
 surface_material_override/0 = SubResource("ShaderMaterial_nhfro")
 
-[node name="S_PrincessCastle_GlowingStar_mo" parent="FortniteSkyeRoom" index="47" unique_id=199189776]
+[node name="S_PrincessCastle_GlowingStar_mo" parent="FortniteSkyeRoom" index="47" unique_id=379455205]
 surface_material_override/0 = SubResource("ShaderMaterial_hrqfm")
 
-[node name="S_PrincessCastle_GlowingStar_mo_001" parent="FortniteSkyeRoom" index="48" unique_id=363893871]
+[node name="S_PrincessCastle_GlowingStar_mo_001" parent="FortniteSkyeRoom" index="48" unique_id=1724673231]
 surface_material_override/0 = SubResource("ShaderMaterial_s7s21")
 
-[node name="S_PrincessCastle_GlowingStar_mo_002" parent="FortniteSkyeRoom" index="49" unique_id=144472832]
+[node name="S_PrincessCastle_GlowingStar_mo_002" parent="FortniteSkyeRoom" index="49" unique_id=449462721]
 surface_material_override/0 = SubResource("ShaderMaterial_eljt4")
 
-[node name="S_PrincessCastle_GlowingStar_mo_003" parent="FortniteSkyeRoom" index="50" unique_id=525663012]
+[node name="S_PrincessCastle_GlowingStar_mo_003" parent="FortniteSkyeRoom" index="50" unique_id=157112855]
 surface_material_override/0 = SubResource("ShaderMaterial_d3ros")
 
-[node name="S_PrincessCastle_GlowingStar_mo_004" parent="FortniteSkyeRoom" index="51" unique_id=1585121178]
+[node name="S_PrincessCastle_GlowingStar_mo_004" parent="FortniteSkyeRoom" index="51" unique_id=1125237411]
 surface_material_override/0 = SubResource("ShaderMaterial_al4x0")
 
-[node name="S_PrincessCastle_GlowingStar_mo_005" parent="FortniteSkyeRoom" index="52" unique_id=50506027]
+[node name="S_PrincessCastle_GlowingStar_mo_005" parent="FortniteSkyeRoom" index="52" unique_id=1321591705]
 surface_material_override/0 = SubResource("ShaderMaterial_7rfm8")
 
-[node name="S_PrincessCastle_GlowingStar_mo_006" parent="FortniteSkyeRoom" index="53" unique_id=2085479364]
+[node name="S_PrincessCastle_GlowingStar_mo_006" parent="FortniteSkyeRoom" index="53" unique_id=182744110]
 surface_material_override/0 = SubResource("ShaderMaterial_5lenj")
 
-[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="54" unique_id=2133015449]
+[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="54" unique_id=1627800168]
 surface_material_override/0 = SubResource("ShaderMaterial_185uh")
 
-[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="55" unique_id=1497133276]
+[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="55" unique_id=1509657950]
 surface_material_override/0 = SubResource("ShaderMaterial_rx4l6")
 
-[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="56" unique_id=2000421635]
+[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="56" unique_id=662661087]
 surface_material_override/0 = SubResource("ShaderMaterial_gehcy")
 
-[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="57" unique_id=1236988561]
+[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="57" unique_id=1450289007]
 surface_material_override/0 = SubResource("ShaderMaterial_21y62")
 
-[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="58" unique_id=1996915869]
+[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="58" unique_id=413816582]
 surface_material_override/0 = SubResource("ShaderMaterial_nm4ic")
 
-[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="59" unique_id=252941617]
+[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="59" unique_id=275751714]
 surface_material_override/0 = SubResource("ShaderMaterial_wmktg")
 
-[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="60" unique_id=683460187]
+[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="60" unique_id=1130948555]
 surface_material_override/0 = SubResource("ShaderMaterial_ugice")
 
-[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="61" unique_id=1882770985]
+[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="61" unique_id=346995403]
 surface_material_override/0 = SubResource("ShaderMaterial_55rxc")
 
-[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="62" unique_id=459088707]
+[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="62" unique_id=1527002405]
 surface_material_override/0 = SubResource("ShaderMaterial_xybmg")
 
-[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="63" unique_id=759449571]
+[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="63" unique_id=444415557]
 surface_material_override/0 = SubResource("ShaderMaterial_ens8c")
 
-[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="64" unique_id=1663103800]
+[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="64" unique_id=1991038978]
 surface_material_override/0 = SubResource("ShaderMaterial_is0yu")
 
-[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="65" unique_id=730165410]
+[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="65" unique_id=356892282]
 surface_material_override/0 = SubResource("ShaderMaterial_ivjpe")
 
-[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="66" unique_id=205960112]
+[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="66" unique_id=1494039088]
 surface_material_override/0 = SubResource("ShaderMaterial_xrjg6")
 
-[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="67" unique_id=1540530639]
+[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="67" unique_id=930975440]
 surface_material_override/0 = SubResource("ShaderMaterial_ttsc5")
 
-[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="68" unique_id=430881031]
+[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="68" unique_id=207096169]
 surface_material_override/0 = SubResource("ShaderMaterial_ar3ht")
 
-[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="69" unique_id=428127189]
+[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="69" unique_id=1050975494]
 surface_material_override/0 = SubResource("ShaderMaterial_c4kl5")
 
-[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="70" unique_id=1143410543]
+[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="70" unique_id=897288096]
 surface_material_override/0 = SubResource("ShaderMaterial_cmcy1")
 
-[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="71" unique_id=578751338]
+[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="71" unique_id=1578027913]
 surface_material_override/0 = SubResource("ShaderMaterial_7gk7s")
 
-[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="72" unique_id=1080847264]
+[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="72" unique_id=414678596]
 surface_material_override/0 = SubResource("ShaderMaterial_u86rm")
 
-[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="73" unique_id=2141006479]
+[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="73" unique_id=1112258432]
 surface_material_override/0 = SubResource("ShaderMaterial_nofs2")
 
-[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="74" unique_id=183115704]
+[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="74" unique_id=156126461]
 surface_material_override/0 = SubResource("ShaderMaterial_i6enq")
 
-[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="75" unique_id=1833686938]
+[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="75" unique_id=2015741840]
 surface_material_override/0 = SubResource("ShaderMaterial_gl1nt")
 
-[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="76" unique_id=1506921979]
+[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="76" unique_id=2016007288]
 surface_material_override/0 = SubResource("ShaderMaterial_g840d")
 
-[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="77" unique_id=420251805]
+[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="77" unique_id=1259390838]
 transform = Transform3D(0.011516285, -6.178845e-05, -0.0005020947, 0, 0.011441086, -0.001407956, 0.00050588214, 0.0014065995, 0.011430062, -1.3424525, -0.037101533, 2.421415)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_fawp4")
 
-[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="78" unique_id=471013850]
+[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="78" unique_id=1806862821]
 transform = Transform3D(-0.0057783267, -0.0001373021, -0.0066383844, -0.00020225269, 0.009741849, 1.16530955e-05, 0.0066364617, 0.00017734423, -0.0057796445, 0.38088435, 0.016014108, -0.6133693)
 surface_material_override/0 = SubResource("ShaderMaterial_sax22")
 
-[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="79" unique_id=1065501491]
+[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="79" unique_id=1019755422]
 surface_material_override/0 = SubResource("ShaderMaterial_jojyi")
 
-[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="80" unique_id=1843320377]
+[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="80" unique_id=314017127]
 transform = Transform3D(-0.011000003, 0, -9.616509e-10, 0, 0.011000003, 0, 9.616509e-10, 0, -0.011000003, 2.6586459, -4.536277e-07, -7.8214345)
 surface_material_override/0 = SubResource("ShaderMaterial_hq1is")
 
-[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="81" unique_id=1905024325]
+[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="81" unique_id=159503674]
 transform = Transform3D(0, 0, 0.008910157, 0, 0.010213098, 0, -0.010213098, 0, 0, -1.9205475, 0.022831641, -7.416227)
 surface_material_override/0 = SubResource("ShaderMaterial_0hrqj")
 
-[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="82" unique_id=425787923]
+[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="82" unique_id=1164826189]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_kwyu7")
 
-[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="83" unique_id=87936500]
+[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="83" unique_id=1528015956]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_aislp")
 
-[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=467940294]
+[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=1497990455]
 transform = Transform3D(-1.3113024e-09, 0, 0.011000002, 0, 0.011000002, 0, -0.011000002, 0, -1.3113024e-09, -0.74898607, -4.536277e-07, -9.894549)
 surface_material_override/0 = SubResource("ShaderMaterial_m5epf")
 
-[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=828185784]
+[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=1140287182]
 transform = Transform3D(0.011000003, 0, -1.3347463e-06, 0, 0.011000003, 0, 1.3347463e-06, 0, 0.011000003, 0.67663616, 0.01905337, -10.442815)
 surface_material_override/0 = SubResource("ShaderMaterial_yw301")
 
-[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=1467195051]
+[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=673684761]
 transform = Transform3D(0, 0, 0.010308666, 0, 0.010308666, 0, -0.010308666, 0, 0, -2.424532, 0.021120753, 1.1599712)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_gptj3")
 
-[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=394854625]
+[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=375238207]
 transform = Transform3D(0.008793885, 0, -0.005193741, 0, 0.0102130985, 0, 0.005193741, 0, 0.008793885, -1.0702758, 0.022831641, -7.3923087)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_5f22q")
 
-[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=2084663966]
+[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=30657582]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_5ek41")
 
-[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=801591375]
+[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=444219775]
 transform = Transform3D(-0.0073266015, 0, 0.007115351, 0, 0.0102130985, 0, -0.007115351, 0, -0.0073266015, -1.8909613, 0.046310063, 2.0354111)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_qroup")
 
-[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="90" unique_id=174543654]
+[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="90" unique_id=2109850519]
 transform = Transform3D(-0.0046567908, 0, 0.00656148, 0, 0.011713316, 0, -0.0043743206, 0, -0.0069851875, 3.2928574, 0.35613698, -6.79265)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_odj0c")
 
-[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=288811796]
+[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=963214997]
 transform = Transform3D(0.009992801, 0, 0.0009680865, 0, 0.010039582, 0, -0.0009680865, 0, 0.009992801, 2.2192428, -0.32402793, -10.5173)
 surface_material_override/0 = SubResource("ShaderMaterial_582gr")
 
-[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=11900622]
+[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=359927294]
 transform = Transform3D(-0.013388757, 0, 0.0026787426, 0, 0.0136541, 0, -0.0026787426, 0, -0.013388757, 2.260562, 0.00832636, 0.6626482)
 surface_material_override/0 = SubResource("ShaderMaterial_7oyxb")
 
-[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="93" unique_id=2124566486]
+[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="93" unique_id=1126487015]
 transform = Transform3D(0.00077371555, 0, -0.0103940675, 0, 0.010422822, 0, 0.0103940675, 0, 0.00077371555, -0.12775724, 0.02389756, -8.289856)
 surface_material_override/0 = SubResource("ShaderMaterial_22avr")
 
-[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="94" unique_id=1963856845]
+[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="94" unique_id=1444909581]
 transform = Transform3D(-0.010513758, 0, 0.001478355, 0, 0.009941802, 0, -0.001580983, 0, -0.009831267, 2.6812901, 0, -5.1590395)
 surface_material_override/0 = SubResource("ShaderMaterial_soiuc")
 
-[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="95" unique_id=1258940202]
+[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="95" unique_id=1611298714]
 transform = Transform3D(0.010039405, 0, -0.0025451903, 0, 0.01035701, 0, 0.0025451903, 0, 0.010039405, 1.3732524, 2.2681385e-07, -0.15249693)
 surface_material_override/0 = SubResource("ShaderMaterial_pspjo")
 
-[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=1621326823]
+[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=1109895790]
 surface_material_override/0 = SubResource("ShaderMaterial_vlw70")
 
-[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=1395959550]
+[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=1137457678]
 surface_material_override/0 = SubResource("ShaderMaterial_2ew4d")
 
-[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=660064796]
+[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=1581641331]
 transform = Transform3D(-0.010996787, 0, -0.00026586326, 0, 0.011000002, 0, 0.00026586326, 0, -0.010996787, 3.8734539, 0.011671415, -3.568455)
 surface_material_override/0 = SubResource("ShaderMaterial_5y8ex")
 
-[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="99" unique_id=687657619]
+[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="99" unique_id=2088770452]
 transform = Transform3D(-0.010656118, 0, -0.0027289458, 0, 0.011000002, 0, 0.0027289458, 0, -0.010656118, 3.6122355, 0.028214112, -3.574685)
 surface_material_override/0 = SubResource("ShaderMaterial_2am1x")
 
-[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=123852574]
+[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=2138271545]
 transform = Transform3D(-0.0006573568, 0, -0.018577047, 0, 0.01858868, 0, 0.018577047, 0, -0.0006573568, 4.480911, 1.8867614, -9.460729)
 surface_material_override/0 = SubResource("ShaderMaterial_42mkq")
 
-[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="101" unique_id=68045822]
+[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="101" unique_id=1397954836]
 transform = Transform3D(0.00013106829, 0, -0.010999221, 0, 0.011000003, 0, 0.010999221, 0, 0.00013106829, 4.4376554, 1.5092351, -3.3882039)
 surface_material_override/0 = SubResource("ShaderMaterial_xcw55")
 
-[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="102" unique_id=1474017174]
+[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="102" unique_id=2071704873]
 surface_material_override/0 = SubResource("ShaderMaterial_bxswn")
 
-[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=799520645]
+[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=1140168413]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_6xvft")
 
-[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="104" unique_id=2105284247]
+[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="104" unique_id=1780805785]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_orwwl")
 
-[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=1886023423]
+[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=1579788238]
 transform = Transform3D(-0.010852922, 0, -0.001792814, 0, 0.011000003, 0, 0.001792814, 0, -0.010852922, 1.83048, 0.006942302, 1.1937311)
 surface_material_override/0 = SubResource("ShaderMaterial_auh4i")
 
-[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=1368742946]
+[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=853512715]
 surface_material_override/0 = SubResource("ShaderMaterial_y33wc")
 
-[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="107" unique_id=336238287]
+[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="107" unique_id=675503112]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_sy87j")
 
-[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=1716716006]
+[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=1542068180]
 surface_material_override/0 = SubResource("ShaderMaterial_ux3tq")
 
-[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="109" unique_id=1190035519]
+[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="109" unique_id=1108319165]
 surface_material_override/0 = SubResource("ShaderMaterial_qbcaj")
 
-[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="110" unique_id=603592948]
+[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="110" unique_id=1332418211]
 surface_material_override/0 = SubResource("ShaderMaterial_1gjpj")
 
-[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="111" unique_id=1894302987]
+[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="111" unique_id=938858865]
 surface_material_override/0 = SubResource("ShaderMaterial_wyeh6")
 
-[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="112" unique_id=1313046640]
+[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="112" unique_id=547980066]
 surface_material_override/0 = SubResource("ShaderMaterial_12ebo")
 
-[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="113" unique_id=2077768330]
+[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="113" unique_id=1595784986]
 surface_material_override/0 = SubResource("ShaderMaterial_phrvf")
 
-[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="114" unique_id=785451219]
+[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="114" unique_id=1540361650]
 surface_material_override/0 = SubResource("ShaderMaterial_y1a53")
 
-[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="115" unique_id=1803278051]
+[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="115" unique_id=383766001]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_r6psu")
 
-[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=1101788329]
+[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=703838661]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_atyw5")
 
-[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="117" unique_id=938400987]
+[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="117" unique_id=1778143758]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_dicji")
 
-[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="118" unique_id=2096481895]
+[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="118" unique_id=1890005890]
 transform = Transform3D(0.0025394259, 0, 0.00443571, 0, 0.0051111844, 0, -0.00443571, 0, 0.0025394259, 1.3078284, 0.023191834, -9.094613)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_uisyg")
 
-[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="119" unique_id=1046492350]
+[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="119" unique_id=1460141318]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_prkiw")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="120" unique_id=947907287]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="120" unique_id=434428044]
 surface_material_override/0 = SubResource("ShaderMaterial_5mo0b")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="121" unique_id=1331077283]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="121" unique_id=1771016623]
 surface_material_override/0 = SubResource("ShaderMaterial_o16lw")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="122" unique_id=1983126715]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="122" unique_id=1468032646]
 surface_material_override/0 = SubResource("ShaderMaterial_hu71u")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="123" unique_id=171090644]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="123" unique_id=1079614248]
 surface_material_override/0 = SubResource("ShaderMaterial_r1wno")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="124" unique_id=1661447156]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="124" unique_id=754483136]
 surface_material_override/0 = SubResource("ShaderMaterial_gg7y1")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=245699956]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=239165661]
 surface_material_override/0 = SubResource("ShaderMaterial_cxqr8")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=590295962]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=594197469]
 surface_material_override/0 = SubResource("ShaderMaterial_b1yjs")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="127" unique_id=1486094212]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="127" unique_id=471912723]
 surface_material_override/0 = SubResource("ShaderMaterial_7305h")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="128" unique_id=1405152315]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="128" unique_id=805418270]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_h5ue4")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="129" unique_id=1417629123]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="129" unique_id=786792946]
 surface_material_override/0 = SubResource("ShaderMaterial_kg5tv")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="130" unique_id=2013292504]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="130" unique_id=383531836]
 surface_material_override/0 = SubResource("ShaderMaterial_13a3n")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="131" unique_id=910161718]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="131" unique_id=1622478757]
 surface_material_override/0 = SubResource("ShaderMaterial_5tnse")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="132" unique_id=2018802853]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="132" unique_id=1537946404]
 surface_material_override/0 = SubResource("ShaderMaterial_m17n0")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="133" unique_id=1103602756]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="133" unique_id=550997036]
 surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="134" unique_id=1123264317]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="134" unique_id=414810682]
 surface_material_override/0 = SubResource("ShaderMaterial_otry8")
 
-[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="135" unique_id=1090456561]
+[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="135" unique_id=1494544746]
 surface_material_override/0 = SubResource("ShaderMaterial_b7doi")
 
-[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="136" unique_id=1322445728]
+[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="136" unique_id=1564034199]
 surface_material_override/0 = SubResource("ShaderMaterial_lgine")
 
-[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="137" unique_id=2029395879]
+[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="137" unique_id=1871522400]
 surface_material_override/0 = SubResource("ShaderMaterial_ios2g")
 
-[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="138" unique_id=1300160157]
+[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="138" unique_id=1323475995]
 transform = Transform3D(0.0005650145, 1.067629e-05, -0.0032646758, -7.766326e-05, 0.0033123128, -2.6090277e-06, 0.003263769, 7.6970144e-05, 0.0005651092, -2.0238373, 0.0003314318, 2.3298473)
 surface_material_override/0 = SubResource("ShaderMaterial_l653v")
 
-[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="139" unique_id=1456711703]
+[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="139" unique_id=950165497]
 surface_material_override/0 = SubResource("ShaderMaterial_ta8wd")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="140" unique_id=1098181700]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="140" unique_id=409521938]
 surface_material_override/0 = SubResource("ShaderMaterial_t8fyj")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="141" unique_id=1304674566]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="141" unique_id=884931659]
 surface_material_override/0 = SubResource("ShaderMaterial_f1mpw")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="142" unique_id=1868605709]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="142" unique_id=571093257]
 surface_material_override/0 = SubResource("ShaderMaterial_im8uk")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="143" unique_id=425507410]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="143" unique_id=249974416]
 surface_material_override/0 = SubResource("ShaderMaterial_qmdsr")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="144" unique_id=895980978]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="144" unique_id=302174004]
 surface_material_override/0 = SubResource("ShaderMaterial_xmg8t")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="145" unique_id=1121444358]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="145" unique_id=1306732575]
 surface_material_override/0 = SubResource("ShaderMaterial_wf7ne")
 
-[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="146" unique_id=66705242]
+[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="146" unique_id=24412122]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_mxchm")
 
-[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="147" unique_id=1292896571]
+[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="147" unique_id=616884979]
 surface_material_override/0 = SubResource("ShaderMaterial_afqqx")
 
-[node name="Trophy_mo" parent="FortniteSkyeRoom" index="148" unique_id=50910274]
+[node name="Trophy_mo" parent="FortniteSkyeRoom" index="148" unique_id=2090912239]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_yjwit")
 
-[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="149" unique_id=735982332]
+[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="149" unique_id=1991815974]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_amv34")
 
-[node name="Wire03_mo" parent="FortniteSkyeRoom" index="150" unique_id=384708436]
+[node name="Wire03_mo" parent="FortniteSkyeRoom" index="150" unique_id=2086776325]
 surface_material_override/0 = SubResource("ShaderMaterial_u8eqe")
 
-[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="151" unique_id=1799892715]
+[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="151" unique_id=1298086391]
 surface_material_override/0 = SubResource("ShaderMaterial_ys57c")
 
 [node name="Neo_Residential_Wall_01_mo2" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=1497840226]

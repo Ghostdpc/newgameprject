@@ -63,6 +63,7 @@ var _body_collision: CollisionShape3D
 
 var _pickup_hold_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
+var _head_icon: PlayerHeadIcon
 
 ## 是否處於死亡/復活流程（非正常對戰狀態）
 func is_dead() -> bool:
@@ -76,6 +77,7 @@ func _ready() -> void:
 	_setup_state_machine()
 	_setup_model()
 	_setup_outfit()
+	_head_icon = get_node_or_null("PlayerHeadIcon") as PlayerHeadIcon
 	apply_player_color(player_color)
 	add_to_group("players")
 
@@ -125,9 +127,23 @@ func pickup_item(item_id: String) -> void:
 	held_item_id = item_id
 	item_picked_up.emit(item_id)
 	EventBus.item_picked_up.emit(player_index, item_id)
+	_show_head_icon(item_id)
 	var def := ItemSystem._item_config.get_item(item_id) if ItemSystem else null
 	if def and def.trigger == ItemTypes.Trigger.ON_PICKUP:
 		use_held_item()
+
+## 头顶显示道具图标（约 2 秒出现→消失）
+func _show_head_icon(item_id: String) -> void:
+	if not _head_icon:
+		return
+	if not ItemSystem or not ItemSystem._item_config:
+		return
+	var icon_key: String = ItemSystem._item_config.get_item_icon(item_id)
+	if icon_key == "":
+		return
+	var tex := ItemIcons.load_icon(icon_key)
+	if tex:
+		_head_icon.show_item(tex)
 
 ## 使用当前持有的道具（供输入系统或外部调用）
 func use_held_item() -> void:

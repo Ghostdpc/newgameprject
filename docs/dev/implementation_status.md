@@ -185,6 +185,13 @@ camera_behavior_push_requested(target, behavior) / camera_behavior_pop_requested
 - `hud.gd`：倒计时/倍率色同步染标线；决胜 3 秒标线一起红脉冲（独立 tween）。
 - 倒计时位置保持取景框内底部中央（既有决策不变）。
 
+### 拾取气泡（交互文档 §8，v1.2 补齐）
+- `scripts/ui/pickup_bubble.gd`（PickupBubbles），挂在 `battle_hud.tscn` 的 MainLayer。
+- 拾取道具/服装时头顶浮现「泡泡+图标」：泡泡沿用卡片视觉（card_bubble + card_tint 染身份色），
+  弹入 0.18s → 跟随头顶 → 1.4s 后上浮淡出，总时长 2.5s；连续拾取立即替换。
+- 尾巴随角色屏幕左右半自动镜像；镜头外/角色隐藏时不显示。
+- 图标映射：服装 id 直查 ItemIcons，道具 id 兜底走 `ItemConfig.get_item_icon`。
+
 ### 流程归属整理
 - ScoringScreen 的 `setup/show_results/flow_finished` 统一由 `LevelBase` 接管；
   `demo_stage.gd` 移除重复接线，只保留 `_on_level_settlement` 里 `enter_scoring_mode()`。

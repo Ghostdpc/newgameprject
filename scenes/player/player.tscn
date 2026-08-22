@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/player/outfit_manager.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/player/character_effects.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/player/player_marker.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/player/player_head_icon.gd" id="7"]
 
 [sub_resource type="CapsuleShape3D" id="4"]
 radius = 0.4
@@ -33,3 +34,8 @@ script = ExtResource("5")
 
 [node name="PlayerMarker" type="Node3D" parent="."]
 script = ExtResource("6")
+
+[node name="PlayerHeadIcon" type="Sprite3D" parent="."]
+position = Vector3(0, 2.1, 0)
+scale = Vector3(0.6, 0.6, 0.6)
+script = ExtResource("7")

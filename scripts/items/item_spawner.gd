@@ -106,4 +106,3 @@ func _make_fallback_spot() -> Node3D:
 	# 用完後延遲釋放（等 _try_spawn 讀完 global_position）
 	dummy.call_deferred("queue_free")
 	return dummy
-
