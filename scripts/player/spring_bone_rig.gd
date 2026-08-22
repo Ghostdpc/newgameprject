@@ -27,12 +27,17 @@
 class_name SpringBoneRig
 extends Node3D
 
+const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
+
 ## 參與彈簧的骨骼（KayKit Mannequin 命名）。可自訂全組。
 @export var bones: Array[String] = [
 	"hips", "spine", "chest", "head",
 	"upperarm.l", "lowerarm.l", "upperarm.r", "lowerarm.r",
 	"upperleg.l", "lowerleg.l", "upperleg.r", "lowerleg.r",
 ]
+
+## Human 骨架（骨骼.00x 無語義骨）時經映射解析；由外部在 setup 前設置
+var is_human: bool = false
 
 ## ─── 命名預設 ─────────────────────────────────────────────────────────────
 ## 每個預設可被 apply_preset("名字") 套用，把 spring_k/d/wobble_force/pulse 等
@@ -258,7 +263,7 @@ func _init_spring() -> void:
 	if not skeleton:
 		return
 	for bone_name in bones:
-		var idx := skeleton.find_bone(bone_name)
+		var idx := _fb(bone_name)
 		if idx == -1:
 			continue
 		_spring_rot[bone_name] = skeleton.get_bone_pose_rotation(idx)
@@ -266,10 +271,16 @@ func _init_spring() -> void:
 	_prev_velocity = Vector3.ZERO
 	_ready_flag = true
 
+## 依骨名找骨架索引（Human 經映射解析）
+func _fb(bone_name: String) -> int:
+	if not skeleton:
+		return -1
+	return skeleton.find_bone(HumanBoneMap.resolve(bone_name, is_human))
+
 ## 目標骨骼旋轉：優先動畫 pose，其次 rest（讀自 target_skeleton，缺省 = skeleton）
 func _target_rotation(bone_name: String) -> Quaternion:
 	var src := target_skeleton if target_skeleton else skeleton
-	var idx := src.find_bone(bone_name)
+	var idx := _fb_in(src, bone_name)
 	if idx == -1:
 		return Quaternion.IDENTITY
 	var q: Quaternion
@@ -278,6 +289,12 @@ func _target_rotation(bone_name: String) -> Quaternion:
 	else:
 		q = src.get_bone_global_rest(idx).basis.get_rotation_quaternion()
 	return q
+
+## 在指定骨架依骨名找索引（Human 經映射解析）
+func _fb_in(src: Skeleton3D, bone_name: String) -> int:
+	if not src:
+		return -1
+	return src.find_bone(HumanBoneMap.resolve(bone_name, is_human))
 
 ## 彈簧骨骼主迴圈
 func _tick_springs(delta: float) -> void:
@@ -309,7 +326,7 @@ func _tick_springs(delta: float) -> void:
 		breath_yaw = sin(_time * TAU * breath_freq * 0.61 + 2.6) * breath_amp * 0.4
 
 	for bone_name in bones:
-		var idx := skeleton.find_bone(bone_name)
+		var idx := _fb(bone_name)
 		if idx == -1:
 			continue
 		var k: float = spring_k.get(bone_name, 200.0)

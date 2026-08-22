@@ -4,15 +4,20 @@
 class_name OutfitManager
 extends Node
 
+const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
+
 signal item_equipped(slot_name: String, item: Node3D)
 signal item_unequipped(slot_name: String)
 
-## 槽位名 -> 目標骨骼（KayKit Mannequin 命名，缺骨時自動退化成普通槽位）
+## 槽位名 -> 目標骨骼（KayKit Mannequin 命名，缺骨時自動退化成普通槽位；
+## Human 骨架經 HumanBoneMap 解析到無語義編號骨）
 const SLOT_BONES: Dictionary = {
 	"hat_slot": "head",
 	"shirt_slot": "chest",
 	"accessory_slot": "upperarm.r",
 }
+
+var _is_human: bool = false
 
 @export var character_root: Node3D
 @export var skeleton: Skeleton3D
@@ -32,7 +37,18 @@ func _ready() -> void:
 		character_root = get_parent() as Node3D
 	if not skeleton and character_root:
 		skeleton = character_root.find_child("Skeleton3D", true, false) as Skeleton3D
+	_detect_human()
 	_build_slots()
+
+## 偵測骨架是否為 Human（含「骨骼」無語義骨名），決定是否用映射
+func _detect_human() -> void:
+	_is_human = false
+	if not skeleton:
+		return
+	for i in skeleton.get_bone_count():
+		if String(skeleton.get_bone_name(i)).begins_with("骨骼"):
+			_is_human = true
+			return
 
 func _build_slots() -> void:
 	for slot_name in SLOT_BONES:
@@ -40,11 +56,12 @@ func _build_slots() -> void:
 
 func _create_slot(slot_name: String) -> void:
 	var bone_name: String = SLOT_BONES[slot_name]
+	var real_bone := HumanBoneMap.resolve(bone_name, _is_human)
 	var slot: Node3D
-	if skeleton and skeleton.find_bone(bone_name) != -1:
+	if skeleton and skeleton.find_bone(real_bone) != -1:
 		var attachment := BoneAttachment3D.new()
 		attachment.name = slot_name
-		attachment.bone_name = bone_name
+		attachment.bone_name = real_bone
 		skeleton.add_child(attachment)
 		slot = attachment
 	else:

@@ -1,12 +1,13 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://assets/models/mannequin/animations/Rig_Medium_MovementBasic.glb" id="2"]
+[ext_resource type="PackedScene" uid="uid://bekeixexq1don" path="res://assets/models/human/human.fbx" id="2"]
 [ext_resource type="Script" path="res://scripts/player/ragdoll_rig.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/player/outfit_manager.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/player/character_effects.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/player/player_marker.gd" id="6"]
 [ext_resource type="Script" path="res://scripts/player/player_head_icon.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/player/player_face_controller.gd" id="8"]
 
 [sub_resource type="CapsuleShape3D" id="4"]
 radius = 0.42
@@ -39,3 +40,6 @@ script = ExtResource("6")
 position = Vector3(0, 2.1, 0)
 scale = Vector3(0.6, 0.6, 0.6)
 script = ExtResource("7")
+
+[node name="Face" type="Node" parent="."]
+script = ExtResource("8")

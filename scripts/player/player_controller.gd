@@ -16,6 +16,29 @@ const ANIM_JUMP: String = "Jump_Full_Long"
 const ANIM_DIVE: String = "Jump_Full_Short"
 
 const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium_General.glb"
+const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
+
+## human 動畫 FPS（模型導入 30fps）
+const HUMAN_ANIM_FPS: float = 30.0
+## human「主動畫」內部的子段（帧號）——所有動作統一塞在同一個動畫裡，按帧號拆：
+## 美術後續加動作時，直接在這個表裡加一行即可，程式自動拆出可點播的子動畫。
+## {子動畫名: [起始幀, 結束幀]}
+const HUMAN_ANIM_SLOTS: Dictionary = {
+	"Human_Idle":  [0, 30],    # 待機
+	"Human_Move":  [40, 60],   # 移動
+	"Human_Dive":  [70, 105],  # 飛撲
+	# 之後美術把更多動作塞進主動畫時，在此加一行即可（如 "Human_Jump": [106,119]）
+}
+
+## 主動畫的後綴識別（美術可能命名 Idle/Walk/… 各種，取「存在」的那個）
+const HUMAN_MASTER_SUFFIXES: Array[String] = ["Idle", "Walk", "Main", "Master"]
+
+## human.fbx 原始高度約 4.456（實測），縮放到 1.0m 的精確係數
+const HUMAN_MODEL_SCALE: float = 1.0 / 4.456
+## human 動畫名帶「骨架|」前綴，用後綴匹配（Idle/Walk/jump）
+const HUMAN_ANIM_IDLE: String = "Idle"
+const HUMAN_ANIM_MOVE: String = "Walk"
+const HUMAN_ANIM_JUMP: String = "jump"
 
 ## 拾取長按時長（秒，策划要求 0.8）
 const PICKUP_HOLD_TIME: float = 0.8
@@ -30,6 +53,8 @@ const GRAB_LERP: float = 8.0
 @export var jump_force: float = 10.0
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
+## human 模型本體 Y 軸朝向補償（deg）。若走路側身，在 player.tscn 調整讓模型正面朝移動方向。
+@export var human_model_yaw_deg: float = -90.0
 
 signal item_picked_up(item_id: String)
 signal item_used(item_id: String)
@@ -42,6 +67,7 @@ var ragdoll_rig: RagdollRig
 var outfit_manager: OutfitManager
 var character_effects: CharacterEffects
 var spring_rig: SpringBoneRig
+var face: PlayerFaceController
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
@@ -54,6 +80,7 @@ var body_width: float = 1.0
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
+var _is_human_model: bool = false
 var _suicide_was_pressed: bool = false
 var _model_skeleton: Skeleton3D
 var _head_bone_idx: int = -1
@@ -445,16 +472,31 @@ func _setup_model() -> void:
 	if not model:
 		return
 	_animation_player = _find_animation_player(model)
-	_merge_idle_animation()
-	_set_animation_looping(ANIM_IDLE)
-	_set_animation_looping(ANIM_MOVE)
-	_set_animation_looping(ANIM_JUMP)
-	_set_animation_looping(ANIM_DIVE)
+	# human 模型檢測：動畫名以「骨架|」開頭（KayKit 為 Idle_A 等），縮小 10 倍 + 轉前向
+	_is_human_model = _is_human_skel(model)
+	if _is_human_model:
+		# human 骨骼 pose 由動畫直接驅動。做正確縮放 + Y 軸朝向補償（前向對齊 +Z）。
+		model.scale = Vector3.ONE * HUMAN_MODEL_SCALE
+		model.rotation.y = deg_to_rad(human_model_yaw_deg)
+		# 模型自帶 OmniLight 隨玩家移動造成泛白/發光，移除之
+		_remove_embedded_lights(model)
+		# 原模型材質為純白 unshaded（泛白主因），改為受光照的標準材質 + 玩家色
+		_apply_human_material(model)
+		# human 自帶動畫，不 merge KayKit Idle（骨骼名不匹配會報警）
+		_set_human_animation_looping()
+		_split_human_idle()
+	else:
+		_merge_idle_animation()
+		_set_animation_looping(ANIM_IDLE)
+		_set_animation_looping(ANIM_MOVE)
+		_set_animation_looping(ANIM_JUMP)
+		_set_animation_looping(ANIM_DIVE)
 	# 初始化布娃娃（綁定模型骨架）
 	ragdoll_rig = get_node_or_null("RagdollRig") as RagdollRig
 	if ragdoll_rig:
 		var skeleton := _find_skeleton(model)
 		if skeleton and _animation_player:
+			ragdoll_rig.is_human = _is_human_model
 			ragdoll_rig.setup(skeleton, _animation_player)
 	# Spring Bone 彈簧骨骼：常態軟糯效果（掛本角色，高 priority 在動畫後寫回）
 	spring_rig = SpringBoneRig.new()
@@ -464,17 +506,22 @@ func _setup_model() -> void:
 	if skel2 and _animation_player:
 		spring_rig.skeleton = skel2
 		spring_rig.animation_player = _animation_player
+		spring_rig.is_human = _is_human_model
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)
 	# 身材缩放：记录 head/chest 骨骼索引（服装效果放大部位用）
-	_model_skeleton = skel2
+	_model_skeleton = _find_skeleton(model)
 	if _model_skeleton:
-		_head_bone_idx = _model_skeleton.find_bone("head")
-		_body_bone_idx = _model_skeleton.find_bone("chest")
+		_head_bone_idx = _model_skeleton.find_bone(HumanBoneMap.resolve("head", _is_human_model))
+		_body_bone_idx = _model_skeleton.find_bone(HumanBoneMap.resolve("chest", _is_human_model))
 	# 变宽用到：Model 节点（整体横向缩放）+ 胶囊碰撞体（半径跟随）
 	_model_node = model
 	_body_collision = get_node_or_null("CollisionShape3D") as CollisionShape3D
+	# 表情贴脸：注入骨架（支持具名 head 骨与 Blender 默认骨名）
+	face = get_node_or_null("Face") as PlayerFaceController
+	if face:
+		face.setup(_model_skeleton)
 
 func _find_skeleton(n: Node) -> Skeleton3D:
 	if n is Skeleton3D:
@@ -484,6 +531,33 @@ func _find_skeleton(n: Node) -> Skeleton3D:
 		if r:
 			return r
 	return null
+
+## 判定是否 human 模型（骨架含 Blender 默認骨名「骨骼.」）
+func _is_human_skel(model: Node3D) -> bool:
+	var skel := _find_skeleton(model) as Skeleton3D
+	if skel:
+		for i in skel.get_bone_count():
+			if String(skel.get_bone_name(i)).begins_with("骨骼"):
+				return true
+	return false
+
+## 移除模型自帶的光源節點（human.fbx 帶一個 OmniLight，會造成泛白/發光）
+func _remove_embedded_lights(model: Node3D) -> void:
+	for l in model.find_children("*", "Light3D", true, false):
+		l.queue_free()
+
+## 覆蓋 human 模型的純白 unshaded 材質：改為受光照、帶玩家色，消除整片泛白
+func _apply_human_material(model: Node3D) -> void:
+	for mi in model.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		for s in m.mesh.get_surface_count():
+			m.material_override = null
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = player_color
+		mat.roughness = 0.9
+		mat.metallic = 0.0
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		m.material_override = mat
 
 ## 從 General.glb 合併 Idle 動畫（MovementBasic 無待機動畫）
 func _merge_idle_animation() -> void:
@@ -532,7 +606,7 @@ func _apply_child_compensate(bone_names: Array[String], parent_scale: float) -> 
 		return
 	var inv := 1.0 / parent_scale
 	for bname in bone_names:
-		var idx := _model_skeleton.find_bone(bname)
+		var idx := _model_skeleton.find_bone(HumanBoneMap.resolve(bname, _is_human_model))
 		if idx != -1:
 			_model_skeleton.set_bone_pose_scale(idx, Vector3.ONE * inv)
 
@@ -540,7 +614,11 @@ func _apply_child_compensate(bone_names: Array[String], parent_scale: float) -> 
 ## 让身材变换的同时碰撞体体积真实变大（飞扑/撞击判定一致）。
 func _apply_collision_scale() -> void:
 	if _model_node:
-		_model_node.scale.x = body_width
+		if _is_human_model:
+			# human 整體縮放基為 HUMAN_MODEL_SCALE，加寬只放大 X
+			_model_node.scale.x = HUMAN_MODEL_SCALE * body_width
+		else:
+			_model_node.scale.x = body_width
 	if _body_collision:
 		var shape := _body_collision.shape as CapsuleShape3D
 		if shape:
@@ -587,6 +665,71 @@ func _set_animation_looping(anim_name: String) -> void:
 	if _animation_player and _animation_player.has_animation(anim_name):
 		_animation_player.get_animation(anim_name).loop_mode = Animation.LOOP_LINEAR
 
+## human 動畫按後綴名稱設為循環（Idle/Walk 循環，jump 不循環）
+func _set_human_animation_looping() -> void:
+	if not _animation_player:
+		return
+	for an in _animation_player.get_animation_list():
+		var anim := _animation_player.get_animation(an)
+		if an.ends_with("Idle") or an.ends_with("Walk"):
+			anim.loop_mode = Animation.LOOP_LINEAR
+		elif an.ends_with("jump"):
+			anim.loop_mode = Animation.LOOP_NONE
+
+## 把 human 主動畫（所有動作塞在一起的那個）按帧號拆成多個獨立子動畫。
+## 源主動畫內部不同帧段是不同動作，直接播整段會「站立錯亂」。
+func _split_human_idle() -> void:
+	if not _animation_player:
+		return
+	var src_name := ""
+	for an in _animation_player.get_animation_list():
+		for sfx in HUMAN_MASTER_SUFFIXES:
+			if an.ends_with(sfx):
+				src_name = an
+				break
+		if src_name != "":
+			break
+	if src_name == "":
+		# 找不到主動畫：退而取第一個動畫當源
+		var list := _animation_player.get_animation_list()
+		if list.size() == 0:
+			return
+		src_name = list[0]
+	var src: Animation = _animation_player.get_animation(src_name)
+	for slot_name in HUMAN_ANIM_SLOTS:
+		var range_arr: Array = HUMAN_ANIM_SLOTS[slot_name]
+		var f0: int = range_arr[0]
+		var f1: int = range_arr[1]
+		var t0 := f0 / HUMAN_ANIM_FPS
+		var t1 := f1 / HUMAN_ANIM_FPS
+		_slice_animation(src, t0, t1, slot_name)
+
+## 從 source 動畫切割 [t0, t1] 時間窗口生成新動畫並加入動畫庫。
+## 針對每條軌收集窗口内的關鍵幀，時間平移到 0 起。
+func _slice_animation(src: Animation, t0: float, t1: float, new_name: String) -> void:
+	if not _animation_player or not _animation_player.has_animation_library(""):
+		return
+	var lib := _animation_player.get_animation_library("")
+	var dst := Animation.new()
+	for t in src.get_track_count():
+		var tk_type := src.track_get_type(t)
+		var path: NodePath = src.track_get_path(t)
+		var tk := dst.add_track(tk_type)
+		dst.track_set_path(tk, path)
+		# 复制轨属性
+		dst.track_set_interpolation_type(tk, src.track_get_interpolation_type(t))
+		var kc := src.track_get_key_count(t)
+		for i in kc:
+			var time := src.track_get_key_time(t, i)
+			if time < t0 - 0.001 or time > t1 + 0.001:
+				continue
+			var v = src.track_get_key_value(t, i)
+			var trans := src.track_get_key_transition(t, i)
+			dst.track_insert_key(tk, time - t0, v, trans)
+	dst.length = t1 - t0
+	dst.loop_mode = Animation.LOOP_LINEAR
+	lib.add_animation(new_name, dst)
+
 ## 依當前狀態切換動畫
 func _update_animation() -> void:
 	if not _animation_player:
@@ -603,6 +746,17 @@ func _update_animation() -> void:
 		_current_anim = anim_name
 
 func _anim_for_state(state_name: String) -> String:
+	if _is_human_model:
+		# human 動畫統一塞在一個主動畫裡，按帧號拆成子段，各自點播
+		match state_name:
+			"Move":
+				return _match_slot_anim("Human_Move")
+			"Dive":
+				return _match_slot_anim("Human_Dive")
+			"Jump", "Fly":
+				return _match_human_anim(HUMAN_ANIM_JUMP)
+			_:
+				return _match_slot_anim("Human_Idle")
 	match state_name:
 		"Move":
 			return ANIM_MOVE
@@ -615,6 +769,27 @@ func _anim_for_state(state_name: String) -> String:
 			return ANIM_DIVE
 		_:
 			return ANIM_IDLE
+
+## human 動畫名後綴匹配：找以指定後綴結尾的動畫名；找不到退回第一個
+func _match_human_anim(suffix: String) -> String:
+	if not _animation_player:
+		return ANIM_IDLE
+	for an in _animation_player.get_animation_list():
+		if an.ends_with(suffix) or an.ends_with("|" + suffix):
+			return an
+	var list := _animation_player.get_animation_list()
+	return list[0] if list.size() > 0 else ANIM_IDLE
+
+## 精確動畫名匹配（用於拆分出的子動畫 Human_*）；找不到退回原主動畫的後綴匹配
+func _match_slot_anim(name: String) -> String:
+	if _animation_player and _animation_player.has_animation(name):
+		return name
+	# 拆不出：退回後綴匹配（如原 jump/Walk/Idle 動畫）
+	var suffix := name.replace("Human_", "")
+	var s := _match_human_anim(suffix)
+	if s == ANIM_IDLE:
+		s = _match_human_anim(HUMAN_ANIM_IDLE)
+	return s
 
 func _find_animation_player(n: Node) -> AnimationPlayer:
 	if n is AnimationPlayer:

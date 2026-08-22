@@ -1,0 +1,91 @@
+## 職責：Human 測試場景 UI 驅動 —— 提供換裝/表情/布娃娃/離地測試快捷鍵
+## 掛在 HumanDemo 根。操作 $Player（player.tscn 的 PlayerController 實例）。
+
+extends Node
+
+@onready var _hint: Label = $UILayer/Hint
+
+const HAT_SCENE := preload("res://scenes/tech_demos/outfit_items/hat.tscn")
+const SHIRT_SCENE := preload("res://scenes/tech_demos/outfit_items/shirt.tscn")
+const BACKPACK_SCENE := preload("res://scenes/tech_demos/outfit_items/backpack.tscn")
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed and not event.echo):
+		return
+	var k := (event as InputEventKey).keycode
+	var player := get_node_or_null("Player")
+	match k:
+		# 換裝
+		KEY_1: _equip(player, "hat_slot", HAT_SCENE)
+		KEY_2: _unequip(player, "hat_slot")
+		KEY_3: _equip(player, "shirt_slot", SHIRT_SCENE)
+		KEY_4: _unequip(player, "shirt_slot")
+		KEY_5: _equip(player, "accessory_slot", BACKPACK_SCENE)
+		KEY_6: _unequip(player, "accessory_slot")
+		# 表情
+		KEY_Q: _face(player, 1)
+		KEY_E: _face(player, -1)
+		KEY_R: _face(player, -1, true)
+		# 布娃娃
+		KEY_B: _ragdoll(player)
+
+func _equip(player: Node, slot: String, scene: PackedScene) -> void:
+	if not player:
+		return
+	var om = player.get("outfit_manager")
+	if om:
+		om.equip(slot, scene)
+		_hint_append(" 已穿戴: " + slot)
+
+func _unequip(player: Node, slot: String) -> void:
+	if not player:
+		return
+	var om = player.get("outfit_manager")
+	if om:
+		om.unequip(slot)
+		_hint_append(" 已卸下: " + slot)
+
+## 表情切換。dir>0 下一個，<0 上一個；clear=true 清除
+func _face(player: Node, dir: int, clear: bool = false) -> void:
+	if not player:
+		return
+	var fc = player.get("face")
+	if not fc:
+		return
+	if clear:
+		fc.call("clear")
+		_hint_append(" 表情清除")
+		return
+	var total: int = fc.call("count")
+	var cur: int = fc.get("_current_index")
+	var nxt: int
+	if total <= 0:
+		return
+	if cur < 0:
+		nxt = 0
+	elif dir > 0:
+		nxt = cur + 1 if cur < total - 1 else -1
+	else:
+		nxt = cur - 1 if cur > 0 else -1
+	fc.call("show_expression", nxt)
+	_hint_append(" 表情 #%d" % (nxt + 1))
+
+func _ragdoll(player: Node) -> void:
+	if not player:
+		return
+	var rr = player.get("ragdoll_rig")
+	if rr:
+		if rr.is_ragdoll_enabled():
+			rr.reset()
+			_hint_append(" 布娃娃關")
+		else:
+			rr.set_ragdoll_enabled(true)
+			_hint_append(" 布娃娃開")
+
+func _hint_append(t: String) -> void:
+	if _hint:
+		_hint.text = "Human (WASD移動/空格跳/F飛撲 E拾取)  [1帽3衣5背包]  [Q/E表情 R清除]  [B布娃娃]\n> " + t
+	else:
+		_hint = $UILayer/Hint
+		if _hint:
+			_hint_append(t)

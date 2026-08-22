@@ -160,6 +160,8 @@ func _make_tinted_material(mesh: MeshInstance3D, color: Color) -> Material:
 		var mat: Material = src.duplicate()
 		if mat is StandardMaterial3D:
 			(mat as StandardMaterial3D).albedo_color = color
+			# human 模型原始材質為 unshaded（泛白/發光主因），統一強制受光照
+			(mat as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 		return mat
 	var mat2 := StandardMaterial3D.new()
 	mat2.albedo_color = color

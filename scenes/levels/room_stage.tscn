@@ -69,7 +69,7 @@
 [ext_resource type="Texture2D" uid="uid://dmtsxxq00ovdk" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_WildWest_BedRoll_1_D.png" id="64_pjk34"]
 [ext_resource type="Environment" uid="uid://bly4kk5loghdq" path="res://resources/environments/room_post_process.tres" id="99_post_process"]
 [ext_resource type="Material" uid="uid://cys3207nm65pj" path="res://resources/materials/room_cartoon_outline_post_process.tres" id="100_outline_post"]
-[ext_resource type="PackedScene" uid="uid://dof4nv68roj65" path="res://assets/models/human/Human.fbx" id="101_human"]
+[ext_resource type="PackedScene" uid="uid://bekeixexq1don" path="res://assets/models/human/human.fbx" id="101_human"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q6di3"]
 render_priority = 0

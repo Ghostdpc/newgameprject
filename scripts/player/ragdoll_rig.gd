@@ -4,6 +4,8 @@
 class_name RagdollRig
 extends Node3D
 
+const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
+
 # 參與 ragdoll 的主要骨骼（KayKit Mannequin 命名）
 const RIG_BONES: Array[String] = [
 	"hips", "spine", "chest", "head",
@@ -15,6 +17,9 @@ const RIG_BONES: Array[String] = [
 
 @export var skeleton: Skeleton3D
 @export var animation_player: AnimationPlayer
+
+## Human 骨架使用無語義編號骨（骨骼.00x），需經 HumanBoneMap 解析部位名
+var is_human: bool = false
 
 var _ragdoll_enabled: bool = false
 var _simulator: PhysicalBoneSimulator3D
@@ -73,13 +78,14 @@ func _build_physical_bones() -> void:
 	skeleton.add_child(_simulator)
 
 	for bone_name in RIG_BONES:
-		var bone_idx := skeleton.find_bone(bone_name)
+		var real_name := HumanBoneMap.resolve(bone_name, is_human)
+		var bone_idx := skeleton.find_bone(real_name)
 		if bone_idx == -1:
 			push_warning("RagdollRig: bone '%s' not found" % bone_name)
 			continue
 		var phys := PhysicalBone3D.new()
 		phys.name = "Phys_" + bone_name
-		phys.bone_name = bone_name
+		phys.bone_name = real_name
 		# PIN 球窩關節：無角度限位，身體可充分癱軟橫躺（6DOF 默認限位會阻止全倒）
 		phys.joint_type = PhysicalBone3D.JOINT_TYPE_PIN
 		phys.mass = 0.5
