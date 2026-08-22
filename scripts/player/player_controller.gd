@@ -122,13 +122,13 @@ func _process(delta: float) -> void:
 		return
 	state_machine.update(delta)
 	_update_animation()
-	if held_item_id.is_empty():
-		# 身上无道具：长按 E 拾取（可被打断）
-		_update_pickup_hold(delta)
-	else:
-		# 身上有道具：按 E 立即使用
-		if player_input.is_use_item_just_pressed():
+	if player_input.is_use_item_just_pressed():
+		if not held_item_id.is_empty():
+			# 身上有道具：立即使用
 			use_held_item()
+		else:
+			# 身上無道具：嘗試拾取附近道具
+			_try_pickup()
 
 ## 长按拾取逻辑：按住 0.8s 触发；移动/受控 打断
 func _update_pickup_hold(delta: float) -> void:
