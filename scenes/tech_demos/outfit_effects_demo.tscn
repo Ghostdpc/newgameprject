@@ -1,0 +1,70 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/outfit_effects_demo_controller.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2"]
+
+[sub_resource type="BoxMesh" id="4"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="BoxShape3D" id="5"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="ProceduralSkyMaterial" id="6"]
+
+[sub_resource type="Sky" id="7"]
+sky_material = SubResource("6")
+
+[sub_resource type="Environment" id="8"]
+background_mode = 2
+sky = SubResource("7")
+ambient_light_source = 3
+ambient_light_energy = 0.8
+
+[node name="OutfitEffectsDemo" type="Node3D"]
+script = ExtResource("1")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("5")
+
+[node name="Player" parent="." instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 3)
+
+[node name="Player2" parent="." instance=ExtResource("2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, 3)
+player_index = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 10, 5)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.6876107, 0.7260796, 0, -0.7260796, 0.6876107, 0, 5, 7)
+current = true
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="Hint" type="Label" parent="UILayer"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 700.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 20
+text = "P1(WASD): 1頭大 2變寬 3慢 4快 5磕頭 || P2(方向鍵/F1-F5同效果) || R/0重置 || 撞擊測碰撞體"
+
+[node name="Feedback" type="Label" parent="UILayer"]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 600.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 22
+text = ""

@@ -7,6 +7,9 @@ extends CanvasLayer
 
 signal flow_finished(action: String)   # "restart" / "lobby"
 
+## 评分 RT（ID 遮罩）面板仅用于开发调试，正常游戏不显示。需要核对像素评分时在 inspector 勾选。
+@export var show_mask_debug: bool = false
+
 const DIM_ORDER: Array = [
 	["ratio", "画面比例"],
 	["center", "C位"],
@@ -94,7 +97,7 @@ func show_results(results: Dictionary) -> void:
 	if img and img.get_width() > 0:
 		_photo_rect.texture = ImageTexture.create_from_image(img)
 	var mask_img: Image = results.get("mask")
-	if mask_img and mask_img.get_width() > 0:
+	if show_mask_debug and mask_img and mask_img.get_width() > 0:
 		_mask_rect.texture = ImageTexture.create_from_image(mask_img)
 		_mask_panel.show()
 	else:

@@ -278,9 +278,12 @@ func _on_photo_taken(texture: ViewportTexture) -> void:
 func _do_shutter_flash() -> void:
 	if not _flash:
 		return
-	_flash.modulate.a = 1.0
+	# 注意：ShutterFlash 底色 alpha=0，modulate 是乘算（0×1=0）盖不住。
+	# 必须驱动 color:a：快门瞬间全屏不透明白，再 0.3s 淡出。
+	# 这层白闪同时遮住结算取掩码那两帧（演员临时移出主相机渲染层）。
+	_flash.color.a = 1.0
 	var tween := create_tween()
-	tween.tween_property(_flash, "modulate:a", 0.0, 0.3)
+	tween.tween_property(_flash, "color:a", 0.0, 0.3)
 
 func _on_settlement_completed(results: Dictionary) -> void:
 	if _scoring_screen:
