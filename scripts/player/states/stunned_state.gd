@@ -4,6 +4,7 @@ class_name StunnedState
 extends BaseState
 
 const STUN_DURATION: float = 1.5
+const KNOCKBACK_DAMP: float = 8.0
 
 var _timer: float = 0.0
 
@@ -20,7 +21,12 @@ func exit() -> void:
 
 func physics_update(delta: float) -> void:
 	_timer -= delta
-	if _timer <= 0.0:
-		var controller := _player as PlayerController
-		if controller and controller.is_on_floor():
-			controller.state_machine.transition_to("Idle")
+	var controller := _player as PlayerController
+	if not controller:
+		return
+	# 落地後水平速度衰減（模擬倒地摩擦）
+	if controller.is_on_floor():
+		controller.velocity.x = move_toward(controller.velocity.x, 0.0, KNOCKBACK_DAMP * delta)
+		controller.velocity.z = move_toward(controller.velocity.z, 0.0, KNOCKBACK_DAMP * delta)
+	if _timer <= 0.0 and controller.is_on_floor():
+		controller.state_machine.transition_to("Idle")
