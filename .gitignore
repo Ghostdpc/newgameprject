@@ -32,3 +32,8 @@ zhhw/
 
 # One-off dev verification scripts
 scripts/dev/
+
+# Blender source files (not Godot runtime assets)
+*.blend
+*.blend1
+
