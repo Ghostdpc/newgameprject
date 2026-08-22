@@ -10,6 +10,8 @@ var _lifetime_timer: float = 0.0
 var _triggered: bool = false
 ## 生成後延遲激活，避免放置者同幀自觸發
 var _activation_timer: float = 0.5
+## 放置者是否已離開過本區域：離開前放置者踩到不觸發（避免原地放置即自滑倒/自消失）
+var _owner_armed: bool = false
 
 func setup(def: TrapDef, placer: PlayerController) -> void:
 	trap_def    = def
@@ -26,17 +28,23 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 	shape.shape = box_shape
 	add_child(shape)
 
-	# 紫色 Cube 占位（道具放置物通用視覺）
-	var mesh_inst := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(0.6, 0.6, 0.6)
-	mesh_inst.mesh = box
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.6, 0.1, 1.0)
-	mesh_inst.material_override = mat
-	add_child(mesh_inst)
+	# 放置物视觉：优先配置模型（香蕉皮），失败回退紫色 Cube 占位
+	var visual: Node3D = null
+	if not def.model.is_empty():
+		visual = PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale, true)
+	if visual == null:
+		var mesh_inst := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = Vector3(0.6, 0.6, 0.6)
+		mesh_inst.mesh = box
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.6, 0.1, 1.0)
+		mesh_inst.material_override = mat
+		visual = mesh_inst
+	add_child(visual)
 
 	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
 	add_to_group("traps")
 
 func _process(delta: float) -> void:
@@ -57,9 +65,12 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 	if not (body is PlayerController):
 		return
+	var player := body as PlayerController
+	# 放置者在離開本區域前不觸發：避免原地放置後 0.5s 激活即自踩，香蕉皮瞬間消失
+	if player == owner_player and not _owner_armed:
+		return
 	_triggered = true
 
-	var player := body as PlayerController
 	for effect in trap_def.effects:
 		var targets := _resolve_targets(effect.target, player)
 		for target_player in targets:
@@ -70,6 +81,11 @@ func _on_body_entered(body: Node3D) -> void:
 
 	EventBus.trap_triggered.emit(trap_def.id, player.player_index)
 	queue_free()
+
+## 放置者離開後武裝：之後再踩（含放置者自己）才會觸發
+func _on_body_exited(body: Node3D) -> void:
+	if body == owner_player:
+		_owner_armed = true
 
 func _resolve_targets(target: ItemTypes.Target, stepper: PlayerController) -> Array:
 	if target == ItemTypes.Target.WORLD:

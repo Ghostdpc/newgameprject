@@ -5,6 +5,12 @@ extends RefCounted
 
 var id: String = ""
 var display_name: String = ""
+## 3D 模型資源路徑（res://，空 = 無模型用占位方塊）
+var model: String = ""
+## 貼圖資源路徑（res://，空 = 用模型自帶材質）
+var texture: String = ""
+## 模型統一縮放
+var model_scale: float = 1.0
 var lifetime: float = 0.0
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_STEP
 var effects: Array[ItemEffect] = []
@@ -13,6 +19,9 @@ static func from_dict(d: Dictionary) -> TrapDef:
 	var def := TrapDef.new()
 	def.id           = str(d.get("id", ""))
 	def.display_name = str(d.get("display_name", def.id))
+	def.model        = str(d.get("model", ""))
+	def.texture      = str(d.get("texture", ""))
+	def.model_scale  = float(d.get("model_scale", 1.0))
 	def.lifetime     = float(d.get("lifetime", 0.0))
 	def.trigger      = ItemTypes.Trigger.ON_STEP
 

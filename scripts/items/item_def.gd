@@ -6,6 +6,12 @@ extends RefCounted
 var id: String = ""
 var display_name: String = ""
 var icon: String = ""
+## 3D 模型資源路徑（res://，空 = 無模型用占位方塊）
+var model: String = ""
+## 貼圖資源路徑（res://，空 = 用模型自帶材質）
+var texture: String = ""
+## 模型統一縮放（貼合道具箱體積）
+var model_scale: float = 1.0
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_USE
 var effects: Array[ItemEffect] = []
 
@@ -15,6 +21,9 @@ static func from_dict(d: Dictionary) -> ItemDef:
 	def.id           = str(d.get("id", ""))
 	def.display_name = str(d.get("display_name", def.id))
 	def.icon         = str(d.get("icon", ""))
+	def.model        = str(d.get("model", ""))
+	def.texture      = str(d.get("texture", ""))
+	def.model_scale  = float(d.get("model_scale", 1.0))
 	def.trigger      = _parse_trigger(str(d.get("trigger", "on_use")))
 
 	var raw_effects: Array = d.get("effects", []) as Array

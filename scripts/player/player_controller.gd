@@ -70,6 +70,12 @@ func is_dead() -> bool:
 	var st := state_machine.current_state_name
 	return st == "Death" or st == "RespawnWaiting" or st == "RespawnFall"
 
+## 香蕉皮踩中：进入倒地滑行状态（沿途撞人，类似飞扑）
+func start_banana_slide() -> void:
+	if is_dead():
+		return
+	state_machine.transition_to("BananaSlide")
+
 func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
 	# 身材缩放要排在动画(priority 0)与弹簧骨骼(100)之后，避免骨骼 scale 被动画覆盖
@@ -270,8 +276,11 @@ func _push_contacted_props() -> void:
 ## 抓取更新：R 鍵按住 → 抓起/跟隨面前物理物；鬆開 → 拋出
 func _update_grab(delta: float) -> void:
 	if _grabbed_prop != null:
-		# 平滑吸向玩家正面抓取點（不瞬移），到位後貼手跟隨
-		var target := global_position + Vector3.UP * GRAB_LIFT + global_basis.z * 1.6
+		# 抓取點隨物品尺寸：前置距離=深度一半+間隙，抬升=高度/2（避免大件卡身位）
+		var size := _prop_half_extents(_grabbed_prop)
+		var depth := size.z  # 沿前向的半深
+		var height := size.y # 半高
+		var target := global_position + Vector3.UP * (GRAB_LIFT + height) + global_basis.z * (depth + 0.5)
 		var diff := target - _grabbed_prop.global_position
 		if diff.length() > 0.05:
 			_grabbed_prop.global_position += diff * clampf(GRAB_LERP * delta, 0.0, 1.0)
@@ -295,6 +304,22 @@ func _update_grab(delta: float) -> void:
 		_grabbed_prop = _find_nearest_prop()
 		if _grabbed_prop:
 			_grabbed_prop.grab()
+
+## 物品碰撞半尺寸（xyz），用於調整抓取點位置避免大件卡身位。無碰撞/未知時返回原固定檔位。
+func _prop_half_extents(prop: PhysicalProp) -> Vector3:
+	for cs in prop.find_children("*", "CollisionShape3D", true, false):
+		var shape: Shape3D = (cs as CollisionShape3D).shape
+		if shape is BoxShape3D:
+			return (shape as BoxShape3D).size * 0.5
+		if shape is CapsuleShape3D:
+			var cap := shape as CapsuleShape3D
+			return Vector3(cap.radius, cap.height * 0.5, cap.radius)
+	var mesh_nodes := prop.find_children("*", "MeshInstance3D", true, false)
+	if not mesh_nodes.is_empty():
+		var mi := mesh_nodes[0] as MeshInstance3D
+		if mi and mi.mesh:
+			return mi.get_aabb().size * 0.5
+	return Vector3(1.1, 0.8, 1.1)
 
 ## 找最近的可抓取場景物件（group "physical_prop"，距離內）
 func _find_nearest_prop() -> PhysicalProp:
@@ -372,6 +397,7 @@ func _setup_state_machine() -> void:
 	var dive := DiveState.new()
 	var fly := FlyState.new()
 	var stunned := StunnedState.new()
+	var banana_slide := BananaSlideState.new()
 	var death := DeathState.new()
 	var respawn_waiting := RespawnWaitingState.new()
 	var respawn_fall := RespawnFallState.new()
@@ -382,6 +408,7 @@ func _setup_state_machine() -> void:
 	dive.init(self)
 	fly.init(self)
 	stunned.init(self)
+	banana_slide.init(self)
 	death.init(self)
 	respawn_waiting.init(self)
 	respawn_fall.init(self)
@@ -392,6 +419,7 @@ func _setup_state_machine() -> void:
 	state_machine.register_state("Dive", dive)
 	state_machine.register_state("Fly", fly)
 	state_machine.register_state("Stunned", stunned)
+	state_machine.register_state("BananaSlide", banana_slide)
 	state_machine.register_state("Death", death)
 	state_machine.register_state("RespawnWaiting", respawn_waiting)
 	state_machine.register_state("RespawnFall", respawn_fall)
@@ -535,7 +563,7 @@ func _kowtow_impulse(head_impulse: Vector3, body_impulse: Vector3) -> void:
 func _ragdoll_in_use() -> bool:
 	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
 		return true
-	return state_machine.current_state_name == "Stunned"
+	return state_machine.current_state_name == "Stunned" or state_machine.current_state_name == "BananaSlide"
 
 func _reset_bone_scale(bone_idx: int) -> void:
 	if _model_skeleton and bone_idx != -1:
@@ -552,7 +580,7 @@ func _update_animation() -> void:
 		return
 	if is_dead():
 		return
-	if state_machine.current_state_name == "Stunned":
+	if state_machine.current_state_name == "Stunned" or state_machine.current_state_name == "BananaSlide":
 		return
 	if ragdoll_rig and ragdoll_rig.is_standing_up():
 		return
