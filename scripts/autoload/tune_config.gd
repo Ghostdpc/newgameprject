@@ -11,23 +11,26 @@ var stun_gravity: float = 45.0     ## 被擊飛期間重力（大=上升下降�
 var ground_brake: float = 30.0     ## 倒地落地水平刹車（大=立刻停）
 var ragdoll_linear_damp: float = 0.3   ## 布娃娃線性阻尼（小=軟）
 var ragdoll_angular_damp: float = 0.3  ## 布娃娃角阻尼（小=擺動大）
+var stun_duration: float = 1.8         ## 倒地（Stunned）時長，秒
 
 const _DEFAULTS: Dictionary = {
 	"dive_force": 9.0, "hit_force": 6.0, "hit_upward": 7.0,
 	"stun_gravity": 45.0, "ground_brake": 30.0,
 	"ragdoll_linear_damp": 0.3, "ragdoll_angular_damp": 0.3,
+	"stun_duration": 1.8,
 }
 
 const CONFIG_PATH: String = "res://data/configs/tune.json"
 
 var _params: Array = [
-	{"name": "dive_force", "step": 0.5},
-	{"name": "hit_force", "step": 0.5},
-	{"name": "hit_upward", "step": 0.5},
-	{"name": "stun_gravity", "step": 2.0},
-	{"name": "ground_brake", "step": 2.0},
-	{"name": "ragdoll_linear_damp", "step": 0.1},
-	{"name": "ragdoll_angular_damp", "step": 0.1},
+	{"name": "dive_force", "step": 0.5, "desc": "自己飛撲衝刺速度（大=衝更遠）"},
+	{"name": "hit_force", "step": 0.5, "desc": "擊飛目標水平力（大=撞出更遠）"},
+	{"name": "hit_upward", "step": 0.5, "desc": "擊飛上拋初速（大=飛更高）"},
+	{"name": "stun_gravity", "step": 2.0, "desc": "被擊飛期間重力（大=上升下降快）"},
+	{"name": "ground_brake", "step": 2.0, "desc": "倒地落地水平刹車（大=立刻停）"},
+	{"name": "ragdoll_linear_damp", "step": 0.1, "desc": "布娃娃線性阻尼（小=更軟更滑）"},
+	{"name": "ragdoll_angular_damp", "step": 0.1, "desc": "布娃娃角阻尼（小=擺動更誇張）"},
+	{"name": "stun_duration", "step": 0.5, "desc": "倒地癱軟時長，秒"},
 ]
 var _selected: int = 0
 var _label: Label
@@ -105,6 +108,11 @@ func _refresh() -> void:
 		var pname: String = _params[i]["name"]
 		var mark := ">" if i == _selected else " "
 		lines.append("%s %-20s %.2f" % [mark, pname, float(get(pname))])
+	# 當前選中參數的中文說明
+	if _params.size() > 0:
+		var cur: Dictionary = _params[_selected]
+		lines.append("")
+		lines.append("≻ %s：%s" % [cur["name"], cur.get("desc", "")])
 	_label.text = "\n".join(lines)
 
 ## 從 res://data/configs/tune.json 讀取覆蓋默認值
