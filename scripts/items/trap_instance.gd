@@ -26,13 +26,13 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 	shape.shape = box_shape
 	add_child(shape)
 
-	# 黃色扁平 Cube 占位（香蕉皮視覺）
+	# 紫色 Cube 占位（道具放置物通用視覺）
 	var mesh_inst := MeshInstance3D.new()
 	var box := BoxMesh.new()
-	box.size = Vector3(0.6, 0.05, 0.6)
+	box.size = Vector3(0.6, 0.6, 0.6)
 	mesh_inst.mesh = box
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 0.9, 0.1)
+	mat.albedo_color = Color(0.6, 0.1, 1.0)
 	mesh_inst.material_override = mat
 	add_child(mesh_inst)
 
