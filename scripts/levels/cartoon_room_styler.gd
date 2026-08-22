@@ -4,7 +4,7 @@ extends Node3D
 const TOON_SHADER: Shader = preload("res://resources/shaders/toon_room_material.gdshader")
 
 var _fill_light := 0.08
-var _color_saturation := 1.12
+var _color_saturation := 0.9
 
 @export_range(0.0, 0.35, 0.01) var fill_light: float:
     get:
