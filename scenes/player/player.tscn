@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://m6wkaui35yss"]
 
 [ext_resource type="Script" uid="uid://da7awv2pkpc3e" path="res://scripts/player/player_controller.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://d2gdq42swhhbp" path="res://assets/models/mannequin/animations/Rig_Medium_MovementBasic.glb" id="2"]
+[ext_resource type="PackedScene" uid="uid://bekeixexq1don" path="res://assets/models/human/human.fbx" id="2"]
 [ext_resource type="Script" uid="uid://cdw1l6pyv5b1a" path="res://scripts/player/ragdoll_rig.gd" id="3"]
 [ext_resource type="Script" uid="uid://dpvggyr46io8p" path="res://scripts/player/outfit_manager.gd" id="4"]
 [ext_resource type="Script" uid="uid://ccuiu73genp2m" path="res://scripts/player/character_effects.gd" id="5"]

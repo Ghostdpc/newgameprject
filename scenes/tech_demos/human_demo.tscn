@@ -27,6 +27,10 @@ script = ExtResource("2_ui")
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
+[node name="Dummy" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -3)
+player_index = 1
+
 [node name="Ground" type="StaticBody3D" parent="." unique_id=437899215]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
 
@@ -58,4 +62,4 @@ offset_top = 20.0
 offset_right = 900.0
 offset_bottom = 120.0
 theme_override_font_sizes/font_size = 20
-text = "Human (WASD移動/空格跳/F飛撲 E拾取)  [1帽3衣5背包]  [Q/E表情 R清除]  [B布娃娃]"
+text = "Human (WASD移動/空格跳/F飛撲) 前方Dummy靶子可撲倒　[1帽3衣5背包] [Q/E表情 R清除] [B布娃娃] [N彈簧磕頭 M磕頭]"

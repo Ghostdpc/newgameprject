@@ -706,6 +706,8 @@ func _split_human_idle() -> void:
 		return
 	var src_name := ""
 	for an in _animation_player.get_animation_list():
+		if an.begins_with("Human_"):
+			continue   # 略過拆分產生的子動畫，避免用它們當源遞歸拆分
 		for sfx in HUMAN_MASTER_SUFFIXES:
 			if an.ends_with(sfx):
 				src_name = an
@@ -713,11 +715,14 @@ func _split_human_idle() -> void:
 		if src_name != "":
 			break
 	if src_name == "":
-		# 找不到主動畫：退而取第一個動畫當源
+		# 找不到主動畫：退而取第一個非拆分的動畫當源
 		var list := _animation_player.get_animation_list()
-		if list.size() == 0:
-			return
-		src_name = list[0]
+		for an in list:
+			if not an.begins_with("Human_"):
+				src_name = an
+				break
+	if src_name == "":
+		return
 	var src: Animation = _animation_player.get_animation(src_name)
 	for slot_name in HUMAN_ANIM_SLOTS:
 		var range_arr: Array = HUMAN_ANIM_SLOTS[slot_name]
