@@ -35,6 +35,10 @@ func _register_effects() -> void:
 		ItemTypes.EffectKind.SPAWN_TRAP,
 		load("res://scripts/items/effects/spawn_trap_effect.gd")
 	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.PLAYER_RAGDOLL,
+		load("res://scripts/items/effects/player_ragdoll_effect.gd")
+	)
 
 ## 玩家使用道具的唯一入口
 ## source_player: 使用者（null = 系統觸發），item_id 對應 items.json
