@@ -15,7 +15,9 @@ const PANEL_BG_COLOR: Color = Color(0.0, 0.0, 0.0, 0.72)
 const PANEL_WIDTH: int = 260
 const PANEL_PADDING: int = 10
 
-var _collisions_on: bool = false
+## F1 碰撞體三態循環：0=關 → 1=僅玩家 → 2=全部(含場景/道具) → 0
+enum CollisionShow { OFF, PLAYERS, ALL }
+var _collision_show: CollisionShow = CollisionShow.OFF
 var _bones_on: bool = false
 var _data_panel_on: bool = false
 var _timer_paused: bool = false
@@ -93,9 +95,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 func _toggle_collisions() -> void:
-	_collisions_on = not _collisions_on
-	_collision_mesh.visible = _collisions_on
-	print("DebugVisualizer: collisions = ", _collisions_on)
+	_collision_show = (_collision_show + 1) % 3
+	_collision_mesh.visible = _collision_show != CollisionShow.OFF
+	print("DebugVisualizer: collisions = ", _collision_show)
 
 func _toggle_bones() -> void:
 	_bones_on = not _bones_on
@@ -136,7 +138,7 @@ func _inject_item_to_p1() -> void:
 func _process(_delta: float) -> void:
 	if _bones_on:
 		_rebuild_bone_lines()
-	if _collisions_on:
+	if _collision_show != CollisionShow.OFF:
 		_rebuild_collisions()
 	if _data_panel_on:
 		_refresh_data_panel()
@@ -162,22 +164,28 @@ func _rebuild_bone_lines() -> void:
 				imm.surface_add_vertex(to)
 	imm.surface_end()
 
-## 遍歷所有角色（players 組），只畫角色身上的碰撞體線框
+## 畫碰撞體線框：PLAYERS=只角色，ALL=整棵樹全部（含場景靜態體/道具）
 func _rebuild_collisions() -> void:
 	var imm: ImmediateMesh = _collision_mesh.mesh as ImmediateMesh
 	imm.clear_surfaces()
 	imm.surface_begin(Mesh.PRIMITIVE_LINES, _collision_mat)
-	for player in get_tree().get_nodes_in_group("players"):
-		for child in (player as Node).find_children("*", "CollisionShape3D", true, false):
-			var cs := child as CollisionShape3D
-			if not cs or not cs.shape:
-				continue
-			var tf := cs.global_transform
-			if cs.shape is CapsuleShape3D:
-				_draw_capsule(imm, tf, cs.shape as CapsuleShape3D)
-			elif cs.shape is BoxShape3D:
-				_draw_box(imm, tf, cs.shape as BoxShape3D)
+	if _collision_show == CollisionShow.ALL:
+		for child in get_tree().root.find_children("*", "CollisionShape3D", true, false):
+			_draw_shape(imm, child as CollisionShape3D)
+	else:
+		for player in get_tree().get_nodes_in_group("players"):
+			for child in (player as Node).find_children("*", "CollisionShape3D", true, false):
+				_draw_shape(imm, child as CollisionShape3D)
 	imm.surface_end()
+
+func _draw_shape(imm: ImmediateMesh, cs: CollisionShape3D) -> void:
+	if not cs or not cs.shape:
+		return
+	var tf := cs.global_transform
+	if cs.shape is CapsuleShape3D:
+		_draw_capsule(imm, tf, cs.shape as CapsuleShape3D)
+	elif cs.shape is BoxShape3D:
+		_draw_box(imm, tf, cs.shape as BoxShape3D)
 
 func _draw_capsule(imm: ImmediateMesh, tf: Transform3D, shape: CapsuleShape3D) -> void:
 	var radius: float = shape.radius
