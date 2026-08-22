@@ -24,9 +24,10 @@ func physics_update(delta: float) -> void:
 	var controller := _player as PlayerController
 	if not controller:
 		return
-	# 落地後水平速度衰減（模擬倒地摩擦）
+	# 落地後水平速度衰減（大刹車=立刻停，倒地滑行短）
 	if controller.is_on_floor():
-		controller.velocity.x = move_toward(controller.velocity.x, 0.0, KNOCKBACK_DAMP * delta)
-		controller.velocity.z = move_toward(controller.velocity.z, 0.0, KNOCKBACK_DAMP * delta)
+		var brake := TuneConfig.ground_brake * delta
+		controller.velocity.x = move_toward(controller.velocity.x, 0.0, brake)
+		controller.velocity.z = move_toward(controller.velocity.z, 0.0, brake)
 	if _timer <= 0.0 and controller.is_on_floor():
 		controller.state_machine.transition_to("Idle")

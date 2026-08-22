@@ -7,10 +7,12 @@ const GRAVITY: float = 20.0
 const MOVE_SPEED: float = 6.0
 const ACCELERATION: float = 15.0
 
-const ANIM_IDLE: String = "T-Pose"
+const ANIM_IDLE: String = "Idle_A"
 const ANIM_MOVE: String = "Running_A"
 const ANIM_JUMP: String = "Jump_Full_Long"
 const ANIM_DIVE: String = "Jump_Full_Short"
+
+const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium_General.glb"
 
 @export var jump_force: float = 10.0
 @export var player_index: int = 0
@@ -31,6 +33,7 @@ var held_item_id: String = ""
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
+var is_dead: bool = false
 
 func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
@@ -58,6 +61,23 @@ func sync_body_to_ragdoll() -> void:
 	if hips_pos == Vector3.ZERO:
 		return
 	global_position = Vector3(hips_pos.x, global_position.y, hips_pos.z)
+
+## 出界死亡：停物理、關布娃娃、隱藏（等待重生）
+func die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	set_ragdoll(false)
+	velocity = Vector3.ZERO
+	visible = false
+
+## 重生：移到指定位置、恢復可控
+func respawn(pos: Vector3) -> void:
+	global_position = pos
+	velocity = Vector3.ZERO
+	is_dead = false
+	visible = true
+	state_machine.transition_to("Idle")
 
 ## 倒地後站起，由調用方確保已關閉 ragdoll
 func stand_up() -> void:
@@ -96,6 +116,8 @@ func _process(delta: float) -> void:
 		use_held_item()
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		return
 	_apply_gravity(delta)
 	state_machine.physics_update(delta)
 	move_and_slide()
@@ -123,7 +145,11 @@ func apply_move(direction: Vector2) -> void:
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
-		velocity.y -= GRAVITY * delta
+		# 被擊飛期間用更大重力，讓上升/下降都更快
+		var g := GRAVITY
+		if state_machine.current_state_name == "Stunned":
+			g = TuneConfig.stun_gravity
+		velocity.y -= g * delta
 
 func _setup_state_machine() -> void:
 	state_machine = PlayerStateMachine.new()
@@ -155,6 +181,7 @@ func _setup_model() -> void:
 	if not model:
 		return
 	_animation_player = _find_animation_player(model)
+	_merge_idle_animation()
 	_set_animation_looping(ANIM_IDLE)
 	_set_animation_looping(ANIM_MOVE)
 	_set_animation_looping(ANIM_JUMP)
@@ -174,6 +201,22 @@ func _find_skeleton(n: Node) -> Skeleton3D:
 		if r:
 			return r
 	return null
+
+## 從 General.glb 合併 Idle 動畫（MovementBasic 無待機動畫）
+func _merge_idle_animation() -> void:
+	if not _animation_player or _animation_player.has_animation(ANIM_IDLE):
+		return
+	var glb := load(IDLE_SOURCE) as PackedScene
+	if not glb:
+		return
+	var inst := glb.instantiate()
+	var src_ap := _find_animation_player(inst)
+	if src_ap and src_ap.has_animation(ANIM_IDLE):
+		var anim: Animation = src_ap.get_animation(ANIM_IDLE).duplicate()
+		var lib := _animation_player.get_animation_library("")
+		if lib:
+			lib.add_animation(ANIM_IDLE, anim)
+	inst.queue_free()
 
 ## 設定單個動畫循環
 func _set_animation_looping(anim_name: String) -> void:

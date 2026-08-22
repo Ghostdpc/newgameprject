@@ -45,8 +45,8 @@ func setup(skel: Skeleton3D, anim: AnimationPlayer) -> void:
 	skeleton = skel
 	animation_player = anim
 	_build_physical_bones()
-	# 初始確保關閉模擬，避免物理骨推擠玩家
-	set_ragdoll_enabled(false)
+	# 初始默認關閉：物理骨未模擬、碰撞已 disabled、_ragdoll_enabled=false
+	# 不調 set_ragdoll_enabled(false)，避免誤觸發站起插值
 
 func _build_physical_bones() -> void:
 	if not skeleton:
@@ -66,9 +66,10 @@ func _build_physical_bones() -> void:
 		phys.bone_name = bone_name
 		phys.joint_type = PhysicalBone3D.JOINT_TYPE_6DOF
 		phys.mass = 1.0
-		phys.linear_damp = 3.0
-		phys.angular_damp = 3.0
-		phys.can_sleep = true
+		# 低阻尼 + 不睡眠：四肢受重力自然下垂/擺動（軟倒效果）
+		phys.linear_damp = 0.5
+		phys.angular_damp = 0.5
+		phys.can_sleep = false
 		# 物理骨僅與地面(1)和其他物理骨(4)碰撞，不與玩家 body(2)交互
 		phys.collision_layer = 4
 		phys.collision_mask = 5   # 1(地面) + 4(物理骨)
@@ -145,6 +146,11 @@ func _start_sim() -> void:
 		if bone_name == "hips":
 			continue
 		sim_bones.append(bone_name)
+	# 應用最新調試阻尼（軟倒手感可運行時調）
+	for bone in _simulator.find_children("*", "PhysicalBone3D", true, false):
+		var pb := bone as PhysicalBone3D
+		pb.linear_damp = TuneConfig.ragdoll_linear_damp
+		pb.angular_damp = TuneConfig.ragdoll_angular_damp
 	_simulator.physical_bones_start_simulation(sim_bones)
 
 ## 對全身施以衝量（僅主幹骨，避免四肢放大位移）

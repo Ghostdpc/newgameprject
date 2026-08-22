@@ -6,8 +6,8 @@ extends BaseState
 const DIVE_FORCE: float = 9.0
 const DIVE_DURATION: float = 0.4
 const RECOVER_DURATION: float = 0.5
-const HIT_FORCE: float = 4.0
-const HIT_UPWARD: float = 2.0
+const HIT_FORCE: float = 8.0
+const HIT_UPWARD: float = 4.0
 
 var _timer: float = 0.0
 var _recover_timer: float = 0.0
@@ -25,8 +25,8 @@ func enter() -> void:
 			_dive_direction = Vector3(move_dir.x, 0.0, move_dir.y).normalized()
 		else:
 			_dive_direction = controller.global_basis.z
-		controller.velocity.x = _dive_direction.x * DIVE_FORCE
-		controller.velocity.z = _dive_direction.z * DIVE_FORCE
+		controller.velocity.x = _dive_direction.x * TuneConfig.dive_force
+		controller.velocity.z = _dive_direction.z * TuneConfig.dive_force
 
 ## 擊中目標：使目標進入倒地狀態（body 擊飛 + ragdoll 瘫軟姿態）
 func hit_target(target: PlayerController) -> void:
@@ -34,12 +34,20 @@ func hit_target(target: PlayerController) -> void:
 		return
 	_has_hit = true
 	target.state_machine.transition_to("Stunned")
-	target.knockback(_dive_direction * HIT_FORCE + Vector3.UP * HIT_UPWARD)
+	target.knockback(_dive_direction * TuneConfig.hit_force + Vector3.UP * TuneConfig.hit_upward)
 	EventBus.item_used.emit(-1, null)
 
 func physics_update(delta: float) -> void:
 	var controller: PlayerController = _player as PlayerController
 	if not controller:
+		return
+	# 撞到人：立即結束衝刺，快速減速停下（不等滿 RECOVER）
+	if _has_hit:
+		var brake := controller.ACCELERATION * 2.0 * delta
+		controller.velocity.x = move_toward(controller.velocity.x, 0.0, brake)
+		controller.velocity.z = move_toward(controller.velocity.z, 0.0, brake)
+		if Vector2(controller.velocity.x, controller.velocity.z).length() < 0.5:
+			controller.state_machine.transition_to("Idle")
 		return
 	if _timer > 0.0:
 		_timer -= delta
