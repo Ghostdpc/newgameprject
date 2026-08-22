@@ -11,7 +11,7 @@ func _ready() -> void:
 	_quit_button.pressed.connect(_on_quit_pressed)
 
 func _on_start_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/levels/photo_stage.tscn")
+	get_tree().change_scene_to_file("res://scenes/levels/photo_stage_test.tscn")
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()

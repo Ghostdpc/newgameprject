@@ -1,5 +1,6 @@
 ## 职责：拍照抢镜头测试关卡（PhotoStageTest）
-## 基于 LevelBase 框架，用 StageBuilder 代码生成舞台 + 假人补位，便于单人测试
+## 基于 LevelBase 框架，用 StageBuilder 代码生成舞台
+## 生成 4 个真实 PlayerController（P1 键盘，P2-P4 手柄），支持完整交互
 ## 测试流程：自动开局 → 混战 12 秒（加速）→ 快门 → 结算
 
 class_name PhotoStageTest
@@ -7,13 +8,21 @@ extends LevelBase
 
 const TEST_BATTLE_SECONDS := 12.0
 
-## P1 真人，其余用假人补位
+## 测试场景固定 4 人
 func get_player_count() -> int:
-	return 1
+	return 4
+
+## 出生点：舞台四角
+func get_spawn_points() -> Array[Vector3]:
+	return [
+		Vector3(-2.0, 0.55, 1.5),
+		Vector3(2.4,  0.5,  1.6),
+		Vector3(-2.6, 0.5, -1.0),
+		Vector3(0.0,  0.5, -2.4),
+	]
 
 func _setup_level() -> void:
 	_build_stage()
-	_spawn_dummies()
 
 ## 测试场景自动开局（正式流程由主界面/匹配触发）
 func _on_level_ready() -> void:
@@ -34,18 +43,3 @@ func _build_stage() -> void:
 	builder.name = "StageBuilder"
 	add_child(builder)
 	builder.build_show_stage(_stage_root)
-
-## 3 名假人演员补位（测试评分与遮挡）
-func _spawn_dummies() -> void:
-	var spots := [
-		Vector3(2.4, 0.5, 1.6),
-		Vector3(-2.6, 0.5, -1.0),
-		Vector3(0.0, 2.5, -2.4),
-	]
-	var root: Node3D = _actors_root if _actors_root else self
-	for i in spots.size():
-		var dummy := DummyActor.new()
-		dummy.player_index = i + 1
-		dummy.player_color = PLAYER_COLORS[i + 1]
-		dummy.position = spots[i]
-		root.add_child(dummy)
