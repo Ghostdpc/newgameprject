@@ -12,13 +12,13 @@ const TEST_BATTLE_SECONDS := 12.0
 func get_player_count() -> int:
 	return 4
 
-## 出生点：舞台四角
+## 出生点：舞台四角，Y 值略高于地面避免卡地
 func get_spawn_points() -> Array[Vector3]:
 	return [
-		Vector3(-2.0, 0.55, 1.5),
-		Vector3(2.4,  0.5,  1.6),
-		Vector3(-2.6, 0.5, -1.0),
-		Vector3(0.0,  0.5, -2.4),
+		Vector3(-2.0, 1.0,  2.0),
+		Vector3( 2.0, 1.0,  2.0),
+		Vector3(-2.0, 1.0, -2.0),
+		Vector3( 2.0, 1.0, -2.0),
 	]
 
 func _setup_level() -> void:
