@@ -87,6 +87,7 @@ var _head_bone_idx: int = -1
 var _body_bone_idx: int = -1
 var _model_node: Node3D
 var _body_collision: CollisionShape3D
+var _body_mask_saved: int = -1
 
 var _pickup_hold_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
@@ -121,6 +122,15 @@ func set_ragdoll(enabled: bool) -> void:
 	# 布娃娃時關閉彈簧骨骼，避免與物理姿態搶寫骨架
 	if spring_rig:
 		spring_rig.set_active(not enabled)
+	# 物理骨 layer=4 啟用碰撞後會擋住/推開玩家碰撞體（玩家 mask 含 4）。
+	# ragdoll 期間把玩家 mask 移除物理骨層，讓碰撞體不被癱軟的骨骼擠開/擋路。
+	if enabled:
+		_body_mask_saved = collision_mask
+		collision_mask = _body_mask_saved & ~4
+	else:
+		if _body_mask_saved != -1:
+			collision_mask = _body_mask_saved
+			_body_mask_saved = -1
 
 ## 擊飛：body 位移（模型跟 body，姿態由 ragdoll 提供）
 func knockback(direction: Vector3) -> void:
@@ -133,8 +143,9 @@ func sync_body_to_ragdoll() -> void:
 	var hips_pos := ragdoll_rig.get_hips_position()
 	if hips_pos == Vector3.ZERO:
 		return
-	# 完全對齊 hips（含 y）並清垂直速度，讓 body 貼著癱軟身體；站起後由碰撞校正高度
-	global_position = Vector3(hips_pos.x, hips_pos.y, hips_pos.z)
+	# 對齊 hips 水平位置；Y 限制在地面之上（≥0），避免碰撞體穿到地面下
+	var body_y := maxf(hips_pos.y, 0.0)
+	global_position = Vector3(hips_pos.x, body_y, hips_pos.z)
 	velocity.y = 0.0
 
 ## 出界死亡：進入死亡狀態（清道具、藏體、停物理）
@@ -497,6 +508,7 @@ func _setup_model() -> void:
 		var skeleton := _find_skeleton(model)
 		if skeleton and _animation_player:
 			ragdoll_rig.is_human = _is_human_model
+			ragdoll_rig.body_root = self
 			ragdoll_rig.setup(skeleton, _animation_player)
 	# Spring Bone 彈簧骨骼：常態軟糯效果（掛本角色，高 priority 在動畫後寫回）
 	spring_rig = SpringBoneRig.new()

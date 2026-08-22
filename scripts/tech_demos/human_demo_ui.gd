@@ -9,6 +9,8 @@ const HAT_SCENE := preload("res://scenes/tech_demos/outfit_items/hat.tscn")
 const SHIRT_SCENE := preload("res://scenes/tech_demos/outfit_items/shirt.tscn")
 const BACKPACK_SCENE := preload("res://scenes/tech_demos/outfit_items/backpack.tscn")
 
+var _spring_kowtow_on: bool = false
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed and not event.echo):
 		return
@@ -28,6 +30,29 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_R: _face(player, -1, true)
 		# 布娃娃
 		KEY_B: _ragdoll(player)
+		# 磕頭：N = 彈簧軟糯磕頭(preset)  M = ragdoll頭骨衝量磕頭
+		KEY_N: _spring_kowtow(player)
+		KEY_M: _ragdoll_kowtow(player)
+
+func _spring_kowtow(player: Node) -> void:
+	if not player:
+		return
+	var spring = player.get("spring_rig")
+	if spring:
+		_spring_kowtow_on = not _spring_kowtow_on
+		spring.call("apply_preset", "kowtow" if _spring_kowtow_on else "normal")
+		_hint_append(" 彈簧磕頭 %s" % ("開(kowtow)" if _spring_kowtow_on else "關(normal)"))
+	else:
+		_hint_append(" 無 spring_rig")
+
+func _ragdoll_kowtow(player: Node) -> void:
+	if not player:
+		return
+	if player.has_method("play_kowtow_ragdoll"):
+		player.call("play_kowtow_ragdoll", 6.0, 1.2)
+		_hint_append(" ragdoll磕頭")
+	else:
+		_hint_append(" 無 play_kowtow_ragdoll")
 
 func _equip(player: Node, slot: String, scene: PackedScene) -> void:
 	if not player:
@@ -76,15 +101,22 @@ func _ragdoll(player: Node) -> void:
 	var rr = player.get("ragdoll_rig")
 	if rr:
 		if rr.is_ragdoll_enabled():
-			rr.reset()
+			# 先同步 body 再關閉（避免起身瞬移）
+			if player.has_method("set_ragdoll"):
+				player.call("set_ragdoll", false)
+			else:
+				rr.reset()
 			_hint_append(" 布娃娃關")
 		else:
-			rr.set_ragdoll_enabled(true)
+			if player.has_method("set_ragdoll"):
+				player.call("set_ragdoll", true)
+			else:
+				rr.set_ragdoll_enabled(true)
 			_hint_append(" 布娃娃開")
 
 func _hint_append(t: String) -> void:
 	if _hint:
-		_hint.text = "Human (WASD移動/空格跳/F飛撲 E拾取)  [1帽3衣5背包]  [Q/E表情 R清除]  [B布娃娃]\n> " + t
+		_hint.text = "Human (WASD移動/空格跳/F飛撲 E拾取)  [1帽3衣5背包]  [Q/E表情 R清除]  [B布娃娃]  [N彈簧磕頭 M磕頭]\n> " + t
 	else:
 		_hint = $UILayer/Hint
 		if _hint:

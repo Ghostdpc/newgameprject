@@ -341,9 +341,23 @@ func _tick_springs(delta: float) -> void:
 		excite_pitch *= wobble_scale
 		excite_roll *= wobble_scale
 		excite_yaw *= wobble_scale
-		var excite_q := (Quaternion(Vector3.RIGHT, excite_pitch)
-			* Quaternion(Vector3(0, 0, 1), excite_roll)
-			* Quaternion(Vector3.UP, excite_yaw))
+		# excite_q 用骨骼局部軸施加激勵。預設(mannequin) head 局部軸與世界對齊：
+		#   pitch點頭=繞worldX(左右) → 用 localX(RIGHT)；roll左右搖=繞worldZ(前後) → localZ；
+		#   yaw轉體=繞worldY(竖直) → localY(UP)。
+		# human 骨架因額外 Y 旋轉/軸轉換，head 局部軸相對世界旋轉了：
+		#   localX→world+Z、localY→world+Y、localZ→world-X。
+		#   故要對齊世界語義需：pitch→繞 localZ(-X)、roll→繞 localX(+Z)、yaw→繞 localY(+Y)。
+		#   即human下互換 pitch/roll 軸。
+		var pitch_axis := Vector3.RIGHT
+		var roll_axis := Vector3(0, 0, 1)
+		var yaw_axis := Vector3.UP
+		if is_human:
+			pitch_axis = Vector3(0, 0, -1)   # 世界-X → 點頭
+			roll_axis = Vector3.RIGHT         # 世界+Z → 左右搖
+			yaw_axis = Vector3.UP             # 世界+Y → 轉體
+		var excite_q := (Quaternion(pitch_axis, excite_pitch)
+			* Quaternion(roll_axis, excite_roll)
+			* Quaternion(yaw_axis, excite_yaw))
 		var target_rot := (target * excite_q).normalized()
 
 		var cur: Quaternion = _spring_rot.get(bone_name) as Quaternion

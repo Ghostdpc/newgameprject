@@ -164,10 +164,26 @@ func nudge_offset(delta: Vector3) -> void:
 		bone_offset += delta
 		_sprite.position = bone_offset
 
-## 調試用：在 fallback 模式旋轉表情朝向（固定朝向模式）
+## 調試用：旋轉表情朝向（fallback 固定朝向模式 / 貼皮模式皆有效）
 func nudge_facing(delta_deg: float) -> void:
 	if not _sprite:
 		return
 	if fallback_billboard:
 		return
 	_sprite.rotate_y(deg_to_rad(delta_deg))
+
+## 調試用：俯仰旋轉（繞局部 X 軸）
+func nudge_pitch(delta_deg: float) -> void:
+	if not _sprite:
+		return
+	_sprite.rotate_x(deg_to_rad(delta_deg))
+
+## 調試用：回讀當前偏移與旋轉，供外部顯示微調數值
+func debug_info() -> String:
+	if not _sprite:
+		return "無 sprite"
+	var off := fallback_offset if _used_fallback else bone_offset
+	var rot := _sprite.rotation_degrees
+	var mode := "fallback" if _used_fallback else "貼皮"
+	return "%s off=(%.3f, %.3f, %.3f) rot=(%.1f, %.1f, %.1f)" % [
+		mode, off.x, off.y, off.z, rot.x, rot.y, rot.z]
