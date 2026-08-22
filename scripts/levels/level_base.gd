@@ -49,6 +49,7 @@ func _ready() -> void:
 
 	_setup_cameras()
 	_spawn_players()
+	_setup_player_hud()
 	_connect_signals()
 
 	# 子类挂载（特殊玩法）
@@ -124,6 +125,12 @@ func _spawn_players() -> void:
 		player.position = spawns[i % spawns.size()]
 		player.add_to_group("settlement_actor")
 		(_actors_root if _actors_root else self).add_child(player)
+
+## 同步四角玩家面板数量
+func _setup_player_hud() -> void:
+	var hud := get_node_or_null("HUD/PlayerHUD")
+	if hud and hud.has_method("setup"):
+		hud.setup(get_player_count())
 
 # ---------------------------------------------------------------
 # 出界與重生
