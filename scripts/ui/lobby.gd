@@ -135,11 +135,13 @@ func _toggle_slot(index: int) -> void:
 		if index == _first_joined_index() and _joined_count() > 1:
 			return
 		_joined[index] = false
+		SoundMgr.play("ui_click")
 		_slot_devices[index] = -2
 	else:
 		_joined[index] = true
 		# P1/P2 键盘；P3/P4 绑定对应手柄 device（调试用，正式加入走手柄 A）
 		_slot_devices[index] = -1 if index <= 1 else index
+		SoundMgr.play("join", true)
 	_refresh()
 
 ## 加入下一个空位并绑定设备（-1 键盘只占 P1/P2）
@@ -229,6 +231,7 @@ func _refresh() -> void:
 func _try_start() -> void:
 	if _joined_count() < 2:
 		return
+	SoundMgr.play("confirm")
 	GameManager.lobby_player_count = _joined_count()
 	# 按槽位顺序压缩设备列表，与出生 player_index 对齐
 	var devices: Array[int] = []

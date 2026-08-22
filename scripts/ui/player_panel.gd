@@ -142,6 +142,32 @@ func pop_plus(score: float) -> void:
 	tw.parallel().tween_property(plus, "modulate:a", 0.0, 0.3).set_delay(0.4)
 	tw.tween_callback(plus.queue_free)
 
+## -xx 弹字（被炸等惩罚）：红色，与 pop_plus 同动效
+func pop_minus(score: float) -> void:
+	if score <= 0.01:
+		return
+	var minus := Label.new()
+	minus.add_theme_font_override("font", FONT_SCORE_ITALIC)
+	minus.text = "-%.0f" % score
+	minus.add_theme_font_size_override("font_size", 42)
+	minus.add_theme_color_override("font_color", Color(0.95, 0.25, 0.2))
+	minus.add_theme_color_override("font_outline_color", COLOR_OUTLINE)
+	minus.add_theme_constant_override("outline_size", 10)
+	var bx := _bubble.position.x
+	var by := _bubble.position.y
+	minus.position = Vector2(
+		bx + _bubble.size.x + 4.0 if not _is_right() else bx - 84.0,
+		by + 30.0)
+	minus.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(minus)
+	minus.pivot_offset = minus.size * 0.5
+	minus.scale = Vector2(0.5, 0.5)
+	var tw := create_tween()
+	tw.tween_property(minus, "scale", Vector2(1.35, 1.35), 0.16).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(minus, "scale", Vector2.ONE, 0.16).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(minus, "modulate:a", 0.0, 0.3).set_delay(0.4)
+	tw.tween_callback(minus.queue_free)
+
 ## 复位结算状态（新一轮开始前调用）
 func reset_scoring() -> void:
 	_total_label.text = "0"

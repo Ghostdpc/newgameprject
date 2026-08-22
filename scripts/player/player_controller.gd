@@ -71,12 +71,16 @@ var face: PlayerFaceController
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
+## 被炸等负面效果累计的积分惩罚，快门结算时从总分扣除（clamp 到 0）
+var score_penalty: int = 0
 ## 移速乘數（1.0 = 正常；由 player_speed_effect 臨時修改）
 var speed_multiplier: float = 1.0
 ## 身材缩放（服装效果）：head_scale 放大头部 / body_scale 放大身躯 / body_width 加宽
 var head_scale: float = 1.0
 var body_scale: float = 1.0
 var body_width: float = 1.0
+## 当前装备的服装（槽位名 -> garment_id），由 GarmentSystem 维护，评分读取用
+var equipped_garments: Dictionary = {}
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
@@ -114,6 +118,7 @@ func _ready() -> void:
 	_head_icon = get_node_or_null("PlayerHeadIcon") as PlayerHeadIcon
 	apply_player_color(player_color)
 	add_to_group("players")
+	EventBus.battle_started.connect(func(): score_penalty = 0)
 
 ## 開關布娃娃（被擊倒時進入物理倒地）
 func set_ragdoll(enabled: bool) -> void:
@@ -245,22 +250,25 @@ func _pickup_movement_blocked() -> bool:
 	return player_input.get_move_direction().length_squared() > 0.0
 
 func _try_pickup() -> void:
-	var id := _pickup_item_id()
-	if not id.is_empty():
+	var result := _pickup_nearest()
+	if result.is_empty():
+		return
+	var id: String = result["id"]
+	var is_garment: bool = result.get("is_garment", false)
+	if is_garment:
+		GarmentSystem.equip_garment(self, id)
+	else:
 		pickup_item(id)
 
-## 拾取：讓地上道具實體自己把 id 告訴我們（實體未實現，返回空）
-func _pickup_item_id() -> String:
-	if not held_item_id.is_empty():
-		return ""
+## 拾取：找最近的 pickup_items 成员，返回 { id, is_garment } 或 {}
+func _pickup_nearest() -> Dictionary:
 	var items := get_tree().get_nodes_in_group("pickup_items")
 	if items.is_empty():
-		return ""
-	# 只拾取面前的道具：半徑內 + 前向夾角在範圍內，取最正前方者
-	var fwd := global_basis.z  # 玩家面向
+		return {}
+	var fwd := global_basis.z
 	var range_sq := PICKUP_RANGE * PICKUP_RANGE
 	var nearest: Node3D = null
-	var best_score := -INF  # 越大越正前方
+	var best_score := -INF
 	for item in items:
 		var n := item as Node3D
 		if not n:
@@ -273,17 +281,20 @@ func _pickup_item_id() -> String:
 		if d_sq < 0.0001:
 			d_sq = 0.0001
 		var dist := sqrt(d_sq)
-		# 正前方 = 夾角餘弦大 + 距離近 → 加權
 		var facing := to.normalized().dot(fwd)
 		if facing < 0.15:
-			continue  # 明確在背後或側後方，不拾
+			continue
 		var score := facing - dist / PICKUP_RANGE * 0.5
 		if score > best_score:
 			best_score = score
 			nearest = n
-	if nearest and nearest.has_method("pickup_for"):
-		return nearest.pickup_for(self)
-	return ""
+	if nearest == null or not nearest.has_method("pickup_for"):
+		return {}
+	var id: String = nearest.pickup_for(self)
+	if id.is_empty():
+		return {}
+	var is_garment := nearest.is_in_group("garment_pickups")
+	return { "id": id, "is_garment": is_garment }
 
 func _physics_process(delta: float) -> void:
 	# 死亡/復活狀態也需物理幀推進（Death→Waiting→Fall），故不整體跳過

@@ -22,8 +22,12 @@ EventBus="*res://scripts/autoload/event_bus.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
 CameraSystem="*res://scripts/autoload/camera_system.gd"
 ItemSystem="*res://scripts/items/item_system.gd"
+DropPlacement="*res://scripts/items/drop_placement.gd"
 ItemSpawner="*res://scripts/items/item_spawner.gd"
+GarmentSystem="*res://scripts/items/garment_system.gd"
+GarmentSpawner="*res://scripts/items/garment_spawner.gd"
 TuneConfig="*res://scripts/autoload/tune_config.gd"
+SoundMgr="*res://scripts/autoload/sound_manager.gd"
 PropVfx="*res://scenes/fx/prop_vfx_layer.tscn"
 
 [display]
@@ -128,3 +132,5 @@ use_item_p2={
 [rendering]
 
 textures/vram_compression/import_etc2_astc=true
+textures/default_filters/anisotropic_filtering_level=4
+anti_aliasing/quality/msaa_3d=2

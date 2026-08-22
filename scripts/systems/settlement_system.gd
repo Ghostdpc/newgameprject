@@ -104,7 +104,14 @@ func _on_photo_taken(texture: ViewportTexture) -> void:
 	_analyze_async(texture)
 
 func _analyze_async(texture: ViewportTexture) -> void:
-	var photo_image := _photo_or_empty(texture)
+	# 拍照瞬间请求高分辨率重渲一帧（演员此刻仍为正常材质，尚未套 ID 掩码）；
+	# 失败则回退到当前实时预览贴图（低分）。
+	var photo_image: Image = null
+	var controller := CameraSystem.get_photo_controller()
+	if controller != null and controller.has_method("capture_high_res"):
+		photo_image = await controller.capture_high_res()
+	if photo_image == null:
+		photo_image = _photo_or_empty(texture)
 
 	var cam := _get_photo_camera()
 	if cam == null:
@@ -251,10 +258,19 @@ func _sync_mask_camera(photo_cam: Camera3D) -> void:
 	_mask_camera.frustum_offset = photo_cam.frustum_offset
 	_mask_camera.near = photo_cam.near
 	_mask_camera.far = photo_cam.far
-	# 视口分辨率必须与 PhotoViewport 一致，否则 KEEP_HEIGHT 下水平视野不同 → 取景错位
-	var photo_vp := _get_photo_viewport()
-	if photo_vp != null and photo_vp.size.x > 0 and photo_vp.size.y > 0:
-		_mask_viewport.size = photo_vp.size
+	# 视口分辨率必须与拍照取景一致（同宽高比），否则 KEEP_HEIGHT 下水平视野不同 → 取景错位。
+	# 优先用取景框原始像素（get_frame_size），使掩码精度不受预览降分辨率影响；
+	# 回退到 PhotoViewport 当前尺寸。
+	var mask_size := Vector2i.ZERO
+	var controller := CameraSystem.get_photo_controller()
+	if controller != null and controller.has_method("get_frame_size"):
+		mask_size = controller.get_frame_size()
+	if mask_size.x <= 0 or mask_size.y <= 0:
+		var photo_vp := _get_photo_viewport()
+		if photo_vp != null:
+			mask_size = photo_vp.size
+	if mask_size.x > 0 and mask_size.y > 0:
+		_mask_viewport.size = mask_size
 
 func _get_photo_viewport() -> Viewport:
 	var controller := CameraSystem.get_photo_controller()
@@ -286,6 +302,7 @@ func _analyze(photo: Image, mask: Image, cam: Camera3D, actors: Array) -> Dictio
 			"color": id_color,
 			"facing": _compute_facing(node, cam),
 			"outfit": _read_outfit_norm(node),
+			"penalty": actor.score_penalty if "score_penalty" in actor else 0,
 		})
 
 	var analyzer = ScoreAnalyzerScript.new()
@@ -315,6 +332,10 @@ func _compute_facing(actor: Node3D, cam: Camera3D) -> float:
 	return ScoreAnalyzerScript.compute_facing(forward, to_cam)
 
 func _read_outfit_norm(actor: Node3D) -> float:
+	# 优先从 GarmentSystem 读取（服装系统接入后的标准路径）
+	if actor is PlayerController:
+		return GarmentSystem.get_equipped_score(actor as PlayerController)
+	# 降级兼容：OutfitManager 件数 × 固定分值（服装系统未接入时）
 	var om := actor.get_node_or_null("OutfitManager")
 	if om == null or not om.has_method("equipped_slot_count"):
 		return 0.0

@@ -218,6 +218,18 @@ camera_behavior_push_requested(target, behavior) / camera_behavior_pop_requested
 - 分数字体接入：`assets/fonts/Kaph-Regular.otf` / `Kaph-Italic.otf`
   （`FONT_SCORE` 总分+键位、`FONT_SCORE_ITALIC` +xx 弹字），替代 FontVariation 假粗体。
 
+### 音频系统（v1.5）
+- autoload `SoundMgr`（`scripts/autoload/sound_manager.gd`）：8 路 SFX 复音池 + 单路 BGM。
+- BGM（DreamMaker Suno 纯器乐）：`assets/audio/bgm/title.mp3`（标题/大厅/主题）、
+  `battle.mp3`（混战）；SCORING 淡出；battle_started 切战斗曲。
+- SFX（程序合成卡通风，`assets/audio/sfx/*.wav` 共 16 个）：
+  ui_click/join/confirm/tick/battle_start/pickup/interrupt/item_use/
+  time_fast/time_slow/time_add/time_sub/hit/shutter/score_tick/champion。
+- 信号驱动：item_picked_up→pickup、item_used→use、trap_triggered→hit、
+  time_effect_applied→四类时间音、photo_taken(非null)→shutter、最后3秒→tick。
+- 显式挂点：大厅加入/取消/开始、标题确认、结算刷分 score_tick、冠军 champion、
+  结算按钮 confirm/ui_click。
+
 ### 顺手修复
 - `camera_offset_effect.gd:25` 类型推断 Parse Error（`var cam :=` → 显式 `Camera3D`），
   此前导致 camera_remote 道具效果注册失败。
