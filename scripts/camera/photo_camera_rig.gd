@@ -11,6 +11,13 @@ extends Node3D
 
 @export var cull_mask: int = 1
 
+## 非拍照时的实时预览降分辨率倍率（RT 每帧重渲整个场景，预览只需低分即可）
+@export_range(0.1, 1.0, 0.05) var preview_scale: float = 0.5
+## 拍照瞬间相对取景框像素的升采样倍率（决定最终照片清晰度）
+@export_range(1.0, 4.0, 0.25) var capture_scale: float = 2.0
+## 拍照高分渲染时的 MSAA
+@export var capture_msaa: Viewport.MSAA = Viewport.MSAA_4X
+
 @onready var _photo_viewport: SubViewport = $PhotoViewport
 @onready var _photo_camera: Camera3D = $PhotoViewport/PhotoCamera
 
@@ -22,6 +29,10 @@ var extra_offset_ndc := Vector2.ZERO
 var extra_scale := 1.0
 
 var _last_vp_size := Vector2i.ZERO
+## 取景框在屏上的原始像素尺寸（未乘 preview_scale），供掩码/拍照对齐
+var _frame_px := Vector2i(640, 360)
+## 拍照高分渲染进行中：暂停 _sync_frustum 覆写视口尺寸
+var _capturing := false
 
 func _ready() -> void:
 	add_to_group("photo_camera_rig")
@@ -87,7 +98,14 @@ func _sync_frustum() -> void:
 	_photo_camera.frustum_offset = foffset
 
 	# SubViewport 渲染分辨率匹配框尺寸（变化时才改，避免每帧重建）
-	var new_vp := Vector2i(maxi(1, int(screen.size.x)), maxi(1, int(screen.size.y)))
+	# 预览期降分辨率（preview_scale）省下第二个场景 pass 的填充开销；
+	# 拍照瞬间 capture_high_res() 会临时升到高分。
+	_frame_px = Vector2i(maxi(1, int(screen.size.x)), maxi(1, int(screen.size.y)))
+	if _capturing:
+		return
+	var new_vp := Vector2i(
+		maxi(1, int(_frame_px.x * preview_scale)),
+		maxi(1, int(_frame_px.y * preview_scale)))
 	if new_vp != _last_vp_size:
 		_last_vp_size = new_vp
 		_photo_viewport.size = new_vp
@@ -114,3 +132,34 @@ func get_camera() -> Camera3D:
 
 func get_render_viewport() -> Viewport:
 	return _photo_viewport
+
+## 取景框在屏上的原始像素尺寸（未乘 preview_scale），掩码渲染按此对齐以保精度
+func get_frame_size() -> Vector2i:
+	return _frame_px
+
+## 拍照瞬间：把 PhotoViewport 临时升到高分辨率 + MSAA，渲一帧后回读 Image，随后自动还原预览低分。
+## 返回照片 Image（失败返回 null）。为 async，调用方需 await。
+func capture_high_res() -> Image:
+	if _photo_viewport == null:
+		return null
+	_capturing = true
+	var hi := Vector2i(
+		maxi(1, mini(4096, int(_frame_px.x * capture_scale))),
+		maxi(1, mini(4096, int(_frame_px.y * capture_scale))))
+	var prev_size := _photo_viewport.size
+	var prev_msaa := _photo_viewport.msaa_3d
+	var prev_mode := _photo_viewport.render_target_update_mode
+	_photo_viewport.size = hi
+	_photo_viewport.msaa_3d = capture_msaa
+	_photo_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	# 等两帧确保高分帧已完成绘制并可回读
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var img := _photo_viewport.get_texture().get_image()
+	# 还原预览态
+	_photo_viewport.size = prev_size
+	_photo_viewport.msaa_3d = prev_msaa
+	_photo_viewport.render_target_update_mode = prev_mode
+	_last_vp_size = Vector2i.ZERO   # 迫使下帧 _sync_frustum 重设预览尺寸
+	_capturing = false
+	return img
