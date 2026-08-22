@@ -47,7 +47,8 @@ func _spawn_one(garment_id: String, pickup_script: Script) -> void:
 	pickup.set_script(pickup_script)
 	pickup.garment_id = garment_id
 	var pos := DropPlacement.pick_position()
-	get_tree().current_scene.add_child(pickup)
+	var host: Node = get_tree().current_scene if get_tree().current_scene else get_parent()
+	host.add_child(pickup)
 	pickup.global_position = pos
 	# 连接拾取销毁信号，解除 spawned_ids 记录
 	pickup.tree_exited.connect(_on_pickup_removed.bind(garment_id))

@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://m6wkaui35yss"]
 
 [ext_resource type="Script" uid="uid://da7awv2pkpc3e" path="res://scripts/player/player_controller.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://d2gdq42swhhbp" path="res://assets/models/mannequin/animations/Rig_Medium_MovementBasic.glb" id="2"]
-[ext_resource type="Script" uid="uid://cdw1l6pyv5b1a" path="res://scripts/player/ragdoll_rig.gd" id="3"]
-[ext_resource type="Script" uid="uid://dpvggyr46io8p" path="res://scripts/player/outfit_manager.gd" id="4"]
-[ext_resource type="Script" uid="uid://ccuiu73genp2m" path="res://scripts/player/character_effects.gd" id="5"]
-[ext_resource type="Script" uid="uid://bv5dlgs0yoiqj" path="res://scripts/player/player_marker.gd" id="6"]
-[ext_resource type="Script" uid="uid://blr00ahw8t6cm" path="res://scripts/player/player_head_icon.gd" id="7"]
+[ext_resource type="PackedScene" uid="uid://bekeixexq1don" path="res://assets/models/human/human.fbx" id="2"]
+[ext_resource type="Script" uid="uid://def87bv68gq1q" path="res://scripts/player/ragdoll_rig.gd" id="3"]
+[ext_resource type="Script" uid="uid://dyrgxhlgst4ct" path="res://scripts/player/outfit_manager.gd" id="4"]
+[ext_resource type="Script" uid="uid://ias7sogbak02" path="res://scripts/player/character_effects.gd" id="5"]
+[ext_resource type="Script" uid="uid://baew5wckoikqc" path="res://scripts/player/player_marker.gd" id="6"]
+[ext_resource type="Script" uid="uid://sgq4ym615wkg" path="res://scripts/player/player_head_icon.gd" id="7"]
+[ext_resource type="Script" path="res://scripts/player/player_face_controller.gd" id="8"]
 
 [sub_resource type="CapsuleShape3D" id="4"]
 radius = 0.42
@@ -39,3 +40,6 @@ script = ExtResource("6")
 [node name="PlayerHeadIcon" type="Sprite3D" parent="." unique_id=1556115947]
 transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 2.1, 0)
 script = ExtResource("7")
+
+[node name="Face" type="Node" parent="."]
+script = ExtResource("8")

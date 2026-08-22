@@ -4,6 +4,8 @@
 class_name RagdollRig
 extends Node3D
 
+const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
+
 # 參與 ragdoll 的主要骨骼（KayKit Mannequin 命名）
 const RIG_BONES: Array[String] = [
 	"hips", "spine", "chest", "head",
@@ -15,6 +17,12 @@ const RIG_BONES: Array[String] = [
 
 @export var skeleton: Skeleton3D
 @export var animation_player: AnimationPlayer
+
+## Human 骨架使用無語義編號骨（骨骼.00x），需經 HumanBoneMap 解析部位名
+var is_human: bool = false
+
+## 玩家 body（可選）：起身前把 body 水平位置對齊 hips 物理骨實際落點，避免瞬移回原點
+var body_root: Node3D
 
 var _ragdoll_enabled: bool = false
 var _simulator: PhysicalBoneSimulator3D
@@ -40,7 +48,13 @@ func _process(delta: float) -> void:
 	if t >= 1.0:
 		_stand_timer = -1.0
 		if animation_player:
-			animation_player.play("T-Pose")
+			# human 無 T-Pose 動畫，起身後回 Idle；mannequin 維持原 T-Pose
+			var next := "T-Pose"
+			for an in animation_player.get_animation_list():
+				if an.ends_with("Idle"):
+					next = an
+					break
+			animation_player.play(next)
 
 ## ragdoll 開啟時，把每個 PhysicalBone 的物理變換寫回對應骨骼，驅動 mesh 癱軟
 func _sync_physics_to_skeleton() -> void:
@@ -72,14 +86,25 @@ func _build_physical_bones() -> void:
 	_simulator.name = "RagdollSimulator"
 	skeleton.add_child(_simulator)
 
-	for bone_name in RIG_BONES:
-		var bone_idx := skeleton.find_bone(bone_name)
+	var bone_list: Array[String] = []
+	if is_human:
+		# human 骨架骨鏈中間夾雜無語義編號骨（.003/.005 等）及 _end 尾骨。
+		# 只對語義骨建物理骨會因鏈中斷而撕裂。改為沿整條鏈「全部骨」建物理骨，
+		# 保證物理骨鏈連續，癱軟時不撕裂（_end 是頭/手/腳鏈的必要連接，不跳過）。
+		for i in skeleton.get_bone_count():
+			bone_list.append(String(skeleton.get_bone_name(i)))
+	else:
+		bone_list = RIG_BONES.duplicate()
+
+	for bone_name in bone_list:
+		var real_name := HumanBoneMap.resolve(bone_name, is_human)
+		var bone_idx := skeleton.find_bone(real_name)
 		if bone_idx == -1:
 			push_warning("RagdollRig: bone '%s' not found" % bone_name)
 			continue
 		var phys := PhysicalBone3D.new()
 		phys.name = "Phys_" + bone_name
-		phys.bone_name = bone_name
+		phys.bone_name = real_name
 		# PIN 球窩關節：無角度限位，身體可充分癱軟橫躺（6DOF 默認限位會阻止全倒）
 		phys.joint_type = PhysicalBone3D.JOINT_TYPE_PIN
 		phys.mass = 0.5
@@ -87,13 +112,21 @@ func _build_physical_bones() -> void:
 		phys.linear_damp = 0.5
 		phys.angular_damp = 0.5
 		phys.can_sleep = false
-		# 物理骨僅與地面(1)和其他物理骨(4)碰撞，不與玩家 body(2)交互
+		# 物理骨碰撞：
+		# mannequin 骨稀疏，允許骨間(4)互碰；human 骨密集重疊（手/腳/頭 _end 鏈），
+		# 骨間互碰會互相推擠→撕裂/爆開，故 human 只與地面(1)碰撞、骨間穿透不互推，聚成團。
 		phys.collision_layer = 4
-		phys.collision_mask = 5   # 1(地面) + 4(物理骨)
+		phys.collision_mask = 5 if not is_human else 1   # 1(地面); mannequin 加 4(物理骨)
 		_simulator.add_child(phys)
 		var shape := CapsuleShape3D.new()
-		shape.radius = 0.1
-		shape.height = _bone_length(bone_idx)
+		if is_human:
+			# human 骨架中段較細且密集；放大碰撞體防止下墜穿透地面
+			shape.radius = 0.15
+			shape.height = maxf(_bone_length(bone_idx), 0.08)
+			phys.mass = 0.3
+		else:
+			shape.radius = 0.1
+			shape.height = _bone_length(bone_idx)
 		var coll := CollisionShape3D.new()
 		coll.shape = shape
 		coll.disabled = true   # 未啟用 ragdoll 前不參與碰撞，避免推擠玩家
@@ -144,6 +177,12 @@ func _stop_sim() -> void:
 	_stand_from.clear()
 	for i in skeleton.get_bone_count():
 		_stand_from.append(skeleton.get_bone_global_pose(i))
+	# 起身前把玩家 body 水平對齊到 hips 物理骨實際落點（不倒偏回原點）
+	if body_root:
+		var hips_pos := get_hips_position()
+		if hips_pos != Vector3.ZERO:
+			body_root.global_position.x = hips_pos.x
+			body_root.global_position.z = hips_pos.z
 	_simulator.physical_bones_stop_simulation()
 	skeleton.reset_bone_poses()
 	# 記錄目標（站立）姿態
@@ -162,8 +201,12 @@ func _start_sim() -> void:
 	if not _simulator:
 		return
 	var sim_bones: Array = []
-	for bone_name in RIG_BONES:
-		sim_bones.append(bone_name)
+	if is_human:
+		for i in skeleton.get_bone_count():
+			sim_bones.append(String(skeleton.get_bone_name(i)))
+	else:
+		for bone_name in RIG_BONES:
+			sim_bones.append(bone_name)
 	# 啟動前確保骨架回到 rest 並強制更新，物理骨從乾淨站姿初始化（避免動畫 pose 殘留導致不全癱軟）
 	if skeleton:
 		skeleton.reset_bone_poses()
@@ -180,6 +223,11 @@ func _start_sim() -> void:
 		pb.linear_damp = lin_damp
 		pb.angular_damp = ang_damp
 	_simulator.physical_bones_start_simulation(sim_bones)
+	# 啟動後清除殘留線/角速度：否則擊飛動量讓鏈末端(頭)甩開，身體被拉長
+	for bone in _simulator.find_children("*", "PhysicalBone3D", true, false):
+		var pb := bone as PhysicalBone3D
+		pb.linear_velocity = Vector3.ZERO
+		pb.angular_velocity = Vector3.ZERO
 
 ## 對全身施以衝量（僅主幹骨，避免四肢放大位移）
 func apply_impulse(direction: Vector3) -> void:
@@ -228,7 +276,12 @@ func is_ragdoll_enabled() -> bool:
 func get_hips_position() -> Vector3:
 	if not _simulator:
 		return Vector3.ZERO
-	var hips: Node = _simulator.get_node_or_null("Phys_hips")
+	var hips_name := "Phys_hips"
+	if is_human:
+		# human 全部骨建物理骨，無 Phys_hips 命名；用根骨（骨骼.001）對應的物理骨
+		if skeleton and skeleton.get_bone_count() > 0:
+			hips_name = "Phys_" + String(skeleton.get_bone_name(0))
+	var hips: Node = _simulator.get_node_or_null(hips_name)
 	if hips:
 		return (hips as PhysicalBone3D).global_position
 	return Vector3.ZERO

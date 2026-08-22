@@ -27,12 +27,17 @@
 class_name SpringBoneRig
 extends Node3D
 
+const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
+
 ## 參與彈簧的骨骼（KayKit Mannequin 命名）。可自訂全組。
 @export var bones: Array[String] = [
 	"hips", "spine", "chest", "head",
 	"upperarm.l", "lowerarm.l", "upperarm.r", "lowerarm.r",
 	"upperleg.l", "lowerleg.l", "upperleg.r", "lowerleg.r",
 ]
+
+## Human 骨架（骨骼.00x 無語義骨）時經映射解析；由外部在 setup 前設置
+var is_human: bool = false
 
 ## ─── 命名預設 ─────────────────────────────────────────────────────────────
 ## 每個預設可被 apply_preset("名字") 套用，把 spring_k/d/wobble_force/pulse 等
@@ -258,7 +263,7 @@ func _init_spring() -> void:
 	if not skeleton:
 		return
 	for bone_name in bones:
-		var idx := skeleton.find_bone(bone_name)
+		var idx := _fb(bone_name)
 		if idx == -1:
 			continue
 		_spring_rot[bone_name] = skeleton.get_bone_pose_rotation(idx)
@@ -266,10 +271,16 @@ func _init_spring() -> void:
 	_prev_velocity = Vector3.ZERO
 	_ready_flag = true
 
+## 依骨名找骨架索引（Human 經映射解析）
+func _fb(bone_name: String) -> int:
+	if not skeleton:
+		return -1
+	return skeleton.find_bone(HumanBoneMap.resolve(bone_name, is_human))
+
 ## 目標骨骼旋轉：優先動畫 pose，其次 rest（讀自 target_skeleton，缺省 = skeleton）
 func _target_rotation(bone_name: String) -> Quaternion:
 	var src := target_skeleton if target_skeleton else skeleton
-	var idx := src.find_bone(bone_name)
+	var idx := _fb_in(src, bone_name)
 	if idx == -1:
 		return Quaternion.IDENTITY
 	var q: Quaternion
@@ -278,6 +289,12 @@ func _target_rotation(bone_name: String) -> Quaternion:
 	else:
 		q = src.get_bone_global_rest(idx).basis.get_rotation_quaternion()
 	return q
+
+## 在指定骨架依骨名找索引（Human 經映射解析）
+func _fb_in(src: Skeleton3D, bone_name: String) -> int:
+	if not src:
+		return -1
+	return src.find_bone(HumanBoneMap.resolve(bone_name, is_human))
 
 ## 彈簧骨骼主迴圈
 func _tick_springs(delta: float) -> void:
@@ -309,7 +326,7 @@ func _tick_springs(delta: float) -> void:
 		breath_yaw = sin(_time * TAU * breath_freq * 0.61 + 2.6) * breath_amp * 0.4
 
 	for bone_name in bones:
-		var idx := skeleton.find_bone(bone_name)
+		var idx := _fb(bone_name)
 		if idx == -1:
 			continue
 		var k: float = spring_k.get(bone_name, 200.0)
@@ -324,9 +341,23 @@ func _tick_springs(delta: float) -> void:
 		excite_pitch *= wobble_scale
 		excite_roll *= wobble_scale
 		excite_yaw *= wobble_scale
-		var excite_q := (Quaternion(Vector3.RIGHT, excite_pitch)
-			* Quaternion(Vector3(0, 0, 1), excite_roll)
-			* Quaternion(Vector3.UP, excite_yaw))
+		# excite_q 用骨骼局部軸施加激勵。預設(mannequin) head 局部軸與世界對齊：
+		#   pitch點頭=繞worldX(左右) → 用 localX(RIGHT)；roll左右搖=繞worldZ(前後) → localZ；
+		#   yaw轉體=繞worldY(竖直) → localY(UP)。
+		# human 骨架因額外 Y 旋轉/軸轉換，head 局部軸相對世界旋轉了：
+		#   localX→world+Z、localY→world+Y、localZ→world-X。
+		#   故要對齊世界語義需：pitch→繞 localZ(-X)、roll→繞 localX(+Z)、yaw→繞 localY(+Y)。
+		#   即human下互換 pitch/roll 軸。
+		var pitch_axis := Vector3.RIGHT
+		var roll_axis := Vector3(0, 0, 1)
+		var yaw_axis := Vector3.UP
+		if is_human:
+			pitch_axis = Vector3(0, 0, -1)   # 世界-X → 點頭
+			roll_axis = Vector3.RIGHT         # 世界+Z → 左右搖
+			yaw_axis = Vector3.UP             # 世界+Y → 轉體
+		var excite_q := (Quaternion(pitch_axis, excite_pitch)
+			* Quaternion(roll_axis, excite_roll)
+			* Quaternion(yaw_axis, excite_yaw))
 		var target_rot := (target * excite_q).normalized()
 
 		var cur: Quaternion = _spring_rot.get(bone_name) as Quaternion

@@ -1,0 +1,65 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/tech_demos/human_demo_ui.gd" id="2_ui"]
+[ext_resource type="Script" path="res://scripts/debug/debug_visualizer.gd" id="3_debug"]
+
+[sub_resource type="BoxMesh" id="4"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="BoxShape3D" id="5"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="ProceduralSkyMaterial" id="6"]
+
+[sub_resource type="Sky" id="7"]
+sky_material = SubResource("6")
+
+[sub_resource type="Environment" id="8"]
+background_mode = 2
+sky = SubResource("7")
+ambient_light_source = 3
+ambient_light_energy = 0.8
+
+[node name="HumanDemo" type="Node3D" unique_id=33303927]
+script = ExtResource("2_ui")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="Dummy" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -3)
+player_index = 1
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=437899215]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=393807844]
+mesh = SubResource("4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=478321442]
+shape = SubResource("5")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=554267077]
+environment = SubResource("8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1581606970]
+transform = Transform3D(1, 0, 0, 0, 0.7071, 0.7071, 0, -0.7071, 0.7071, 0, 6, 8)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=558489364]
+transform = Transform3D(1, 0, 0, 0, 0.5203582, 0.8539481, 0, -0.8539481, 0.5203582, 0, 4.967043, 6)
+
+[node name="DebugVisualizer" type="Node3D" parent="."]
+script = ExtResource("3_debug")
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=1337434893]
+
+[node name="Hint" type="Label" parent="UILayer" unique_id=962432701]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 900.0
+offset_bottom = 120.0
+theme_override_font_sizes/font_size = 20
+text = "Human (WASD移動/空格跳/F飛撲) 前方Dummy靶子可撲倒　[1帽3衣5背包] [Q/E表情 R清除] [B布娃娃] [N彈簧磕頭 M磕頭]"
