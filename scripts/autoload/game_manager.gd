@@ -1,6 +1,5 @@
 ## 職責：遊戲整體流程控制，按 GameConfig 驅動各階段順序推進
 
-class_name GameManager
 extends Node
 
 enum GameStage {

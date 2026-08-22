@@ -32,3 +32,12 @@ func _tick_timers(delta: float) -> void:
 			expired.append(behavior)
 	for behavior in expired:
 		pop_behavior(behavior)
+
+
+func get_camera() -> Camera3D:
+	return _camera
+
+func get_render_viewport() -> Viewport:
+	if _camera:
+		return _camera.get_viewport()
+	return null
