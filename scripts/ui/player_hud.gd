@@ -77,7 +77,6 @@ func _position_panel(panel: Control, index: int) -> void:
 func _connect_signals() -> void:
 	EventBus.item_picked_up.connect(_on_item_picked_up)
 	EventBus.item_used.connect(_on_item_used)
-	EventBus.outfit_changed.connect(_on_outfit_changed)
 
 func _on_item_picked_up(player_index: int, item_id: String) -> void:
 	var panel := _get_panel(player_index)
@@ -91,20 +90,17 @@ func _on_item_used(player_index: int, _item_id: String) -> void:
 		return
 	panel.flash_item_used()
 
-func _on_outfit_changed(player_index: int, slot: int, item_id: String) -> void:
-	var panel := _get_panel(player_index)
-	if not panel:
-		return
-	panel.set_outfit_slot(slot, _load_icon(item_id) if item_id != "" else null)
-
 func _get_panel(player_index: int) -> PlayerPanel:
 	if player_index < 0 or player_index >= _panels.size():
 		return null
 	return _panels[player_index]
 
-## 图标资源映射（demo 版走 ItemIcons 静态表，正式版与资源同事约定）
+## 图标资源映射：道具 id → 图标 key → 贴图（走 ItemConfig.get_item_icon + ItemIcons）
 func _load_icon(item_id: String) -> Texture2D:
-	return ItemIcons.load_icon(item_id)
+	var icon_key: String = ItemSystem._item_config.get_item_icon(item_id)
+	if icon_key == "":
+		return null
+	return ItemIcons.load_icon(icon_key)
 
 # ---------------------------------------------------------------- S6/S7 支持
 ## 给所有面板创建评分区

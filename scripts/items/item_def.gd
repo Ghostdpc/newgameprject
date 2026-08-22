@@ -5,6 +5,7 @@ extends RefCounted
 
 var id: String = ""
 var display_name: String = ""
+var icon: String = ""
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_USE
 var effects: Array[ItemEffect] = []
 
@@ -13,6 +14,7 @@ static func from_dict(d: Dictionary) -> ItemDef:
 	var def := ItemDef.new()
 	def.id           = str(d.get("id", ""))
 	def.display_name = str(d.get("display_name", def.id))
+	def.icon         = str(d.get("icon", ""))
 	def.trigger      = _parse_trigger(str(d.get("trigger", "on_use")))
 
 	var raw_effects: Array = d.get("effects", []) as Array

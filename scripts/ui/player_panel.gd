@@ -1,11 +1,12 @@
 ## 职责：单个玩家角标面板（四角之一）
-## 内容：颜色+编号+形状头像（三重辨识）、服装 3 槽（头/身/手）、道具槽、
-##       皇冠（冠军）、评分行（S6 逐维刷分）。
+## 内容：颜色+编号+形状头像（三重辨识）、道具槽、皇冠（冠军）、评分行（S6 逐维刷分）。
+## 服装槽已按新交互设计移除（服装不展示图标）。
 
 class_name PlayerPanel
 extends PanelContainer
 
-const OUTFIT_SLOT_COUNT := 3
+## 道具槽索引（唯一槽位）
+const ITEM_SLOT_INDEX := 0
 
 var player_index: int = 0
 var player_color: Color = Color.WHITE
@@ -14,7 +15,7 @@ var _avatar_bg: ColorRect
 var _avatar_shape: TextureRect
 var _name_label: Label
 var _crown: TextureRect
-# 槽位：[0..2] 服装（头/身/手），[3] 道具
+# 槽位：[0] 道具
 var _slot_ghosts: Array[TextureRect] = []
 var _slot_icons: Array[TextureRect] = []
 var _score_box: VBoxContainer
@@ -64,18 +65,11 @@ func _build_ui() -> void:
 	_name_label.add_theme_color_override("font_color", player_color)
 	vbox.add_child(_name_label)
 
-	# 服装 3 槽（头/身/手）
-	var outfit_row := HBoxContainer.new()
-	outfit_row.add_theme_constant_override("separation", 6)
-	vbox.add_child(outfit_row)
-	for i in OUTFIT_SLOT_COUNT:
-		outfit_row.add_child(_build_slot(Vector2(30, 30), i))
-
-	# 道具槽（单槽，稍大）
+	# 道具槽（单槽）
 	var item_row := HBoxContainer.new()
 	item_row.add_theme_constant_override("separation", 6)
 	vbox.add_child(item_row)
-	item_row.add_child(_build_slot(Vector2(38, 38), 3))
+	item_row.add_child(_build_slot(Vector2(38, 38)))
 	var item_hint := Label.new()
 	item_hint.text = "道具"
 	item_hint.add_theme_font_size_override("font_size", 14)
@@ -121,7 +115,7 @@ func _build_avatar() -> Control:
 	box.add_child(_crown)
 	return box
 
-func _build_slot(size: Vector2, _slot_index: int) -> Control:
+func _build_slot(size: Vector2) -> Control:
 	var holder := Control.new()
 	holder.custom_minimum_size = size
 
@@ -140,8 +134,7 @@ func _build_slot(size: Vector2, _slot_index: int) -> Control:
 
 	# 空槽轮廓
 	var ghost := TextureRect.new()
-	ghost.texture = ItemIcons.slot_icon(_slot_index) if _slot_index < OUTFIT_SLOT_COUNT \
-		else ItemIcons.load_icon("slot_2")
+	ghost.texture = ItemIcons.load_icon("slot_2")
 	ghost.modulate = Color(1, 1, 1, 0.4)
 	ghost.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	ghost.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -167,15 +160,9 @@ func _build_slot(size: Vector2, _slot_index: int) -> Control:
 	_slot_icons.append(icon)
 	return holder
 
-# ---------------------------------------------------------------- 服装/道具
-## 装备即生效：旧图标淡出、新图标弹入（交互文档 §5.3）
-func set_outfit_slot(slot: int, icon: Texture2D) -> void:
-	if slot < 0 or slot >= OUTFIT_SLOT_COUNT:
-		return
-	_set_slot_icon(slot, icon)
-
+# ---------------------------------------------------------------- 道具
 func set_item(icon: Texture2D) -> void:
-	_set_slot_icon(OUTFIT_SLOT_COUNT, icon)
+	_set_slot_icon(ITEM_SLOT_INDEX, icon)
 
 func _set_slot_icon(index: int, icon: Texture2D) -> void:
 	var ghost := _slot_ghosts[index]
@@ -195,7 +182,7 @@ func _set_slot_icon(index: int, icon: Texture2D) -> void:
 
 ## 使用道具：图标清空 + 灰闪
 func flash_item_used() -> void:
-	var rect := _slot_icons[OUTFIT_SLOT_COUNT]
+	var rect := _slot_icons[ITEM_SLOT_INDEX]
 	if rect.texture == null:
 		return
 	var tw := create_tween()
@@ -204,7 +191,7 @@ func flash_item_used() -> void:
 	tw.tween_callback(func():
 		rect.texture = null
 		rect.self_modulate = Color.WHITE
-		_slot_ghosts[OUTFIT_SLOT_COUNT].modulate.a = 1.0)
+		_slot_ghosts[ITEM_SLOT_INDEX].modulate.a = 1.0)
 
 # ---------------------------------------------------------------- 冠军皇冠
 func show_crown(on: bool) -> void:
