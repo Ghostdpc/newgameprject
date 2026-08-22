@@ -17,6 +17,13 @@ const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium
 ## 拾取長按時長（秒，策划要求 0.8）
 const PICKUP_HOLD_TIME: float = 0.8
 
+## 抓取距離 / 拋出速度 / 被抓起物體跟隨位置（探索性功能，可刪）
+const GRAB_RANGE: float = 2.5
+const GRAB_LIFT: float = 1.6
+const THROW_SPEED: float = 5.0
+## 抓取吸向手的速度（大=更快抓到；小=緩慢飛來）
+const GRAB_LERP: float = 8.0
+
 @export var jump_force: float = 10.0
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
@@ -39,6 +46,7 @@ var _animation_player: AnimationPlayer
 var _current_anim: String = ""
 
 var _pickup_hold_time: float = 0.0
+var _grabbed_prop: PhysicalProp = null
 
 ## 是否處於死亡/復活流程（非正常對戰狀態）
 func is_dead() -> bool:
@@ -185,8 +193,68 @@ func _physics_process(delta: float) -> void:
 		return
 	move_and_slide()
 	_check_dive_hit()
+	_push_contacted_props()
+	_update_grab(delta)
 
-## 飛撲狀態碰撞檢測：命中其他玩家則擊飛
+## 玩家移動時推動接觸到的場景物理物（解決 move_and_slide 卡住不推）
+func _push_contacted_props() -> void:
+	# 用輸入方向而非 velocity（頂住箱子時 velocity 會被歸零，輸入方向仍有效）
+	var input_dir := player_input.get_move_direction()
+	if input_dir.length_squared() < 0.01:
+		return
+	var push_dir := Vector3(input_dir.x, 0.0, input_dir.y).normalized()
+	for i in get_slide_collision_count():
+		var collider := get_slide_collision(i).get_collider()
+		if collider is PhysicalProp:
+			(collider as PhysicalProp).push(push_dir)
+
+## 抓取更新：R 鍵按住 → 抓起/跟隨面前物理物；鬆開 → 拋出
+func _update_grab(delta: float) -> void:
+	if _grabbed_prop != null:
+		# 平滑吸向玩家正面抓取點（不瞬移），到位後貼手跟隨
+		var target := global_position + Vector3.UP * GRAB_LIFT + global_basis.z * 1.6
+		var diff := target - _grabbed_prop.global_position
+		if diff.length() > 0.05:
+			_grabbed_prop.global_position += diff * clampf(GRAB_LERP * delta, 0.0, 1.0)
+		else:
+			_grabbed_prop.global_position = target
+		if not player_input.is_grab_pressed():
+			# 鬆開：跑動中 = 帶著玩家速度拋出；靜止 = 原地放下（只留很小前向）
+			var carry := Vector3(velocity.x, 0.0, velocity.z)
+			var throw_dir := global_basis.z.normalized()
+			var speed := carry.length()
+			var release_velocity: Vector3
+			if speed > 0.5:
+				release_velocity = throw_dir * THROW_SPEED + carry + Vector3.UP * 2.0
+			else:
+				release_velocity = carry + throw_dir * 0.5 + Vector3.UP * 1.0
+			_grabbed_prop.release(release_velocity)
+			_grabbed_prop = null
+		return
+	# 未抓取：R 按下 → 抓最近的物理物件
+	if player_input.is_grab_pressed():
+		_grabbed_prop = _find_nearest_prop()
+		if _grabbed_prop:
+			_grabbed_prop.grab()
+
+## 找最近的可抓取場景物件（group "physical_prop"，距離內）
+func _find_nearest_prop() -> PhysicalProp:
+	var props := get_tree().get_nodes_in_group("physical_prop")
+	var nearest: PhysicalProp = null
+	var best := INF
+	for node in props:
+		var prop := node as PhysicalProp
+		if not prop or prop.freeze:
+			continue
+		var d := global_position.distance_to(prop.global_position)
+		if d < best:
+			best = d
+			nearest = prop
+	if nearest and best <= GRAB_RANGE:
+		return nearest
+	return null
+
+## 飛撲狀態碰撞檢測：撞到玩家→擊飛對方倒地；撞到場景物理物→擊飛物品 + 自己倒地
 func _check_dive_hit() -> void:
 	if state_machine.current_state_name != "Dive":
 		return
@@ -195,6 +263,16 @@ func _check_dive_hit() -> void:
 		var collider := get_slide_collision(i).get_collider()
 		if collider is PlayerController:
 			dive.hit_target(collider as PlayerController)
+		elif collider is PhysicalProp:
+			dive.knock_prop(collider as PhysicalProp)
+			# 撞到物品自己也立刻停下並進入倒地（與被撞同等）
+			_knocked_down_by_prop(dive)
+			return
+
+## 撞到物品後自己倒地：立即停下 + 進入 Stunned（布娃娃癱軟）
+func _knocked_down_by_prop(dive: DiveState) -> void:
+	velocity = Vector3.ZERO
+	state_machine.transition_to("Stunned")
 
 func apply_move(direction: Vector2) -> void:
 	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED

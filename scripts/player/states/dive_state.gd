@@ -38,6 +38,15 @@ func hit_target(target: PlayerController) -> void:
 	fly.launch(_dive_direction * TuneConfig.hit_force + Vector3.UP * TuneConfig.hit_upward)
 	EventBus.item_used.emit(-1, null)
 
+## 擊中場景物理物：擊飛物品（不影響自己繼續飛撲）
+func knock_prop(prop: PhysicalProp) -> void:
+	var force := _dive_direction * TuneConfig.hit_force + Vector3.UP * TuneConfig.hit_upward * 0.5
+	if prop.is_frozen():
+		prop.release(force)
+	else:
+		# 用 impulse 會除以 mass（箱子重 => 飛不遠），改按質量放大衝量
+		prop.apply_central_impulse(force * prop.mass)
+
 func physics_update(delta: float) -> void:
 	var controller: PlayerController = _player as PlayerController
 	if not controller:
