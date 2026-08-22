@@ -23,6 +23,24 @@ func get_spawn_points() -> Array[Vector3]:
 
 func _setup_level() -> void:
 	_build_stage()
+	_setup_item_hotspots()
+
+## 在舞台範圍內生成 6 個道具熱點（代碼生成，與 StageBuilder 座標對齊）
+func _setup_item_hotspots() -> void:
+	var hotspot_positions: Array[Vector3] = [
+		Vector3(-4.0, 0.6,  0.0),
+		Vector3( 4.0, 0.6,  0.0),
+		Vector3( 0.0, 0.6, -3.0),
+		Vector3(-3.0, 0.6,  3.0),
+		Vector3( 3.0, 0.6,  3.0),
+		Vector3( 0.0, 0.6,  1.0),
+	]
+	for pos in hotspot_positions:
+		var hotspot := Node3D.new()
+		hotspot.position = pos
+		hotspot.name = "ItemHotspot"
+		add_child(hotspot)
+		hotspot.add_to_group("item_hotspot")
 
 ## 测试场景自动开局（正式流程由主界面/匹配触发）
 func _on_level_ready() -> void:
