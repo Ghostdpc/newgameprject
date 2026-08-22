@@ -17,6 +17,13 @@ const SLOT_BONES: Dictionary = {
 	"accessory_slot": "upperarm.r",
 }
 
+## 槽位掛點偏移（米）：human 骨架骨槽位置可能偏高，用偏移把裝備物拉回正確觀感位置。
+## 例如 halo 掛 head 骨（human 是頭頂最尖端）會浮太高，下移到底座/頭上。
+const SLOT_OFFSET: Dictionary = {
+	"hat_slot": Vector3(0.0, -0.3, 0.0),
+	"shirt_slot": Vector3(0.0, 0.45, 0.0),
+}
+
 var _is_human: bool = false
 
 @export var character_root: Node3D
@@ -72,13 +79,26 @@ func _create_slot(slot_name: String) -> void:
 
 ## 裝備物品到指定槽位（同槽位先卸載舊物）
 func equip(slot_name: String, item_scene: PackedScene, item_id: String = "") -> Node3D:
+	unequip(slot_name)
+	var item := item_scene.instantiate()
+	item.name = "Item"
+	return _mount(slot_name, item, item_id)
+
+## 直接掛載已構建的 Node3D（如 PropModelBuilder 套貼圖後的節點），避免作為 scene 再實例化
+func equip_garment_node(slot_name: String, node: Node3D, item_id: String = "") -> Node3D:
+	unequip(slot_name)
+	node.name = "Item"
+	return _mount(slot_name, node, item_id)
+
+func _mount(slot_name: String, item: Node3D, item_id: String) -> Node3D:
 	if not _slots.has(slot_name):
 		push_error("OutfitManager: 無此槽位 '%s'" % slot_name)
+		item.free()
 		return null
-	unequip(slot_name)
-	var item: Node3D = item_scene.instantiate()
-	item.name = "Item"
 	_slots[slot_name].add_child(item)
+	# 套用槽位掛點偏移（halo 掛 human head 骨會浮高，下移）
+	if SLOT_OFFSET.has(slot_name) and _is_human:
+		item.position = SLOT_OFFSET[slot_name]
 	_items[slot_name] = item
 	_item_ids[slot_name] = item_id
 	_recolor(item)
@@ -116,13 +136,11 @@ func _recolor_all() -> void:
 func _recolor(item: Node3D) -> void:
 	for child in item.find_children("*", "MeshInstance3D", true, false):
 		var mesh := child as MeshInstance3D
-		var mat: Material
 		var src: Material = mesh.get_active_material(0)
 		if src:
-			mat = src.duplicate()
-			if mat is StandardMaterial3D:
-				(mat as StandardMaterial3D).albedo_color = player_color
-		else:
-			mat = StandardMaterial3D.new()
-			(mat as StandardMaterial3D).albedo_color = player_color
+			# 有自帶材質（halo 金色等）：保留原色，不被玩家色覆蓋成純白
+			continue
+		# 無材質（占位件）：新建玩家色材質
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = player_color
 		mesh.material_override = mat

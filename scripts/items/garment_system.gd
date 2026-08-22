@@ -16,6 +16,17 @@ func _ready() -> void:
 	_garment_config.load()
 	EventBus.battle_ended.connect(_on_battle_ended)
 
+## 給服裝模型套用 tint 色（覆蓋純白 unshaded 材質，占位可視化）
+func _tint_model(item: Node3D, color: Color) -> void:
+	for mi in item.find_children("*", "MeshInstance3D", true, false):
+		var mesh := mi as MeshInstance3D
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = color
+		mat.roughness = 0.6
+		mat.metallic = 0.3
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		mesh.material_override = mat
+
 ## 检查 id 是否属于服装
 func is_garment(id: String) -> bool:
 	if _garment_config == null:
@@ -41,7 +52,18 @@ func equip_garment(player: PlayerController, garment_id: String) -> void:
 		else:
 			var scene := load(def.model) as PackedScene
 			if scene:
-				player.outfit_manager.equip(def.slot, scene, garment_id)
+				var item: Node3D = null
+				if not def.texture.is_empty():
+					# 有貼圖：用 PropModelBuilder 套貼圖後掛載
+					var built := PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale)
+					if built:
+						item = player.outfit_manager.equip_garment_node(def.slot, built, garment_id)
+				if item == null:
+					# 無貼圖或 build 失敗：直接掛 scene
+					item = player.outfit_manager.equip(def.slot, scene, garment_id)
+				# 占位 tint：僅在「無貼圖且配置了非白 tint」時套用（純白 unshaded 白模上色）
+				if item and def.texture.is_empty() and def.tint != Color.WHITE:
+					_tint_model(item, def.tint)
 
 	# 应用效果
 	var ctx := ItemContext.new()

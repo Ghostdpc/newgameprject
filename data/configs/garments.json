@@ -24,6 +24,7 @@
       "slot": "hat_slot",
       "model": "res://assets/models/garments/halo/halo.fbx",
       "model_scale": 1.0,
+      "tint": "gold",
       "score_bonus": 0.12,
       "effects": [
         {
