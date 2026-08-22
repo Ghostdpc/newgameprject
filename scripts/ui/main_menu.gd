@@ -1,36 +1,50 @@
-## 职责：S0 标题界面 —— 中央 Logo + 底部确认提示，任意确认键进入大厅（交互文档 §4 标题）
-
+## 职责：S0 标题界面 —— 3D 房间背景（缓慢环绕相机）+ 模糊滤镜 + Logo/开始/退出 图片按钮
+## 输入：开始按钮 / 任意确认键 / 手柄非○键 → 进入大厅；退出按钮 / Esc / 手柄○ → 退出
 class_name MainMenu
-extends Control
+extends Node
 
-@onready var _start_hint: Label = $Center/VBox/StartHint
-@onready var _shape_row: HBoxContainer = $Center/VBox/ShapeRow
+@onready var _pad_start: TextureRect = $UILayer/UIRoot/Center/Menu/StartCol/PadIcon
+@onready var _pad_quit: TextureRect = $UILayer/UIRoot/Center/Menu/QuitCol/PadIcon
+@onready var _start_btn: TextureButton = $UILayer/UIRoot/Center/Menu/StartCol/StartButton
+@onready var _quit_btn: TextureButton = $UILayer/UIRoot/Center/Menu/QuitCol/QuitButton
+
+const _SCALE_NORMAL := Vector2.ONE
+const _SCALE_HOVER := Vector2(1.12, 1.12)
+const _SCALE_PRESS := Vector2(0.94, 0.94)
 
 func _ready() -> void:
-	_pulse_hint()
-	_apply_shape_colors()
-	gui_input.connect(_on_gui_input)
+	_pulse(_pad_start)
+	_pulse(_pad_quit)
+	_setup_button_feedback(_start_btn)
+	_setup_button_feedback(_quit_btn)
 
-## 主界面 4 个形状图标颜色跟随玩家配色配置
-func _apply_shape_colors() -> void:
-	if not _shape_row:
+## 图片按钮：悬停放大、按下缩小、移出复原（缩放绕中心）
+func _setup_button_feedback(btn: TextureButton) -> void:
+	if not btn:
 		return
-	var shapes := _shape_row.get_children()
-	for i in shapes.size():
-		var tex := shapes[i] as TextureRect
-		if tex:
-			tex.modulate = PlayerConfig.get_color(i)
+	btn.pivot_offset = btn.custom_minimum_size * 0.5
+	btn.mouse_entered.connect(func() -> void: _scale_to(btn, _SCALE_HOVER))
+	btn.mouse_exited.connect(func() -> void: _scale_to(btn, _SCALE_NORMAL))
+	btn.button_down.connect(func() -> void: _scale_to(btn, _SCALE_PRESS))
+	btn.button_up.connect(func() -> void:
+		_scale_to(btn, _SCALE_HOVER if btn.is_hovered() else _SCALE_NORMAL))
 
-## 鼠标点击任意位置也可开始（手柄/键盘走 _unhandled_input）
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed \
-			and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT:
-		GameManager.enter_lobby()
+func _scale_to(btn: TextureButton, target: Vector2) -> void:
+	var tw := create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(btn, "scale", target, 0.12)
 
-func _pulse_hint() -> void:
+func _pulse(node: CanvasItem) -> void:
+	if not node:
+		return
 	var tw := create_tween().set_loops()
-	tw.tween_property(_start_hint, "modulate:a", 0.35, 0.55)
-	tw.tween_property(_start_hint, "modulate:a", 1.0, 0.55)
+	tw.tween_property(node, "modulate:a", 0.45, 0.6)
+	tw.tween_property(node, "modulate:a", 1.0, 0.6)
+
+func _on_start_pressed() -> void:
+	GameManager.enter_lobby()
+
+func _on_quit_pressed() -> void:
+	get_tree().quit()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed():
@@ -38,10 +52,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_ESCAPE:
 		get_tree().quit()
 		return
-	# 任意键盘键（非 Esc）或手柄任意按钮 → 进入大厅
-	if event is InputEventKey or event is InputEventJoypadButton:
+	if event is InputEventJoypadButton:
+		get_viewport().set_input_as_handled()
+		# 手柄○（PS 上映射为 JOY_BUTTON_B）→ 退出，其余按钮 → 开始
+		if (event as InputEventJoypadButton).button_index == JOY_BUTTON_B:
+			get_tree().quit()
+		else:
+			GameManager.enter_lobby()
+		return
+	if event is InputEventKey:
 		get_viewport().set_input_as_handled()
 		GameManager.enter_lobby()
-
-func _on_quit_pressed() -> void:
-	get_tree().quit()

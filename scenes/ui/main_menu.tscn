@@ -1,141 +1,125 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene format=3 uid="uid://c8c0kws6qos58"]
 
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
-[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_circle.svg" id="3_shp"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_triangle.svg" id="4_shp"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_square.svg" id="5_shp"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_diamond.svg" id="6_shp"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/shutter_icon.svg" id="7_sht"]
+[ext_resource type="Script" uid="uid://bp1bqroxgvuil" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="PackedScene" uid="uid://batsr4alw6826" path="res://scenes/levels/room_stage.tscn" id="2_room"]
+[ext_resource type="Script" uid="uid://ts447a5b6xxv" path="res://scripts/ui/menu_camera_orbit.gd" id="3_orbit"]
+[ext_resource type="Shader" uid="uid://c6t31sykv863j" path="res://resources/shaders/menu_blur.gdshader" id="4_blur"]
+[ext_resource type="Texture2D" uid="uid://civ0r3n1bcli" path="res://assets/textures/ui/menu/title.png" id="5_title"]
+[ext_resource type="Texture2D" uid="uid://dkqyle3uqa5pe" path="res://assets/textures/ui/menu/pad_triangle.png" id="6_padt"]
+[ext_resource type="Texture2D" uid="uid://ccqko2yart75m" path="res://assets/textures/ui/menu/btn_start.png" id="7_start"]
+[ext_resource type="Texture2D" uid="uid://cdvltypr5v4u3" path="res://assets/textures/ui/menu/pad_circle.png" id="8_padc"]
+[ext_resource type="Texture2D" uid="uid://cyo0xqj5bbs7m" path="res://assets/textures/ui/menu/btn_quit.png" id="9_quit"]
 
-[sub_resource type="Gradient" id="bg_grad_g"]
-offsets = PackedFloat32Array(0, 0.6, 1)
-colors = PackedColorArray(0.06, 0.09, 0.16, 1, 0.075, 0.085, 0.13, 1, 0.04, 0.045, 0.08, 1)
+[sub_resource type="ShaderMaterial" id="blur_mat"]
+shader = ExtResource("4_blur")
+shader_parameter/blur_amount = 3.5
+shader_parameter/tint = Color(0.03, 0.04, 0.07, 0.28)
 
-[node name="MainMenu" type="Control"]
-layout_mode = 3
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme = ExtResource("2_theme")
+[node name="MainMenu" type="Node" unique_id=1493095370]
 script = ExtResource("1_menu")
 
-[node name="BG" type="ColorRect" parent="."]
-layout_mode = 1
+[node name="Background" type="Node3D" parent="." unique_id=1626290228]
+
+[node name="RoomStage" parent="Background" unique_id=16819829 instance=ExtResource("2_room")]
+
+[node name="MenuCamera" type="Camera3D" parent="Background" unique_id=707873613]
+transform = Transform3D(1, 0, 0, 0, 0.8755841, 0.4830656, 0, -0.4830656, 0.8755841, 0.9, 1.9528406, -4.3239455)
+current = true
+fov = 55.0
+script = ExtResource("3_orbit")
+
+[node name="BlurLayer" type="CanvasLayer" parent="." unique_id=1219962576]
+
+[node name="Blur" type="ColorRect" parent="BlurLayer" unique_id=373549529]
+material = SubResource("blur_mat")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.055, 0.07, 0.115, 1)
+mouse_filter = 2
 
-[node name="Center" type="CenterContainer" parent="."]
-layout_mode = 1
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=283575948]
+layer = 2
+
+[node name="UIRoot" type="Control" parent="UILayer" unique_id=1827995481]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="VBox" type="VBoxContainer" parent="Center"]
-custom_minimum_size = Vector2(620, 0)
+[node name="Logo" type="TextureRect" parent="UILayer/UIRoot" unique_id=771843304]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -410.0
+offset_top = 219.0
+offset_right = 410.0
+offset_bottom = 614.0
+grow_horizontal = 2
+texture = ExtResource("5_title")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Center" type="CenterContainer" parent="UILayer/UIRoot" unique_id=362039864]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.58
+anchor_right = 1.0
+anchor_bottom = 0.82
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Menu" type="HBoxContainer" parent="UILayer/UIRoot/Center" unique_id=1982601600]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 180
 alignment = 1
 
-[node name="ShutterIcon" type="TextureRect" parent="Center/VBox"]
-custom_minimum_size = Vector2(84, 84)
+[node name="StartCol" type="VBoxContainer" parent="UILayer/UIRoot/Center/Menu" unique_id=1915437571]
 layout_mode = 2
-texture = ExtResource("7_sht")
-expand_mode = 1
-stretch_mode = 5
+theme_override_constants/separation = 16
+alignment = 1
 
-[node name="TitleLabel" type="Label" parent="Center/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.97, 1, 1)
-theme_override_font_sizes/font_size = 84
-text = "别抢我镜头"
-horizontal_alignment = 1
-
-[node name="SubLabel" type="Label" parent="Center/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.72, 0.86, 1)
-theme_override_font_sizes/font_size = 24
-text = "Don't Steal My Shot · 2~4 人本地同屏派对 · Demo"
-horizontal_alignment = 1
-
-[node name="ShapeRow" type="HBoxContainer" parent="Center/VBox"]
+[node name="PadIcon" type="TextureRect" parent="UILayer/UIRoot/Center/Menu/StartCol" unique_id=1060611376]
+custom_minimum_size = Vector2(58, 58)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 26
-
-[node name="S1" type="TextureRect" parent="Center/VBox/ShapeRow"]
-custom_minimum_size = Vector2(52, 52)
-layout_mode = 2
-modulate = Color(0.2, 0.45, 0.9, 1)
-texture = ExtResource("3_shp")
+texture = ExtResource("6_padt")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="S2" type="TextureRect" parent="Center/VBox/ShapeRow"]
-custom_minimum_size = Vector2(52, 52)
+[node name="StartButton" type="TextureButton" parent="UILayer/UIRoot/Center/Menu/StartCol" unique_id=618889222]
+custom_minimum_size = Vector2(240, 92)
 layout_mode = 2
-modulate = Color(0.9, 0.55, 0.1, 1)
-texture = ExtResource("4_shp")
+size_flags_horizontal = 4
+texture_normal = ExtResource("7_start")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="QuitCol" type="VBoxContainer" parent="UILayer/UIRoot/Center/Menu" unique_id=1750079226]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PadIcon" type="TextureRect" parent="UILayer/UIRoot/Center/Menu/QuitCol" unique_id=865238758]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("8_padc")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="S3" type="TextureRect" parent="Center/VBox/ShapeRow"]
-custom_minimum_size = Vector2(52, 52)
+[node name="QuitButton" type="TextureButton" parent="UILayer/UIRoot/Center/Menu/QuitCol" unique_id=931003632]
+custom_minimum_size = Vector2(240, 92)
 layout_mode = 2
-modulate = Color(0.2, 0.8, 0.3, 1)
-texture = ExtResource("5_shp")
-expand_mode = 1
+size_flags_horizontal = 4
+texture_normal = ExtResource("9_quit")
+ignore_texture_size = true
 stretch_mode = 5
 
-[node name="S4" type="TextureRect" parent="Center/VBox/ShapeRow"]
-custom_minimum_size = Vector2(52, 52)
-layout_mode = 2
-modulate = Color(0.6, 0.3, 0.9, 1)
-texture = ExtResource("6_shp")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Spacer" type="Control" parent="Center/VBox"]
-custom_minimum_size = Vector2(0, 46)
-layout_mode = 2
-
-[node name="StartHint" type="Label" parent="Center/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
-theme_override_font_sizes/font_size = 30
-text = "— 按 确认键 开始 —"
-horizontal_alignment = 1
-
-[node name="BottomBar" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = -52.0
-offset_right = -28.0
-offset_bottom = -18.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 20
-
-[node name="KeyHint" type="Label" parent="BottomBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.5, 0.56, 0.66, 1)
-theme_override_font_sizes/font_size = 18
-text = "确认：Enter / 空格 / 手柄 A        退出：Esc"
-
-[node name="QuitButton" type="Button" parent="BottomBar"]
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "退出游戏"
-
-[connection signal="pressed" from="BottomBar/QuitButton" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="UILayer/UIRoot/Center/Menu/StartCol/StartButton" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="UILayer/UIRoot/Center/Menu/QuitCol/QuitButton" to="." method="_on_quit_pressed"]
