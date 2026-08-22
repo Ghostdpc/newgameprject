@@ -15,7 +15,7 @@
           "kind": "player_speed",
           "target": "self",
           "duration": 3.0,
-          "params": { "multiplier": 1.4 }
+          "params": { "multiplier": 10.0 }
         }
       ]
     },
@@ -107,10 +107,10 @@
       "trigger": "on_step",
       "effects": [
         {
-          "kind": "player_ragdoll",
+          "kind": "banana_slide",
           "target": "self",
-          "duration": 1.5,
-          "params": {}
+          "duration": 0.0,
+          "params": { "speed": 8.0 }
         }
       ]
     }

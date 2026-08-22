@@ -16,10 +16,10 @@ const RESPAWN_HEIGHT: float = 8.0   ## 重生空中高度（落下）
 const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
 
 const PLAYER_COLORS: Array[Color] = [
-	Color(0.9, 0.2, 0.2),
-	Color(0.2, 0.4, 0.9),
-	Color(0.2, 0.8, 0.3),
-	Color(0.9, 0.8, 0.1),
+	Color(0.2, 0.45, 0.9),   # P1 蓝
+	Color(0.9, 0.55, 0.1),   # P2 橙
+	Color(0.2, 0.8, 0.3),    # P3 绿
+	Color(0.6, 0.3, 0.9),    # P4 紫
 ]
 
 # ---- 相机默认参数 ----（子类可覆写）
@@ -35,14 +35,15 @@ const PLAYER_COLORS: Array[Color] = [
 # ---- 节点引用（通用节点在场景中由关卡手动放置）----
 @onready var _main_camera: Camera3D = get_node_or_null("MainCamera") as Camera3D
 @onready var _main_controller: CameraController = get_node_or_null("MainCamera/CameraController") as CameraController
-@onready var _photo_camera: Camera3D = get_node_or_null("PhotoViewport/PhotoCamera") as Camera3D
-@onready var _photo_controller: CameraController = get_node_or_null("PhotoViewport/PhotoCamera/CameraController") as CameraController
 @onready var _settlement: Node = get_node_or_null("SettlementSystem")
-@onready var _results_panel: Node = get_node_or_null("ResultsPanel")
+@onready var _scoring_screen: Node = get_node_or_null("ScoringScreen")
 @onready var _flash: ColorRect = get_node_or_null("HUD/ShutterFlash") as ColorRect
 @onready var _stage_root: Node3D = get_node_or_null("Stage") as Node3D
 @onready var _actors_root: Node3D = get_node_or_null("Actors") as Node3D
 @onready var _spawn_root: Node3D = get_node_or_null("SpawnPoints") as Node3D
+
+## 拍照相机 rig（通过 group 查找，策划可任意命名/摆放）
+var _photo_rig: PhotoCameraRig = null
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -187,13 +188,11 @@ func _setup_cameras() -> void:
 		fixed.look_target = main_cam_look
 		_main_controller.push_behavior(fixed)
 		CameraSystem.register_main_camera(_main_controller)
-	if _photo_controller:
-		_photo_controller.init(_photo_camera)
-		var pf := FixedShotBehavior.new()
-		pf.position = photo_cam_pos
-		pf.look_target = photo_cam_look
-		_photo_controller.push_behavior(pf)
-		CameraSystem.register_photo_camera(_photo_controller)
+
+	# 拍照相机 rig 自己注册（在 rig._ready 里），这里只做查找
+	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")
+	if not rigs.is_empty():
+		_photo_rig = rigs[0] as PhotoCameraRig
 
 # ---------------------------------------------------------------
 # 信号
@@ -206,6 +205,15 @@ func _connect_signals() -> void:
 	EventBus.photo_taken.connect(_on_photo_taken)
 	if _settlement and _settlement.has_signal("settlement_completed"):
 		_settlement.settlement_completed.connect(_on_settlement_completed)
+	if _scoring_screen and _scoring_screen.has_signal("flow_finished"):
+		_scoring_screen.flow_finished.connect(_on_flow_finished)
+
+func _on_flow_finished(action: String) -> void:
+	match action:
+		"restart":
+			GameManager.start_game()
+		"lobby":
+			GameManager.enter_lobby()
 
 func _on_battle_started() -> void:
 	_on_level_battle_started()
@@ -235,9 +243,12 @@ func _do_shutter_flash() -> void:
 	tween.tween_property(_flash, "modulate:a", 0.0, 0.3)
 
 func _on_settlement_completed(results: Dictionary) -> void:
-	if _results_panel and _results_panel.has_method("show_results"):
-		_results_panel.show_results(results)
-		_results_panel.show()
+	if _scoring_screen:
+		var hud := get_node_or_null("HUD/PlayerHUD")
+		if hud and _scoring_screen.has_method("setup"):
+			_scoring_screen.setup(hud)
+		if _scoring_screen.has_method("show_results"):
+			_scoring_screen.show_results(results)
 	_on_level_settlement(results)
 
 func _on_level_settlement(_results: Dictionary) -> void:

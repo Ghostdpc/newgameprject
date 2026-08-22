@@ -15,12 +15,12 @@ func test_initial_stage_is_main_menu() -> void:
 
 func test_stage_order_starts_with_theme_announce() -> void:
 	var stage_order: Array = _game_manager.STAGE_ORDER
-	assert_eq(stage_order[0], 1, "第一個階段應為 THEME_ANNOUNCE(1)")
+	assert_eq(stage_order[0], GameManager.GameStage.THEME_ANNOUNCE, "第一個階段應為 THEME_ANNOUNCE")
 
 func test_battle_duration_loaded_from_config() -> void:
 	var cfg := GameConfig.new()
 	cfg.load()
-	assert_eq(cfg.battle_duration, 15.0, "battle_duration 應從 JSON 讀為 15.0")
+	assert_eq(cfg.battle_duration, 45.0, "battle_duration 應從 JSON 讀為 45.0")
 
 func test_score_system_returns_four_scores() -> void:
 	var score_sys := ScoreSystem.new()

@@ -7,7 +7,7 @@ var _config: ItemConfig
 
 func before_each() -> void:
 	GameManager.stage_time_remaining = 10.0
-	GameManager.time_scale = 1.0
+	GameManager.time_rate = 1.0
 	_item_system = load("res://scripts/items/item_system.gd").new()
 	add_child_autofree(_item_system)
 	_config = _item_system._item_config
@@ -55,9 +55,9 @@ func test_banana_peel_trap_has_effect() -> void:
 	var trap := _config.get_trap("banana_peel")
 	assert_eq(trap.effects.size(), 1, "banana_peel 應有 1 個效果")
 
-func test_banana_peel_effect_is_ragdoll() -> void:
+func test_banana_peel_effect_is_banana_slide() -> void:
 	var trap := _config.get_trap("banana_peel")
-	assert_eq(trap.effects[0].kind, ItemTypes.EffectKind.PLAYER_RAGDOLL)
+	assert_eq(trap.effects[0].kind, ItemTypes.EffectKind.BANANA_SLIDE)
 
 # --- TimerAddEffect（加時電池 / 減時剪刀）---
 
@@ -84,22 +84,22 @@ func test_time_scissors_min_clamp_at_one() -> void:
 # --- TimerScaleEffect（快進發條 / 慢放沙漏）---
 
 func test_fast_crank_sets_time_scale() -> void:
-	GameManager.time_scale = 1.0
+	GameManager.time_rate = 1.0
 	_item_system.use_item(null, "fast_forward_crank")
-	assert_eq(GameManager.time_scale, 2.0, "快進發條應將 time_scale 設為 2.0")
+	assert_eq(GameManager.time_rate, 2.0, "快進發條應將 time_rate 設為 2.0")
 
 func test_slow_hourglass_sets_time_scale() -> void:
-	GameManager.time_scale = 1.0
+	GameManager.time_rate = 1.0
 	_item_system.use_item(null, "slow_hourglass")
-	assert_eq(GameManager.time_scale, 0.5, "慢放沙漏應將 time_scale 設為 0.5")
+	assert_eq(GameManager.time_rate, 0.5, "慢放沙漏應將 time_rate 設為 0.5")
 
 func test_timer_scale_reverts_after_duration() -> void:
-	GameManager.time_scale = 1.0
+	GameManager.time_rate = 1.0
 	_item_system.use_item(null, "fast_forward_crank")
-	assert_eq(GameManager.time_scale, 2.0)
+	assert_eq(GameManager.time_rate, 2.0)
 	# 模擬時間流逝超過 3 秒（效果 duration = 3.0）
 	_item_system._process(3.1)
-	assert_eq(GameManager.time_scale, 1.0, "持續時間結束後 time_scale 應還原為 1.0")
+	assert_eq(GameManager.time_rate, 1.0, "持續時間結束後 time_rate 應還原為 1.0")
 
 # --- PlayerSpeedEffect（能量飲料）---
 
@@ -107,7 +107,7 @@ func test_energy_drink_sets_speed_multiplier() -> void:
 	var mock_player := _make_mock_player()
 	mock_player.speed_multiplier = 1.0
 	_item_system.use_item(mock_player, "energy_drink")
-	assert_eq(mock_player.speed_multiplier, 1.4, "能量飲料應將移速倍數設為 1.4")
+	assert_eq(mock_player.speed_multiplier, 10.0, "能量飲料應將移速倍數設為 10.0")
 	mock_player.queue_free()
 
 func test_energy_drink_reverts_after_duration() -> void:

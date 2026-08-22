@@ -31,4 +31,5 @@ static func _parse_kind(s: String) -> ItemTypes.EffectKind:
 		"player_stun":    return ItemTypes.EffectKind.PLAYER_STUN
 		"player_speed":   return ItemTypes.EffectKind.PLAYER_SPEED
 		"timer_add":      return ItemTypes.EffectKind.TIMER_ADD
+		"banana_slide":   return ItemTypes.EffectKind.BANANA_SLIDE
 		_:                return ItemTypes.EffectKind.NONE

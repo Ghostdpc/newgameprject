@@ -1,0 +1,109 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/lobby.gd" id="1_lobby"]
+[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("2_theme")
+script = ExtResource("1_lobby")
+
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.055, 0.07, 0.115, 1)
+
+[node name="Header" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 36.0
+offset_bottom = 160.0
+grow_horizontal = 2
+theme_override_constants/separation = 6
+
+[node name="TitleLabel" type="Label" parent="Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 44
+text = "玩家加入与识别"
+horizontal_alignment = 1
+
+[node name="CountLabel" type="Label" parent="Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "已加入 0 / 4"
+horizontal_alignment = 1
+
+[node name="HostHint" type="Label" parent="Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.7, 0.82, 1)
+theme_override_font_sizes/font_size = 20
+text = "等待玩家加入…"
+horizontal_alignment = 1
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 120.0
+offset_bottom = -150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardRow" type="HBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Footer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = -160.0
+offset_right = -40.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="ButtonRow" type="HBoxContainer" parent="Footer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+
+[node name="BackButton" type="Button" parent="Footer/ButtonRow"]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "← 返回标题"
+
+[node name="StartButton" type="Button" parent="Footer/ButtonRow"]
+custom_minimum_size = Vector2(340, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "至少 2 人才能开始"
+disabled = true
+
+[node name="StartHint" type="Label" parent="Footer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "加入至少 2 名玩家后，房主确认开始"
+horizontal_alignment = 1
+
+[node name="KeyHint" type="Label" parent="Footer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.56, 0.66, 1)
+theme_override_font_sizes/font_size = 17
+text = "数字键 1~4 加入/取消对应槽位 · Enter 加入下一空位 / 开始 · Backspace 取消 · Esc 返回"
+horizontal_alignment = 1

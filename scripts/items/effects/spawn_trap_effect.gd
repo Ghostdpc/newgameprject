@@ -4,7 +4,12 @@ class_name SpawnTrapEffect
 extends ItemEffect
 
 func apply(ctx: ItemContext) -> void:
-	if ctx.source_player == null:
+	# WORLD target 時 source_player 為 null，從 extra["invoker"] 取原始使用者
+	var placer: PlayerController = ctx.source_player
+	if placer == null:
+		placer = ctx.extra.get("invoker") as PlayerController
+	if placer == null:
+		push_warning("SpawnTrapEffect: no valid placer found")
 		return
 	var trap_id: String = str(params.get("trap_id", ""))
 	if trap_id.is_empty():
@@ -16,6 +21,6 @@ func apply(ctx: ItemContext) -> void:
 		return
 	var instance := TrapInstance.new()
 	# setup 先於 add_child，確保 collision_layer/mask 在進入物理世界前設置好
-	instance.setup(trap_def, ctx.source_player)
-	ctx.source_player.get_tree().current_scene.add_child(instance)
-	instance.global_position = ctx.source_player.global_position
+	instance.setup(trap_def, placer)
+	placer.get_tree().current_scene.add_child(instance)
+	instance.global_position = placer.global_position

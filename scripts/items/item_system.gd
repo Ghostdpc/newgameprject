@@ -39,6 +39,10 @@ func _register_effects() -> void:
 		ItemTypes.EffectKind.PLAYER_RAGDOLL,
 		load("res://scripts/items/effects/player_ragdoll_effect.gd")
 	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.BANANA_SLIDE,
+		load("res://scripts/items/effects/banana_slide_effect.gd")
+	)
 
 ## 玩家使用道具的唯一入口
 ## source_player: 使用者（null = 系統觸發），item_id 對應 items.json
@@ -54,7 +58,8 @@ func use_item(source_player: PlayerController, item_id: String, extra: Dictionar
 			var ctx := ItemContext.new()
 			ctx.source_player = target_player
 			ctx.item_id       = item_id
-			ctx.extra         = extra
+			ctx.extra         = extra.duplicate()
+			ctx.extra["invoker"] = source_player  # 始終保留原始使用者引用
 			effect.apply(ctx)
 			if effect.duration > 0.0:
 				_active_effects.append({

@@ -12,6 +12,7 @@ enum EffectKind {
 	PLAYER_RAGDOLL,  # 觸發目標玩家布娃娃
 	PLAYER_SPEED,    # 移速乘數 buff
 	SPAWN_TRAP,      # 在使用者位置生成放置物
+	BANANA_SLIDE,    # 香蕉皮滑行衝量 + 躺下
 }
 
 enum Trigger {

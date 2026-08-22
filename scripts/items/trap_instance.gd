@@ -8,6 +8,8 @@ var owner_player: PlayerController
 
 var _lifetime_timer: float = 0.0
 var _triggered: bool = false
+## 生成後延遲激活，避免放置者同幀自觸發
+var _activation_timer: float = 0.5
 
 func setup(def: TrapDef, placer: PlayerController) -> void:
 	trap_def    = def
@@ -16,12 +18,12 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 
 	collision_layer = 0  # 放置物自身不占物理層
 	collision_mask  = 2  # 檢測 layer=2（玩家層）
+	monitoring = false   # 延遲激活，_activation_timer 歸零後才開啟
 
 	var shape := CollisionShape3D.new()
-	var capsule := CapsuleShape3D.new()
-	capsule.radius = 0.45
-	capsule.height = 0.1
-	shape.shape = capsule
+	var box_shape := BoxShape3D.new()
+	box_shape.size = Vector3(0.9, 0.3, 0.9)
+	shape.shape = box_shape
 	add_child(shape)
 
 	# 黃色扁平 Cube 占位（香蕉皮視覺）
@@ -40,6 +42,10 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 func _process(delta: float) -> void:
 	if _triggered:
 		return
+	if _activation_timer > 0.0:
+		_activation_timer -= delta
+		if _activation_timer <= 0.0:
+			monitoring = true  # 延遲後才開始偵測
 	if trap_def == null or trap_def.lifetime <= 0.0:
 		return
 	_lifetime_timer -= delta

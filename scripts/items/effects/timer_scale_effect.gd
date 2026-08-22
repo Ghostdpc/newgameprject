@@ -13,7 +13,7 @@ func from_data(data: Dictionary) -> void:
 
 func apply(ctx: ItemContext) -> void:
 	var scale: float = float(params.get("scale", 1.0))
-	GameManager.time_scale = scale
+	GameManager.time_rate = scale
 
 func revert(ctx: ItemContext) -> void:
-	GameManager.time_scale = 1.0
+	GameManager.time_rate = 1.0
