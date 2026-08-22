@@ -16,8 +16,8 @@ signal player_entered_zone(player_index: int)
 signal player_exited_zone(player_index: int)
 
 # 道具
-signal item_picked_up(player_index: int, item: Node)
-signal item_used(player_index: int, item: Node)
+signal item_picked_up(player_index: int, item_id: String)
+signal item_used(player_index: int, item_id: String)
 
 # 相機
 signal camera_behavior_push_requested(camera_target: String, behavior: Object)

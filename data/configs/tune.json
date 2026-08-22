@@ -1,0 +1,9 @@
+{
+	"dive_force": 9.0,
+	"ground_brake": 30.0,
+	"hit_force": 12.34,
+	"hit_upward": 7.0,
+	"ragdoll_angular_damp": 0.15,
+	"ragdoll_linear_damp": 0.3,
+	"stun_gravity": 45.0
+}

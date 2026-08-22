@@ -7,14 +7,20 @@ const GRAVITY: float = 20.0
 const MOVE_SPEED: float = 6.0
 const ACCELERATION: float = 15.0
 
-const ANIM_IDLE: String = "T-Pose"
+const ANIM_IDLE: String = "Idle_A"
 const ANIM_MOVE: String = "Running_A"
 const ANIM_JUMP: String = "Jump_Full_Long"
 const ANIM_DIVE: String = "Jump_Full_Short"
 
+const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium_General.glb"
+
 @export var jump_force: float = 10.0
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
+
+signal item_picked_up(item_id: String)
+signal item_used(item_id: String)
+signal item_cleared()
 
 var player_input: PlayerInput
 var state_machine: PlayerStateMachine
@@ -22,8 +28,12 @@ var ragdoll_rig: RagdollRig
 var outfit_manager: OutfitManager
 var character_effects: CharacterEffects
 
+## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
+var held_item_id: String = ""
+
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
+var is_dead: bool = false
 
 func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
@@ -39,31 +49,82 @@ func set_ragdoll(enabled: bool) -> void:
 		return
 	ragdoll_rig.set_ragdoll_enabled(enabled)
 
-## 擊飛：body 位移（不施加到物理骨，避免 mesh 脫離 body）
+## 擊飛：body 位移（模型跟 body，姿態由 ragdoll 提供）
 func knockback(direction: Vector3) -> void:
-	velocity.x = direction.x
-	velocity.z = direction.z
-	velocity.y = direction.y
+	velocity = direction
+
+## 站起前把 body 移到 ragdoll 倒地落點（避免站起瞬移）
+func sync_body_to_ragdoll() -> void:
+	if not ragdoll_rig:
+		return
+	var hips_pos := ragdoll_rig.get_hips_position()
+	if hips_pos == Vector3.ZERO:
+		return
+	global_position = Vector3(hips_pos.x, global_position.y, hips_pos.z)
+
+## 出界死亡：停物理、關布娃娃、清道具、隱藏（等待重生）
+func die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	clear_item()
+	set_ragdoll(false)
+	velocity = Vector3.ZERO
+	visible = false
+
+## 重生：移到指定位置、恢復可控
+func respawn(pos: Vector3) -> void:
+	global_position = pos
+	velocity = Vector3.ZERO
+	is_dead = false
+	visible = true
+	state_machine.transition_to("Idle")
 
 ## 倒地後站起，由調用方確保已關閉 ragdoll
 func stand_up() -> void:
 	if ragdoll_rig:
 		ragdoll_rig.reset()
 
+## 拾取道具（覆盖式：新道具直接替换当前持有；ON_PICKUP 触发器立即使用）
+func pickup_item(item_id: String) -> void:
+	held_item_id = item_id
+	item_picked_up.emit(item_id)
+	EventBus.item_picked_up.emit(player_index, item_id)
+	var def := ItemSystem._item_config.get_item(item_id) if ItemSystem else null
+	if def and def.trigger == ItemTypes.Trigger.ON_PICKUP:
+		use_held_item()
+
+## 使用当前持有的道具（供输入系统或外部调用）
+func use_held_item() -> void:
+	if held_item_id.is_empty():
+		return
+	var id := held_item_id
+	held_item_id = ""
+	item_used.emit(id)
+	ItemSystem.use_item(self, id)
+
+## 丢弃持有的道具（不触发效果）
+func clear_item() -> void:
+	if held_item_id.is_empty():
+		return
+	held_item_id = ""
+	item_cleared.emit()
+
 func _process(delta: float) -> void:
+	if is_dead:
+		return
 	state_machine.update(delta)
 	_update_animation()
+	if player_input.is_use_item_just_pressed():
+		use_held_item()
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		return
 	_apply_gravity(delta)
 	state_machine.physics_update(delta)
 	move_and_slide()
 	_check_dive_hit()
-	# ragdoll 時強制骨架 mesh 對齊 body，避免 mesh 滯後於擊飛
-	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
-		var model := get_node_or_null("Model")
-		if model:
-			(model as Node3D).global_position = global_position
 
 ## 飛撲狀態碰撞檢測：命中其他玩家則擊飛
 func _check_dive_hit() -> void:
@@ -87,7 +148,14 @@ func apply_move(direction: Vector2) -> void:
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
-		velocity.y -= GRAVITY * delta
+		# Fly 階段由 FlyState 自行管理重力（可自定義下墜）
+		if state_machine.current_state_name == "Fly":
+			return
+		# 被擊飛期間用更大重力，讓上升/下降都更快
+		var g := GRAVITY
+		if state_machine.current_state_name == "Stunned":
+			g = TuneConfig.stun_gravity
+		velocity.y -= g * delta
 
 func _setup_state_machine() -> void:
 	state_machine = PlayerStateMachine.new()
@@ -97,18 +165,21 @@ func _setup_state_machine() -> void:
 	var move := MoveState.new()
 	var jump := JumpState.new()
 	var dive := DiveState.new()
+	var fly := FlyState.new()
 	var stunned := StunnedState.new()
 
 	idle.init(self)
 	move.init(self)
 	jump.init(self)
 	dive.init(self)
+	fly.init(self)
 	stunned.init(self)
 
 	state_machine.register_state("Idle", idle)
 	state_machine.register_state("Move", move)
 	state_machine.register_state("Jump", jump)
 	state_machine.register_state("Dive", dive)
+	state_machine.register_state("Fly", fly)
 	state_machine.register_state("Stunned", stunned)
 
 	state_machine.start("Idle")
@@ -119,6 +190,7 @@ func _setup_model() -> void:
 	if not model:
 		return
 	_animation_player = _find_animation_player(model)
+	_merge_idle_animation()
 	_set_animation_looping(ANIM_IDLE)
 	_set_animation_looping(ANIM_MOVE)
 	_set_animation_looping(ANIM_JUMP)
@@ -138,6 +210,22 @@ func _find_skeleton(n: Node) -> Skeleton3D:
 		if r:
 			return r
 	return null
+
+## 從 General.glb 合併 Idle 動畫（MovementBasic 無待機動畫）
+func _merge_idle_animation() -> void:
+	if not _animation_player or _animation_player.has_animation(ANIM_IDLE):
+		return
+	var glb := load(IDLE_SOURCE) as PackedScene
+	if not glb:
+		return
+	var inst := glb.instantiate()
+	var src_ap := _find_animation_player(inst)
+	if src_ap and src_ap.has_animation(ANIM_IDLE):
+		var anim: Animation = src_ap.get_animation(ANIM_IDLE).duplicate()
+		var lib := _animation_player.get_animation_library("")
+		if lib:
+			lib.add_animation(ANIM_IDLE, anim)
+	inst.queue_free()
 
 ## 設定單個動畫循環
 func _set_animation_looping(anim_name: String) -> void:
@@ -164,6 +252,9 @@ func _anim_for_state(state_name: String) -> String:
 		"Jump":
 			return ANIM_JUMP
 		"Dive":
+			return ANIM_DIVE
+		"Fly":
+			# 被擊飛姿態（暫用飛撲動畫，後續可加專用被擊動畫 / 翻滾）
 			return ANIM_DIVE
 		_:
 			return ANIM_IDLE
