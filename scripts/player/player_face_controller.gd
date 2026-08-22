@@ -13,12 +13,15 @@ const FACE_DISTANCE := 0.42
 ## 貼面高度：沿骨上軸(+Y)上移到臉部中央
 const FACE_UP := 0.50
 ## Sprite 顯示高度（世界單位）
-const ICON_HEIGHT := 0.36
+const ICON_HEIGHT := 0.09
 ## face layer（不在拍照 RT，避免占分）——沿用 UI 標識層
 const FACE_LAYER := 4
 
 ## 貼皮模式的表情局部偏移（相對頭骨），頂層縮放/位移參數，方便外部微調
-@export var bone_offset: Vector3 = Vector3(0.0, FACE_UP, -FACE_DISTANCE)
+## 調試後默認值（2026-08-23）：(-0.16, -0.62, 0.04) + 旋轉 (0, -90°, 0)
+@export var bone_offset: Vector3 = Vector3(-0.16, -0.62, 0.04)
+## 貼皮模式的 Sprite 局部旋轉（弧度）
+@export var bone_rotation: Vector3 = Vector3(0.0, deg_to_rad(-90.0), 0.0)
 
 ## 表情所掛的骨（預設 head；找不到時用 fallback_attach 節點）
 ## 支援多候選：依序嘗試，命中第一個存在的骨（head → Human 的頭骨 → 骨骼.004 等 Blender 預設名）
@@ -57,7 +60,7 @@ func setup(skel: Skeleton3D) -> void:
 		att.bone_name = bound_bone
 		skeleton.add_child(att)
 		_sprite = _new_sprite(false)
-		_sprite.rotation.y = PI
+		_sprite.rotation = bone_rotation
 		_sprite.position = bone_offset
 		att.add_child(_sprite)
 	else:
@@ -178,6 +181,12 @@ func nudge_pitch(delta_deg: float) -> void:
 	if not _sprite:
 		return
 	_sprite.rotate_x(deg_to_rad(delta_deg))
+
+## 調試用：滾動旋轉（繞局部 Z 軸）
+func nudge_roll(delta_deg: float) -> void:
+	if not _sprite:
+		return
+	_sprite.rotate_z(deg_to_rad(delta_deg))
 
 ## 調試用：回讀當前偏移與旋轉，供外部顯示微調數值
 func debug_info() -> String:

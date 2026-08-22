@@ -1,7 +1,7 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene format=3 uid="uid://cdhwx48ukdhh2"]
 
 [ext_resource type="Script" uid="uid://dd02hk008y6o3" path="res://scripts/player/face_demo_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://m6wkaui35yss" path="res://scenes/player/player.tscn" id="2"]
 
 [sub_resource type="BoxMesh" id="3"]
 size = Vector3(30, 0.5, 30)
@@ -21,45 +21,42 @@ background_mode = 2
 sky = SubResource("2")
 ambient_light_source = 3
 ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 1.0
 
-[node name="FaceDemo" type="Node3D"]
+[node name="FaceDemo" type="Node3D" unique_id=2016509408]
 script = ExtResource("1")
 
-[node name="Ground" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[node name="Ground" type="StaticBody3D" parent="." unique_id=2037324530]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=1497943854]
 mesh = SubResource("3")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=275427585]
 shape = SubResource("4")
 
-[node name="PlayerP1" parent="." instance=ExtResource("2")]
-position = Vector3(-1.5, 1, 0)
+[node name="PlayerP1" parent="." unique_id=436427743 instance=ExtResource("2")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -1.5, 1, 0)
 
-[node name="PlayerP2" parent="." instance=ExtResource("2")]
-position = Vector3(1.5, 1, 0)
+[node name="PlayerP2" parent="." unique_id=2045894969 instance=ExtResource("2")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.5, 1, 0)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.5, 0.866, 0, -0.866, 0.5, 0, 6, 8)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2101885214]
+transform = Transform3D(1, 0, 0, 0, 0.500011, 0.86601907, 0, -0.86601907, 0.500011, 0, 3.5577812, 4.3149834)
 light_energy = 1.2
 shadow_enabled = true
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.6, 0.8, 0, -0.8, 0.6, 0, 4, 6)
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1805072415]
+transform = Transform3D(1, 0, 0, 0, 0.92916775, -0.3696584, 0, 0.3696584, 0.92916775, -1.4751272, 0.61655664, 0.46967793)
 current = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=360961029]
 environment = SubResource("5")
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=33044417]
 
-[node name="Hint" type="Label" parent="UILayer"]
+[node name="Hint" type="Label" parent="UILayer" unique_id=668854054]
 offset_left = 20.0
 offset_top = 20.0
 offset_right = 1100.0
 offset_bottom = 200.0
 theme_override_font_sizes/font_size = 18
 autowrap_mode = 2
-text = ""

@@ -23,4 +23,5 @@ func physics_update(_delta: float) -> void:
 			controller.state_machine.transition_to("Idle")
 
 	if controller.player_input.is_dive_just_pressed():
+		controller.cycle_face()
 		controller.state_machine.transition_to("Dive")

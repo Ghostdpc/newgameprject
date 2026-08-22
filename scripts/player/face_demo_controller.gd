@@ -1,6 +1,6 @@
 ## 職責：表情貼臉測試場景控制。
-## P1: Q下一表情 / E上一表情 / R清除；WASD 移動
-## P2: U下一表情 / I上一表情 / O清除
+## P1: Q/E 切換表情（按住連續）/ R清除；WASD 移動；T 凍結/解凍角色動畫
+## P2: U/I 切換表情（按住連續）/ O清除
 ## 表情素材為「子沐创意素材 (N)」自動切分後的全部單表情，Q/U 每按一次輪流切換
 ## P1 表情位姿微調（主鍵盤）：
 ##   T/G=X±  Y/H=Y±  U/J=Z±  N/M=偏航  B/V=俯仰  5=還原默認
@@ -9,9 +9,13 @@ extends Node3D
 
 const POS_STEP := 0.02
 const ROT_STEP := 5.0
+## 長按連續切換的最小間隔（秒）
+const HOLD_INTERVAL := 0.12
 
 var _hint_label: Label
 var _last_debug: String = ""
+## 長按計時器
+var _hold_timer: float = 0.0
 
 func _ready() -> void:
 	_hint_label = $UILayer/Hint as Label
@@ -19,8 +23,51 @@ func _ready() -> void:
 	_refresh_hint()
 
 ## 每幀刷新提示，讓位姿參數一直可見
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_refresh_hint()
+	_handle_hold(delta)
+
+## 長按 Q/E / U/I 連續切換表情；數字鍵連續微調位姿
+func _handle_hold(delta: float) -> void:
+	_hold_timer += delta
+	if _hold_timer < HOLD_INTERVAL:
+		return
+	_hold_timer = 0.0
+	var p1 := get_node_or_null("PlayerP1") as Node
+	var p2 := get_node_or_null("PlayerP2") as Node
+	if Input.is_key_pressed(KEY_Q):
+		_cycle(p1, 1)
+	if Input.is_key_pressed(KEY_E):
+		_cycle(p1, -1)
+	if Input.is_key_pressed(KEY_U):
+		_cycle(p2, 1)
+	if Input.is_key_pressed(KEY_I):
+		_cycle(p2, -1)
+	# 數字鍵長按連續微調
+	if Input.is_key_pressed(KEY_1):
+		_nudge(p1, Vector3(-POS_STEP, 0, 0), 0.0)
+	if Input.is_key_pressed(KEY_2):
+		_nudge(p1, Vector3(POS_STEP, 0, 0), 0.0)
+	if Input.is_key_pressed(KEY_3):
+		_nudge(p1, Vector3(0, POS_STEP, 0), 0.0)
+	if Input.is_key_pressed(KEY_4):
+		_nudge(p1, Vector3(0, -POS_STEP, 0), 0.0)
+	if Input.is_key_pressed(KEY_5):
+		_nudge(p1, Vector3(0, 0, -POS_STEP), 0.0)
+	if Input.is_key_pressed(KEY_6):
+		_nudge(p1, Vector3(0, 0, POS_STEP), 0.0)
+	if Input.is_key_pressed(KEY_7):
+		_nudge(p1, Vector3.ZERO, -ROT_STEP)
+	if Input.is_key_pressed(KEY_8):
+		_nudge(p1, Vector3.ZERO, ROT_STEP)
+	if Input.is_key_pressed(KEY_9):
+		_pitch(p1, -ROT_STEP)
+	if Input.is_key_pressed(KEY_0):
+		_pitch(p1, ROT_STEP)
+	if Input.is_key_pressed(KEY_BRACKETLEFT):
+		_roll(p1, -ROT_STEP)
+	if Input.is_key_pressed(KEY_BRACKETRIGHT):
+		_roll(p1, ROT_STEP)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed and not event.echo):
@@ -32,12 +79,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	var p1 := get_node_or_null("PlayerP1") as Node
 	var p2 := get_node_or_null("PlayerP2") as Node
 	match k:
-		KEY_Q: _cycle(p1, 1)
-		KEY_E: _cycle(p1, -1)
 		KEY_R: _clear(p1)
-		KEY_U: _cycle(p2, 1)
-		KEY_I: _cycle(p2, -1)
 		KEY_O: _clear(p2)
+		KEY_T: _toggle_freeze(p1)
 		KEY_1: _nudge(p1, Vector3(-POS_STEP, 0, 0), 0.0)
 		KEY_2: _nudge(p1, Vector3(POS_STEP, 0, 0), 0.0)
 		KEY_3: _nudge(p1, Vector3(0, POS_STEP, 0), 0.0)
@@ -48,8 +92,26 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_8: _nudge(p1, Vector3.ZERO, ROT_STEP)
 		KEY_9: _pitch(p1, -ROT_STEP)
 		KEY_0: _pitch(p1, ROT_STEP)
+		KEY_BRACKETLEFT: _roll(p1, -ROT_STEP)
+		KEY_BRACKETRIGHT: _roll(p1, ROT_STEP)
 		KEY_MINUS: _reset_debug(p1)
 	_refresh_hint()
+
+## 凍結/解凍：暫停動畫 + 關閉彈簧骨骼，角色定住方便看表情
+func _toggle_freeze(actor: Node) -> void:
+	if actor == null:
+		return
+	var frozen: bool = not bool(actor.get("frozen"))
+	actor.set("frozen", frozen)
+	var ap: AnimationPlayer = actor.get("_animation_player")
+	var sr: Node = actor.get("spring_rig")
+	if ap:
+		if frozen:
+			ap.pause()
+		else:
+			ap.play(actor.get("_current_anim"))
+	if sr:
+		sr.set_active(not frozen)
 
 ## 微調位置/偏航
 func _nudge(actor: Node, delta_pos: Vector3, delta_yaw_deg: float) -> void:
@@ -67,7 +129,13 @@ func _pitch(actor: Node, delta_deg: float) -> void:
 	if fc:
 		fc.call("nudge_pitch", delta_deg)
 
-## 還原默認偏移與旋轉（貼皮模式：bone_offset + 背向旋轉；fallback：歸回預設）
+## 微調滾動
+func _roll(actor: Node, delta_deg: float) -> void:
+	var fc := _face_of(actor)
+	if fc:
+		fc.call("nudge_roll", delta_deg)
+
+## 還原默認偏移與旋轉（貼皮模式：bone_offset + bone_rotation；fallback：歸回預設）
 func _reset_debug(actor: Node) -> void:
 	var fc := _face_of(actor)
 	if fc == null:
@@ -77,12 +145,12 @@ func _reset_debug(actor: Node) -> void:
 		fc.set("fallback_offset", Vector3(0.0, 2.2, 0.0))
 		if sprite:
 			sprite.position = fc.get("fallback_offset")
+			sprite.rotation = Vector3.ZERO
 	else:
-		fc.set("bone_offset", Vector3(0.0, 0.5, -0.42))
+		fc.set("bone_offset", Vector3(-0.16, -0.62, 0.04))
 		if sprite:
 			sprite.position = fc.get("bone_offset")
-	if sprite:
-		sprite.rotation = Vector3(0.0, PI, 0.0) if not fc.get("_used_fallback") else Vector3.ZERO
+			sprite.rotation = Vector3(0.0, deg_to_rad(-90.0), 0.0)
 
 func _face_of(actor: Node) -> Node:
 	if actor == null:
@@ -124,12 +192,15 @@ func _refresh_hint() -> void:
 	var f1 := _face_of(p1)
 	if f1:
 		d1 = String(f1.call("debug_info"))
+	var frozen := ""
+	if p1 and p1.get("frozen"):
+		frozen = "  🧊已凍結"
 	_hint_label.text = (
 		"表情素材共 %d 張\n"
-		+ "[P1] Q下 / E上 / R清除 → %s    [P2] U下 / I上 / O清除 → %s\n"
-		+ "P1 位姿 → %s\n"
-		+ "P1位姿[主鍵數字] 1/2=X  3/4=Y  5/6=Z  7/8=偏航  9/0=俯仰  -=還原"
-	) % [t1, c1, c2, d1]
+		+ "[P1] Q/E長按連續切 → %s   [P2] U/I長按連續切 → %s\n"
+		+ "P1 位姿 → %s%s\n"
+		+ "P1位姿[長按數字連調] 1/2=X  3/4=Y  5/6=Z  7/8=偏航  9/0=俯仰  [/=滾動  -=還原  T=凍結"
+	) % [t1, c1, c2, d1, frozen]
 	if d1 != _last_debug:
 		_last_debug = d1
 		print("[face] ", d1)

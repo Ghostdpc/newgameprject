@@ -18,10 +18,12 @@ func physics_update(_delta: float) -> void:
 		return
 
 	if controller.player_input.is_jump_just_pressed() and controller.is_on_floor():
+		controller.cycle_face()
 		controller.state_machine.transition_to("Jump")
 		return
 
 	if controller.player_input.is_dive_just_pressed():
+		controller.cycle_face()
 		controller.state_machine.transition_to("Dive")
 		return
 

@@ -272,6 +272,12 @@ func _on_flow_finished(action: String) -> void:
 
 func _on_battle_started() -> void:
 	_on_level_battle_started()
+	# 每轮开始：给每个玩家随机一个表情
+	var actors := _actors_root if _actors_root else self
+	for child in actors.get_children():
+		var p := child as PlayerController
+		if p:
+			p.enter_match_random_face()
 
 func _on_battle_ended() -> void:
 	_on_level_battle_ended()

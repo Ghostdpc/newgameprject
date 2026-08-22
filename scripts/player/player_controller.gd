@@ -69,6 +69,20 @@ var character_effects: CharacterEffects
 var spring_rig: SpringBoneRig
 var face: PlayerFaceController
 
+## 進入對局：隨機一個表情（每輪開始調用）
+func enter_match_random_face() -> void:
+	if face and face.count() > 0:
+		face.show_expression(randi() % face.count())
+
+## 動作觸發時輪換到下一表情
+func cycle_face() -> void:
+	if not face or face.count() <= 0:
+		return
+	var next: int = int(face.get("_current_index")) + 1
+	if next >= face.count():
+		next = 0
+	face.show_expression(next)
+
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
 ## 被炸等负面效果累计的积分惩罚，快门结算时从总分扣除（clamp 到 0）
@@ -84,6 +98,8 @@ var equipped_garments: Dictionary = {}
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
+## 凍結（表情調試用）：暫停動畫更新與狀態機，角色定住
+var frozen: bool = false
 var _is_human_model: bool = false
 var _suicide_was_pressed: bool = false
 var _model_skeleton: Skeleton3D
@@ -212,6 +228,8 @@ func clear_item() -> void:
 
 func _process(delta: float) -> void:
 	if is_dead():
+		return
+	if frozen:
 		return
 	if spring_rig:
 		spring_rig.velocity_hints = Vector2(velocity.x, velocity.z)
@@ -612,11 +630,30 @@ func _apply_body_scale() -> void:
 	if _body_bone_idx != -1:
 		_model_skeleton.set_bone_pose_scale(_body_bone_idx, Vector3.ONE * body_scale)
 	if _head_bone_idx != -1:
-		# 抵消 chest 继承的缩放，再乘自身的头放大
-		_model_skeleton.set_bone_pose_scale(_head_bone_idx, Vector3.ONE * (head_scale / maxf(body_scale, 0.01)))
+		if _is_human_model:
+			# human 頭部 mesh 綁定骨：骨骼.004/005(頸/頭根) 與 骨骼.005_end_end_end_end(頭主體,236頂點)。
+			# 只放大這幾個有權重的骨，頭部才會真正變大。
+			var head_scale_v := head_scale / maxf(body_scale, 0.01)
+			for i in _model_skeleton.get_bone_count():
+				var nm := String(_model_skeleton.get_bone_name(i))
+				if nm == "骨骼.004" or nm == "骨骼.005" or nm == "骨骼.005_end_end_end_end":
+					_model_skeleton.set_bone_pose_scale(i, Vector3.ONE * head_scale_v)
+			# 帽子掛在頭骨會連帶被放大；對帽子節點做逆補償，保持尺寸適中
+			_compensate_hat_scale(head_scale_v)
+		else:
+			# 抵消 chest 继承的缩放，再乘自身的头放大
+			_model_skeleton.set_bone_pose_scale(_head_bone_idx, Vector3.ONE * (head_scale / maxf(body_scale, 0.01)))
 	# 手臂是 chest 子骨，身体放大时抵消保持原大小
 	_apply_child_compensate(_CHEST_CHILD_BONES, body_scale)
 	_apply_collision_scale()
+
+## 帽子掛在頭骨會隨頭放大而放大；設逆縮放保持帽子視覺尺寸不爆大（另縮 0.85 讓帽子更小）
+func _compensate_hat_scale(head_scale_v: float) -> void:
+	if not outfit_manager or head_scale_v <= 0.0:
+		return
+	var hat := outfit_manager.get_item("hat_slot")
+	if hat:
+		hat.scale = Vector3.ONE * (0.85 / head_scale_v)
 
 ## chest 的子骨（身体放大时补偿还原，避免手臂跟着变大）
 const _CHEST_CHILD_BONES: Array[String] = [
@@ -763,6 +800,9 @@ func _update_animation() -> void:
 	if not _animation_player:
 		return
 	if is_dead():
+		return
+	if frozen:
+		_animation_player.pause()
 		return
 	if state_machine.current_state_name == "Stunned" or state_machine.current_state_name == "BananaSlide":
 		return
