@@ -29,7 +29,16 @@ const ANIM_SPEED_FACTOR: float = 1.6  ## 走動畫隨速度變速的倍率
 @export var damping_follow: float = 6.0
 @export var stiffness_spring: float = 120.0
 @export var damping_spring: float = 10.0
-@export var strength_relaxed: float = 0.5
+@export var strength_relaxed: float = 0.8
+
+## 位置肌肉 PD 參數（N/m，軟跟隨動畫，阻尼高防抖）
+@export var pos_kp: float = 20.0
+@export var pos_kd: float = 12.0
+## 旋轉肌肉 PD 參數（Nm/rad，軟跟隨）
+@export var rot_kp: float = 18.0
+@export var rot_kd: float = 8.0
+@export var max_force: float = 40.0
+@export var max_torque: float = 20.0
 
 ## 骨骼樹：name -> parent
 const BONE_TREE: Dictionary = {
@@ -56,6 +65,8 @@ var _driver_anim: AnimationPlayer
 var _anchor: RigidBody3D
 var _bodies: Dictionary = {}        # bone_name -> RigidBody3D
 var _anim_targets: Dictionary = {}  # bone_name -> Transform3D(動畫當前全局位姿)
+var _prev_force: Dictionary = {}    # bone_name -> Vector3 平滑肌肉力
+var _prev_torque: Dictionary = {}   # bone_name -> Vector3 平滑肌肉力矩
 var _mode: Mode = Mode.FOLLOW
 var _hint: Label
 var _use_walk: bool = true
@@ -151,7 +162,7 @@ func _build_chain() -> void:
 	_anchor.freeze = true
 	_anchor.collision_layer = 0
 	_anchor.collision_mask = 0
-	_render_model.add_child(_anchor)
+	_render_skel.add_child(_anchor)
 	_bodies["hips"] = _anchor
 
 	for bone_name in LEAD_BONES:
@@ -164,11 +175,13 @@ func _build_chain() -> void:
 		var r_gt: Transform3D = _render_skel.get_bone_global_rest(_render_skel.find_bone(bone_name))
 		body.position = r_gt.origin
 		body.basis = r_gt.basis
-		_render_model.add_child(body)
+		_render_skel.add_child(body)
 		_bodies[bone_name] = body
 		_attach_joint(body, parent_name)
 
 ## 建立一個 RigidBody（質量/形狀/碰撞）
+## 骨間不碰撞（mask 不含 4），只碰地面(1) —— active ragdoll 標準做法，
+## 形狀由 joint 鏈約束，避免各骨自我互頂把身體頂亂
 func _make_body(bone_name: String, mass: float) -> RigidBody3D:
 	var body := RigidBody3D.new()
 	body.name = "AB_" + bone_name
@@ -177,16 +190,16 @@ func _make_body(bone_name: String, mass: float) -> RigidBody3D:
 	body.linear_damp = 0.5
 	body.angular_damp = 0.1
 	body.collision_layer = 4
-	body.collision_mask = 5
+	body.collision_mask = 1
 	var shape := CapsuleShape3D.new()
-	shape.radius = 0.09
+	shape.radius = 0.07
 	shape.height = _bone_length(bone_name)
 	var coll := CollisionShape3D.new()
 	coll.shape = shape
 	body.add_child(coll)
 	return body
 
-## 6DOF 球窩：鎖位置、旋轉自由
+## 6DOF 球窩：旋轉自由，線性鬆約束（允許小幅伸縮，由位置肌肉維持形狀）
 func _attach_joint(body: RigidBody3D, parent_bone: String) -> void:
 	var parent_body: RigidBody3D = _bodies.get(parent_bone)
 	if not parent_body:
@@ -198,13 +211,14 @@ func _attach_joint(body: RigidBody3D, parent_bone: String) -> void:
 		joint.position = _render_skel.get_bone_global_rest(idx).origin
 	for axis in ["x", "y", "z"]:
 		joint.set("linear_limit_" + axis + "/enabled", true)
-		joint.set("linear_limit_" + axis + "/upper_distance", 0.0)
-		joint.set("linear_limit_" + axis + "/lower_distance", 0.0)
+		joint.set("linear_limit_" + axis + "/upper_distance", 0.4)
+		joint.set("linear_limit_" + axis + "/lower_distance", -0.4)
 	joint.set_node_a(body.get_path())
 	joint.set_node_b(parent_body.get_path())
-	_render_model.add_child(joint)
+	_render_skel.add_child(joint)
 
 ## 採樣動畫目標位姿（Driver 骨架，動畫每幀更新）
+## 目標 = 骨架全局變換 × 骨全局姿勢（世界座標）
 ## hips 錨點（凍結時）直接跟動畫 hips 位姿 → body 站
 func _sample_targets() -> void:
 	_anim_targets.clear()
@@ -212,51 +226,62 @@ func _sample_targets() -> void:
 		var idx := _driver_skel.find_bone(bone_name)
 		if idx == -1:
 			continue
-		_anim_targets[bone_name] = _render_model.global_transform * _driver_skel.get_bone_global_pose(idx)
+		_anim_targets[bone_name] = _driver_skel.global_transform * _driver_skel.get_bone_global_pose(idx)
 	if _anchor and _anchor.freeze:
 		var hips_idx := _driver_skel.find_bone("hips")
 		if hips_idx != -1:
-			_anchor.global_transform = _render_model.global_transform * _driver_skel.get_bone_global_pose(hips_idx)
+			_anchor.global_transform = _driver_skel.global_transform * _driver_skel.get_bone_global_pose(hips_idx)
 
-## 虛擬肌肉（PD 控制器）：每根物理體往動畫目標姿態拉
+## 虛擬肌肉（PD 控制器）：每根物理體往動畫目標姿態拉（位置 + 旋轉）
+## force = kp*err - kd*vel；輸出經指數低通濾波 → 平滑跟隨、防抽搐
 func _tick_muscles(delta: float) -> void:
-	var stiffness := stiffness_follow
-	var damping := damping_follow
-	var hips_positional := true   # 位置肌肉（hip 拉向身體）
+	var kp := pos_kp
+	var kd := pos_kd
+	var rkp := rot_kp
+	var rkd := rot_kd
 	match _mode:
 		Mode.RELAXED:
-			stiffness = strength_relaxed
-			damping = 1.0
-			hips_positional = false   # 鬆：hip 也不拉 → 全身癱
+			kp *= strength_relaxed
+			kd = 2.0
+			rkp *= strength_relaxed
+			rkd = 1.0
 		Mode.SPRING:
-			stiffness = stiffness_spring
-			damping = damping_spring
+			kp = stiffness_spring * 0.3
+			kd = damping_spring
+			rkp = stiffness_spring * 0.3
+			rkd = damping_spring
+	# 濾波係數（0~1，越小越平滑越軟；≈1 越硬跟越快）
+	var smooth := clampf(1.0 - 20.0 * delta, 0.0, 1.0)
 	for bone_name in _bodies.keys():
 		var body: RigidBody3D = _bodies.get(bone_name)
 		var target: Transform3D = _anim_targets.get(bone_name)
 		if not body or target == null:
 			continue
 		var cur := body.global_transform
-		# 旋轉肌肉：往動畫姿態拉（hips 也要，保持直立）
+		# 旋轉肌肉（往動畫姿態，限幅 + 平滑）
+		var torque := Vector3.ZERO
 		var rel := cur.basis.inverse() * target.basis
 		var q := rel.get_rotation_quaternion()
 		var angle := q.get_angle()
 		var axis := q.get_axis()
 		if angle >= 0.001:
-			var torque := axis * (stiffness * angle)
-			torque -= body.angular_velocity * damping
-			body.apply_torque(torque * delta)
-		else:
-			body.apply_torque(-body.angular_velocity * damping * delta)
-		# hips：位置肌肉拉向 target（讓身體跟隨移動、不完全塌落）
-		if bone_name == "hips" and hips_positional:
-			var walk_speed := Vector2(velocity.x, velocity.z).length()
-			var pull: float = stiffness * 3.0 + walk_speed * 2.0
-			body.apply_central_force((target.origin - cur.origin) * pull * delta)
+			torque = (axis * (rkp * angle) - body.angular_velocity * rkd).limit_length(max_torque)
+		# 位置肌肉（往動畫位置，限幅 + 平滑）
+		var err := target.origin - cur.origin
+		var force := (err * kp - body.linear_velocity * kd).limit_length(max_force)
+		# 低通濾波：與前幀力混合
+		var pfx: Vector3 = _prev_force.get(bone_name, force)
+		var ptx: Vector3 = _prev_torque.get(bone_name, torque)
+		torque = ptx.lerp(torque, 1.0 - smooth)
+		force = pfx.lerp(force, 1.0 - smooth)
+		_prev_force[bone_name] = force
+		_prev_torque[bone_name] = torque
+		body.apply_torque(torque)
+		body.apply_central_force(force)
 
 ## 把物理剛體位姿寫回 Render 骨架 → mesh 跟物理
 func _write_back_mesh() -> void:
-	var inv := _render_model.global_transform.affine_inverse()
+	var inv := _render_skel.global_transform.affine_inverse()
 	for bone_name in _bodies.keys():
 		var idx := _render_skel.find_bone(bone_name)
 		if idx == -1:
