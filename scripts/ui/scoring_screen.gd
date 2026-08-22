@@ -171,9 +171,15 @@ func _finish_champion() -> void:
 	tw.tween_property(_champion_box, "modulate:a", 1.0, 0.25)
 	_score_hint.hide()
 	_callout("评分结束 · 称号仅表现，不影响系统分数")
+	_restart_btn.grab_focus()
 
 # ---------------------------------------------------------------- 输入加速
 func _unhandled_input(event: InputEvent) -> void:
-	if _sequence_running and event.is_pressed() and event.is_action_pressed("ui_accept"):
+	if not event.is_pressed():
+		return
+	var is_accept := event.is_action_pressed("ui_accept") \
+		or (event is InputEventJoypadButton \
+			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A)
+	if _sequence_running and is_accept:
 		_skip_requested = true
 		get_viewport().set_input_as_handled()
