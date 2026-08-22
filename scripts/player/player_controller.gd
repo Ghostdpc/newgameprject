@@ -145,6 +145,9 @@ func apply_move(direction: Vector2) -> void:
 
 func _apply_gravity(delta: float) -> void:
 	if not is_on_floor():
+		# Fly 階段由 FlyState 自行管理重力（可自定義下墜）
+		if state_machine.current_state_name == "Fly":
+			return
 		# 被擊飛期間用更大重力，讓上升/下降都更快
 		var g := GRAVITY
 		if state_machine.current_state_name == "Stunned":
@@ -159,18 +162,21 @@ func _setup_state_machine() -> void:
 	var move := MoveState.new()
 	var jump := JumpState.new()
 	var dive := DiveState.new()
+	var fly := FlyState.new()
 	var stunned := StunnedState.new()
 
 	idle.init(self)
 	move.init(self)
 	jump.init(self)
 	dive.init(self)
+	fly.init(self)
 	stunned.init(self)
 
 	state_machine.register_state("Idle", idle)
 	state_machine.register_state("Move", move)
 	state_machine.register_state("Jump", jump)
 	state_machine.register_state("Dive", dive)
+	state_machine.register_state("Fly", fly)
 	state_machine.register_state("Stunned", stunned)
 
 	state_machine.start("Idle")
@@ -243,6 +249,9 @@ func _anim_for_state(state_name: String) -> String:
 		"Jump":
 			return ANIM_JUMP
 		"Dive":
+			return ANIM_DIVE
+		"Fly":
+			# 被擊飛姿態（暫用飛撲動畫，後續可加專用被擊動畫 / 翻滾）
 			return ANIM_DIVE
 		_:
 			return ANIM_IDLE

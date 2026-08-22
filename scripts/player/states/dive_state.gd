@@ -28,13 +28,14 @@ func enter() -> void:
 		controller.velocity.x = _dive_direction.x * TuneConfig.dive_force
 		controller.velocity.z = _dive_direction.z * TuneConfig.dive_force
 
-## 擊中目標：使目標進入倒地狀態（body 擊飛 + ragdoll 瘫軟姿態）
+## 擊中目標：使目標進入飛行（Fly）→ 落地倒地（Down）
 func hit_target(target: PlayerController) -> void:
 	if _has_hit:
 		return
 	_has_hit = true
-	target.state_machine.transition_to("Stunned")
-	target.knockback(_dive_direction * TuneConfig.hit_force + Vector3.UP * TuneConfig.hit_upward)
+	target.state_machine.transition_to("Fly")
+	var fly := target.state_machine.get_current_state() as FlyState
+	fly.launch(_dive_direction * TuneConfig.hit_force + Vector3.UP * TuneConfig.hit_upward)
 	EventBus.item_used.emit(-1, null)
 
 func physics_update(delta: float) -> void:

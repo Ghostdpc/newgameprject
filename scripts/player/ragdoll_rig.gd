@@ -137,14 +137,12 @@ func _stop_sim() -> void:
 func is_standing_up() -> bool:
 	return _stand_timer >= 0.0
 
-## 延遲啟動模擬（hips 不模擬，跟隨骨架跟 body 位移；其他骨瘫軟做姿態）
+## 延遲啟動模擬（全骨參與，讓角色整隻癱軟）
 func _start_sim() -> void:
 	if not _simulator:
 		return
 	var sim_bones: Array = []
 	for bone_name in RIG_BONES:
-		if bone_name == "hips":
-			continue
 		sim_bones.append(bone_name)
 	# 應用最新調試阻尼（軟倒手感可運行時調）
 	for bone in _simulator.find_children("*", "PhysicalBone3D", true, false):
