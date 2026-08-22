@@ -5,7 +5,8 @@
       "display_name": "🍄 蘑菇帽",
       "icon": "mushroom_hat",
       "slot": "hat_slot",
-      "model": "",
+      "model": "res://assets/models/garments/mushroom/mushroom.fbx",
+      "texture": "res://assets/models/garments/mushroom/mushroom_basemap.png",
       "model_scale": 1.0,
       "score_bonus": 0.08,
       "effects": [
@@ -29,22 +30,6 @@
           "kind": "garment_emission_glow",
           "target": "self",
           "params": { "strength": 0.6 }
-        }
-      ]
-    },
-    {
-      "id": "lightning_shirt",
-      "display_name": "⚡ 闪电T恤",
-      "icon": "lightning_shirt",
-      "slot": "shirt_slot",
-      "model": "",
-      "model_scale": 1.0,
-      "score_bonus": 0.08,
-      "effects": [
-        {
-          "kind": "player_speed",
-          "target": "self",
-          "params": { "multiplier": 1.5 }
         }
       ]
     },
@@ -78,22 +63,6 @@
           "kind": "garment_body_scale",
           "target": "self",
           "params": { "scale": 1.5, "width": 1.5 }
-        }
-      ]
-    },
-    {
-      "id": "guitar",
-      "display_name": "🎸 吉他",
-      "icon": "guitar",
-      "slot": "accessory_slot",
-      "model": "",
-      "model_scale": 1.0,
-      "score_bonus": 0.08,
-      "effects": [
-        {
-          "kind": "garment_spring_wobble",
-          "target": "self",
-          "params": { "preset": "kowtow" }
         }
       ]
     }
