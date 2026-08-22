@@ -202,8 +202,8 @@ func _pickup_item_id() -> String:
 func _physics_process(delta: float) -> void:
 	# 死亡/復活狀態也需物理幀推進（Death→Waiting→Fall），故不整體跳過
 	_apply_gravity(delta)
-	state_machine.physics_update(delta)
 	if is_dead():
+		state_machine.physics_update(delta)
 		move_and_slide()
 		return
 	if GameManager.current_stage == GameManager.GameStage.SCORING:
@@ -211,6 +211,7 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0.0, ACCELERATION * delta)
 		move_and_slide()
 		return
+	state_machine.physics_update(delta)
 	move_and_slide()
 	_check_dive_hit()
 	_push_contacted_props()

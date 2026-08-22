@@ -173,45 +173,26 @@ func _finish_champion() -> void:
 	_callout("评分结束 · 称号仅表现，不影响系统分数")
 	_restart_btn.grab_focus()
 
-## 获取房主绑定的设备（player_devices[0]）
+## 获取房主绑定的设备（player_devices[0]）用于刷分阶段跳过判断
 func _host_device() -> int:
 	if GameManager.player_devices.is_empty():
 		return -2
 	return GameManager.player_devices[0]
 
-## 判断事件是否来自房主设备（键盘 or 房主手柄）
-func _is_host_event(event: InputEvent) -> bool:
-	var dev := _host_device()
-	if dev == -1 or dev == -2:
-		# 键盘房主：键盘事件 or 任意 ui_accept
-		return event is InputEventKey or event.is_action_pressed("ui_accept")
-	if event is InputEventJoypadButton:
-		return (event as InputEventJoypadButton).device == dev
-	return false
-
-# ---------------------------------------------------------------- 输入加速
+# ---------------------------------------------------------------- 输入加速（刷分阶段，房主按确认跳过）
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed():
 		return
 	if _sequence_running:
-		var is_accept := event.is_action_pressed("ui_accept") \
-			or (event is InputEventJoypadButton \
-				and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A)
-		if is_accept:
+		var dev := _host_device()
+		var is_host_accept: bool
+		if dev == -1 or dev == -2:
+			is_host_accept = event is InputEventKey or event.is_action_pressed("ui_accept")
+		elif event is InputEventJoypadButton:
+			is_host_accept = (event as InputEventJoypadButton).device == dev \
+				and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A
+		else:
+			is_host_accept = false
+		if is_host_accept:
 			_skip_requested = true
-			get_viewport().set_input_as_handled()
-		return
-	# 冠军结算后：房主 A/Enter=重开，B/Backspace=返回大厅
-	if _champion_box.visible and _is_host_event(event):
-		if event.is_action_pressed("ui_accept") \
-				or (event is InputEventJoypadButton \
-					and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A):
-			flow_finished.emit("restart")
-			get_viewport().set_input_as_handled()
-		elif event.is_action_pressed("ui_cancel") \
-				or (event is InputEventJoypadButton \
-					and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B) \
-				or (event is InputEventKey \
-					and (event as InputEventKey).physical_keycode == KEY_BACKSPACE):
-			flow_finished.emit("lobby")
 			get_viewport().set_input_as_handled()
