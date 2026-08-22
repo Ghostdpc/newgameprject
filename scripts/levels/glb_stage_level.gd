@@ -1,7 +1,7 @@
-## 职责：通用 GLB 场景关卡 —— 快速把场景资源接入为正式战斗关卡
+## 职责：通用房间关卡 —— 快速把场景/模型资源接入为正式战斗关卡
 ## 用法（见 docs/dev/新关卡接入指南.md）：
-##   1. 复制模板场景，根节点挂本脚本
-##   2. Stage 下放一个 Node3D 挂 StagePreview（scene_path 填 glb，room_scale 调尺寸）
+##   1. 复制模板场景根挂本脚本，Stage/Room 挂 RoomSource
+##   2. RoomSource 填 scene_path（.tscn 预摆好用 NONE；.glb 用 SCALE_TO_FIT）
 ##   3. 编辑器摆 MainCamera / PhotoCameraRig / SpawnPoints / ItemHotspots
 ##   4. 如需调整碰撞分类，改下方 @export 关键字数组
 ##
@@ -75,7 +75,7 @@ func _setup_level() -> void:
 		if not scoring.flow_finished.is_connected(_on_flow_finished):
 			scoring.flow_finished.connect(_on_flow_finished)
 
-## 舞台资源由 Stage/Room 节点（挂 StagePreview 脚本）负责加载与缩放，这里只取引用
+## 舞台资源由 Stage/Room 节点（挂 RoomSource 脚本）负责加载与缩放，这里只取引用
 func _ensure_room() -> void:
 	if not _stage_root:
 		return

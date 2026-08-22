@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://c1hknq3ob75mt"]
+
+[ext_resource type="Script" uid="uid://b2xqj662dp55y" path="res://scripts/levels/glb_stage_level.gd" id="1"]
+[ext_resource type="Script" uid="uid://dmtsr5hwrm3wf" path="res://scripts/camera/camera_controller.gd" id="2"]
+[ext_resource type="Script" uid="uid://5wsik8geadre" path="res://scripts/systems/settlement_system.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/flow_overlay.tscn" id="5_flow"]
+[ext_resource type="Script" uid="uid://bshrgo2iebyrc" path="res://scripts/debug/debug_visualizer.gd" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/camera/photo_camera_rig.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battle_hud.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/ui/scoring_screen.tscn" id="10"]
+[ext_resource type="Script" uid="uid://dhyye68jjpeoa" path="res://scripts/levels/room_source.gd" id="12_rsource"]
+
+[node name="RoomStageBattle" type="Node3D" unique_id=587974176]
+script = ExtResource("1")
+main_cam_pos = Vector3(6.857163, 15.9678135, -28.890018)
+main_cam_look = Vector3(0.458, -3.972, 3.455)
+main_cam_fov = 45.0
+photo_cam_pos = Vector3(0, 2.5, 6)
+photo_cam_look = Vector3(0, 1.2, -1)
+
+[node name="Stage" type="Node3D" parent="." unique_id=1365606931]
+
+[node name="Room" type="Node3D" parent="Stage" unique_id=222089971]
+script = ExtResource("12_rsource")
+scene_path = "res://scenes/levels/room_stage.tscn"
+
+[node name="Actors" type="Node3D" parent="." unique_id=2143757049]
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=894845059]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.96382236, 0)
+
+[node name="ItemHotspots" type="Node3D" parent="." unique_id=21663240]
+
+[node name="Hotspot1" type="Node3D" parent="ItemHotspots" unique_id=347465452]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, 1.5)
+
+[node name="Hotspot2" type="Node3D" parent="ItemHotspots" unique_id=37476741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, 0)
+
+[node name="Hotspot3" type="Node3D" parent="ItemHotspots" unique_id=1511173568]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -4)
+
+[node name="Hotspot4" type="Node3D" parent="ItemHotspots" unique_id=1550109557]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -2)
+
+[node name="Hotspot5" type="Node3D" parent="ItemHotspots" unique_id=1461993769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -2)
+
+[node name="MainCamera" type="Camera3D" parent="." unique_id=1940083208]
+transform = Transform3D(0.110057555, 0.50661516, -0.85511893, 0, 0.8603454, 0.5097115, 0.9939252, -0.056097604, 0.09468751, -27.348568, 12.212242, 7.376967)
+current = true
+fov = 50.0
+
+[node name="CameraController" type="Node" parent="MainCamera" unique_id=1734740635]
+script = ExtResource("2")
+
+[node name="PhotoCameraRig" parent="." unique_id=1982521465 instance=ExtResource("8")]
+
+[node name="HUD" parent="." unique_id=516157177 instance=ExtResource("9")]
+
+[node name="FlowOverlay" parent="." unique_id=1607808924 instance=ExtResource("5_flow")]
+
+[node name="ScoringScreen" parent="." unique_id=882014725 instance=ExtResource("10")]
+
+[node name="SettlementSystem" type="Node" parent="." unique_id=753969565]
+script = ExtResource("4")
+
+[node name="DebugVisualizer" type="Node3D" parent="." unique_id=996826707]
+script = ExtResource("6")

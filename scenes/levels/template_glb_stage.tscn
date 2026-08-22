@@ -8,42 +8,16 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/battle_hud.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/ui/scoring_screen.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/ui/flow_overlay.tscn" id="5_flow"]
-[ext_resource type="Script" path="res://scripts/levels/stage_preview.gd" id="12_sprev"]
-
-[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
-
-[sub_resource type="Sky" id="SkyRes"]
-sky_material = SubResource("SkyMat")
-
-[sub_resource type="Environment" id="EnvRes"]
-background_mode = 2
-sky = SubResource("SkyRes")
-ambient_light_source = 3
-ambient_light_energy = 0.9
-tonemap_mode = 2
-glow_enabled = true
-glow_intensity = 0.6
-glow_bloom = 0.1
-ssao_enabled = true
+[ext_resource type="Script" path="res://scripts/levels/room_source.gd" id="12_rsource"]
 
 [node name="GlbStageLevel" type="Node3D"]
 script = ExtResource("1")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("EnvRes")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-position = Vector3(8, 14, 10)
-rotation = Vector3(-0.95, 0.5, 0)
-light_energy = 1.2
-shadow_enabled = true
-
 [node name="Stage" type="Node3D" parent="."]
 
 [node name="Room" type="Node3D" parent="Stage"]
-script = ExtResource("12_sprev")
+script = ExtResource("12_rsource")
 scene_path = ""
-room_scale = 8.0
 
 [node name="Actors" type="Node3D" parent="."]
 

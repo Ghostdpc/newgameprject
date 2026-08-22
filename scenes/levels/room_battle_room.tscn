@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://crkxjlq0xv184" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb" id="1_room"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+
+[sub_resource type="Sky" id="SkyRes"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="EnvRes"]
+background_mode = 2
+sky = SubResource("SkyRes")
+ambient_light_source = 3
+ambient_light_energy = 0.9
+ssao_enabled = true
+
+[node name="RoomBattleRoom" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("EnvRes")
+
+[node name="ToonKeyLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.9393727, -0.31959414, 0.12425166, 0, 0.3623577, 0.9320391, -0.3428978, -0.8755321, 0.34038895, 0, 0, 0)
+light_color = Color(1, 0.9, 0.95, 1)
+light_energy = 1.4
+shadow_enabled = true
+shadow_bias = 0.06
+shadow_normal_bias = 1.5
+shadow_opacity = 0.55
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
+
+[node name="ToonFillLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.12884454, 0.6538886, -0.7455393, 0, 0.7518057, 0.65938467, 0.9916648, 0.084958114, -0.096866064, 0, 0, 0)
+light_color = Color(0.82, 0.75, 1, 1)
+light_energy = 0.72
+
+[node name="FortniteSkyeRoom" parent="." instance=ExtResource("1_room")]
+transform = Transform3D(16.818626, 0, 0, 0, 16.818626, 0, 0, 0, 16.818626, 0, 0, 0)
