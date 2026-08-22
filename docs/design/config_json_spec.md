@@ -80,6 +80,58 @@ data/configs/
 
 ---
 
+### `items.json` — 道具表
+
+```json
+{
+  "_comment": "道具表。每條道具包含 trigger + effects[]",
+  "items": [
+    {
+      "id": "time_bomb",
+      "display_name": "時間炸彈",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "timer_add",
+          "target": "world",
+          "duration": 0.0,
+          "params": { "delta": -3.0 }
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### 道具根字段
+
+| 鍵 | 類型 | 說明 |
+|----|------|------|
+| `id` | string | 唯一 ID，代碼通過此查詢 |
+| `display_name` | string | 顯示名稱（UI 用）|
+| `trigger` | string | 觸發時機：`on_use` / `on_pickup` / `on_hit` |
+| `effects` | array | 效果列表（順序執行）|
+
+#### effects[] 字段
+
+| 鍵 | 類型 | 說明 |
+|----|------|------|
+| `kind` | string | 效果類型（見下表）|
+| `target` | string | 目標：`self` / `others` / `all` / `world` |
+| `duration` | number | 持續時長（秒），`0` = 瞬發 |
+| `params` | object | 效果參數，依 kind 不同而異 |
+
+#### 已支持的 kind
+
+| kind | 目標語義 | params 字段 | 說明 |
+|------|---------|-------------|------|
+| `timer_add` | `world` | `delta: float` | 增減當前倒計時（負數=減）|
+| `camera_push` | TBD | TBD | 推入相機行為（待實現）|
+| `player_stun` | `self/others/all` | `seconds: float` | 眩暈玩家（待實現）|
+| `player_ragdoll` | `self/others/all` | — | 觸發布娃娃（待實現）|
+
+---
+
 ## 新增配置文件流程
 
 1. 在 `data/configs/` 新建 `your_config.json`

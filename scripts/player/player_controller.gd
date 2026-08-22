@@ -16,11 +16,18 @@ const ANIM_DIVE: String = "Jump_Full_Short"
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
 
+signal item_picked_up(item_id: String)
+signal item_used(item_id: String)
+signal item_cleared()
+
 var player_input: PlayerInput
 var state_machine: PlayerStateMachine
 var ragdoll_rig: RagdollRig
 var outfit_manager: OutfitManager
 var character_effects: CharacterEffects
+
+## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
+var held_item_id: String = ""
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
@@ -50,23 +57,30 @@ func stand_up() -> void:
 	if ragdoll_rig:
 		ragdoll_rig.reset()
 
-## 持有的道具 id，空字符串表示无道具
-var held_item_id: String = ""
-
-## 拾取道具（覆盖式，捡到新的直接替换）
+## 拾取道具（覆盖式：新道具直接替换当前持有；ON_PICKUP 触发器立即使用）
 func pickup_item(item_id: String) -> void:
 	held_item_id = item_id
+	item_picked_up.emit(item_id)
+	EventBus.item_picked_up.emit(player_index, item_id)
 	var def := ItemSystem._item_config.get_item(item_id) if ItemSystem else null
 	if def and def.trigger == ItemTypes.Trigger.ON_PICKUP:
-		ItemSystem.use_item(self, item_id)
-		held_item_id = ""
+		use_held_item()
 
 ## 使用当前持有的道具（供输入系统或外部调用）
 func use_held_item() -> void:
 	if held_item_id.is_empty():
 		return
-	ItemSystem.use_item(self, held_item_id)
+	var id := held_item_id
 	held_item_id = ""
+	item_used.emit(id)
+	ItemSystem.use_item(self, id)
+
+## 丢弃持有的道具（不触发效果）
+func clear_item() -> void:
+	if held_item_id.is_empty():
+		return
+	held_item_id = ""
+	item_cleared.emit()
 
 func _process(delta: float) -> void:
 	state_machine.update(delta)

@@ -70,18 +70,72 @@ OutfitManager
 
 ---
 
-## 道具系統（框架）
+## 道具系統
+
+### 架構分層
 
 ```
-ItemBase (Node3D)
-├── item_id: String
-├── PickupComponent       # 簡化版：範圍碰撞 → 觸發拾取
-└── UseComponent (基類)   # 具體道具繼承實作 use()
+data/configs/items.json          ← 策劃配表：id / 名稱 / trigger / effects[]
+        ↓ ConfigLoader
+ItemConfig (ConfigTable)         ← get_item(id) → ItemDef
+        ↓
+ItemDef (RefCounted, 只讀)       ← id / display_name / trigger / effects[]
+ItemEffect (RefCounted, 基類)    ← kind / target / duration / params
+        ↓ ItemEffectRegistry.create(kind, data)
+具體效果子類                      ← apply(ctx) / revert(ctx)
+        ↓ ItemSystem.use_item()
+ItemSystem (autoload)            ← 解析目標 → apply → 計時 revert
 ```
 
-道具 `use()` 可操作：
-- `CameraSystem.push_behavior()` — 影響主相機或攝影相機
-- `EventBus` 信號 — 影響其他系統
+### 枚舉（ItemTypes）
+
+| 枚舉 | 值 | 說明 |
+|------|----|------|
+| `EffectKind` | `TIMER_ADD` | 增減拍攝倒計時 |
+| | `CAMERA_PUSH` | 推入相機行為 |
+| | `PLAYER_STUN` | 眩暈目標玩家 |
+| | `PLAYER_RAGDOLL` | 觸發目標布娃娃 |
+| `Trigger` | `ON_PICKUP` | 拾取時立即生效 |
+| | `ON_USE` | 玩家按使用鍵觸發 |
+| | `ON_HIT` | 道具實體碰撞命中觸發 |
+| `Target` | `SELF` | 使用者自身 |
+| | `OTHERS` | 其他所有玩家 |
+| | `ALL` | 所有玩家 |
+| | `WORLD` | 全局（無玩家目標）|
+
+### 道具持有（PlayerController）
+
+- `held_item_id: String` — 當前持有道具 id，空字符串表示無道具
+- **每次只能持有 1 個**，`pickup_item()` 覆盖式替換
+- `pickup_item(id)` — 拾取；`ON_PICKUP` 觸發器立即使用
+- `use_held_item()` — 手動使用（Y 鍵 / 手把 Y）
+- `clear_item()` — 丟棄（不觸發效果）
+- 信號：`item_picked_up(id)` / `item_used(id)` / `item_cleared()`
+
+### 新增效果步驟
+
+1. 在 `scripts/items/effects/` 新建 `xxx_effect.gd`，繼承 `ItemEffect`
+2. 覆寫 `apply(ctx)` 和（有時長時）`revert(ctx)`
+3. 在 `ItemTypes.EffectKind` 加枚舉值
+4. 在 `ItemDef._parse_kind()` 加字符串映射
+5. 在 `ItemSystem._register_effects()` 加一行 `register()`
+6. 配表 `items.json` 中 `kind` 字段填對應字符串
+
+### 目錄結構
+
+```
+scripts/items/
+├── item_types.gd              # EffectKind / Trigger / Target enum
+├── item_effect.gd             # 基類
+├── item_effect_registry.gd    # 靜態注冊表
+├── item_def.gd                # 只讀值對象
+├── item_config.gd             # ConfigTable 子類
+├── item_context.gd            # 運行時上下文
+├── item_system.gd             # autoload 入口
+└── effects/
+    ├── timer_add_effect.gd    # 增減倒計時
+    └── camera_push_effect.gd  # TBD
+```
 
 ---
 
