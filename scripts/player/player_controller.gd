@@ -6,6 +6,8 @@ extends CharacterBody3D
 const GRAVITY: float = 20.0
 const MOVE_SPEED: float = 6.0
 const ACCELERATION: float = 15.0
+## 拾取有效距離（米）
+const PICKUP_RANGE: float = 1.5
 
 const ANIM_IDLE: String = "Idle_A"
 const ANIM_MOVE: String = "Running_A"
@@ -159,23 +161,23 @@ func _try_pickup() -> void:
 func _pickup_item_id() -> String:
 	if not held_item_id.is_empty():
 		return ""
-	# 地上道具實體（group "pickup_items"）待同事/後續實現
 	var items := get_tree().get_nodes_in_group("pickup_items")
 	if items.is_empty():
 		return ""
-	# 取最近的一個
+	# 取拾取範圍內最近的一個
 	var nearest: Node3D = null
 	var best_d := INF
+	var range_sq := PICKUP_RANGE * PICKUP_RANGE
 	for item in items:
 		var n := item as Node3D
 		if not n:
 			continue
 		var d := global_position.distance_squared_to(n.global_position)
-		if d < best_d:
+		if d < range_sq and d < best_d:
 			best_d = d
 			nearest = n
-	if nearest and (nearest as Node3D).has_method("pickup_for"):
-		return (nearest as Node3D).pickup_for(self)
+	if nearest and nearest.has_method("pickup_for"):
+		return nearest.pickup_for(self)
 	return ""
 
 func _physics_process(delta: float) -> void:
