@@ -23,7 +23,7 @@ extends RigidBody3D
 
 func _ready() -> void:
 	collision_layer = 4
-	collision_mask = 3  # 地面(1) + 玩家(2)
+	collision_mask = 7  # 地面(1) + 玩家(2) + 其他物品(4)：物品間也互相碰撞
 	mass = prop_mass
 	linear_damp = prop_linear_damp
 	angular_damp = prop_angular_damp
