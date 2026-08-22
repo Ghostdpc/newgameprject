@@ -47,4 +47,3 @@ func get_trap(id: String) -> TrapDef:
 		if r is Dictionary and r.get("id", "") == id:
 			return TrapDef.from_dict(r)
 	return null
-

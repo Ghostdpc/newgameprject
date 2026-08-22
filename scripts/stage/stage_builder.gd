@@ -17,7 +17,8 @@ func load_piece(piece_name: String) -> PackedScene:
 	return _scene_cache[piece_name]
 
 func add_piece(root: Node3D, piece_name: String, pos: Vector3, rot_y_deg: float = 0.0,
-		piece_scale: Vector3 = Vector3.ONE, occluder: bool = false, collision: bool = true) -> Node3D:
+		piece_scale: Vector3 = Vector3.ONE, occluder: bool = false, collision: bool = true,
+		physical: bool = false) -> Node3D:
 	var ps := load_piece(piece_name)
 	if ps == null:
 		push_warning("StageBuilder: 缺少組件 %s" % piece_name)
@@ -27,12 +28,47 @@ func add_piece(root: Node3D, piece_name: String, pos: Vector3, rot_y_deg: float 
 	inst.position = pos
 	inst.rotation_degrees.y = rot_y_deg
 	inst.scale = piece_scale
-	root.add_child(inst)
 	if occluder:
 		_add_to_group_recursive(inst, "photo_occluder")
-	if collision:
+	# 統一先加入 root（reparent 需在樹內）
+	root.add_child(inst)
+	if physical and collision:
+		# 可動物：把 inst 從 root 移入 PhysicalProp(RigidBody3D) 根下，物理驅動帶動視覺
+		_make_dynamic_prop(inst, pos)  # prop 已加入 root
+	elif collision:
 		_build_collision(inst)
 	return inst
+
+func _make_dynamic_prop(inst: Node3D, pos: Vector3) -> PhysicalProp:
+	var prop := PhysicalProp.new()
+	prop.name = "DynamicProp"
+	prop.prop_mass = 8.0
+	prop.push_strength = 25.0
+	prop.position = pos  # 物理根在舞台位置
+	prop.rotation_degrees.y = inst.rotation_degrees.y
+	# 先讓 prop 進樹（reparent keep_global 才生效），再 reparent inst → inst 局部歸零，mesh 貼住 prop
+	inst.get_parent().add_child(prop)
+	inst.reparent(prop)
+	# 用 mesh 包圍盒生成輕量 box 碰撞（質心匹配，不卡地）
+	var mesh := find_child_mesh(inst)
+	if mesh and mesh.mesh:
+		var aabb := mesh.get_aabb()
+		var box := BoxShape3D.new()
+		box.size = aabb.size
+		var cs := CollisionShape3D.new()
+		cs.shape = box
+		cs.position = aabb.get_center()
+		prop.add_child(cs)
+	return prop
+
+func find_child_mesh(n: Node) -> MeshInstance3D:
+	if n is MeshInstance3D:
+		return n
+	for c in n.get_children():
+		var r := find_child_mesh(c)
+		if r:
+			return r
+	return null
 
 ## 示範舞台：主甲板 + 雙層高台 + 背景牆 + 前景遮擋物
 ## 座標約定：拍照相機在 +Z 側朝 -Z 拍，背景牆在 -Z 側
@@ -59,11 +95,12 @@ func build_show_stage(root: Node3D) -> void:
 	add_piece(root, "Wall_Half", Vector3(-6.9, 0.0, 2.5), 90.0)
 	add_piece(root, "Wall_Half", Vector3(6.9, 0.0, 2.5), -90.0)
 	# 前景遮擋物（策劃案：花籃/音響位，這裡用桶/箱/桌替代；標記 occluder）
-	add_piece(root, "Barrel_A", Vector3(-4.2, 0.5, 6.5), 0.0, Vector3.ONE, true)
-	add_piece(root, "Barrel_A", Vector3(4.2, 0.5, 6.5), 0.0, Vector3.ONE, true)
-	add_piece(root, "Box_A", Vector3(4.2, 1.3, 6.5), 0.0, Vector3.ONE, true)
-	add_piece(root, "Pallet_Small", Vector3(1.9, 0.0, 7.2), 0.0, Vector3.ONE, true)
-	add_piece(root, "table_medium", Vector3(-1.9, 0.0, 7.4), 0.0, Vector3.ONE, true)
+	# 小件設為 physical=true → 可推/可抓/可撞飛的可動物
+	add_piece(root, "Barrel_A", Vector3(-4.2, 0.5, 6.5), 0.0, Vector3.ONE, true, true, true)
+	add_piece(root, "Barrel_A", Vector3(4.2, 0.5, 6.5), 0.0, Vector3.ONE, true, true, true)
+	add_piece(root, "Box_A", Vector3(4.2, 1.3, 6.5), 0.0, Vector3.ONE, true, true, true)
+	add_piece(root, "Pallet_Small", Vector3(1.9, 0.0, 7.2), 0.0, Vector3.ONE, true, true, true)
+	add_piece(root, "table_medium", Vector3(-1.9, 0.0, 7.4), 0.0, Vector3.ONE, true, true, true)
 
 func _build_collision(inst: Node3D) -> void:
 	for node in _collect_meshes(inst):
