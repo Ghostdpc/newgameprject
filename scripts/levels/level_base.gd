@@ -93,6 +93,10 @@ func _on_level_decisive_moment() -> void:
 func get_player_count() -> int:
 	return 4
 
+## 参与玩家的槽位索引（0-3）。默认按在场玩家数量取 0..count-1。
+func get_player_slots() -> Array[int]:
+	return range(get_player_count())
+
 ## 出生点列表，子类覆写提供
 func get_spawn_points() -> Array[Vector3]:
 	var points: Array[Vector3] = []
@@ -112,12 +116,14 @@ func get_spawn_points() -> Array[Vector3]:
 
 func _spawn_players() -> void:
 	var spawns := get_spawn_points()
+	var slots := get_player_slots()
 	var count: int = mini(get_player_count(), spawns.size())
-	for i in count:
+	for k in count:
+		var slot: int = slots[k] if k < slots.size() else k
 		var player: PlayerController = PLAYER_SCENE.instantiate() as PlayerController
-		player.player_index = i
-		player.player_color = PlayerConfig.get_color(i)
-		player.position = spawns[i % spawns.size()]
+		player.player_index = slot
+		player.player_color = PlayerConfig.get_color(slot)
+		player.position = spawns[slot % spawns.size()]
 		player.add_to_group("settlement_actor")
 		(_actors_root if _actors_root else self).add_child(player)
 
@@ -125,7 +131,7 @@ func _spawn_players() -> void:
 func _setup_player_hud() -> void:
 	var hud := get_node_or_null("HUD/PlayerLayer/PlayerHUD")
 	if hud and hud.has_method("setup"):
-		hud.setup(get_player_count())
+		hud.setup(get_player_count(), get_player_slots())
 
 # ---------------------------------------------------------------
 # 出界與重生

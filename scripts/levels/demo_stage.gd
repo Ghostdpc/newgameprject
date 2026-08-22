@@ -16,6 +16,13 @@ var _slowmo_end_msec: int = 0
 func get_player_count() -> int:
 	return clampi(GameManager.lobby_player_count, 2, 4)
 
+## 按大厅已加入的槽位生成玩家（P1/P3 加入则只出 P1、P3）
+func get_player_slots() -> Array[int]:
+	var slots := GameManager.get_joined_slots()
+	if slots.is_empty():
+		return super.get_player_slots()
+	return slots
+
 ## 出生点：舞台四角
 func get_spawn_points() -> Array[Vector3]:
 	return [

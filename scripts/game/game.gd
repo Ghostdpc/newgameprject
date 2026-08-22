@@ -55,9 +55,11 @@ func _spawn_players() -> void:
 		push_error("Game: player_scene not assigned")
 		return
 	var count := clampi(GameManager.lobby_player_count, 2, PLAYER_COUNT)
-	for i in count:
+	var slots := GameManager.get_joined_slots()
+	for k in count:
+		var slot: int = slots[k] if k < slots.size() else k
 		var player: PlayerController = player_scene.instantiate() as PlayerController
-		player.player_index = i
-		player.player_color = PLAYER_COLORS[i]
-		player.position = SPAWN_POSITIONS[i]
+		player.player_index = slot
+		player.player_color = PLAYER_COLORS[slot]
+		player.position = SPAWN_POSITIONS[slot]
 		_players_root.add_child(player)

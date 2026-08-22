@@ -10,6 +10,19 @@ signal effect_finished(effect: String)
 
 const GRAY_COLOR := Color(0.4, 0.4, 0.45, 1.0)
 
+## 隐形「模板写入」通道：让玩家真实网格在 main 视口写 stencil=1，
+## 供地面取景光圈(CaptureZoneHighlight)读取 → 实现「只有玩家遮挡光圈」。
+## 作为每个玩家材质的 next_pass，轮廓精确贴合模型且不改变外观。
+static var _stencil_writer_material: ShaderMaterial
+
+static func _get_stencil_writer() -> ShaderMaterial:
+	if _stencil_writer_material == null:
+		var m := ShaderMaterial.new()
+		m.shader = load("res://resources/shaders/capture_stencil_writer.gdshader")
+		m.render_priority = -8  # 早于光圈(=8)绘制，保证光圈读到 stencil
+		_stencil_writer_material = m
+	return _stencil_writer_material
+
 ## 臟污貼花（灰頭土臉）：程序噪聲紋理，全場靜態緩存複用
 static var _dirt_texture: Texture2D
 
@@ -205,7 +218,9 @@ func _make_tinted_material(mesh: MeshInstance3D, color: Color) -> Material:
 			(mat as StandardMaterial3D).albedo_color = color
 			# human 模型原始材質為 unshaded（泛白/發光主因），統一強制受光照
 			(mat as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
+		mat.next_pass = _get_stencil_writer()
 		return mat
 	var mat2 := StandardMaterial3D.new()
 	mat2.albedo_color = color
+	mat2.next_pass = _get_stencil_writer()
 	return mat2

@@ -50,6 +50,17 @@ var _panel_root: HBoxContainer
 var _item_list_overlay: CanvasLayer
 var _item_list_panel: VBoxContainer
 
+# F8 取景區域高亮調參
+var _zone_panel_overlay: CanvasLayer
+var _zone_panel_on: bool = false
+var _zone_scale_slider: HSlider
+var _zone_scale_label: Label
+var _zone_alpha_slider: HSlider
+var _zone_alpha_label: Label
+var _zone_glow_slider: HSlider
+var _zone_glow_label: Label
+var _zone_color_btn: ColorPickerButton
+
 func _ready() -> void:
 	_line_mat = StandardMaterial3D.new()
 	_line_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -73,6 +84,7 @@ func _ready() -> void:
 
 	_build_data_overlay()
 	_build_item_list_overlay()
+	_build_zone_overlay()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -96,6 +108,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.physical_keycode == KEY_F7:
 			_force_respawn_banana()
+			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_F8:
+			_toggle_zone_panel()
 			get_viewport().set_input_as_handled()
 
 func _toggle_collisions() -> void:
@@ -408,3 +423,137 @@ func _force_respawn_banana() -> void:
 	var spawn_pos := p1.global_position + forward * 1.0
 	spawn_pos.y = 0.8
 	inst.global_position = spawn_pos
+
+# ─── F8 取景區域高亮調參 ──────────────────────────────────────────────────────
+
+func _build_zone_overlay() -> void:
+	_zone_panel_overlay = CanvasLayer.new()
+	_zone_panel_overlay.name = "DebugZoneOverlay"
+	_zone_panel_overlay.layer = 130
+	_zone_panel_overlay.visible = false
+	add_child(_zone_panel_overlay)
+
+	var bg := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.0, 0.0, 0.0, 0.85)
+	style.set_content_margin_all(12)
+	bg.add_theme_stylebox_override("panel", style)
+	bg.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	bg.position = Vector2(-270.0, -210.0)
+	_zone_panel_overlay.add_child(bg)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+	bg.add_child(vbox)
+
+	var title := Label.new()
+	title.text = "── 取景區域 [F8] ──"
+	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
+	title.add_theme_font_size_override("font_size", 14)
+	vbox.add_child(title)
+
+	# 區域縮放
+	_zone_scale_label = _add_zone_label(vbox)
+	_zone_scale_slider = _add_zone_slider(vbox, 0.5, 2.0, 0.01, 1.1, _on_zone_scale_changed)
+	# 整體透明度
+	_zone_alpha_label = _add_zone_label(vbox)
+	_zone_alpha_slider = _add_zone_slider(vbox, 0.0, 1.0, 0.01, 0.7, _on_zone_alpha_changed)
+	# 光暈強度
+	_zone_glow_label = _add_zone_label(vbox)
+	_zone_glow_slider = _add_zone_slider(vbox, 0.0, 2.0, 0.01, 0.85, _on_zone_glow_changed)
+	# 顏色
+	var color_row := HBoxContainer.new()
+	color_row.add_theme_constant_override("separation", 6)
+	vbox.add_child(color_row)
+	var color_lbl := Label.new()
+	color_lbl.text = "glow_color"
+	color_lbl.add_theme_color_override("font_color", Color.WHITE)
+	color_lbl.add_theme_font_size_override("font_size", 13)
+	color_row.add_child(color_lbl)
+	_zone_color_btn = ColorPickerButton.new()
+	_zone_color_btn.custom_minimum_size = Vector2(120.0, 24.0)
+	_zone_color_btn.color = Color(1.0, 0.82, 0.35, 1.0)
+	_zone_color_btn.edit_alpha = false
+	_zone_color_btn.color_changed.connect(_on_zone_color_changed)
+	color_row.add_child(_zone_color_btn)
+
+	_on_zone_scale_changed(_zone_scale_slider.value)
+	_on_zone_alpha_changed(_zone_alpha_slider.value)
+	_on_zone_glow_changed(_zone_glow_slider.value)
+
+## 建一個帶背景說明的 Label（值文字由對應 _on_*_changed 填）
+func _add_zone_label(parent: Control) -> Label:
+	var lbl := Label.new()
+	lbl.add_theme_color_override("font_color", Color.WHITE)
+	lbl.add_theme_font_size_override("font_size", 13)
+	parent.add_child(lbl)
+	return lbl
+
+func _add_zone_slider(parent: Control, mn: float, mx: float, stp: float,
+		val: float, cb: Callable) -> HSlider:
+	var s := HSlider.new()
+	s.min_value = mn
+	s.max_value = mx
+	s.step = stp
+	s.value = val
+	s.custom_minimum_size = Vector2(220.0, 20.0)
+	s.value_changed.connect(cb)
+	parent.add_child(s)
+	return s
+
+func _toggle_zone_panel() -> void:
+	_zone_panel_on = not _zone_panel_on
+	_zone_panel_overlay.visible = _zone_panel_on
+	# 打開時同步當前實際值
+	if _zone_panel_on:
+		var hl := _get_zone_highlight()
+		if hl:
+			_zone_scale_slider.set_value_no_signal(hl.zone_scale)
+			_update_zone_scale_label(hl.zone_scale)
+			var a: float = float(hl.get_param(&"overall_alpha", _zone_alpha_slider.value))
+			_zone_alpha_slider.set_value_no_signal(a)
+			_update_zone_alpha_label(a)
+			var g: float = float(hl.get_param(&"glow_strength", _zone_glow_slider.value))
+			_zone_glow_slider.set_value_no_signal(g)
+			_update_zone_glow_label(g)
+			var col: Color = hl.get_param(&"glow_color", _zone_color_btn.color)
+			_zone_color_btn.color = col
+	print("DebugVisualizer: zone_panel = ", _zone_panel_on)
+
+func _on_zone_scale_changed(value: float) -> void:
+	var hl := _get_zone_highlight()
+	if hl:
+		hl.zone_scale = value
+	_update_zone_scale_label(value)
+
+func _on_zone_alpha_changed(value: float) -> void:
+	var hl := _get_zone_highlight()
+	if hl:
+		hl.set_param(&"overall_alpha", value)
+	_update_zone_alpha_label(value)
+
+func _on_zone_glow_changed(value: float) -> void:
+	var hl := _get_zone_highlight()
+	if hl:
+		hl.set_param(&"glow_strength", value)
+	_update_zone_glow_label(value)
+
+func _on_zone_color_changed(color: Color) -> void:
+	var hl := _get_zone_highlight()
+	if hl:
+		hl.set_param(&"glow_color", color)
+
+func _update_zone_scale_label(value: float) -> void:
+	if _zone_scale_label:
+		_zone_scale_label.text = "zone_scale   %.2f×" % value
+
+func _update_zone_alpha_label(value: float) -> void:
+	if _zone_alpha_label:
+		_zone_alpha_label.text = "overall_alpha  %.2f" % value
+
+func _update_zone_glow_label(value: float) -> void:
+	if _zone_glow_label:
+		_zone_glow_label.text = "glow_strength  %.2f" % value
+
+func _get_zone_highlight() -> CaptureZoneHighlight:
+	return get_tree().get_first_node_in_group("capture_zone_highlight") as CaptureZoneHighlight

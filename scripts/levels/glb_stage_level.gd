@@ -53,6 +53,13 @@ var _shutter_slowmo: ShutterSlowmoController
 func get_player_count() -> int:
 	return clampi(GameManager.lobby_player_count, 2, 4)
 
+## 按大厅已加入的槽位生成玩家（P1/P3 加入则只出 P1、P3）
+func get_player_slots() -> Array[int]:
+	var slots := GameManager.get_joined_slots()
+	if slots.is_empty():
+		return super.get_player_slots()
+	return slots
+
 func get_spawn_points() -> Array[Vector3]:
 	# 优先场景内 SpawnPoints 节点（策划摆放），否则默认四角
 	if _spawn_root and _spawn_root.get_child_count() > 0:

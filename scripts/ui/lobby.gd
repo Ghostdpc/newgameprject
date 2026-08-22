@@ -190,11 +190,7 @@ func _maybe_autostart() -> void:
 func _do_start() -> void:
 	SoundMgr.play("confirm")
 	GameManager.lobby_player_count = _joined_count()
-	var devices: Array[int] = []
-	for i in 4:
-		if _joined[i]:
-			devices.append(_slot_devices[i])
-	GameManager.player_devices = devices
+	GameManager.player_devices = _slot_devices.duplicate()
 	get_tree().change_scene_to_file("res://scenes/levels/room_stage_battle.tscn")
 
 func _on_back() -> void:

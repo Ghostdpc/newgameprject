@@ -9,16 +9,21 @@ const PANEL_SCENE: PackedScene = preload("res://scenes/ui/player_panel.tscn")
 
 ## 玩家数量（2-4，由关卡/流程注入，默认 4）
 var player_count: int = 4
+## 玩家槽位索引（0-3），默认按数量取 0..count-1（大厅加入空位场景下非连续）
+var player_slots: Array[int] = []
 
 var _panels: Array[PlayerPanel] = []
+## 槽位 -> 面板（空槽保持 null，索引与玩家位置一致）
+var _slot_panels: Array[PlayerPanel] = [null, null, null, null]
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_connect_signals()
 
-func setup(count: int) -> void:
+func setup(count: int, slots: Array[int] = []) -> void:
 	player_count = clampi(count, 2, 4)
+	player_slots = slots if not slots.is_empty() else range(player_count)
 	_clear_panels()
 	_build_panels()
 
@@ -26,14 +31,16 @@ func _clear_panels() -> void:
 	for p in _panels:
 		p.queue_free()
 	_panels.clear()
+	_slot_panels = [null, null, null, null]
 
 func _build_panels() -> void:
-	for i in player_count:
+	for slot in player_slots:
 		var panel: PlayerPanel = PANEL_SCENE.instantiate() as PlayerPanel
 		add_child(panel)
-		panel.setup(i, PlayerConfig.get_color(i))
-		_position_panel(panel, i)
+		panel.setup(slot, PlayerConfig.get_color(slot))
+		_position_panel(panel, slot)
 		_panels.append(panel)
+		_slot_panels[slot] = panel
 
 ## 根节点矩形精确等于卡片尺寸，四角留 margin
 func _position_panel(panel: Control, index: int) -> void:
@@ -79,9 +86,9 @@ func _on_item_used(player_index: int, _item_id: String) -> void:
 	panel.flash_item_used()
 
 func _get_panel(player_index: int) -> PlayerPanel:
-	if player_index < 0 or player_index >= _panels.size():
+	if player_index < 0 or player_index >= _slot_panels.size():
 		return null
-	return _panels[player_index]
+	return _slot_panels[player_index]
 
 ## 图标资源映射：道具 id → 图标 key → 贴图（走 ItemConfig.get_item_icon + ItemIcons）
 func _load_icon(item_id: String) -> Texture2D:
