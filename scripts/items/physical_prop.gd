@@ -83,10 +83,20 @@ func _add_auto_shape() -> void:
 	var mesh := mesh_nodes[0] as MeshInstance3D
 	if not mesh or not mesh.mesh:
 		return
+	# mesh 相對本 RigidBody 的變換（含房間烘焙的縮放/旋轉），碰撞盒須在此空間量測，
+	# 否則 prop.scale=1 時碰撞盒會是 mesh 原始尺寸（放大數十倍）→ 卡人/頂飛。
+	var rel := global_transform.affine_inverse() * mesh.global_transform
 	var aabb := mesh.get_aabb()
+	var b := AABB(rel * aabb.position, Vector3.ZERO)
+	for i in range(8):
+		var corner := aabb.position + Vector3(
+			aabb.size.x * float(i & 1),
+			aabb.size.y * float((i >> 1) & 1),
+			aabb.size.z * float((i >> 2) & 1))
+		b = b.expand(rel * corner)
 	var box := BoxShape3D.new()
-	box.size = aabb.size
+	box.size = b.size
 	var cs := CollisionShape3D.new()
 	cs.shape = box
-	cs.position = aabb.get_center()
+	cs.position = b.get_center()
 	add_child(cs)

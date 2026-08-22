@@ -171,9 +171,28 @@ func _finish_champion() -> void:
 	tw.tween_property(_champion_box, "modulate:a", 1.0, 0.25)
 	_score_hint.hide()
 	_callout("评分结束 · 称号仅表现，不影响系统分数")
+	_restart_btn.grab_focus()
 
-# ---------------------------------------------------------------- 输入加速
+## 获取房主绑定的设备（player_devices[0]）用于刷分阶段跳过判断
+func _host_device() -> int:
+	if GameManager.player_devices.is_empty():
+		return -2
+	return GameManager.player_devices[0]
+
+# ---------------------------------------------------------------- 输入加速（刷分阶段，房主按确认跳过）
 func _unhandled_input(event: InputEvent) -> void:
-	if _sequence_running and event.is_pressed() and event.is_action_pressed("ui_accept"):
-		_skip_requested = true
-		get_viewport().set_input_as_handled()
+	if not event.is_pressed():
+		return
+	if _sequence_running:
+		var dev := _host_device()
+		var is_host_accept: bool
+		if dev == -1 or dev == -2:
+			is_host_accept = event is InputEventKey or event.is_action_pressed("ui_accept")
+		elif event is InputEventJoypadButton:
+			is_host_accept = (event as InputEventJoypadButton).device == dev \
+				and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A
+		else:
+			is_host_accept = false
+		if is_host_accept:
+			_skip_requested = true
+			get_viewport().set_input_as_handled()

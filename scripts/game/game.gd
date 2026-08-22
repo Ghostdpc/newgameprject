@@ -54,7 +54,8 @@ func _spawn_players() -> void:
 	if not player_scene:
 		push_error("Game: player_scene not assigned")
 		return
-	for i in PLAYER_COUNT:
+	var count := clampi(GameManager.lobby_player_count, 2, PLAYER_COUNT)
+	for i in count:
 		var player: PlayerController = player_scene.instantiate() as PlayerController
 		player.player_index = i
 		player.player_color = PLAYER_COLORS[i]

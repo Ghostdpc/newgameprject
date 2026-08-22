@@ -13,12 +13,14 @@ var ground_brake: float = 30.0     ## 倒地落地水平刹車（大=立刻停�
 var ragdoll_linear_damp: float = 0.3   ## 布娃娃線性阻尼（小=軟）
 var ragdoll_angular_damp: float = 0.3  ## 布娃娃角阻尼（小=擺動大）
 var stun_duration: float = 1.8         ## 倒地（Stunned）時長，秒
+var head_scale: float = 1.0            ## 頭部放大倍率（服裝效果）
+var body_scale: float = 1.0            ## 身軀放大倍率（服裝效果）
 
 const _DEFAULTS: Dictionary = {
 	"move_speed": 5.0, "dive_force": 9.0, "hit_force": 6.0, "hit_upward": 7.0,
 	"stun_gravity": 45.0, "ground_brake": 30.0,
 	"ragdoll_linear_damp": 0.3, "ragdoll_angular_damp": 0.3,
-	"stun_duration": 1.8,
+	"stun_duration": 1.8, "head_scale": 1.0, "body_scale": 1.0,
 }
 
 const CONFIG_PATH: String = "res://data/configs/tune.json"
@@ -33,6 +35,8 @@ var _params: Array = [
 	{"name": "ragdoll_linear_damp", "step": 0.1, "desc": "布娃娃線性阻尼（小=更軟更滑）"},
 	{"name": "ragdoll_angular_damp", "step": 0.1, "desc": "布娃娃角阻尼（小=擺動更誇張）"},
 	{"name": "stun_duration", "step": 0.5, "desc": "倒地癱軟時長，秒"},
+	{"name": "head_scale", "step": 0.1, "desc": "頭部放大倍率（1=正常，>1 頭變大）"},
+	{"name": "body_scale", "step": 0.1, "desc": "身軀放大倍率（1=正常，>1 身體變大）"},
 ]
 var _selected: int = 0
 var _label: Label

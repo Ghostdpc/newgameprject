@@ -58,19 +58,35 @@ func _on_timer_updated(seconds: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed():
 		return
-	if not event.is_action_pressed("ui_cancel"):
-		return
 	var stage := GameManager.current_stage
-	if stage != GameManager.GameStage.BATTLE and stage != GameManager.GameStage.THEME_ANNOUNCE:
+	# 手柄 Start（Options）或 ui_cancel 触发暂停/继续
+	var is_pause_key := event.is_action_pressed("ui_cancel") \
+		or (event is InputEventJoypadButton \
+			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_START)
+	if is_pause_key:
+		if stage != GameManager.GameStage.BATTLE and stage != GameManager.GameStage.THEME_ANNOUNCE:
+			return
+		if _paused:
+			resume()
+		else:
+			pause()
 		return
+	# 暂停界面：手柄 A / ui_accept → 继续；手柄 B → 返回大厅
 	if _paused:
-		resume()
-	else:
-		pause()
+		if event.is_action_pressed("ui_accept") \
+				or (event is InputEventJoypadButton \
+					and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A):
+			resume()
+			get_viewport().set_input_as_handled()
+		elif event is InputEventJoypadButton \
+				and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B:
+			_return_lobby()
+			get_viewport().set_input_as_handled()
 
 func pause() -> void:
 	_paused = true
 	_pause_screen.show()
+	_continue_btn.grab_focus()
 	get_tree().paused = true
 	EventBus.game_paused_changed.emit(true)
 

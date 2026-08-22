@@ -47,9 +47,19 @@ var spring_rig: SpringBoneRig
 var held_item_id: String = ""
 ## 移速乘數（1.0 = 正常；由 player_speed_effect 臨時修改）
 var speed_multiplier: float = 1.0
+## 身材缩放（服装效果）：head_scale 放大头部 / body_scale 放大身躯 / body_width 加宽
+var head_scale: float = 1.0
+var body_scale: float = 1.0
+var body_width: float = 1.0
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
+var _suicide_was_pressed: bool = false
+var _model_skeleton: Skeleton3D
+var _head_bone_idx: int = -1
+var _body_bone_idx: int = -1
+var _model_node: Node3D
+var _body_collision: CollisionShape3D
 
 var _pickup_hold_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
@@ -61,6 +71,8 @@ func is_dead() -> bool:
 
 func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
+	# 身材缩放要排在动画(priority 0)与弹簧骨骼(100)之后，避免骨骼 scale 被动画覆盖
+	process_priority = 100
 	_setup_state_machine()
 	_setup_model()
 	_setup_outfit()
@@ -139,8 +151,11 @@ func _process(delta: float) -> void:
 	if spring_rig:
 		spring_rig.velocity_hints = Vector2(velocity.x, velocity.z)
 		spring_rig.root_velocity = velocity
+	if GameManager.current_stage == GameManager.GameStage.SCORING:
+		return
 	state_machine.update(delta)
 	_update_animation()
+	_apply_body_scale()
 	if player_input.is_use_item_just_pressed():
 		if not held_item_id.is_empty():
 			# 身上有道具：立即使用
@@ -200,14 +215,29 @@ func _pickup_item_id() -> String:
 func _physics_process(delta: float) -> void:
 	# 死亡/復活狀態也需物理幀推進（Death→Waiting→Fall），故不整體跳過
 	_apply_gravity(delta)
-	state_machine.physics_update(delta)
 	if is_dead():
+		state_machine.physics_update(delta)
 		move_and_slide()
 		return
+	_handle_suicide()
+	if GameManager.current_stage == GameManager.GameStage.SCORING:
+		velocity.x = move_toward(velocity.x, 0.0, ACCELERATION * delta)
+		velocity.z = move_toward(velocity.z, 0.0, ACCELERATION * delta)
+		move_and_slide()
+		return
+	state_machine.physics_update(delta)
 	move_and_slide()
 	_check_dive_hit()
 	_push_contacted_props()
 	_update_grab(delta)
+
+## 自殺快捷鍵（測試用）：P1=O / P2=P，按下立即觸發完整死亡+重生流程
+func _handle_suicide() -> void:
+	var pressed := player_input.is_suicide_just_pressed()
+	if pressed and not _suicide_was_pressed:
+		# 把玩家移到出界下方，讓 LevelBase._physics_process 接管重生流程
+		global_position.y = -100.0
+	_suicide_was_pressed = pressed
 
 ## 玩家移動時推動接觸到的場景物理物（解決 move_and_slide 卡住不推）
 func _push_contacted_props() -> void:
@@ -257,7 +287,7 @@ func _find_nearest_prop() -> PhysicalProp:
 	var best := INF
 	for node in props:
 		var prop := node as PhysicalProp
-		if not prop or prop.freeze:
+		if not prop:
 			continue
 		var d := global_position.distance_to(prop.global_position)
 		if d < best:
@@ -380,6 +410,14 @@ func _setup_model() -> void:
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)
+	# 身材缩放：记录 head/chest 骨骼索引（服装效果放大部位用）
+	_model_skeleton = skel2
+	if _model_skeleton:
+		_head_bone_idx = _model_skeleton.find_bone("head")
+		_body_bone_idx = _model_skeleton.find_bone("chest")
+	# 变宽用到：Model 节点（整体横向缩放）+ 胶囊碰撞体（半径跟随）
+	_model_node = model
+	_body_collision = get_node_or_null("CollisionShape3D") as CollisionShape3D
 
 func _find_skeleton(n: Node) -> Skeleton3D:
 	if n is Skeleton3D:
@@ -405,6 +443,87 @@ func _merge_idle_animation() -> void:
 		if lib:
 			lib.add_animation(ANIM_IDLE, anim)
 	inst.queue_free()
+
+## 身材缩放（服装效果）：head_scale 放大头部，body_scale 放大身躯。
+## chest 骨缩放的子骨（头/手臂）乘 1/body_scale 抵消，避免身体放大连带头和手臂；
+## 头再叠乘自身 head_scale（若未放大头则保持正常大小）。
+## 布娃娃/倒地时重置（物理接管骨骼姿态，不再叠加缩放避免错乱）。
+func _apply_body_scale() -> void:
+	if not _model_skeleton:
+		return
+	if _ragdoll_in_use():
+		_reset_bone_scale(_head_bone_idx)
+		_reset_bone_scale(_body_bone_idx)
+		return
+	if _body_bone_idx != -1:
+		_model_skeleton.set_bone_pose_scale(_body_bone_idx, Vector3.ONE * body_scale)
+	if _head_bone_idx != -1:
+		# 抵消 chest 继承的缩放，再乘自身的头放大
+		_model_skeleton.set_bone_pose_scale(_head_bone_idx, Vector3.ONE * (head_scale / maxf(body_scale, 0.01)))
+	# 手臂是 chest 子骨，身体放大时抵消保持原大小
+	_apply_child_compensate(_CHEST_CHILD_BONES, body_scale)
+	_apply_collision_scale()
+
+## chest 的子骨（身体放大时补偿还原，避免手臂跟着变大）
+const _CHEST_CHILD_BONES: Array[String] = [
+	"upperarm.l", "lowerarm.l", "wrist.l", "hand.l", "handslot.l",
+	"upperarm.r", "lowerarm.r", "wrist.r", "hand.r", "handslot.r",
+]
+
+func _apply_child_compensate(bone_names: Array[String], parent_scale: float) -> void:
+	if parent_scale == 1.0 or not _model_skeleton:
+		return
+	var inv := 1.0 / parent_scale
+	for bname in bone_names:
+		var idx := _model_skeleton.find_bone(bname)
+		if idx != -1:
+			_model_skeleton.set_bone_pose_scale(idx, Vector3.ONE * inv)
+
+## 加宽：Model 整个横向(X)缩放 + 胶囊碰撞体半径同步跟随，
+## 让身材变换的同时碰撞体体积真实变大（飞扑/撞击判定一致）。
+func _apply_collision_scale() -> void:
+	if _model_node:
+		_model_node.scale.x = body_width
+	if _body_collision:
+		var shape := _body_collision.shape as CapsuleShape3D
+		if shape:
+			shape.radius = 0.4 * maxf(1.0, maxf(body_width, body_scale))
+
+## 磕头布娃娃（服装演出）：临时开启 ragdoll，对 head 骨施向前下方冲量让角色叩头，
+## 一段时间后自动关闭 ragdoll 恢复站姿。不进入 Stunned/倒地状态。
+func play_kowtow_ragdoll(force: float = 6.0, duration: float = 1.0) -> void:
+	if not ragdoll_rig:
+		return
+	if ragdoll_rig.is_ragdoll_enabled():
+		return
+	spring_rig.set_active(false)
+	ragdoll_rig.set_ragdoll_enabled(true)
+	# 等物理骨就绪（下帧）再施加头部叩冲冲量
+	var fwd := -global_basis.z
+	var head_impulse := Vector3(fwd.x * force, -force * 0.8, fwd.z * force)
+	var body_impulse := Vector3(fwd.x * force * 0.25, 0.0, fwd.z * force * 0.25)
+	call_deferred("_kowtow_impulse", head_impulse, body_impulse)
+	# 磕完自动恢复站姿
+	await get_tree().create_timer(duration).timeout
+	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
+		ragdoll_rig.reset()
+	if spring_rig:
+		spring_rig.set_active(true)
+
+func _kowtow_impulse(head_impulse: Vector3, body_impulse: Vector3) -> void:
+	if not ragdoll_rig or not ragdoll_rig.is_ragdoll_enabled():
+		return
+	ragdoll_rig.apply_bone_impulse("head", head_impulse)
+	ragdoll_rig.apply_impulse(body_impulse)
+
+func _ragdoll_in_use() -> bool:
+	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
+		return true
+	return state_machine.current_state_name == "Stunned"
+
+func _reset_bone_scale(bone_idx: int) -> void:
+	if _model_skeleton and bone_idx != -1:
+		_model_skeleton.set_bone_pose_scale(bone_idx, Vector3.ONE)
 
 ## 設定單個動畫循環
 func _set_animation_looping(anim_name: String) -> void:

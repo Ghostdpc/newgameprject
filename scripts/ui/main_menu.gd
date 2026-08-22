@@ -33,12 +33,15 @@ func _pulse_hint() -> void:
 	tw.tween_property(_start_hint, "modulate:a", 1.0, 0.55)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_pressed() and event.is_action_pressed("ui_accept"):
+	if not event.is_pressed():
+		return
+	if event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_ESCAPE:
+		get_tree().quit()
+		return
+	# 任意键盘键（非 Esc）或手柄任意按钮 → 进入大厅
+	if event is InputEventKey or event is InputEventJoypadButton:
 		get_viewport().set_input_as_handled()
 		GameManager.enter_lobby()
-	elif event.is_pressed() and event is InputEventKey \
-			and (event as InputEventKey).keycode == KEY_ESCAPE:
-		get_tree().quit()
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
