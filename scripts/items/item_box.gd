@@ -2,26 +2,47 @@
 ## - "pickup_items" group 复用 PlayerController 现有拾取接口
 ## - StaticBody3D 子节点提供物理碰撞（玩家可撞飞）
 ## - Label3D 显示道具名
+## - 生成时从天而降（Tween 落地动画）
 
 class_name ItemBox
 extends Area3D
 
+const DROP_HEIGHT: float    = 3.5
+const DROP_DURATION: float  = 0.45
+const BOUNCE_HEIGHT: float  = 0.3
+const BOUNCE_DURATION: float = 0.15
+
 ## 由 ItemSpawner 在生成后赋值
 var item_id: String = ""
+var _landed: bool = false
 
 func _ready() -> void:
 	_build_visuals()
 	add_to_group("item_boxes")
 	add_to_group("pickup_items")
+	call_deferred("_start_drop")
 
-## 被 PlayerController._pickup_item_id() 调用，返回道具 id 并消除自身
+## 被 PlayerController 拾取，返回道具 id 并消除自身
 func pickup_for(_player: PlayerController) -> String:
-	if item_id.is_empty():
+	if item_id.is_empty() or not _landed:
 		queue_free()
 		return ""
 	var id := item_id
 	queue_free()
 	return id
+
+func _start_drop() -> void:
+	var landing_y := global_position.y
+	global_position.y += DROP_HEIGHT
+
+	var tw := create_tween()
+	tw.tween_property(self, "position:y", landing_y, DROP_DURATION)\
+		.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "position:y", landing_y + BOUNCE_HEIGHT, BOUNCE_DURATION)\
+		.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "position:y", landing_y, BOUNCE_DURATION)\
+		.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	tw.tween_callback(func(): _landed = true)
 
 func _build_visuals() -> void:
 	# 物理碰撞体（StaticBody3D，layer=1 让玩家撞上去）

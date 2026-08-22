@@ -61,12 +61,16 @@ static func _parse_trigger(s: String) -> ItemTypes.Trigger:
 
 static func _parse_kind(s: String) -> ItemTypes.EffectKind:
 	match s.to_lower():
-		"timer_add":      return ItemTypes.EffectKind.TIMER_ADD
-		"timer_scale":    return ItemTypes.EffectKind.TIMER_SCALE
-		"camera_push":    return ItemTypes.EffectKind.CAMERA_PUSH
-		"camera_offset":  return ItemTypes.EffectKind.CAMERA_OFFSET
-		"player_stun":    return ItemTypes.EffectKind.PLAYER_STUN
-		"player_ragdoll": return ItemTypes.EffectKind.PLAYER_RAGDOLL
-		"player_speed":   return ItemTypes.EffectKind.PLAYER_SPEED
-		"spawn_trap":     return ItemTypes.EffectKind.SPAWN_TRAP
-		_:                return ItemTypes.EffectKind.NONE
+		"timer_add":               return ItemTypes.EffectKind.TIMER_ADD
+		"timer_scale":             return ItemTypes.EffectKind.TIMER_SCALE
+		"camera_push":             return ItemTypes.EffectKind.CAMERA_PUSH
+		"camera_offset":           return ItemTypes.EffectKind.CAMERA_OFFSET
+		"player_stun":             return ItemTypes.EffectKind.PLAYER_STUN
+		"player_ragdoll":          return ItemTypes.EffectKind.PLAYER_RAGDOLL
+		"player_speed":            return ItemTypes.EffectKind.PLAYER_SPEED
+		"spawn_trap":              return ItemTypes.EffectKind.SPAWN_TRAP
+		"garment_head_scale":      return ItemTypes.EffectKind.GARMENT_HEAD_SCALE
+		"garment_body_scale":      return ItemTypes.EffectKind.GARMENT_BODY_SCALE
+		"garment_spring_wobble":   return ItemTypes.EffectKind.GARMENT_SPRING_WOBBLE
+		"garment_emission_glow":   return ItemTypes.EffectKind.GARMENT_EMISSION_GLOW
+		_:                         return ItemTypes.EffectKind.NONE

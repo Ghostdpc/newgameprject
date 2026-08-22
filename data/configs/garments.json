@@ -1,0 +1,101 @@
+{
+  "garments": [
+    {
+      "id": "mushroom_hat",
+      "display_name": "🍄 蘑菇帽",
+      "icon": "mushroom_hat",
+      "slot": "hat_slot",
+      "model": "",
+      "model_scale": 1.0,
+      "score_bonus": 0.08,
+      "effects": [
+        {
+          "kind": "garment_head_scale",
+          "target": "self",
+          "params": { "scale": 1.8 }
+        }
+      ]
+    },
+    {
+      "id": "halo",
+      "display_name": "✨ 光环",
+      "icon": "halo",
+      "slot": "hat_slot",
+      "model": "",
+      "model_scale": 1.0,
+      "score_bonus": 0.12,
+      "effects": [
+        {
+          "kind": "garment_emission_glow",
+          "target": "self",
+          "params": { "strength": 0.6 }
+        }
+      ]
+    },
+    {
+      "id": "lightning_shirt",
+      "display_name": "⚡ 闪电T恤",
+      "icon": "lightning_shirt",
+      "slot": "shirt_slot",
+      "model": "",
+      "model_scale": 1.0,
+      "score_bonus": 0.08,
+      "effects": [
+        {
+          "kind": "player_speed",
+          "target": "self",
+          "params": { "multiplier": 1.5 }
+        }
+      ]
+    },
+    {
+      "id": "snail_hoodie",
+      "display_name": "🐌 蜗牛连帽衫",
+      "icon": "snail_hoodie",
+      "slot": "shirt_slot",
+      "model": "res://assets/models/garments/snail_hoodie/snail_hoodie.fbx",
+      "texture": "res://assets/models/garments/snail_hoodie/snail_hoodie_basemap.png",
+      "model_scale": 1.0,
+      "score_bonus": 0.06,
+      "effects": [
+        {
+          "kind": "player_speed",
+          "target": "self",
+          "params": { "multiplier": 0.6 }
+        }
+      ]
+    },
+    {
+      "id": "inflate_shirt",
+      "display_name": "🎈 充气球衣",
+      "icon": "inflate_shirt",
+      "slot": "shirt_slot",
+      "model": "",
+      "model_scale": 1.0,
+      "score_bonus": 0.10,
+      "effects": [
+        {
+          "kind": "garment_body_scale",
+          "target": "self",
+          "params": { "scale": 1.5, "width": 1.5 }
+        }
+      ]
+    },
+    {
+      "id": "guitar",
+      "display_name": "🎸 吉他",
+      "icon": "guitar",
+      "slot": "accessory_slot",
+      "model": "",
+      "model_scale": 1.0,
+      "score_bonus": 0.08,
+      "effects": [
+        {
+          "kind": "garment_spring_wobble",
+          "target": "self",
+          "params": { "preset": "kowtow" }
+        }
+      ]
+    }
+  ]
+}

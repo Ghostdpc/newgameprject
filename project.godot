@@ -22,9 +22,13 @@ EventBus="*res://scripts/autoload/event_bus.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
 CameraSystem="*res://scripts/autoload/camera_system.gd"
 ItemSystem="*res://scripts/items/item_system.gd"
+DropPlacement="*res://scripts/items/drop_placement.gd"
 ItemSpawner="*res://scripts/items/item_spawner.gd"
+GarmentSystem="*res://scripts/items/garment_system.gd"
+GarmentSpawner="*res://scripts/items/garment_spawner.gd"
 TuneConfig="*res://scripts/autoload/tune_config.gd"
 SoundMgr="*res://scripts/autoload/sound_manager.gd"
+PropVfx="*res://scenes/fx/prop_vfx_layer.tscn"
 
 [display]
 

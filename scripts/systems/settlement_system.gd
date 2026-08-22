@@ -315,6 +315,10 @@ func _compute_facing(actor: Node3D, cam: Camera3D) -> float:
 	return ScoreAnalyzerScript.compute_facing(forward, to_cam)
 
 func _read_outfit_norm(actor: Node3D) -> float:
+	# 优先从 GarmentSystem 读取（服装系统接入后的标准路径）
+	if actor is PlayerController:
+		return GarmentSystem.get_equipped_score(actor as PlayerController)
+	# 降级兼容：OutfitManager 件数 × 固定分值（服装系统未接入时）
 	var om := actor.get_node_or_null("OutfitManager")
 	if om == null or not om.has_method("equipped_slot_count"):
 		return 0.0

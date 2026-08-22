@@ -14,6 +14,9 @@ func from_data(data: Dictionary) -> void:
 func apply(ctx: ItemContext) -> void:
 	var scale: float = float(params.get("scale", 1.0))
 	GameManager.time_rate = scale
+	EventBus.time_effect_applied.emit(0 if scale > 1.0 else 1, scale)
 
 func revert(ctx: ItemContext) -> void:
+	var scale: float = float(params.get("scale", 1.0))
 	GameManager.time_rate = 1.0
+	EventBus.time_effect_applied.emit(0 if scale > 1.0 else 1, 0.0)
