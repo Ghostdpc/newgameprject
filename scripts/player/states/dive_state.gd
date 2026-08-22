@@ -9,6 +9,8 @@ const DIVE_DURATION: float = 0.4
 const RECOVER_DURATION: float = 0.5
 const HIT_FORCE: float = 8.0
 const HIT_UPWARD: float = 4.0
+## 飛撲自身輕微騰空初速（y），讓動作有高度變化而非純貼地滑行
+const DIVE_UP: float = 2.5
 
 enum Phase { PREPARE, DIVE, RECOVER }
 
@@ -50,9 +52,9 @@ func knock_prop(prop: PhysicalProp) -> void:
 	if prop.is_frozen():
 		prop.release(force)
 	else:
-		# apply_central_impulse 直接給 Δ動量（速度增量 = impulse/mass），不另乘 mass，
-		# 否則重物也獲相等速度瞬間爆飛 → 玩家碰撞被頂射亂飛
-		prop.apply_central_impulse(force)
+		# 速度增量 = impulse/mass。乘 mass 讓撞飛速度與質量無關（重物也飛得動）；
+		# 亂飛已由物品側的擊飛冷卻解決，此處保持夠大的撞飛力道
+		prop.apply_central_impulse(force * prop.mass)
 
 func physics_update(delta: float) -> void:
 	var controller: PlayerController = _player as PlayerController
@@ -77,6 +79,9 @@ func physics_update(delta: float) -> void:
 				_phase_timer = DIVE_DURATION
 				controller.velocity.x = _dive_direction.x * TuneConfig.dive_force
 				controller.velocity.z = _dive_direction.z * TuneConfig.dive_force
+				# 輕微騰空：飛撲自帶高度變化（不高，落地靠重力拉回）
+				if controller.is_on_floor():
+					controller.velocity.y = DIVE_UP
 		Phase.DIVE:
 			# 衝刺階段：保持速度，結束後進僵直
 			_phase_timer -= delta
