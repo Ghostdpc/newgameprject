@@ -27,9 +27,9 @@ func test_equip_garment_applies_effect_and_score_and_revert() -> void:
 	assert_eq(player.body_width, 1.5, "充氣球衣應加寬 body_width=1.5")
 	assert_almost_eq(player.body_scale, 1.5, 0.001, "充氣球衣應放大 body_scale=1.5")
 
-	# 不同槽：閃電T → 移速
-	GarmentSystem.equip_garment(player, "lightning_shirt")
-	assert_almost_eq(player.speed_multiplier, 1.5, 0.001, "閃電T應加速移速 x1.5")
+	# 移速類服裝：蝸牛連帽衫 → 減速
+	GarmentSystem.equip_garment(player, "snail_hoodie")
+	assert_almost_eq(player.speed_multiplier, 0.6, 0.001, "蝸牛連帽衫應減速移速 x0.6")
 
 	# 結束混戰還原所有效果
 	EventBus.battle_ended.emit()
