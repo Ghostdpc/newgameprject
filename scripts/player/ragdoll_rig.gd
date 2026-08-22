@@ -198,6 +198,24 @@ func apply_bone_impulse(bone_name: String, direction: Vector3) -> void:
 	if target:
 		target.apply_impulse(direction)
 
+## 驱动所有物理骨沿水平方向匀速滑行（香蕉皮滑倒用）。speed<=0 停止滑行。
+## 每帧重置水平骨速以克服地面摩擦，保持滑行；垂直速度保持物理守恒（接触地面）。
+func drive_bones_horizontal(dir: Vector3, speed: float) -> void:
+	if not _ragdoll_enabled or not _simulator:
+		return
+	var h := (Vector3(dir.x, 0.0, dir.z)).normalized()
+	for bone in _simulator.find_children("*", "PhysicalBone3D", true, false):
+		var pb := bone as PhysicalBone3D
+		var v := pb.linear_velocity
+		if speed <= 0.0:
+			# 停止滑行：只清水平部分，保留垂直（落回地面）
+			pb.linear_velocity = Vector3(0.0, v.y, 0.0)
+		else:
+			# 维持前方恒定水平速度
+			var target_v := h * speed
+			# 平滑逼近而非瞬置，避免抖动
+			pb.linear_velocity = Vector3(target_v.x, v.y, target_v.z)
+
 ## 重置布娃娃
 func reset() -> void:
 	set_ragdoll_enabled(false)

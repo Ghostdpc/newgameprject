@@ -18,7 +18,7 @@ func apply(ctx: ItemContext) -> void:
 		invoker = ctx.source_player
 	if invoker == null:
 		return
-	var controller := CameraSystem.get_main_controller()
+	var controller: CameraController = CameraSystem.get_main_controller() as CameraController
 	if controller == null:
 		push_warning("CameraOffsetEffect: no main camera controller")
 		return
@@ -32,7 +32,7 @@ func apply(ctx: ItemContext) -> void:
 	ctx.extra[KEY_BEHAVIOR] = focus
 
 func revert(ctx: ItemContext) -> void:
-	var controller := CameraSystem.get_main_controller()
+	var controller: CameraController = CameraSystem.get_main_controller() as CameraController
 	if controller == null:
 		return
 	var focus: PlayerFocusBehavior = ctx.extra.get(KEY_BEHAVIOR) as PlayerFocusBehavior
