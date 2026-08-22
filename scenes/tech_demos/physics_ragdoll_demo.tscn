@@ -1,0 +1,72 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/player/physics_ragdoll_demo.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/models/mannequin/animations/Rig_Medium_MovementBasic.glb" id="2"]
+[ext_resource type="Script" path="res://scripts/player/ragdoll_rig.gd" id="3"]
+
+[sub_resource type="BoxMesh" id="4"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="BoxShape3D" id="5"]
+size = Vector3(30, 0.4, 30)
+
+[sub_resource type="CapsuleShape3D" id="9"]
+radius = 0.4
+height = 1.4
+
+[sub_resource type="ProceduralSkyMaterial" id="6"]
+
+[sub_resource type="Sky" id="7"]
+sky_material = SubResource("6")
+
+[sub_resource type="Environment" id="8"]
+background_mode = 2
+sky = SubResource("7")
+ambient_light_source = 3
+ambient_light_energy = 0.8
+
+[node name="Demo" type="Node3D"]
+
+[node name="Player" type="CharacterBody3D" parent="."]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+position = Vector3(0, 0.9, 0)
+shape = SubResource("9")
+
+[node name="RigModel" parent="Player" instance=ExtResource("2")]
+
+[node name="RagdollRig" type="Node3D" parent="Player"]
+script = ExtResource("3")
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("5")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7071, 0.7071, 0, -0.7071, 0.7071, 0, 6, 8)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.766, 0.6428, 0, -0.6428, 0.766, 0, 2.2, 6)
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="Hint" type="Label" parent="UILayer"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 900.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 22
+text = "PhysicsRagdollDemo"
