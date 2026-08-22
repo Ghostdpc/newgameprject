@@ -1,5 +1,5 @@
 {
-  "_comment": "道具表。spawn_config 控制场上生成；items[] 为道具定义；traps[] 为放置物定义。model/texture 为 3D 模型与贴图路径，model_scale 统一缩放使模型贴合道具箱，未配置则用占位方块",
+  "_comment": "道具表。spawn_config 控制场上生成；items[] 为道具定义；traps[] 为放置物定义。model/texture 为 3D 模型与贴图路径，model_scale 统一缩放使模型贴合道具箱，未配置则用占位方块。use_vfx 为释放道具时播放的特效场景路径（res://），缺省则不播放；use_vfx_mode 控制特效播放位置：world=世界坐标（使用者当前位置）/ attach_player=挂载到使用者身上跟随 / attach_camera=挂载到相机前方（类全屏）",
   "spawn_config": {
     "_comment": "max_active: 场上同时存在的道具箱上限，从 items[] 中随机选取类型生成；respawn_interval: 补充间隔（秒）",
     "max_active": 5,
@@ -36,7 +36,7 @@
           "kind": "spawn_trap",
           "target": "world",
           "duration": 0.0,
-          "params": { "trap_id": "banana_peel" }
+          "params": { "trap_id": "banana_peel", "spawn_y": 0.8 }
         }
       ]
     },

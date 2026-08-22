@@ -13,6 +13,10 @@ var texture: String = ""
 var model_scale: float = 1.0
 var lifetime: float = 0.0
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_STEP
+## 放置物被觸發時播放的特效場景路徑（res://，空 = 不播放）
+var use_vfx: String = ""
+## 特效播放位置模式（放置物固定為 world，在觸發點播放）
+var use_vfx_mode: ItemDef.VfxMode = ItemDef.VfxMode.WORLD
 var effects: Array[ItemEffect] = []
 
 static func from_dict(d: Dictionary) -> TrapDef:
@@ -23,6 +27,8 @@ static func from_dict(d: Dictionary) -> TrapDef:
 	def.texture      = str(d.get("texture", ""))
 	def.model_scale  = float(d.get("model_scale", 1.0))
 	def.lifetime     = float(d.get("lifetime", 0.0))
+	def.use_vfx      = str(d.get("use_vfx", ""))
+	def.use_vfx_mode = ItemDef._parse_vfx_mode(str(d.get("use_vfx_mode", "world")))
 	def.trigger      = ItemTypes.Trigger.ON_STEP
 
 	var raw_effects: Array = d.get("effects", []) as Array

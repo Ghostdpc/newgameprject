@@ -1,4 +1,5 @@
 ## 職責：spawn_trap 效果 —— 在使用者腳下生成放置物（陷阱）
+## params.spawn_y（可選）：固定生成高度，不設則使用放置者當前 y 坐標
 
 class_name SpawnTrapEffect
 extends ItemEffect
@@ -23,4 +24,7 @@ func apply(ctx: ItemContext) -> void:
 	# setup 先於 add_child，確保 collision_layer/mask 在進入物理世界前設置好
 	instance.setup(trap_def, placer)
 	placer.get_tree().current_scene.add_child(instance)
-	instance.global_position = placer.global_position
+	var spawn_pos := placer.global_position
+	if params.has("spawn_y"):
+		spawn_pos.y = float(params["spawn_y"])
+	instance.global_position = spawn_pos
