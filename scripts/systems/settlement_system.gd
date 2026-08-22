@@ -70,7 +70,6 @@ func _analyze_async(texture: ViewportTexture) -> void:
 		# headless/dummy 渲染器拿不到真实画面，用空图兜底（正式环境不会触发）
 		push_warning("SettlementSystem: 截图为空（可能是 headless 渲染），像素分析降级为零")
 		photo_image = Image.create_empty(_mask_viewport.size.x, _mask_viewport.size.y, false, Image.FORMAT_RGBA8)
-	photo_image.flip_y()
 
 	var cam := _get_photo_camera()
 	if cam == null:
