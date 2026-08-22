@@ -12,7 +12,7 @@
       "icon": "item_energy",
       "model": "res://assets/models/props/energy_drink/drink.fbx",
       "texture": "res://assets/models/props/energy_drink/drink_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -29,7 +29,7 @@
       "icon": "item_banana",
       "model": "res://assets/models/props/banana/banana_whole.fbx",
       "texture": "res://assets/models/props/banana/banana_whole_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -46,7 +46,7 @@
       "icon": "item_fastforward",
       "model": "res://assets/models/props/fast_forward_crank/crank.fbx",
       "texture": "res://assets/models/props/fast_forward_crank/crank_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -63,7 +63,7 @@
       "icon": "item_slowmo",
       "model": "res://assets/models/props/slow_hourglass/hourglass.fbx",
       "texture": "res://assets/models/props/slow_hourglass/hourglass_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -80,7 +80,7 @@
       "icon": "item_battery",
       "model": "res://assets/models/props/time_battery/battery.fbx",
       "texture": "res://assets/models/props/time_battery/battery_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -97,7 +97,7 @@
       "icon": "item_scissors",
       "model": "res://assets/models/props/time_scissors/scissors.fbx",
       "texture": "res://assets/models/props/time_scissors/scissors_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -114,7 +114,7 @@
       "icon": "item_remote",
       "model": "res://assets/models/props/camera_remote/remote.fbx",
       "texture": "res://assets/models/props/camera_remote/remote_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "trigger": "on_use",
       "effects": [
         {
@@ -132,7 +132,7 @@
       "display_name": "香蕉皮（放置物）",
       "model": "res://assets/models/props/banana_peel/banana_peel.fbx",
       "texture": "res://assets/models/props/banana_peel/banana_peel_basemap.png",
-      "model_scale": 0.5,
+      "model_scale": 1.0,
       "lifetime": 15.0,
       "trigger": "on_step",
       "effects": [

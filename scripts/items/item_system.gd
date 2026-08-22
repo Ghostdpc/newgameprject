@@ -43,6 +43,22 @@ func _register_effects() -> void:
 		ItemTypes.EffectKind.BANANA_SLIDE,
 		load("res://scripts/items/effects/banana_slide_effect.gd")
 	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.GARMENT_HEAD_SCALE,
+		load("res://scripts/items/effects/garment_head_scale_effect.gd")
+	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.GARMENT_BODY_SCALE,
+		load("res://scripts/items/effects/garment_body_scale_effect.gd")
+	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.GARMENT_SPRING_WOBBLE,
+		load("res://scripts/items/effects/garment_spring_wobble_effect.gd")
+	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.GARMENT_EMISSION_GLOW,
+		load("res://scripts/items/effects/garment_emission_glow_effect.gd")
+	)
 
 ## 玩家使用道具的唯一入口
 ## source_player: 使用者（null = 系統觸發），item_id 對應 items.json
