@@ -17,7 +17,6 @@ func get_player_count() -> int:
 ## 出生点：优先读 SpawnPoints 节点，否则用默认四角
 func get_spawn_points() -> Array[Vector3]:
 	if not _spawn_root:
-		# 无 SpawnPoints 节点时，用默认站位（舞台中央偏前）
 		return [
 			Vector3(-2.0, 0.55, 1.5),
 			Vector3(2.4, 0.5, 1.6),
@@ -26,12 +25,19 @@ func get_spawn_points() -> Array[Vector3]:
 		]
 	return super.get_spawn_points()
 
+## 将场景内 ItemHotspots 子节点注册到 "item_hotspot" 组
+func _setup_level() -> void:
+	var hotspot_root := get_node_or_null("ItemHotspots")
+	if hotspot_root:
+		for child in hotspot_root.get_children():
+			if child is Node3D:
+				child.add_to_group("item_hotspot")
+
 ## 决胜时刻：HUD 倒计时变红 + 屏幕边缘提示
 func _on_level_decisive_moment() -> void:
 	if _timer_label:
 		_timer_label.modulate = Color(1.0, 0.25, 0.2)
 
 func _on_level_ready() -> void:
-	# 决胜时刻颜色由 stage_timer_updated 恢复
 	if _timer_label:
 		_timer_label.modulate = Color.WHITE

@@ -1,39 +1,141 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=9 format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_circle.svg" id="3_shp"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_triangle.svg" id="4_shp"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_square.svg" id="5_shp"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/shape_diamond.svg" id="6_shp"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/shutter_icon.svg" id="7_sht"]
+
+[sub_resource type="Gradient" id="bg_grad_g"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0.06, 0.09, 0.16, 1, 0.075, 0.085, 0.13, 1, 0.04, 0.045, 0.08, 1)
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("1")
+theme = ExtResource("2_theme")
+script = ExtResource("1_menu")
 
 [node name="BG" type="ColorRect" parent="."]
-layout_mode = 3
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.08, 0.08, 0.12, 1)
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.055, 0.07, 0.115, 1)
 
 [node name="Center" type="CenterContainer" parent="."]
-layout_mode = 3
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="Center"]
-custom_minimum_size = Vector2(320, 0)
-theme_override_constants/separation = 20
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="ShutterIcon" type="TextureRect" parent="Center/VBox"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("7_sht")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="TitleLabel" type="Label" parent="Center/VBox"]
-text = "MyGame"
-theme_override_font_sizes/font_size = 56
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 84
+text = "别抢我镜头"
 horizontal_alignment = 1
 
-[node name="StartButton" type="Button" parent="Center/VBox"]
-custom_minimum_size = Vector2(320, 64)
-text = "開始遊戲"
-theme_override_font_sizes/font_size = 26
+[node name="SubLabel" type="Label" parent="Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.72, 0.86, 1)
+theme_override_font_sizes/font_size = 24
+text = "Don't Steal My Shot · 2~4 人本地同屏派对 · Demo"
+horizontal_alignment = 1
 
-[node name="QuitButton" type="Button" parent="Center/VBox"]
-custom_minimum_size = Vector2(320, 64)
-text = "退出遊戲"
-theme_override_font_sizes/font_size = 26
+[node name="ShapeRow" type="HBoxContainer" parent="Center/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 26
+
+[node name="S1" type="TextureRect" parent="Center/VBox/ShapeRow"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+modulate = Color(0.2, 0.45, 0.9, 1)
+texture = ExtResource("3_shp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="S2" type="TextureRect" parent="Center/VBox/ShapeRow"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+modulate = Color(0.9, 0.55, 0.1, 1)
+texture = ExtResource("4_shp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="S3" type="TextureRect" parent="Center/VBox/ShapeRow"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+modulate = Color(0.2, 0.8, 0.3, 1)
+texture = ExtResource("5_shp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="S4" type="TextureRect" parent="Center/VBox/ShapeRow"]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+modulate = Color(0.6, 0.3, 0.9, 1)
+texture = ExtResource("6_shp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Spacer" type="Control" parent="Center/VBox"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+
+[node name="StartHint" type="Label" parent="Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "— 按 确认键 开始 —"
+horizontal_alignment = 1
+
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -52.0
+offset_right = -28.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="KeyHint" type="Label" parent="BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.5, 0.56, 0.66, 1)
+theme_override_font_sizes/font_size = 18
+text = "确认：Enter / 空格 / 手柄 A        退出：Esc"
+
+[node name="QuitButton" type="Button" parent="BottomBar"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "退出游戏"
+
+[connection signal="pressed" from="BottomBar/QuitButton" to="." method="_on_quit_pressed"]

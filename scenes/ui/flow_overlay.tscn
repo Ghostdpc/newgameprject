@@ -1,0 +1,143 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/flow_overlay.gd" id="1_flow"]
+[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+
+[node name="FlowOverlay" type="CanvasLayer"]
+layer = 20
+process_mode = 3
+script = ExtResource("1_flow")
+
+[node name="ThemeScreen" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+
+[node name="ThemeDim" type="ColorRect" parent="ThemeScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.03, 0.07, 0.82)
+
+[node name="Center" type="CenterContainer" parent="ThemeScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="ThemeScreen/Center"]
+custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="ThemeCaption" type="Label" parent="ThemeScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "—— 本局主题 ——"
+horizontal_alignment = 1
+
+[node name="ThemeNameLabel" type="Label" parent="ThemeScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
+theme_override_font_sizes/font_size = 86
+text = "主题"
+horizontal_alignment = 1
+
+[node name="ThemeBonusLabel" type="Label" parent="ThemeScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.82, 0.92, 1)
+theme_override_font_sizes/font_size = 26
+text = "加分倾向"
+horizontal_alignment = 1
+
+[node name="CountdownLabel" type="Label" parent="ThemeScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.97, 1, 1)
+theme_override_font_sizes/font_size = 120
+text = "3"
+horizontal_alignment = 1
+
+[node name="WaitHint" type="Label" parent="ThemeScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.62, 0.74, 1)
+theme_override_font_sizes/font_size = 19
+text = "保持待命 · 倒数结束后直接开局（不创建专属区域）"
+horizontal_alignment = 1
+
+[node name="PauseScreen" type="Control" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+
+[node name="PauseDim" type="ColorRect" parent="PauseScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0.02, 0.66)
+
+[node name="Center" type="CenterContainer" parent="PauseScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="PauseScreen/Center"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_constants/separation = 22
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="PauseScreen/Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "暂停"
+horizontal_alignment = 1
+
+[node name="SubLabel" type="Label" parent="PauseScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.72, 0.84, 1)
+theme_override_font_sizes/font_size = 20
+text = "倒计时已冻结 · 全员动作停止"
+horizontal_alignment = 1
+
+[node name="ButtonRow" type="VBoxContainer" parent="PauseScreen/Center/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ContinueButton" type="Button" parent="PauseScreen/Center/VBox/ButtonRow"]
+custom_minimum_size = Vector2(420, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "继续对局"
+
+[node name="LobbyButton" type="Button" parent="PauseScreen/Center/VBox/ButtonRow"]
+custom_minimum_size = Vector2(420, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "返回房间（房主）"
+
+[node name="KeyHint" type="Label" parent="PauseScreen/Center/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.56, 0.66, 1)
+theme_override_font_sizes/font_size = 17
+text = "Esc 继续 · 返回房间保留设备识别、放弃本轮"
+horizontal_alignment = 1

@@ -1,29 +1,116 @@
 {
-  "_comment": "道具表。每条道具包含 trigger + effects[]",
+  "_comment": "道具表。spawn_config 控制场上生成；items[] 为道具定义；traps[] 为放置物定义",
+  "spawn_config": {
+    "_comment": "max_active: 场上同时存在的道具箱上限，从 items[] 中随机选取类型生成；respawn_interval: 补充间隔（秒）",
+    "max_active": 5,
+    "respawn_interval": 8.0
+  },
   "items": [
     {
-      "id": "time_bomb",
-      "display_name": "时间炸弹",
+      "id": "energy_drink",
+      "display_name": "能量饮料",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "player_speed",
+          "target": "self",
+          "duration": 3.0,
+          "params": { "multiplier": 10.0 }
+        }
+      ]
+    },
+    {
+      "id": "banana_peel",
+      "display_name": "香蕉皮",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "spawn_trap",
+          "target": "world",
+          "duration": 0.0,
+          "params": { "trap_id": "banana_peel" }
+        }
+      ]
+    },
+    {
+      "id": "fast_forward_crank",
+      "display_name": "快进发条",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "timer_scale",
+          "target": "world",
+          "duration": 0.0,
+          "params": { "scale": 2.0, "seconds": 3.0 }
+        }
+      ]
+    },
+    {
+      "id": "slow_hourglass",
+      "display_name": "慢放沙漏",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "timer_scale",
+          "target": "world",
+          "duration": 0.0,
+          "params": { "scale": 0.5, "seconds": 3.0 }
+        }
+      ]
+    },
+    {
+      "id": "time_battery",
+      "display_name": "加时电池",
       "trigger": "on_use",
       "effects": [
         {
           "kind": "timer_add",
           "target": "world",
           "duration": 0.0,
-          "params": { "delta": -3.0 }
+          "params": { "delta": 3.0 }
         }
       ]
     },
     {
-      "id": "time_gift",
-      "display_name": "时间礼物",
-      "trigger": "on_pickup",
+      "id": "time_scissors",
+      "display_name": "减时剪刀",
+      "trigger": "on_use",
       "effects": [
         {
           "kind": "timer_add",
           "target": "world",
           "duration": 0.0,
-          "params": { "delta": 5.0 }
+          "params": { "delta": -3.0, "min_clamp": 1.0 }
+        }
+      ]
+    },
+    {
+      "id": "camera_remote",
+      "display_name": "相机遥控器",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "_comment": "camera_offset 接口已预留，待实现",
+          "kind": "camera_offset",
+          "target": "self",
+          "duration": 0.0,
+          "params": { "duration": 2.5 }
+        }
+      ]
+    }
+  ],
+  "traps": [
+    {
+      "id": "banana_peel",
+      "display_name": "香蕉皮（放置物）",
+      "lifetime": 15.0,
+      "trigger": "on_step",
+      "effects": [
+        {
+          "kind": "banana_slide",
+          "target": "self",
+          "duration": 0.0,
+          "params": { "speed": 8.0 }
         }
       ]
     }

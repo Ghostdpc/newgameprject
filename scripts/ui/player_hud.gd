@@ -96,7 +96,7 @@ func _on_item_used(player_index: int, _item_id: String) -> void:
 	var panel := _get_panel(player_index)
 	if not panel:
 		return
-	panel.set_item(null)
+	panel.flash_item_used()
 
 func _on_outfit_changed(player_index: int, slot: int, item_id: String) -> void:
 	var panel := _get_panel(player_index)
@@ -109,6 +109,32 @@ func _get_panel(player_index: int) -> PlayerPanel:
 		return null
 	return _panels[player_index]
 
-## 图标资源映射（TODO：与道具/服装系统约定 item_id → 图标路径）
-func _load_icon(_item_id: String) -> Texture2D:
-	return null
+## 图标资源映射（demo 版走 ItemIcons 静态表，正式版与资源同事约定）
+func _load_icon(item_id: String) -> Texture2D:
+	return ItemIcons.load_icon(item_id)
+
+# ---------------------------------------------------------------- S6/S7 支持
+## 给所有面板创建评分区
+func prepare_scoreboards(dim_defs: Array) -> void:
+	for p in _panels:
+		p.clear_scoring()
+		p.begin_scoring(dim_defs)
+
+func reveal_dimension(player_index: int, key: String, score: float) -> void:
+	var panel := _get_panel(player_index)
+	if panel:
+		panel.reveal_dim(key, score)
+
+func set_total(player_index: int, total: float) -> void:
+	var panel := _get_panel(player_index)
+	if panel:
+		panel.set_total(total)
+
+## 冠军皇冠（其他人收起）
+func set_champion(player_index: int) -> void:
+	for i in _panels.size():
+		_panels[i].show_crown(i == player_index)
+
+func clear_scoreboards() -> void:
+	for p in _panels:
+		p.clear_scoring()

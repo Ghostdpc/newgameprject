@@ -1,0 +1,1820 @@
+[gd_scene format=3 uid="uid://j68a5wljc6pk"]
+
+[ext_resource type="Script" uid="uid://dcedyelxonn4" path="res://scripts/levels/cartoon_room_styler.gd" id="1_style"]
+[ext_resource type="PackedScene" uid="uid://crkxjlq0xv184" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb" id="2_room"]
+[ext_resource type="Shader" uid="uid://cee53ku7y8ijf" path="res://resources/shaders/toon_room_material.gdshader" id="4_piasg"]
+[ext_resource type="Texture2D" uid="uid://b0swxbpkxefdy" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Door_D.png" id="5_nfgv6"]
+[ext_resource type="Texture2D" uid="uid://b6ajvp4ar15ix" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_CampingShelve_D.png" id="6_f4cup"]
+[ext_resource type="Texture2D" uid="uid://r7t8kpw6wqox" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Cell_Phone_D.png" id="7_r8t1p"]
+[ext_resource type="Texture2D" uid="uid://cmfdjmuolp214" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Poster_Creature.png" id="8_2lakq"]
+[ext_resource type="Texture2D" uid="uid://bwm25u0k2ga5" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Poster_Hero.png" id="9_xrmax"]
+[ext_resource type="Texture2D" uid="uid://c7t0t0bmvjd0x" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Poster_Parade.png" id="10_vq7we"]
+[ext_resource type="Texture2D" uid="uid://bqm3h62nknvs" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Wallpaper_Damage_D.png" id="11_cr3y0"]
+[ext_resource type="Texture2D" uid="uid://sia76fvr4k16" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Neo_FrostedGlass_Plain_D.png" id="12_l8sux"]
+[ext_resource type="Texture2D" uid="uid://bhiybvmssy7ks" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Neo_Concrete_Trim_01_D.png" id="13_mtkgq"]
+[ext_resource type="Texture2D" uid="uid://cc6ggj07dk6vs" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_CT_NeonCat_Doodles_AG_FE.png" id="14_hjsp8"]
+[ext_resource type="Texture2D" uid="uid://dw18qn4iecrwv" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_ArchitectTools_D.png" id="15_qmuou"]
+[ext_resource type="Texture2D" uid="uid://ckv02oqg5vaxy" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Photographer_Female_Glider_Photographer_Female_D.png" id="16_eorcs"]
+[ext_resource type="Texture2D" uid="uid://b7fhf0y1k378p" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_Prop_Trash_D.png" id="17_y0i5h"]
+[ext_resource type="Texture2D" uid="uid://cnpxrowm4u6vu" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Basket_D.png" id="18_faxdv"]
+[ext_resource type="Texture2D" uid="uid://dewoxkycuwwfy" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_PrincessCastle_Footrest_D.png" id="19_qbor2"]
+[ext_resource type="Texture2D" uid="uid://of778q8y87p7" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Agency_Faction_LootCrate_01_D.png" id="20_hc2hx"]
+[ext_resource type="Texture2D" uid="uid://b4l5iem3phqbp" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Agency_Midas_DeskLamp_01_D.png" id="21_ik5uc"]
+[ext_resource type="Texture2D" uid="uid://og7y31o0jvtr" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Agency_Picture_Frame_01_D.png" id="22_uk07m"]
+[ext_resource type="Texture2D" uid="uid://ctta2p8l6wpye" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AgencyPoster_01.png" id="23_0676q"]
+[ext_resource type="Texture2D" uid="uid://dwatthgjohbiu" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AgencyPoster_02.png" id="24_xfpxv"]
+[ext_resource type="Texture2D" uid="uid://cpo4qsuc1pswm" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Donut_BlackMarker_01_D.png" id="25_0dqc7"]
+[ext_resource type="Texture2D" uid="uid://c22jaw38i5bqj" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_MountainBase_WallLight_01_D.png" id="26_yxleg"]
+[ext_resource type="Texture2D" uid="uid://vwkkpd80hhdr" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Poster_Monsters.png" id="27_8yldn"]
+[ext_resource type="Texture2D" uid="uid://ci7ohjxiuj05p" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_ObjectiveBoardAssets_D.png" id="28_5e3t3"]
+[ext_resource type="Texture2D" uid="uid://bx6vb64n6mg5a" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_OilRig_TrashCan_D.png" id="29_ujlpp"]
+[ext_resource type="Texture2D" uid="uid://45yxju51yacf" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Chair_D.png" id="30_bbgk2"]
+[ext_resource type="Texture2D" uid="uid://ce430dqup64sl" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_PrincessCastle_GlowingStar_D.png" id="31_1kh0e"]
+[ext_resource type="Texture2D" uid="uid://861i08yv8c5h" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Backpack_01_D.png" id="32_xt10u"]
+[ext_resource type="Texture2D" uid="uid://dutxskwf4skrp" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Beanbag_01_D.png" id="33_mkk1o"]
+[ext_resource type="Texture2D" uid="uid://ct0v2lpr1ov26" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Bed_Single_01_D.png" id="34_xjb11"]
+[ext_resource type="Texture2D" uid="uid://cvgw7b8tx6eem" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_ag_desk_D.png" id="35_ntp3i"]
+[ext_resource type="Texture2D" uid="uid://dmcwdncb5vi2m" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_DeskLamp_01_D.png" id="36_40a6v"]
+[ext_resource type="Texture2D" uid="uid://bgc580bbfmx1r" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_DisplayCase_Crystal_01_D.png" id="37_w6kc1"]
+[ext_resource type="Texture2D" uid="uid://d3rkmwoef8hxi" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Dresser_01_D.png" id="38_ka8ou"]
+[ext_resource type="Texture2D" uid="uid://cssyxydbfow5m" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_GamingChair_01_D.png" id="39_jeg3a"]
+[ext_resource type="Texture2D" uid="uid://cowbgiyxts4he" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_GamingComputer_01_D.png" id="40_1etme"]
+[ext_resource type="Texture2D" uid="uid://cqrjh6c3837u0" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_GamingConsole_01_D.png" id="41_y1hcb"]
+[ext_resource type="Texture2D" uid="uid://cuq48wu5a0yk4" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Gaming_Table_01_D.png" id="42_cymb3"]
+[ext_resource type="Texture2D" uid="uid://bl4dq0n7uvov7" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_NightStand_01_D.png" id="43_0nmju"]
+[ext_resource type="Texture2D" uid="uid://bmqhtgahyvw8c" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Plush_01_D.png" id="44_lwnv1"]
+[ext_resource type="Texture2D" uid="uid://dqta5kkw343q8" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Rug_01_Yellow_D.png" id="45_4erof"]
+[ext_resource type="Texture2D" uid="uid://bfc3hgsibqvff" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Rug_01_Pink_D.png" id="46_gjqqk"]
+[ext_resource type="Texture2D" uid="uid://bx78bp71bepgi" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Shelf_open_01_D.png" id="47_mye4y"]
+[ext_resource type="Texture2D" uid="uid://ccmwnr8voclp1" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Shelf_Tall_01_D.png" id="48_ycdee"]
+[ext_resource type="Texture2D" uid="uid://bpkgnf33haiat" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Slippers_01_D.png" id="49_b4m1h"]
+[ext_resource type="Texture2D" uid="uid://bljri3ug40mbp" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Sword_Plaque_01_D.png" id="50_gx7ng"]
+[ext_resource type="Texture2D" uid="uid://c8dikaa3ne21w" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_WeaponBoard_01_D.png" id="51_iw6vi"]
+[ext_resource type="Texture2D" uid="uid://cs08rx330q1s1" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_SharkIsland_BasePhotos_01_D.png" id="52_y4h8f"]
+[ext_resource type="Texture2D" uid="uid://cknu4q0lvpcyj" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_SharkIsland_BookStacks_D.png" id="53_n5720"]
+[ext_resource type="Texture2D" uid="uid://cgq78jeh2u86l" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shark_Base_Games_01_D.png" id="54_g8bes"]
+[ext_resource type="Texture2D" uid="uid://b1x6ld6uopujy" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Pickaxe_Photographer_Female_1h_D.png" id="55_4h564"]
+[ext_resource type="Texture2D" uid="uid://da8lmtojuixll" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Books_01_D.png" id="56_chcpl"]
+[ext_resource type="Texture2D" uid="uid://qbkhsgnbjdgc" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Neo_Carpet_01_D_AG_FE.png" id="57_302sk"]
+[ext_resource type="Texture2D" uid="uid://dythub0ss1xic" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_FORT_Doors_Cartoon_AG_FE.png" id="58_rahpg"]
+[ext_resource type="Texture2D" uid="uid://cfks4vxfo77cx" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Poster_01_D.png" id="59_cb7k8"]
+[ext_resource type="Texture2D" uid="uid://b5vkjy1dvj5c1" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_StW_Quest_Prop_Red_Carpet_Pickup_D.png" id="60_i8ohb"]
+[ext_resource type="Texture2D" uid="uid://cqr80hjr6npaa" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shelters_Telescope01_D.png" id="61_rlffm"]
+[ext_resource type="Texture2D" uid="uid://diq2bsk73m60q" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_DoorTrim_D.png" id="62_kkwdf"]
+[ext_resource type="Texture2D" uid="uid://hqkxao4d2f6h" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Trophy_Celebration_D.png" id="63_3x3rt"]
+[ext_resource type="Texture2D" uid="uid://dmtsxxq00ovdk" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_WildWest_BedRoll_1_D.png" id="64_pjk34"]
+[ext_resource type="Environment" uid="uid://bly4kk5loghdq" path="res://resources/environments/room_post_process.tres" id="99_post_process"]
+[ext_resource type="Material" uid="uid://cys3207nm65pj" path="res://resources/materials/room_cartoon_outline_post_process.tres" id="100_outline_post"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q6di3"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("5_nfgv6")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_felcu"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("6_f4cup")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xgbhp"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("7_r8t1p")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dw7u0"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("8_2lakq")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qidwv"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("9_xrmax")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j1iir"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("10_vq7we")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_myq12"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lp56n"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iaskv"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ry04o"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bx2yd"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yo4io"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ppu5y"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b0fhn"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("11_cr3y0")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_717w7"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("12_l8sux")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dpk8t"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("13_mtkgq")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ibkib"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("12_l8sux")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8ikp5"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("13_mtkgq")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bd3ow"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("12_l8sux")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_brbye"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("13_mtkgq")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j7ud4"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("12_l8sux")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1gunk"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("13_mtkgq")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vh7kc"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tvvkq"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7lb3x"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("14_hjsp8")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6jpvr"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o6c6n"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hjsew"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tlklo"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yhqx1"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("15_qmuou")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s0ce3"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("16_eorcs")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_x7vwj"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("17_y0i5h")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v3pdg"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("18_faxdv")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ihd2"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("19_qbor2")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3u4xa"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("20_hc2hx")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_afne7"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("21_ik5uc")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bsbeu"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("22_uk07m")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vv805"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("23_0676q")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7o0r3"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("24_xfpxv")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3r2e3"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("25_0dqc7")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2yfd5"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("26_yxleg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gki1x"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("26_yxleg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4yul1"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("27_8yldn")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5w3o3"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rtudk"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("28_5e3t3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_inixb"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("28_5e3t3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c1dpq"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("28_5e3t3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_87kqu"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("28_5e3t3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gq0ka"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("28_5e3t3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3dqcm"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("28_5e3t3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kfx22"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("29_ujlpp")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nhfro"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("30_bbgk2")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hrqfm"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s7s21"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eljt4"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d3ros"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_al4x0"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7rfm8"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5lenj"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_185uh"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rx4l6"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gehcy"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_21y62"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nm4ic"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wmktg"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ugice"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_55rxc"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xybmg"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ens8c"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_is0yu"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ivjpe"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xrjg6"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ttsc5"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ar3ht"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c4kl5"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cmcy1"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7gk7s"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u86rm"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nofs2"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_i6enq"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gl1nt"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g840d"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fawp4"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("32_xt10u")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sax22"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("33_mkk1o")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jojyi"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("33_mkk1o")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hq1is"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("34_xjb11")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0hrqj"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("35_ntp3i")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kwyu7"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("36_40a6v")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aislp"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("36_40a6v")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m5epf"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("37_w6kc1")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yw301"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("38_ka8ou")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gptj3"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("38_ka8ou")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5f22q"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("39_jeg3a")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5ek41"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("40_1etme")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qroup"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("41_y1hcb")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_odj0c"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("42_cymb3")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_582gr"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("43_0nmju")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7oyxb"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("44_lwnv1")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_22avr"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("45_4erof")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_soiuc"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("46_gjqqk")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pspjo"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("45_4erof")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vlw70"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("47_mye4y")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2ew4d"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("48_ycdee")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5y8ex"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("49_b4m1h")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2am1x"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("49_b4m1h")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_42mkq"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("50_gx7ng")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xcw55"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("51_iw6vi")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bxswn"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("52_y4h8f")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6xvft"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("53_n5720")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_orwwl"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("53_n5720")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_auh4i"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("54_g8bes")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y33wc"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("54_g8bes")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sy87j"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("54_g8bes")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ux3tq"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qbcaj"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1gjpj"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wyeh6"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_12ebo"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("31_1kh0e")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_phrvf"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y1a53"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("55_4h564")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r6psu"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("56_chcpl")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_atyw5"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("56_chcpl")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dicji"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("56_chcpl")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uisyg"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("56_chcpl")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_prkiw"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("56_chcpl")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5mo0b"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("57_302sk")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o16lw"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("57_302sk")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hu71u"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("57_302sk")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r1wno"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("57_302sk")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gg7y1"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cxqr8"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b1yjs"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7305h"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h5ue4"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kg5tv"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_13a3n"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5tnse"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m17n0"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rtc1q"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_otry8"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("58_rahpg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b7doi"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("54_g8bes")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lgine"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("54_g8bes")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ios2g"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("59_cb7k8")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l653v"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("60_i8ohb")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ta8wd"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("61_rlffm")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t8fyj"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("62_kkwdf")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f1mpw"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("62_kkwdf")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_im8uk"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("62_kkwdf")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qmdsr"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("62_kkwdf")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xmg8t"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("62_kkwdf")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wf7ne"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("62_kkwdf")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mxchm"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_afqqx"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yjwit"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("63_3x3rt")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_amv34"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_texture = ExtResource("64_pjk34")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u8eqe"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ys57c"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 1, 1, 1)
+shader_parameter/fill_light = 0.08
+shader_parameter/color_saturation = 1.12
+
+[node name="Node3D" type="Node3D" unique_id=568602606]
+script = ExtResource("1_style")
+fill_light = 0.08
+color_saturation = 1.12
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=601374248]
+environment = ExtResource("99_post_process")
+
+[node name="ToonKeyLight" type="DirectionalLight3D" parent="." unique_id=1594509699]
+transform = Transform3D(0.9393727, -0.31959414, 0.12425166, 0, 0.3623577, 0.9320391, -0.3428978, -0.8755321, 0.34038895, 0, 0, 0)
+light_color = Color(1, 0.9, 0.95, 1)
+light_energy = 1.65
+shadow_enabled = true
+shadow_bias = 0.06
+shadow_normal_bias = 1.5
+shadow_opacity = 0.55
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
+
+[node name="CartoonOutline" type="CanvasLayer" parent="." unique_id=497139088]
+layer = 10
+
+[node name="PostProcess" type="ColorRect" parent="CartoonOutline" unique_id=184592749]
+material = ExtResource("100_outline_post")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ToonFillLight" type="DirectionalLight3D" parent="." unique_id=2100901971]
+transform = Transform3D(-0.12884454, 0.6538886, -0.7455393, 0, 0.7518057, 0.65938467, 0.9916648, 0.084958114, -0.096866064, 0, 0, 0)
+light_color = Color(0.82, 0.75, 1, 1)
+light_energy = 0.72
+
+[node name="FortniteSkyeRoom" parent="." unique_id=964906877 instance=ExtResource("2_room")]
+transform = Transform3D(16.818626, 0, 0, 0, 16.818626, 0, 0, 0, 16.818626, 0, 0, 0)
+
+[node name="Agency_Door_01_mo" parent="FortniteSkyeRoom" index="0" unique_id=1904245283]
+surface_material_override/0 = SubResource("ShaderMaterial_q6di3")
+
+[node name="CampingShelve_WalkieTalkie_01_mo" parent="FortniteSkyeRoom" index="1" unique_id=977035415]
+surface_material_override/0 = SubResource("ShaderMaterial_felcu")
+
+[node name="Cell_Phone_mo" parent="FortniteSkyeRoom" index="2" unique_id=1800749969]
+surface_material_override/0 = SubResource("ShaderMaterial_xgbhp")
+
+[node name="Cinematic_Prop_Poster_Space_mo_001" parent="FortniteSkyeRoom" index="3" unique_id=1672263342]
+surface_material_override/0 = SubResource("ShaderMaterial_dw7u0")
+
+[node name="Cinematic_Prop_Poster_Space_mo_002" parent="FortniteSkyeRoom" index="4" unique_id=840554642]
+surface_material_override/0 = SubResource("ShaderMaterial_qidwv")
+
+[node name="Cinematic_Prop_Poster_Space_mo_003" parent="FortniteSkyeRoom" index="5" unique_id=625095127]
+surface_material_override/0 = SubResource("ShaderMaterial_j1iir")
+
+[node name="Neo_Residential_DoorC_mo" parent="FortniteSkyeRoom" index="6" unique_id=781143845]
+surface_material_override/0 = SubResource("ShaderMaterial_myq12")
+
+[node name="Neo_Residential_Wall_01_mo" parent="FortniteSkyeRoom" index="7" unique_id=1532386887]
+surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
+
+[node name="Neo_Residential_Wall_01_mo_001" parent="FortniteSkyeRoom" index="8" unique_id=1990469641]
+surface_material_override/0 = SubResource("ShaderMaterial_iaskv")
+
+[node name="Neo_Residential_Wall_01_mo_002" parent="FortniteSkyeRoom" index="9" unique_id=1910032644]
+surface_material_override/0 = SubResource("ShaderMaterial_ry04o")
+
+[node name="Neo_Residential_Wall_01_mo_003" parent="FortniteSkyeRoom" index="10" unique_id=684725761]
+surface_material_override/0 = SubResource("ShaderMaterial_bx2yd")
+
+[node name="Neo_Residential_Wall_01_mo_004" parent="FortniteSkyeRoom" index="11" unique_id=725275528]
+surface_material_override/0 = SubResource("ShaderMaterial_yo4io")
+
+[node name="Neo_Residential_Wall_01_mo_005" parent="FortniteSkyeRoom" index="12" unique_id=148450126]
+surface_material_override/0 = SubResource("ShaderMaterial_ppu5y")
+
+[node name="Neo_Residential_Wall_01_mo_006" parent="FortniteSkyeRoom" index="13" unique_id=1536063659]
+surface_material_override/0 = SubResource("ShaderMaterial_b0fhn")
+
+[node name="Neo_SkyScraper_Window_01_mo" parent="FortniteSkyeRoom" index="14" unique_id=1404113247]
+surface_material_override/0 = SubResource("ShaderMaterial_717w7")
+surface_material_override/1 = SubResource("ShaderMaterial_dpk8t")
+
+[node name="Neo_SkyScraper_Window_01_mo_001" parent="FortniteSkyeRoom" index="15" unique_id=11055291]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_ibkib")
+surface_material_override/1 = SubResource("ShaderMaterial_8ikp5")
+
+[node name="Neo_SkyScraper_Window_01_mo_002" parent="FortniteSkyeRoom" index="16" unique_id=747390298]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_bd3ow")
+surface_material_override/1 = SubResource("ShaderMaterial_brbye")
+
+[node name="Neo_SkyScraper_Window_01_mo_003" parent="FortniteSkyeRoom" index="17" unique_id=1729243471]
+surface_material_override/0 = SubResource("ShaderMaterial_j7ud4")
+surface_material_override/1 = SubResource("ShaderMaterial_1gunk")
+
+[node name="Paper_Notes_mo" parent="FortniteSkyeRoom" index="18" unique_id=896412173]
+surface_material_override/0 = SubResource("ShaderMaterial_vh7kc")
+
+[node name="Paper_Notes_mo_001" parent="FortniteSkyeRoom" index="19" unique_id=237998464]
+surface_material_override/0 = SubResource("ShaderMaterial_tvvkq")
+
+[node name="Paper_Notes_mo_002" parent="FortniteSkyeRoom" index="20" unique_id=2065433407]
+surface_material_override/0 = SubResource("ShaderMaterial_7lb3x")
+
+[node name="Paper_Notes_mo_003" parent="FortniteSkyeRoom" index="21" unique_id=835375219]
+surface_material_override/0 = SubResource("ShaderMaterial_6jpvr")
+
+[node name="Paper_Notes_mo_004" parent="FortniteSkyeRoom" index="22" unique_id=684064832]
+surface_material_override/0 = SubResource("ShaderMaterial_o6c6n")
+
+[node name="Paper_Notes_mo_005" parent="FortniteSkyeRoom" index="23" unique_id=1924840796]
+surface_material_override/0 = SubResource("ShaderMaterial_hjsew")
+
+[node name="Paper_Notes_mo_006" parent="FortniteSkyeRoom" index="24" unique_id=1381509919]
+surface_material_override/0 = SubResource("ShaderMaterial_tlklo")
+
+[node name="Pencil_mo" parent="FortniteSkyeRoom" index="25" unique_id=537614612]
+surface_material_override/0 = SubResource("ShaderMaterial_yhqx1")
+
+[node name="Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_mo" parent="FortniteSkyeRoom/Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_ao/Skeleton3D" parent_id_path=PackedInt32Array(964906877, 950278579) index="0" unique_id=1394854815]
+surface_material_override/0 = SubResource("ShaderMaterial_s0ce3")
+
+[node name="Prop_Trash_01_Can_01_mo" parent="FortniteSkyeRoom" index="27" unique_id=930177535]
+surface_material_override/0 = SubResource("ShaderMaterial_x7vwj")
+
+[node name="S_AG_FE_Basket_mo" parent="FortniteSkyeRoom" index="28" unique_id=796106]
+surface_material_override/0 = SubResource("ShaderMaterial_v3pdg")
+
+[node name="S_AG_FE_Footrest_mo" parent="FortniteSkyeRoom" index="29" unique_id=1265314865]
+surface_material_override/0 = SubResource("ShaderMaterial_7ihd2")
+
+[node name="S_Agency_Faction_LootCrate_01_mo" parent="FortniteSkyeRoom" index="30" unique_id=485717872]
+surface_material_override/0 = SubResource("ShaderMaterial_3u4xa")
+
+[node name="S_Agency_Midas_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="31" unique_id=2089163132]
+surface_material_override/0 = SubResource("ShaderMaterial_afne7")
+
+[node name="S_Agency_Picture_Frame_01_mo" parent="FortniteSkyeRoom" index="32" unique_id=1633897171]
+surface_material_override/0 = SubResource("ShaderMaterial_bsbeu")
+
+[node name="S_Agency_Poster_01_mo" parent="FortniteSkyeRoom" index="33" unique_id=1932573895]
+surface_material_override/0 = SubResource("ShaderMaterial_vv805")
+
+[node name="S_Agency_Poster_01_mo_001" parent="FortniteSkyeRoom" index="34" unique_id=237755244]
+surface_material_override/0 = SubResource("ShaderMaterial_7o0r3")
+
+[node name="S_Donut_BlackMarker_01_mo" parent="FortniteSkyeRoom" index="35" unique_id=284448815]
+surface_material_override/0 = SubResource("ShaderMaterial_3r2e3")
+
+[node name="S_MountainBase_WallLight_01_mo" parent="FortniteSkyeRoom" index="36" unique_id=703797771]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_2yfd5")
+
+[node name="S_MountainBase_WallLight_01_mo_001" parent="FortniteSkyeRoom" index="37" unique_id=43615288]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_gki1x")
+
+[node name="S_ObjectiveBoard_MiniMap_mo" parent="FortniteSkyeRoom" index="38" unique_id=1586280737]
+surface_material_override/0 = SubResource("ShaderMaterial_4yul1")
+surface_material_override/1 = SubResource("ShaderMaterial_5w3o3")
+
+[node name="S_ObjectiveBoard_Pin_A_mo" parent="FortniteSkyeRoom" index="39" unique_id=945094312]
+surface_material_override/0 = SubResource("ShaderMaterial_rtudk")
+
+[node name="S_ObjectiveBoard_Pin_A_mo_001" parent="FortniteSkyeRoom" index="40" unique_id=1465574723]
+surface_material_override/0 = SubResource("ShaderMaterial_inixb")
+
+[node name="S_ObjectiveBoard_Pin_B_mo" parent="FortniteSkyeRoom" index="41" unique_id=1363566879]
+surface_material_override/0 = SubResource("ShaderMaterial_c1dpq")
+
+[node name="S_ObjectiveBoard_Pin_B_mo_001" parent="FortniteSkyeRoom" index="42" unique_id=1076561109]
+surface_material_override/0 = SubResource("ShaderMaterial_87kqu")
+
+[node name="S_ObjectiveBoard_Pin_C_mo" parent="FortniteSkyeRoom" index="43" unique_id=113070773]
+surface_material_override/0 = SubResource("ShaderMaterial_gq0ka")
+
+[node name="S_ObjectiveBoard_Pin_C_mo_001" parent="FortniteSkyeRoom" index="44" unique_id=1213924119]
+surface_material_override/0 = SubResource("ShaderMaterial_3dqcm")
+
+[node name="S_OilRig_TrashCan_mo" parent="FortniteSkyeRoom" index="45" unique_id=115824816]
+surface_material_override/0 = SubResource("ShaderMaterial_kfx22")
+
+[node name="S_PrincessCastle_Armchair_mo" parent="FortniteSkyeRoom" index="46" unique_id=648456745]
+surface_material_override/0 = SubResource("ShaderMaterial_nhfro")
+
+[node name="S_PrincessCastle_GlowingStar_mo" parent="FortniteSkyeRoom" index="47" unique_id=199189776]
+surface_material_override/0 = SubResource("ShaderMaterial_hrqfm")
+
+[node name="S_PrincessCastle_GlowingStar_mo_001" parent="FortniteSkyeRoom" index="48" unique_id=363893871]
+surface_material_override/0 = SubResource("ShaderMaterial_s7s21")
+
+[node name="S_PrincessCastle_GlowingStar_mo_002" parent="FortniteSkyeRoom" index="49" unique_id=144472832]
+surface_material_override/0 = SubResource("ShaderMaterial_eljt4")
+
+[node name="S_PrincessCastle_GlowingStar_mo_003" parent="FortniteSkyeRoom" index="50" unique_id=525663012]
+surface_material_override/0 = SubResource("ShaderMaterial_d3ros")
+
+[node name="S_PrincessCastle_GlowingStar_mo_004" parent="FortniteSkyeRoom" index="51" unique_id=1585121178]
+surface_material_override/0 = SubResource("ShaderMaterial_al4x0")
+
+[node name="S_PrincessCastle_GlowingStar_mo_005" parent="FortniteSkyeRoom" index="52" unique_id=50506027]
+surface_material_override/0 = SubResource("ShaderMaterial_7rfm8")
+
+[node name="S_PrincessCastle_GlowingStar_mo_006" parent="FortniteSkyeRoom" index="53" unique_id=2085479364]
+surface_material_override/0 = SubResource("ShaderMaterial_5lenj")
+
+[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="54" unique_id=2133015449]
+surface_material_override/0 = SubResource("ShaderMaterial_185uh")
+
+[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="55" unique_id=1497133276]
+surface_material_override/0 = SubResource("ShaderMaterial_rx4l6")
+
+[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="56" unique_id=2000421635]
+surface_material_override/0 = SubResource("ShaderMaterial_gehcy")
+
+[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="57" unique_id=1236988561]
+surface_material_override/0 = SubResource("ShaderMaterial_21y62")
+
+[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="58" unique_id=1996915869]
+surface_material_override/0 = SubResource("ShaderMaterial_nm4ic")
+
+[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="59" unique_id=252941617]
+surface_material_override/0 = SubResource("ShaderMaterial_wmktg")
+
+[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="60" unique_id=683460187]
+surface_material_override/0 = SubResource("ShaderMaterial_ugice")
+
+[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="61" unique_id=1882770985]
+surface_material_override/0 = SubResource("ShaderMaterial_55rxc")
+
+[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="62" unique_id=459088707]
+surface_material_override/0 = SubResource("ShaderMaterial_xybmg")
+
+[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="63" unique_id=759449571]
+surface_material_override/0 = SubResource("ShaderMaterial_ens8c")
+
+[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="64" unique_id=1663103800]
+surface_material_override/0 = SubResource("ShaderMaterial_is0yu")
+
+[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="65" unique_id=730165410]
+surface_material_override/0 = SubResource("ShaderMaterial_ivjpe")
+
+[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="66" unique_id=205960112]
+surface_material_override/0 = SubResource("ShaderMaterial_xrjg6")
+
+[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="67" unique_id=1540530639]
+surface_material_override/0 = SubResource("ShaderMaterial_ttsc5")
+
+[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="68" unique_id=430881031]
+surface_material_override/0 = SubResource("ShaderMaterial_ar3ht")
+
+[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="69" unique_id=428127189]
+surface_material_override/0 = SubResource("ShaderMaterial_c4kl5")
+
+[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="70" unique_id=1143410543]
+surface_material_override/0 = SubResource("ShaderMaterial_cmcy1")
+
+[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="71" unique_id=578751338]
+surface_material_override/0 = SubResource("ShaderMaterial_7gk7s")
+
+[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="72" unique_id=1080847264]
+surface_material_override/0 = SubResource("ShaderMaterial_u86rm")
+
+[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="73" unique_id=2141006479]
+surface_material_override/0 = SubResource("ShaderMaterial_nofs2")
+
+[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="74" unique_id=183115704]
+surface_material_override/0 = SubResource("ShaderMaterial_i6enq")
+
+[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="75" unique_id=1833686938]
+surface_material_override/0 = SubResource("ShaderMaterial_gl1nt")
+
+[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="76" unique_id=1506921979]
+surface_material_override/0 = SubResource("ShaderMaterial_g840d")
+
+[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="77" unique_id=420251805]
+surface_material_override/0 = SubResource("ShaderMaterial_fawp4")
+
+[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="78" unique_id=471013850]
+surface_material_override/0 = SubResource("ShaderMaterial_sax22")
+
+[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="79" unique_id=1065501491]
+surface_material_override/0 = SubResource("ShaderMaterial_jojyi")
+
+[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="80" unique_id=1843320377]
+surface_material_override/0 = SubResource("ShaderMaterial_hq1is")
+
+[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="81" unique_id=1905024325]
+surface_material_override/0 = SubResource("ShaderMaterial_0hrqj")
+
+[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="82" unique_id=425787923]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_kwyu7")
+
+[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="83" unique_id=87936500]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_aislp")
+
+[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=467940294]
+surface_material_override/0 = SubResource("ShaderMaterial_m5epf")
+
+[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=828185784]
+surface_material_override/0 = SubResource("ShaderMaterial_yw301")
+
+[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=1467195051]
+surface_material_override/0 = SubResource("ShaderMaterial_gptj3")
+
+[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=394854625]
+surface_material_override/0 = SubResource("ShaderMaterial_5f22q")
+
+[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=2084663966]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_5ek41")
+
+[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=801591375]
+surface_material_override/0 = SubResource("ShaderMaterial_qroup")
+
+[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="90" unique_id=174543654]
+surface_material_override/0 = SubResource("ShaderMaterial_odj0c")
+
+[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=288811796]
+surface_material_override/0 = SubResource("ShaderMaterial_582gr")
+
+[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=11900622]
+surface_material_override/0 = SubResource("ShaderMaterial_7oyxb")
+
+[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="93" unique_id=2124566486]
+surface_material_override/0 = SubResource("ShaderMaterial_22avr")
+
+[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="94" unique_id=1963856845]
+surface_material_override/0 = SubResource("ShaderMaterial_soiuc")
+
+[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="95" unique_id=1258940202]
+surface_material_override/0 = SubResource("ShaderMaterial_pspjo")
+
+[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=1621326823]
+surface_material_override/0 = SubResource("ShaderMaterial_vlw70")
+
+[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=1395959550]
+surface_material_override/0 = SubResource("ShaderMaterial_2ew4d")
+
+[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=660064796]
+surface_material_override/0 = SubResource("ShaderMaterial_5y8ex")
+
+[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="99" unique_id=687657619]
+surface_material_override/0 = SubResource("ShaderMaterial_2am1x")
+
+[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=123852574]
+surface_material_override/0 = SubResource("ShaderMaterial_42mkq")
+
+[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="101" unique_id=68045822]
+surface_material_override/0 = SubResource("ShaderMaterial_xcw55")
+
+[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="102" unique_id=1474017174]
+surface_material_override/0 = SubResource("ShaderMaterial_bxswn")
+
+[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=799520645]
+surface_material_override/0 = SubResource("ShaderMaterial_6xvft")
+
+[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="104" unique_id=2105284247]
+surface_material_override/0 = SubResource("ShaderMaterial_orwwl")
+
+[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=1886023423]
+surface_material_override/0 = SubResource("ShaderMaterial_auh4i")
+
+[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=1368742946]
+surface_material_override/0 = SubResource("ShaderMaterial_y33wc")
+
+[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="107" unique_id=336238287]
+surface_material_override/0 = SubResource("ShaderMaterial_sy87j")
+
+[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=1716716006]
+surface_material_override/0 = SubResource("ShaderMaterial_ux3tq")
+
+[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="109" unique_id=1190035519]
+surface_material_override/0 = SubResource("ShaderMaterial_qbcaj")
+
+[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="110" unique_id=603592948]
+surface_material_override/0 = SubResource("ShaderMaterial_1gjpj")
+
+[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="111" unique_id=1894302987]
+surface_material_override/0 = SubResource("ShaderMaterial_wyeh6")
+
+[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="112" unique_id=1313046640]
+surface_material_override/0 = SubResource("ShaderMaterial_12ebo")
+
+[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="113" unique_id=2077768330]
+surface_material_override/0 = SubResource("ShaderMaterial_phrvf")
+
+[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="114" unique_id=785451219]
+surface_material_override/0 = SubResource("ShaderMaterial_y1a53")
+
+[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="115" unique_id=1803278051]
+surface_material_override/0 = SubResource("ShaderMaterial_r6psu")
+
+[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=1101788329]
+surface_material_override/0 = SubResource("ShaderMaterial_atyw5")
+
+[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="117" unique_id=938400987]
+surface_material_override/0 = SubResource("ShaderMaterial_dicji")
+
+[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="118" unique_id=2096481895]
+surface_material_override/0 = SubResource("ShaderMaterial_uisyg")
+
+[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="119" unique_id=1046492350]
+surface_material_override/0 = SubResource("ShaderMaterial_prkiw")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="120" unique_id=947907287]
+surface_material_override/0 = SubResource("ShaderMaterial_5mo0b")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="121" unique_id=1331077283]
+surface_material_override/0 = SubResource("ShaderMaterial_o16lw")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="122" unique_id=1983126715]
+surface_material_override/0 = SubResource("ShaderMaterial_hu71u")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="123" unique_id=171090644]
+surface_material_override/0 = SubResource("ShaderMaterial_r1wno")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="124" unique_id=1661447156]
+surface_material_override/0 = SubResource("ShaderMaterial_gg7y1")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=245699956]
+surface_material_override/0 = SubResource("ShaderMaterial_cxqr8")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=590295962]
+surface_material_override/0 = SubResource("ShaderMaterial_b1yjs")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="127" unique_id=1486094212]
+surface_material_override/0 = SubResource("ShaderMaterial_7305h")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="128" unique_id=1405152315]
+surface_material_override/0 = SubResource("ShaderMaterial_h5ue4")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="129" unique_id=1417629123]
+surface_material_override/0 = SubResource("ShaderMaterial_kg5tv")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="130" unique_id=2013292504]
+surface_material_override/0 = SubResource("ShaderMaterial_13a3n")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="131" unique_id=910161718]
+surface_material_override/0 = SubResource("ShaderMaterial_5tnse")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="132" unique_id=2018802853]
+surface_material_override/0 = SubResource("ShaderMaterial_m17n0")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="133" unique_id=1103602756]
+surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="134" unique_id=1123264317]
+surface_material_override/0 = SubResource("ShaderMaterial_otry8")
+
+[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="135" unique_id=1090456561]
+surface_material_override/0 = SubResource("ShaderMaterial_b7doi")
+
+[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="136" unique_id=1322445728]
+surface_material_override/0 = SubResource("ShaderMaterial_lgine")
+
+[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="137" unique_id=2029395879]
+surface_material_override/0 = SubResource("ShaderMaterial_ios2g")
+
+[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="138" unique_id=1300160157]
+surface_material_override/0 = SubResource("ShaderMaterial_l653v")
+
+[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="139" unique_id=1456711703]
+surface_material_override/0 = SubResource("ShaderMaterial_ta8wd")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="140" unique_id=1098181700]
+surface_material_override/0 = SubResource("ShaderMaterial_t8fyj")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="141" unique_id=1304674566]
+surface_material_override/0 = SubResource("ShaderMaterial_f1mpw")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="142" unique_id=1868605709]
+surface_material_override/0 = SubResource("ShaderMaterial_im8uk")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="143" unique_id=425507410]
+surface_material_override/0 = SubResource("ShaderMaterial_qmdsr")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="144" unique_id=895980978]
+surface_material_override/0 = SubResource("ShaderMaterial_xmg8t")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="145" unique_id=1121444358]
+surface_material_override/0 = SubResource("ShaderMaterial_wf7ne")
+
+[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="146" unique_id=66705242]
+surface_material_override/0 = SubResource("ShaderMaterial_mxchm")
+
+[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="147" unique_id=1292896571]
+surface_material_override/0 = SubResource("ShaderMaterial_afqqx")
+
+[node name="Trophy_mo" parent="FortniteSkyeRoom" index="148" unique_id=50910274]
+surface_material_override/0 = SubResource("ShaderMaterial_yjwit")
+
+[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="149" unique_id=735982332]
+surface_material_override/0 = SubResource("ShaderMaterial_amv34")
+
+[node name="Wire03_mo" parent="FortniteSkyeRoom" index="150" unique_id=384708436]
+surface_material_override/0 = SubResource("ShaderMaterial_u8eqe")
+
+[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="151" unique_id=1799892715]
+surface_material_override/0 = SubResource("ShaderMaterial_ys57c")
+
+[editable path="FortniteSkyeRoom"]

@@ -16,10 +16,10 @@ const RESPAWN_HEIGHT: float = 8.0   ## 重生空中高度（落下）
 const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
 
 const PLAYER_COLORS: Array[Color] = [
-	Color(0.9, 0.2, 0.2),
-	Color(0.2, 0.4, 0.9),
-	Color(0.2, 0.8, 0.3),
-	Color(0.9, 0.8, 0.1),
+	Color(0.2, 0.45, 0.9),   # P1 蓝
+	Color(0.9, 0.55, 0.1),   # P2 橙
+	Color(0.2, 0.8, 0.3),    # P3 绿
+	Color(0.6, 0.3, 0.9),    # P4 紫
 ]
 
 # ---- 相机默认参数 ----（子类可覆写）
@@ -36,7 +36,7 @@ const PLAYER_COLORS: Array[Color] = [
 @onready var _main_camera: Camera3D = get_node_or_null("MainCamera") as Camera3D
 @onready var _main_controller: CameraController = get_node_or_null("MainCamera/CameraController") as CameraController
 @onready var _settlement: Node = get_node_or_null("SettlementSystem")
-@onready var _results_panel: Node = get_node_or_null("ResultsPanel")
+@onready var _scoring_screen: Node = get_node_or_null("ScoringScreen")
 @onready var _flash: ColorRect = get_node_or_null("HUD/ShutterFlash") as ColorRect
 @onready var _stage_root: Node3D = get_node_or_null("Stage") as Node3D
 @onready var _actors_root: Node3D = get_node_or_null("Actors") as Node3D
@@ -205,6 +205,15 @@ func _connect_signals() -> void:
 	EventBus.photo_taken.connect(_on_photo_taken)
 	if _settlement and _settlement.has_signal("settlement_completed"):
 		_settlement.settlement_completed.connect(_on_settlement_completed)
+	if _scoring_screen and _scoring_screen.has_signal("flow_finished"):
+		_scoring_screen.flow_finished.connect(_on_flow_finished)
+
+func _on_flow_finished(action: String) -> void:
+	match action:
+		"restart":
+			GameManager.start_game()
+		"lobby":
+			GameManager.enter_lobby()
 
 func _on_battle_started() -> void:
 	_on_level_battle_started()
@@ -234,9 +243,12 @@ func _do_shutter_flash() -> void:
 	tween.tween_property(_flash, "modulate:a", 0.0, 0.3)
 
 func _on_settlement_completed(results: Dictionary) -> void:
-	if _results_panel and _results_panel.has_method("show_results"):
-		_results_panel.show_results(results)
-		_results_panel.show()
+	if _scoring_screen:
+		var hud := get_node_or_null("HUD/PlayerHUD")
+		if hud and _scoring_screen.has_method("setup"):
+			_scoring_screen.setup(hud)
+		if _scoring_screen.has_method("show_results"):
+			_scoring_screen.show_results(results)
 	_on_level_settlement(results)
 
 func _on_level_settlement(_results: Dictionary) -> void:

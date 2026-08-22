@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/levels/room_test.tscn" id="1_room"]
+[ext_resource type="Script" path="res://scripts/debug/room_preview_capture.gd" id="2_capture"]
+
+[node name="RoomPreviewCapture" type="Node3D"]
+script = ExtResource("2_capture")
+
+[node name="RoomTest" parent="." instance=ExtResource("1_room")]
