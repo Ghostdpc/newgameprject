@@ -28,14 +28,15 @@ const PLAYER_COLORS: Array[Color] = [
 # ---- 节点引用（通用节点在场景中由关卡手动放置）----
 @onready var _main_camera: Camera3D = get_node_or_null("MainCamera") as Camera3D
 @onready var _main_controller: CameraController = get_node_or_null("MainCamera/CameraController") as CameraController
-@onready var _photo_camera: Camera3D = get_node_or_null("PhotoViewport/PhotoCamera") as Camera3D
-@onready var _photo_controller: CameraController = get_node_or_null("PhotoViewport/PhotoCamera/CameraController") as CameraController
 @onready var _settlement: Node = get_node_or_null("SettlementSystem")
 @onready var _results_panel: Node = get_node_or_null("ResultsPanel")
 @onready var _flash: ColorRect = get_node_or_null("HUD/ShutterFlash") as ColorRect
 @onready var _stage_root: Node3D = get_node_or_null("Stage") as Node3D
 @onready var _actors_root: Node3D = get_node_or_null("Actors") as Node3D
 @onready var _spawn_root: Node3D = get_node_or_null("SpawnPoints") as Node3D
+
+## 拍照相机 rig（通过 group 查找，策划可任意命名/摆放）
+var _photo_rig: PhotoCameraRig = null
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -137,13 +138,11 @@ func _setup_cameras() -> void:
 		fixed.look_target = main_cam_look
 		_main_controller.push_behavior(fixed)
 		CameraSystem.register_main_camera(_main_controller)
-	if _photo_controller:
-		_photo_controller.init(_photo_camera)
-		var pf := FixedShotBehavior.new()
-		pf.position = photo_cam_pos
-		pf.look_target = photo_cam_look
-		_photo_controller.push_behavior(pf)
-		CameraSystem.register_photo_camera(_photo_controller)
+
+	# 拍照相机 rig 自己注册（在 rig._ready 里），这里只做查找
+	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")
+	if not rigs.is_empty():
+		_photo_rig = rigs[0] as PhotoCameraRig
 
 # ---------------------------------------------------------------
 # 信号

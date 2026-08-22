@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/levels/photo_stage_test.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/systems/settlement_system.gd" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/results_panel.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/ui/player_hud.gd" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/camera/photo_camera_rig.tscn" id="7"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 
@@ -17,17 +18,6 @@ background_mode = 2
 sky = SubResource("SkyRes")
 ambient_light_source = 3
 ambient_light_energy = 0.8
-
-[sub_resource type="BoxMesh" id="CamBody"]
-size = Vector3(1.0, 0.75, 0.8)
-
-[sub_resource type="CylinderMesh" id="CylMesh"]
-top_radius = 0.22
-bottom_radius = 0.22
-height = 0.5
-
-[sub_resource type="StandardMaterial3D" id="CamMat"]
-albedo_color = Color(0.15, 0.16, 0.2, 1)
 
 [node name="PhotoStageTest" type="Node3D"]
 script = ExtResource("1")
@@ -60,19 +50,9 @@ fov = 50.0
 [node name="CameraController" type="Node" parent="MainCamera"]
 script = ExtResource("2")
 
-[node name="PhotoViewport" type="SubViewport" parent="."]
-size = Vector2i(640, 360)
-render_target_update_mode = 4
-
-[node name="PhotoCamera" type="Camera3D" parent="PhotoViewport"]
+[node name="PhotoCameraRig" parent="." instance=ExtResource("7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 12)
-current = true
 fov = 45.0
-near = 0.1
-far = 120.0
-
-[node name="CameraController" type="Node" parent="PhotoViewport/PhotoCamera"]
-script = ExtResource("2")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3")

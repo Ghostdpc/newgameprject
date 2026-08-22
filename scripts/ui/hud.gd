@@ -15,7 +15,18 @@ func _ready() -> void:
 	_bind_photo_panel()
 
 func _bind_photo_panel() -> void:
-	var viewport := get_parent().get_node_or_null("PhotoViewport") as SubViewport
+	# 通过 group 查找 PhotoCameraRig（策划可任意命名节点）
+	var rig: Node = null
+	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")
+	if not rigs.is_empty():
+		rig = rigs[0]
+	if not rig:
+		# 兜底：旧结构 PhotoViewport
+		var viewport := get_parent().get_node_or_null("PhotoViewport") as SubViewport
+		if viewport and _photo_rect:
+			_photo_rect.texture = viewport.get_texture()
+		return
+	var viewport: Viewport = rig.get_render_viewport()
 	if viewport and _photo_rect:
 		_photo_rect.texture = viewport.get_texture()
 

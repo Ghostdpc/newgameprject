@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/camera/photo_camera_rig.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="2"]
+
+[sub_resource type="BoxMesh" id="CamBody"]
+size = Vector3(1.0, 0.75, 0.8)
+
+[sub_resource type="CylinderMesh" id="CylMesh"]
+top_radius = 0.22
+bottom_radius = 0.22
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="CamMat"]
+albedo_color = Color(0.15, 0.16, 0.2, 1)
+
+[node name="PhotoCameraRig" type="Node3D"]
+script = ExtResource("1")
+fov = 45.0
+viewport_size = Vector2i(640, 360)
+cull_mask = 1
+
+[node name="LookTarget" type="Node3D" parent="."]
+position = Vector3(0, 1.2, -12)
+
+[node name="PhotoViewport" type="SubViewport" parent="."]
+size = Vector2i(640, 360)
+render_target_update_mode = 4
+
+[node name="PhotoCamera" type="Camera3D" parent="PhotoViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+current = true
+fov = 45.0
+near = 0.1
+far = 120.0
+cull_mask = 1
+
+[node name="CameraController" type="Node" parent="PhotoViewport/PhotoCamera"]
+script = ExtResource("2")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="Model"]
+layers = 4
+mesh = SubResource("CamBody")
+surface_material_override/0 = SubResource("CamMat")
+
+[node name="Lens" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -0.6)
+layers = 4
+mesh = SubResource("CylMesh")
+surface_material_override/0 = SubResource("CamMat")
+
+[node name="Tripod" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
+layers = 4
+scale = Vector3(0.3, 5.5, 0.3)
+mesh = SubResource("CylMesh")
+surface_material_override/0 = SubResource("CamMat")
