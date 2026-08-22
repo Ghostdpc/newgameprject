@@ -236,7 +236,7 @@ func _try_start() -> void:
 		if _joined[i]:
 			devices.append(_slot_devices[i])
 	GameManager.player_devices = devices
-	get_tree().change_scene_to_file("res://scenes/levels/room_battle.tscn")
+	get_tree().change_scene_to_file("res://scenes/levels/room_stage_battle.tscn")
 
 func _on_back() -> void:
 	GameManager.enter_title()

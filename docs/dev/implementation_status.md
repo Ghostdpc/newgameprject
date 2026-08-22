@@ -201,6 +201,23 @@ camera_behavior_push_requested(target, behavior) / camera_behavior_pop_requested
   `player_index` 从父节点 PlayerController 同步（修了全红的旧问题）。
 - 尺寸常量 `MARKER_SIZE=2.0`；layer 4 不进合照。
 
+### 结算界面改版（v1.4，对照新设计图）
+- `scoring_screen.gd/tscn` 重写：
+  - 中央 **-5° 斜置胶片框**：手绘贴图 `assets/textures/ui/film_frame.png`
+    （DreamMaker 生成 + 洋红抠透明，波浪手描边 + 上下 11 齿孔），照片按实测窗口比例
+    `FILM_HOLE` 垫底外扩 10px 藏边；照片=拍照 RT。
+  - 四角头像卡：泡泡/小人/眼睛染玩家色 + P#字标 + **白色漫画字总分**（FontVariation 加粗+黑描边）
+    + 每维刷分时头像旁弹 **玩家色 +xx** 上浮淡出 + 总分弹跳累加。
+  - 冠军：新版金皇冠（crown_v2）弹入到冠军头像上。
+  - 底部六边形双按钮：再来一局(A) / 返回(X)，图标 icon_restart/icon_exit，鼠标可点、
+    结算完成后 A/Enter=重开、X/Esc=返回；刷分阶段仍为房主确认键加速。
+  - 结算期间隐藏战斗四角卡（PlayerHUD），重开/返回后恢复。
+- 新零件（player_v2.png 拆分）：`card/crown_v2.png`、`card/icon_restart.png`、`card/icon_exit.png`；
+  `ItemIcons["crown"]` 已指向新款（战斗卡冠军皇冠同步升级）。
+- 字标右缘裁切微调：右角卡 P# 外溢 +16 → +4（player_panel / scoring_screen 同步）。
+- 分数字体接入：`assets/fonts/Kaph-Regular.otf` / `Kaph-Italic.otf`
+  （`FONT_SCORE` 总分+键位、`FONT_SCORE_ITALIC` +xx 弹字），替代 FontVariation 假粗体。
+
 ### 顺手修复
 - `camera_offset_effect.gd:25` 类型推断 Parse Error（`var cam :=` → 显式 `Camera3D`），
   此前导致 camera_remote 道具效果注册失败。

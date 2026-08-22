@@ -1,135 +1,161 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://10pw2ri4o2qh"]
 
-[ext_resource type="Script" path="res://scripts/ui/scoring_screen.gd" id="1_scoring"]
-[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+[ext_resource type="Script" uid="uid://b5ulsgt3u11it" path="res://scripts/ui/scoring_screen.gd" id="1_scoring"]
+[ext_resource type="Texture2D" uid="uid://bkqaf30wn0af" path="res://assets/textures/ui/film_frame.png" id="2_film"]
+[ext_resource type="Texture2D" uid="uid://blxw6g4l8kkhy" path="res://assets/textures/ui/card/card_hex.png" id="3_hex"]
+[ext_resource type="Texture2D" uid="uid://dm165aarbb4ky" path="res://assets/textures/ui/card/icon_restart.png" id="4_restart"]
+[ext_resource type="Texture2D" uid="uid://crttqnnlso4ay" path="res://assets/textures/ui/card/icon_exit.png" id="5_exit"]
+[ext_resource type="FontFile" uid="uid://oj7ndrgx0uv2" path="res://assets/fonts/Kaph-Regular.otf" id="6_kaph"]
 
-[node name="ScoringScreen" type="CanvasLayer"]
+[node name="ScoringScreen" type="CanvasLayer" unique_id=1192127958]
 layer = 15
 script = ExtResource("1_scoring")
 
-[node name="Root" type="Control" parent="."]
+[node name="Root" type="Control" parent="." unique_id=818974370]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("2_theme")
+mouse_filter = 2
 
-[node name="Dim" type="ColorRect" parent="Root"]
-layout_mode = 1
-anchors_preset = 15
+[node name="Dim" type="ColorRect" parent="Root" unique_id=176946253]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.015, 0.02, 0.05, 0.58)
+mouse_filter = 2
+color = Color(0, 0, 0, 0.28)
 
-[node name="ScoreHint" type="Label" parent="Root"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 22.0
-offset_bottom = 54.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.6, 0.78, 0.95, 0.9)
-theme_override_font_sizes/font_size = 21
-text = "系统自动评分 · 任意确认键加速（不可篡改）"
-horizontal_alignment = 1
-
-[node name="PhotoFrame" type="PanelContainer" parent="Root"]
-custom_minimum_size = Vector2(680, 440)
-layout_mode = 1
-anchors_preset = 8
+[node name="Film" type="Control" parent="Root" unique_id=954155251]
+anchors_preset = 0
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -280.0
-offset_right = 340.0
-offset_bottom = 160.0
+offset_left = -540.0
+offset_top = -360.0
+offset_right = 540.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = -0.0872665
+pivot_offset = Vector2(540, 360)
+mouse_filter = 2
 
-[node name="VBox" type="VBoxContainer" parent="Root/PhotoFrame"]
-layout_mode = 2
-theme_override_constants/separation = 10
+[node name="Photo" type="TextureRect" parent="Root/Film" unique_id=1803371857]
+layout_mode = 0
+offset_left = 66.68
+offset_top = 116.72
+offset_right = 1002.32
+offset_bottom = 572.48
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
 
-[node name="PhotoRect" type="TextureRect" parent="Root/PhotoFrame/VBox"]
-custom_minimum_size = Vector2(640, 360)
+[node name="Frame" type="TextureRect" parent="Root/Film" unique_id=1737360159]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_film")
+expand_mode = 1
+
+[node name="BtnRow" type="HBoxContainer" parent="Root" unique_id=712336766]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -165.0
+offset_top = -156.0
+offset_right = 165.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 90
+alignment = 1
+
+[node name="BtnRestart" type="Control" parent="Root/BtnRow" unique_id=186638103]
+custom_minimum_size = Vector2(120, 140)
 layout_mode = 2
+
+[node name="Hex" type="TextureRect" parent="Root/BtnRow/BtnRestart" unique_id=1383349068]
+layout_mode = 0
+offset_left = 5.0
+offset_right = 115.0
+offset_bottom = 126.0
+mouse_filter = 2
+texture = ExtResource("3_hex")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CaptionLabel" type="Label" parent="Root/PhotoFrame/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.84, 0.92, 1)
-theme_override_font_sizes/font_size = 20
-text = ""
+[node name="Icon" type="TextureRect" parent="Root/BtnRow/BtnRestart" unique_id=355388970]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 28.0
+offset_right = 93.0
+offset_bottom = 94.0
+mouse_filter = 2
+texture = ExtResource("4_restart")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Key" type="Label" parent="Root/BtnRow/BtnRestart" unique_id=580665723]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 104.0
+offset_right = 80.0
+offset_bottom = 140.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("6_kaph")
+theme_override_font_sizes/font_size = 34
+text = "A"
 horizontal_alignment = 1
 
-[node name="DimCallout" type="Label" parent="Root"]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 360.0
-offset_top = -190.0
-offset_right = -360.0
-offset_bottom = -140.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
-theme_override_font_sizes/font_size = 40
-text = ""
+[node name="BtnLobby" type="Control" parent="Root/BtnRow" unique_id=1515751471]
+custom_minimum_size = Vector2(120, 140)
+layout_mode = 2
+
+[node name="Hex" type="TextureRect" parent="Root/BtnRow/BtnLobby" unique_id=1878498209]
+layout_mode = 0
+offset_left = 5.0
+offset_right = 115.0
+offset_bottom = 126.0
+mouse_filter = 2
+texture = ExtResource("3_hex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Icon" type="TextureRect" parent="Root/BtnRow/BtnLobby" unique_id=1934582890]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 28.0
+offset_right = 93.0
+offset_bottom = 94.0
+mouse_filter = 2
+texture = ExtResource("5_exit")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Key" type="Label" parent="Root/BtnRow/BtnLobby" unique_id=126887476]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 104.0
+offset_right = 80.0
+offset_bottom = 140.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
+theme_override_constants/outline_size = 10
+theme_override_fonts/font = ExtResource("6_kaph")
+theme_override_font_sizes/font_size = 34
+text = "X"
 horizontal_alignment = 1
-
-[node name="ChampionBox" type="Control" parent="Root"]
-visible = false
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 460.0
-offset_top = -130.0
-offset_right = -460.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="VBox" type="VBoxContainer" parent="Root/ChampionBox"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 60.0
-offset_right = -60.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="ChampionLabel" type="Label" parent="Root/ChampionBox/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.3, 1)
-theme_override_font_sizes/font_size = 42
-text = "★ 冠军"
-horizontal_alignment = 1
-
-[node name="ButtonRow" type="HBoxContainer" parent="Root/ChampionBox/VBox"]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 30
-
-[node name="RestartButton" type="Button" parent="Root/ChampionBox/VBox/ButtonRow"]
-custom_minimum_size = Vector2(300, 58)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "重开 · 下一主题"
-
-[node name="LobbyButton" type="Button" parent="Root/ChampionBox/VBox/ButtonRow"]
-custom_minimum_size = Vector2(300, 58)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "返回房间"

@@ -69,13 +69,20 @@ func physics_update(delta: float) -> void:
 	# 撞人/撞物检测（用 body 的滑行碰撞）
 	if not _hit:
 		for i in controller.get_slide_collision_count():
-			var collider := controller.get_slide_collision(i).get_collider()
+			var col := controller.get_slide_collision(i)
+			var collider := col.get_collider()
 			if collider is PlayerController and collider != controller:
 				_hit_player(collider as PlayerController)
 				return
 			elif collider is PhysicalProp:
 				_halt("撞到物品")
 				return
+			elif collider is StaticBody3D:
+				# 撞到静态障碍（墙/家具）：法线近水平才算墙面/侧面，地面(近竖直)忽略
+				var normal := col.get_normal()
+				if absf(normal.y) < 0.6:
+					_halt("撞到静态障碍")
+					return
 	# 没撞到，滑满距离后起身
 	if _slid_dist >= MAX_SLIDE_DIST:
 		_stand_up()

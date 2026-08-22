@@ -1,13 +1,14 @@
-## 职责：S5/S6/S7 —— 快门后照片居中放大 → 四角面板逐维刷分（任意确认键加速）
-##       → 总分排名 → 冠军皇冠 + 重开/返回房间（交互文档 §7）
-## 评分数据来自 SettlementSystem（settlement_completed），本界面只负责表现。
+## 职责：S6/S7 结算界面 —— 斜置胶片框(最终照片) + 复用 PlayerPanel 四角头像卡
+## + 底部六边形双按钮。评分数据来自 SettlementSystem（settlement_completed），
+## 本界面只负责表现；卡片刷分动画由 PlayerPanel 提供（set_total / pop_plus / show_crown）。
+## 静态布局在 scoring_screen.tscn 中可视化摆放（策划可拖动），六边形按钮因结构相同用代码生成。
 
 class_name ScoringScreen
 extends CanvasLayer
 
 signal flow_finished(action: String)   # "restart" / "lobby"
 
-## 评分 RT（ID 遮罩）面板仅用于开发调试，正常游戏不显示。需要核对像素评分时在 inspector 勾选。
+## 评分 RT（ID 遮罩）调试面板，正常游戏不显示
 @export var show_mask_debug: bool = false
 
 const DIM_ORDER: Array = [
@@ -18,40 +19,50 @@ const DIM_ORDER: Array = [
 ]
 
 @onready var _root: Control = $Root
-@onready var _photo_rect: TextureRect = $Root/PhotoFrame/VBox/PhotoRect
-@onready var _caption: Label = $Root/PhotoFrame/VBox/CaptionLabel
-@onready var _dim_callout: Label = $Root/DimCallout
-@onready var _score_hint: Label = $Root/ScoreHint
-@onready var _champion_box: Control = $Root/ChampionBox
-@onready var _champion_label: Label = $Root/ChampionBox/VBox/ChampionLabel
-@onready var _restart_btn: Button = $Root/ChampionBox/VBox/ButtonRow/RestartButton
-@onready var _lobby_btn: Button = $Root/ChampionBox/VBox/ButtonRow/LobbyButton
+@onready var _film: Control = $Root/Film
+@onready var _photo_rect: TextureRect = $Root/Film/Photo
+@onready var _btn_restart: Control = $Root/BtnRow/BtnRestart
+@onready var _btn_lobby: Control = $Root/BtnRow/BtnLobby
+@onready var _dim_rect: ColorRect = $Root/Dim
+
+var _mask_panel: PanelContainer
+var _mask_rect: TextureRect
 
 var _player_hud: PlayerHUD = null
 var _results: Dictionary = {}
-var _skip_requested: bool = false
-var _sequence_running: bool = false
-var _mask_panel: Control = null
-var _mask_rect: TextureRect = null
+var _skip_requested := false
+var _sequence_running := false
+var _sequence_done := false
 
 func _ready() -> void:
 	_root.hide()
-	_restart_btn.pressed.connect(func(): flow_finished.emit("restart"))
-	_lobby_btn.pressed.connect(func(): flow_finished.emit("lobby"))
 	EventBus.stage_changed.connect(_on_stage_changed)
+	_bind_button(_btn_restart, "restart")
+	_bind_button(_btn_lobby, "lobby")
 	_build_mask_panel()
 
-## 新一轮开始（重开/返回）时收起结算界面与评分面板
+## 新一轮开始（重开/返回）时收起结算界面、恢复战斗道具槽
 func _on_stage_changed(stage: int) -> void:
 	if stage != GameManager.GameStage.SCORING and _root.visible:
 		_root.hide()
 		if _player_hud:
-			_player_hud.clear_scoreboards()
+			_player_hud.exit_scoring_style()
 
-## 评分 RT（ID 遮罩）调试面板：贴在结算画面右侧，方便核对像素评分
+## 底部六边形按钮：hover 放大 + 左键点击
+func _bind_button(btn: Control, action: String) -> void:
+	btn.mouse_entered.connect(func(): btn.scale = Vector2(1.1, 1.1))
+	btn.mouse_exited.connect(func(): btn.scale = Vector2.ONE)
+	btn.gui_input.connect(func(ev: InputEvent):
+		if ev is InputEventMouseButton and ev.pressed \
+				and ev.button_index == MOUSE_BUTTON_LEFT:
+			_do_action(action))
+
+func _do_action(action: String) -> void:
+	flow_finished.emit(action)
+
+## 评分 RT（ID 遮罩）调试面板：贴在结算画面右侧
 func _build_mask_panel() -> void:
 	_mask_panel = PanelContainer.new()
-	_mask_panel.name = "MaskPanel"
 	_mask_panel.anchor_left = 1.0
 	_mask_panel.anchor_top = 0.5
 	_mask_panel.anchor_right = 1.0
@@ -64,35 +75,35 @@ func _build_mask_panel() -> void:
 	_mask_panel.grow_vertical = Control.GROW_DIRECTION_BOTH
 	_mask_panel.hide()
 	_root.add_child(_mask_panel)
-
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 8)
 	_mask_panel.add_child(vbox)
-
 	var label := Label.new()
 	label.text = "评分RT · ID遮罩（只算玩家）"
 	label.add_theme_font_size_override("font_size", 18)
 	label.add_theme_color_override("font_color", Color(0.55, 0.85, 1.0))
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(label)
-
 	_mask_rect = TextureRect.new()
 	_mask_rect.custom_minimum_size = Vector2(320, 180)
 	_mask_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_mask_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	vbox.add_child(_mask_rect)
 
+# ---------------------------------------------------------------- 结算入口
 func setup(player_hud: PlayerHUD) -> void:
 	_player_hud = player_hud
 
 func show_results(results: Dictionary) -> void:
 	_results = results
 	_skip_requested = false
+	_sequence_done = false
+	_run_total = {}
 	_root.show()
-	_champion_box.hide()
-	_score_hint.show()
-	_dim_callout.text = "—— 系统四维评分 ——"
-	# 照片居中放大（S6：照片居中放很大）
+	# 保留四角 PlayerPanel 显示（战斗 HUD 顶部/取景框由 HUD.enter_scoring_mode 隐藏）
+	if _player_hud:
+		_player_hud.reset_scoreboards()
+		_player_hud.enter_scoring_style()
 	var img: Image = results.get("photo")
 	if img and img.get_width() > 0:
 		_photo_rect.texture = ImageTexture.create_from_image(img)
@@ -102,87 +113,61 @@ func show_results(results: Dictionary) -> void:
 		_mask_panel.show()
 	else:
 		_mask_panel.hide()
-	_caption.text = "快门瞬间 · 主题：摄影棚乱斗"
-	_photo_rect.pivot_offset = _photo_rect.size * 0.5
-	_photo_rect.modulate.a = 0.0
-	_photo_rect.scale = Vector2(0.55, 0.55)
-	var tw := create_tween()
-	tw.set_parallel(true)
-	tw.tween_property(_photo_rect, "scale", Vector2.ONE, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_photo_rect, "modulate:a", 1.0, 0.3)
+	_film.scale = Vector2(0.7, 0.7)
+	_film.modulate.a = 0.0
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(_film, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_film, "modulate:a", 1.0, 0.25)
 	_begin_sequence.call_deferred()
 
+# ---------------------------------------------------------------- 逐维刷分
 func _begin_sequence() -> void:
 	await _run_scoring()
 	_finish_champion()
 
-# ---------------------------------------------------------------- 逐维刷分
 func _run_scoring() -> void:
-	if _player_hud == null:
-		return
 	_sequence_running = true
-	_player_hud.prepare_scoreboards(DIM_ORDER)
-	await _wait(0.7)
+	await _wait(0.8)
 	for dim_def in DIM_ORDER:
 		var key := String(dim_def[0])
-		var dim_name := String(dim_def[1])
-		_callout(dim_name)
 		for actor in _results.get("actors", []):
-			var dims: Dictionary = actor.get("dimensions", {})
-			var d: Dictionary = dims.get(key, {})
-			var score: float = d.get("score", 0.0)
-			_player_hud.reveal_dimension(int(actor.get("player_index", -1)), key, score)
-			await _wait(0.1)
-		await _wait(0.55)
-	# 总分
-	for actor in _results.get("actors", []):
-		_player_hud.set_total(int(actor.get("player_index", -1)), float(actor.get("total", 0.0)))
-	_callout("总分排名")
+			var idx := int(actor.get("player_index", -1))
+			var d: Dictionary = actor.get("dimensions", {}).get(key, {})
+			_pop_plus(idx, float(d.get("score", 0.0)))
+			await _wait(0.12)
+		await _wait(0.5)
 	_sequence_running = false
-	await _wait(1.0)
+	_sequence_done = true
+	await _wait(0.6)
 
-func _callout(text: String) -> void:
-	_dim_callout.text = text
-	_dim_callout.pivot_offset = _dim_callout.size * 0.5
-	_dim_callout.scale = Vector2(1.35, 1.35)
-	_dim_callout.modulate.a = 1.0
-	var tw := create_tween()
-	tw.tween_property(_dim_callout, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+## +xx 弹字（由 PlayerPanel 提供 scale 弹跳效果）+ 总分累加
+func _pop_plus(index: int, score: float) -> void:
+	if not _player_hud:
+		return
+	var panel: PlayerPanel = _player_hud.get_panel(index)
+	if not panel:
+		return
+	var total: float = _run_total.get(index, 0.0) + score
+	_run_total[index] = total
+	panel.set_total(total)
+	panel.pop_plus(score)
+
+var _run_total: Dictionary = {}
 
 func _wait(seconds: float) -> void:
 	var actual := 0.05 if _skip_requested else seconds
 	await get_tree().create_timer(actual).timeout
 
-# ---------------------------------------------------------------- 冠军结算
+# ---------------------------------------------------------------- 冠军
 func _finish_champion() -> void:
 	var actors: Array = _results.get("actors", [])
-	if actors.is_empty():
+	if actors.is_empty() or not _player_hud:
 		return
-	# settlement 已按总分降序排序
 	var champion: Dictionary = actors[0]
 	var idx := int(champion.get("player_index", 0))
-	if _player_hud:
-		_player_hud.set_champion(idx)
-	_champion_label.text = "★ 冠军 · P%d" % (idx + 1)
-	_champion_box.show()
-	_champion_box.pivot_offset = _champion_box.size * 0.5
-	_champion_box.scale = Vector2(0.7, 0.7)
-	_champion_box.modulate.a = 0.0
-	var tw := create_tween()
-	tw.set_parallel(true)
-	tw.tween_property(_champion_box, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_champion_box, "modulate:a", 1.0, 0.25)
-	_score_hint.hide()
-	_callout("评分结束 · 称号仅表现，不影响系统分数")
-	_restart_btn.grab_focus()
+	_player_hud.get_panel(idx).show_crown(true)
 
-## 获取房主绑定的设备（player_devices[0]）用于刷分阶段跳过判断
-func _host_device() -> int:
-	if GameManager.player_devices.is_empty():
-		return -2
-	return GameManager.player_devices[0]
-
-# ---------------------------------------------------------------- 输入加速（刷分阶段，房主按确认跳过）
+# ---------------------------------------------------------------- 输入
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_pressed():
 		return
@@ -199,3 +184,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		if is_host_accept:
 			_skip_requested = true
 			get_viewport().set_input_as_handled()
+		return
+	if not _sequence_done:
+		return
+	if event.is_action_pressed("ui_accept") or (event is InputEventKey and event.physical_keycode == KEY_A):
+		get_viewport().set_input_as_handled()
+		_do_action("restart")
+	elif event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.physical_keycode == KEY_X):
+		get_viewport().set_input_as_handled()
+		_do_action("lobby")
+
+func _host_device() -> int:
+	if GameManager.player_devices.is_empty():
+		return -2
+	return GameManager.player_devices[0]
