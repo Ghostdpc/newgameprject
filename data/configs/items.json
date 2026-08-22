@@ -9,6 +9,7 @@
     {
       "id": "energy_drink",
       "display_name": "能量饮料",
+      "icon": "item_energy",
       "trigger": "on_use",
       "effects": [
         {
@@ -22,6 +23,7 @@
     {
       "id": "banana_peel",
       "display_name": "香蕉皮",
+      "icon": "item_banana",
       "trigger": "on_use",
       "effects": [
         {
@@ -35,6 +37,7 @@
     {
       "id": "fast_forward_crank",
       "display_name": "快进发条",
+      "icon": "item_fastforward",
       "trigger": "on_use",
       "effects": [
         {
@@ -48,6 +51,7 @@
     {
       "id": "slow_hourglass",
       "display_name": "慢放沙漏",
+      "icon": "item_slowmo",
       "trigger": "on_use",
       "effects": [
         {
@@ -61,6 +65,7 @@
     {
       "id": "time_battery",
       "display_name": "加时电池",
+      "icon": "item_battery",
       "trigger": "on_use",
       "effects": [
         {
@@ -74,6 +79,7 @@
     {
       "id": "time_scissors",
       "display_name": "减时剪刀",
+      "icon": "item_scissors",
       "trigger": "on_use",
       "effects": [
         {
@@ -87,6 +93,7 @@
     {
       "id": "camera_remote",
       "display_name": "相机遥控器",
+      "icon": "item_remote",
       "trigger": "on_use",
       "effects": [
         {

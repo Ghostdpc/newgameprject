@@ -110,6 +110,7 @@ func _ready() -> void:
 - 繼承 `GutTest`
 - 每個測試函數前綴 `test_`
 - 每個功能模塊至少覆蓋：正常流程 / 邊界值 / 異常輸入
+- **實現完畢後必須先自行跑一遍測試（`godot --headless -s addons/gut/gut_cmdln.gd`），確認全綠再提交**
 
 ```gdscript
 ## 職責：測試 ScoreSystem 打分邏輯

@@ -3,6 +3,7 @@
 ## F3 數據面板：遍歷所有玩家，實時顯示角色持有道具/速度/狀態等運行時數據
 ## F4 暫停/恢復倒計時（凍結結算用）
 ## F5 對 P1 注入道具並立即使用（測試道具效果用）
+## F6 打開/關閉道具調試列表（點擊道具名立即對 P1 觸發效果）
 
 class_name DebugVisualizer
 extends Node3D
@@ -18,6 +19,7 @@ var _collisions_on: bool = false
 var _bones_on: bool = false
 var _data_panel_on: bool = false
 var _timer_paused: bool = false
+var _item_list_on: bool = false
 
 ## F5 循環注入的道具 id 列表（按順序循環）
 const DEBUG_ITEM_CYCLE: Array[String] = [
@@ -41,6 +43,10 @@ var _collision_mat: StandardMaterial3D
 var _overlay: CanvasLayer
 var _panel_root: HBoxContainer
 
+# F6 道具調試列表
+var _item_list_overlay: CanvasLayer
+var _item_list_panel: VBoxContainer
+
 func _ready() -> void:
 	_line_mat = StandardMaterial3D.new()
 	_line_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -63,6 +69,7 @@ func _ready() -> void:
 	_collision_mesh.visible = false
 
 	_build_data_overlay()
+	_build_item_list_overlay()
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -80,6 +87,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.physical_keycode == KEY_F5:
 			_inject_item_to_p1()
+			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_F6:
+			_toggle_item_list()
 			get_viewport().set_input_as_handled()
 
 func _toggle_collisions() -> void:
@@ -299,3 +309,60 @@ func _make_player_panel() -> PanelContainer:
 
 func _fmt_vec3(v: Vector3) -> String:
 	return "(%.1f, %.1f, %.1f)" % [v.x, v.y, v.z]
+
+# ─── F6 道具調試列表 ──────────────────────────────────────────────────────────
+
+func _build_item_list_overlay() -> void:
+	_item_list_overlay = CanvasLayer.new()
+	_item_list_overlay.name = "DebugItemListOverlay"
+	_item_list_overlay.layer = 129
+	_item_list_overlay.visible = false
+	add_child(_item_list_overlay)
+
+	var bg := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.0, 0.0, 0.0, 0.85)
+	style.set_content_margin_all(12)
+	bg.add_theme_stylebox_override("panel", style)
+	bg.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	bg.position = Vector2(-220.0, 8.0)
+	_item_list_overlay.add_child(bg)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+	bg.add_child(vbox)
+	_item_list_panel = vbox
+
+	var title := Label.new()
+	title.text = "── 道具調試 [F6] ──"
+	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
+	title.add_theme_font_size_override("font_size", 14)
+	vbox.add_child(title)
+
+	for item_id in DEBUG_ITEM_CYCLE:
+		var btn := Button.new()
+		btn.text = item_id
+		btn.custom_minimum_size = Vector2(180.0, 32.0)
+		btn.add_theme_font_size_override("font_size", 13)
+		btn.pressed.connect(_on_debug_item_btn.bind(item_id))
+		vbox.add_child(btn)
+
+func _toggle_item_list() -> void:
+	_item_list_on = not _item_list_on
+	_item_list_overlay.visible = _item_list_on
+	print("DebugVisualizer: item_list = ", _item_list_on)
+
+func _on_debug_item_btn(item_id: String) -> void:
+	var players: Array = get_tree().get_nodes_in_group("players")
+	var p1: PlayerController = null
+	for node in players:
+		var pc := node as PlayerController
+		if pc and pc.player_index == 0:
+			p1 = pc
+			break
+	if p1 == null:
+		push_warning("DebugVisualizer: P1 not found")
+		return
+	p1.held_item_id = item_id
+	p1.use_held_item()
+	print("DebugVisualizer: [F6 list] used item '%s' on P1" % item_id)

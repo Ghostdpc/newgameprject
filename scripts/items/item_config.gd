@@ -21,6 +21,13 @@ func get_item(id: String) -> ItemDef:
 			return ItemDef.from_dict(r)
 	return null
 
+## 按 id 返回道具图标 key（用于 UI 显示，空字符串 = 无图标）
+func get_item_icon(id: String) -> String:
+	for r in get_records("items"):
+		if r is Dictionary and r.get("id", "") == id:
+			return str(r.get("icon", ""))
+	return ""
+
 ## 返回所有道具 id 列表
 func all_ids() -> Array[String]:
 	var result: Array[String] = []

@@ -1,0 +1,164 @@
+# 程序实现状态与开发记录
+
+> 版本：v1.0 · 更新：2026-08-22
+> 记录本轮开发对场景/相机/关卡/UI/结算的改动，供后续开发查阅
+
+---
+
+## 1. 当前流程（S0-S7）
+
+```
+S0 标题(main_menu) → S1/S2 加入+确认(lobby) → S3 主题公布(3s)
+→ S4 混战(45s, 时间道具可改倍率/加减时) → S5 快门(0.5x慢放+白闪)
+→ S6 五维刷分 → S7 冠军结算(重开/返回房间)
+```
+
+- 流程由 `GameManager`（autoload）驱动，`GameStage` 枚举见 `scripts/autoload/game_manager.gd`
+- 大厅确认人数后进 `scenes/levels/demo_stage.tscn`（`lobby.gd:191`）
+- 各阶段时长配置在 `data/configs/game_flow.json`
+
+---
+
+## 2. 关卡框架
+
+### 层级
+```
+LevelBase (scripts/levels/level_base.gd)   # 玩法骨架，通用
+├── DemoStage (demo_stage.gd)              # 完整流程关卡（当前大厅进入）
+├── PhotoStage (photo_stage.gd)            # 正式关卡模板
+└── PhotoStageTest (photo_stage_test.gd)   # 测试关卡（固定4人+12s加速）
+```
+
+### LevelBase 职责
+- 相机初始化（MainCamera + 拍照 rig 查找）
+- 玩家生成（只实例化 + 赋值 index/color，控制靠 PlayerController 内建）
+- 出界重生（`FALL_Y=-5` 判定，`RESPAWN_WAIT=2s`，随机复活点 + 黄色光柱标记）
+- 信号连接（battle_started/ended、photo_taken、settlement_completed、flow_finished）
+- 快门白闪（`HUD/FlashLayer/ShutterFlash`）
+- 结算衔接（`ScoringScreen.setup(player_hud)` + `show_results`）
+
+### 子类扩展点（hook）
+```gdscript
+_setup_level()               # 舞台布置、道具注册、特殊玩法
+_on_level_ready()            # 关卡加载完成（可自动开局）
+_on_level_battle_started()   # 混战开始
+_on_level_battle_ended()     # 混战结束→快门前
+_on_level_decisive_moment()  # 最后3秒
+_on_level_photo_taken(tex)   # 收到照片
+_on_level_settlement(res)    # 结算结果
+get_player_count()           # 玩家数 2-4
+get_spawn_points()           # 出生点
+```
+
+---
+
+## 3. 可复用拍照相机组件
+
+### PhotoCameraRig（`scenes/camera/photo_camera_rig.tscn` + `scripts/camera/photo_camera_rig.gd`）
+
+策划把 rig 拖进场景即可，无需写代码：
+
+| 操作 | 参数 |
+|------|------|
+| 相机位置 | rig 节点的 `Position` |
+| 拍摄区域中心 | 拖动 `LookTarget` 子节点（相机自动看向它） |
+| 视野范围 | `fov`（越小范围越小） |
+| RT 尺寸 | `viewport_size` |
+
+### 关键机制
+- 相机持续渲染到内部 SubViewport，供 HUD 取景框实时显示 + 快门截图
+- **相机模型放 visibility layer 3**，PhotoCamera `cull_mask=1` 排除模型 → 拍照画面无模型（无黑球），主相机能看到模型
+- 自动 `add_to_group("photo_camera_rig")` + 注册 `CameraSystem`
+- 接口：`get_camera()` / `get_controller()` / `get_render_viewport()`
+
+---
+
+## 4. UI 结构（battle_hud.tscn 三层 CanvasLayer）
+
+| 层 | layer 值 | 内容 |
+|----|---------|------|
+| `MainLayer` | 1 | 取景框（RT+四角贴花+快门图标+倒计时）、阶段名、飞字浮层 |
+| `PlayerLayer` | 100 | 四角玩家面板（高优先级，不被结算界面遮挡） |
+| `FlashLayer` | 200 | 快门白闪（最高，覆盖一切） |
+
+- `hud.gd` 挂在 `MainLayer`；`player_hud.gd` 挂在 `PlayerLayer/PlayerHUD`
+- ScoringScreen layer=15（低于玩家卡 100，高于取景框 1）
+- **倒计时在取景框内底部中央**（模拟真实相机 UI，交互文档写错已按此实现）
+
+### 四角玩家面板（PlayerHUD + PlayerPanel）
+- P1左上 / P2右上 / P3左下 / P4右下
+- 三重辨识：颜色 + 编号 + 形状（圆/三角/方/菱，`ItemIcons` 图标）
+- 服装 3 槽（头/身/手）+ 道具槽（单槽，预留扩展）
+- 评分区（S6 逐维刷分）+ 皇冠（S7 冠军）
+
+---
+
+## 5. 玩家配色配置
+
+- 配置：`data/configs/player_colors.json`（`#RRGGBB` 十六进制）
+- 读取：`PlayerConfig`（`scripts/game/player_config.gd`，`ConfigTable` 子类，静态单例）
+- 使用方（全部统一）：`LevelBase`（3D 角色）、`PlayerHUD`（四角面板）、`lobby`（大厅卡片）、`main_menu`（形状装饰）、`demo_stage`（遮罩匹配色）
+
+改 JSON 后需重新运行游戏（`PlayerConfig._instance` 进程内缓存，不热重载）。
+
+---
+
+## 6. 关键信号接口（EventBus）
+
+```gdscript
+# 流程
+stage_changed(stage) / stage_timer_updated(seconds) / battle_started() / battle_ended()
+# 拍照
+photo_taken(viewport_texture)   # null=拍照请求，非null=回传实拍
+# 道具
+item_picked_up(player_index, item_id) / item_used(player_index, item_id)
+item_spawned(item_id, position) / trap_triggered(trap_id, player_index)
+# 服装（槽位 0头/1身/2手持）
+outfit_changed(player_index, slot, item_id)
+# 时间道具（0快进/1慢放/2加时/3减时）
+time_effect_applied(effect_type, value)
+# 暂停
+game_paused_changed(paused)
+# 相机
+camera_behavior_push_requested(target, behavior) / camera_behavior_pop_requested(...)
+```
+
+---
+
+## 7. GameManager 关键接口（流程同事维护，只读）
+
+| 成员 | 说明 |
+|------|------|
+| `current_stage` / `stage_time_remaining` | 当前阶段/剩余时间 |
+| `time_rate` | 倒计时倍率（快进2.0/慢放0.5） |
+| `lobby_player_count` | 大厅确认人数（关卡读它生成玩家） |
+| `add_time(delta)` | 加时/减时（减时最低1秒），返回实际变化量 |
+| `start_game()` / `finish_scoring()` | 开新局 / 结算推进 |
+| `enter_lobby()` / `enter_title()` | 返回房间 / 返回标题 |
+
+---
+
+## 8. 本轮关键决策记录
+
+| 决策 | 内容 |
+|------|------|
+| 拍照相机 | 做成可复用 rig 组件，模型用 layer 隔离避免挡镜头 |
+| 相机模型遮挡 | 模型 layer 3 + PhotoCamera cull_mask=1（只渲染场景 layer1） |
+| 截图颠倒 | `settlement_system.gd` 删除多余 `flip_y()` |
+| 倒计时位置 | 放取景框内底部中央（交互文档写的顶部中央是错的） |
+| 玩家卡片层级 | PlayerLayer=100 高于结算 15，只白闪(200)等少数更高 |
+| 玩家颜色 | 集中到 `player_colors.json`，消除 5 处硬编码 |
+| 假数据 | 移除 `demo_stage.tscn` 的 `DemoUiDriver`（`demo_ui_driver.gd` 保留未删，可复用） |
+
+---
+
+## 9. 待办 / 需与同事对齐
+
+| 事项 | 负责方 | 状态 |
+|------|--------|------|
+| 真实服装拾取 → `outfit_changed` 信号 | 服装系统同事 | 待接入 |
+| 真实道具拾取 → `item_picked_up` | 道具系统（ItemSystem 已有） | 部分接入 |
+| 图标资源 `assets/textures/ui/*.svg` | 已齐全 | ✓ |
+| 玩家名/头像数据（面板姓名） | 流程/匹配同事 | 待定 |
+| 仿相机装饰图（取景框边框精修） | 美术 | 占位中 |
+| 暂停/断线 UI | 流程/系统同事 | 待定 |
