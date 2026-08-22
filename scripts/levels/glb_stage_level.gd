@@ -127,10 +127,14 @@ func _convert_to_prop(mi: MeshInstance3D) -> void:
 	prop.name = "Prop_" + mi.name
 	prop.prop_mass = 2.0
 	prop.freeze = true
+	# RigidBody 不可帶非單位縮放：房間 room_scale 使摆件世界 scale≈0.03，
+	# RigidBody 帶此縮放會令物理碰撞體在 unfreeze(鬆手)/受力(飛撲)時錯誤膨脹→頂飛玩家。
+	# 對策：prop 只取正交部分(scale=1，物理穩定)，縮放烘焙進 mesh 子節點與碰撞 shape，視覺不變。
+	var ortho := saved_global.orthonormalized()
+	mi.transform = ortho.affine_inverse() * saved_global   # mesh 相對 prop：純縮放
 	prop.add_child(mi)
-	mi.transform = Transform3D.IDENTITY
+	prop.transform = saved_parent.global_transform.affine_inverse() * ortho
 	saved_parent.add_child(prop)
-	prop.global_transform = saved_global
 
 func _add_static_body(mi: MeshInstance3D) -> void:
 	var mesh: Mesh = mi.mesh
