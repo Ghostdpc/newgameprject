@@ -30,3 +30,31 @@ func _find_skeleton(n: Node) -> Skeleton3D:
 		if r:
 			return r
 	return null
+
+func test_mesh_follows_body_during_ragdoll() -> void:
+	# 建地面
+	var ground := StaticBody3D.new()
+	var shape := CollisionShape3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(50, 1, 50)
+	shape.shape = box
+	shape.position = Vector3(0, -0.5, 0)
+	ground.add_child(shape)
+	add_child_autofree(ground)
+
+	var pscene := load("res://scenes/player/player.tscn") as PackedScene
+	var player := pscene.instantiate() as PlayerController
+	player.position = Vector3(0, 2, 0)
+	add_child_autofree(player)
+	await wait_physics_frames(5)
+	var model: Node3D = player.get_node("Model")
+	# 開 ragdoll + 擊飛 body
+	player.state_machine.transition_to("Stunned")
+	player.knockback(Vector3(5.0, 2.0, 0.0))
+	await wait_physics_frames(20)
+	var body_pos := player.global_position
+	var model_pos := model.global_position
+	print("ragdoll: body=", body_pos, " model=", model_pos, " diff=", (model_pos - body_pos))
+	# 模型應跟 body 位移（水平差距小）
+	var hz_diff := Vector2(model_pos.x - body_pos.x, model_pos.z - body_pos.z).length()
+	assert_lt(hz_diff, 1.0, "ragdoll 時模型應跟 body 位移")

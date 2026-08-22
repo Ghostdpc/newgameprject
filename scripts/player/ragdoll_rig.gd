@@ -136,12 +136,16 @@ func _stop_sim() -> void:
 func is_standing_up() -> bool:
 	return _stand_timer >= 0.0
 
-## 延遲啟動模擬（確保物理骨已入樹並初始化）
+## 延遲啟動模擬（hips 不模擬，跟隨骨架跟 body 位移；其他骨瘫軟做姿態）
 func _start_sim() -> void:
-	if _simulator:
-		_simulator.physical_bones_start_simulation()
-	if skeleton:
-		skeleton.force_update_all_bone_transforms()
+	if not _simulator:
+		return
+	var sim_bones: Array = []
+	for bone_name in RIG_BONES:
+		if bone_name == "hips":
+			continue
+		sim_bones.append(bone_name)
+	_simulator.physical_bones_start_simulation(sim_bones)
 
 ## 對全身施以衝量（僅主幹骨，避免四肢放大位移）
 func apply_impulse(direction: Vector3) -> void:
@@ -159,3 +163,12 @@ func reset() -> void:
 ## 查詢布娃娃是否啟用
 func is_ragdoll_enabled() -> bool:
 	return _ragdoll_enabled
+
+## 取得 hips 物理骨當前世界位置（用於站起時同步 body）
+func get_hips_position() -> Vector3:
+	if not _simulator:
+		return Vector3.ZERO
+	var hips: Node = _simulator.get_node_or_null("Phys_hips")
+	if hips:
+		return (hips as PhysicalBone3D).global_position
+	return Vector3.ZERO

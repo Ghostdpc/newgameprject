@@ -28,14 +28,12 @@ func enter() -> void:
 		controller.velocity.x = _dive_direction.x * DIVE_FORCE
 		controller.velocity.z = _dive_direction.z * DIVE_FORCE
 
-## 擊中目標：使目標進入倒地狀態（布娃娃 + 擊飛位移）
+## 擊中目標：使目標進入倒地狀態（body 擊飛 + ragdoll 瘫軟姿態）
 func hit_target(target: PlayerController) -> void:
 	if _has_hit:
 		return
 	_has_hit = true
-	# 目標進入 Stunned（啟用布娃娃倒地）
 	target.state_machine.transition_to("Stunned")
-	# body 擊飛位移（mesh 跟隨 body，不脫節）
 	target.knockback(_dive_direction * HIT_FORCE + Vector3.UP * HIT_UPWARD)
 	EventBus.item_used.emit(-1, null)
 
