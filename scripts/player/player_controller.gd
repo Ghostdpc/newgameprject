@@ -139,6 +139,8 @@ func _process(delta: float) -> void:
 	if spring_rig:
 		spring_rig.velocity_hints = Vector2(velocity.x, velocity.z)
 		spring_rig.root_velocity = velocity
+	if GameManager.current_stage == GameManager.GameStage.SCORING:
+		return
 	state_machine.update(delta)
 	_update_animation()
 	if player_input.is_use_item_just_pressed():
@@ -202,6 +204,11 @@ func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)
 	state_machine.physics_update(delta)
 	if is_dead():
+		move_and_slide()
+		return
+	if GameManager.current_stage == GameManager.GameStage.SCORING:
+		velocity.x = move_toward(velocity.x, 0.0, ACCELERATION * delta)
+		velocity.z = move_toward(velocity.z, 0.0, ACCELERATION * delta)
 		move_and_slide()
 		return
 	move_and_slide()
