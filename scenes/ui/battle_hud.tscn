@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="Script" path="res://scripts/ui/player_hud.gd" id="2_phud"]
 [ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="3_theme"]
 [ext_resource type="Script" path="res://scripts/ui/focus_reticle.gd" id="4_ret"]
+[ext_resource type="Script" path="res://scripts/ui/off_screen_indicator.gd" id="5_off"]
 
 [sub_resource type="StyleBoxFlat" id="badge_style"]
 content_margin_left = 10.0
@@ -161,6 +162,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="OffScreenIndicator" type="Control" parent="MainLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_off")
 
 [node name="PlayerLayer" type="CanvasLayer" parent="."]
 layer = 100

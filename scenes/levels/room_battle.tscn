@@ -8,8 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://4lljd7ononot" path="res://scenes/camera/photo_camera_rig.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/ui/battle_hud.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/ui/scoring_screen.tscn" id="10"]
-[ext_resource type="PackedScene" uid="uid://crkxjlq0xv184" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb" id="11_room"]
-[ext_resource type="Script" uid="uid://bvarewras16w0" path="res://scripts/levels/room_preview.gd" id="12_rpreview"]
+[ext_resource type="Script" path="res://scripts/levels/stage_preview.gd" id="12_rpreview"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 
@@ -21,6 +20,11 @@ background_mode = 2
 sky = SubResource("SkyRes")
 ambient_light_source = 3
 ambient_light_energy = 0.9
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.1
+ssao_enabled = true
 
 [node name="RoomBattle" type="Node3D" unique_id=889601719]
 script = ExtResource("1")
@@ -51,9 +55,9 @@ light_energy = 0.72
 
 [node name="Stage" type="Node3D" parent="." unique_id=1172279687]
 
-[node name="Room" parent="Stage" unique_id=2078285664 instance=ExtResource("11_room")]
-transform = Transform3D(2.8339908, 0, 0, 0, 2.8339908, 0, 0, 0, 2.8339908, 0, 0, 0)
+[node name="Room" type="Node3D" parent="Stage" unique_id=2078285664]
 script = ExtResource("12_rpreview")
+scene_path = "res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb"
 room_scale = 30.0
 
 [node name="Actors" type="Node3D" parent="." unique_id=491013080]
@@ -79,6 +83,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -2)
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=529860567]
 transform = Transform3D(1, 0, 0, 0, 0.8603454, 0.5097115, 0, -0.5097115, 0.8603454, 0.72814155, 6.9369698, 7.376967)
+current = true
 fov = 50.0
 
 [node name="CameraController" type="Node" parent="MainCamera" unique_id=861699394]

@@ -16,6 +16,11 @@ background_mode = 2
 sky = SubResource("SkyRes")
 ambient_light_source = 3
 ambient_light_energy = 0.8
+tonemap_mode = 2
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.1
+ssao_enabled = true
 
 [sub_resource type="BoxMesh" id="CamBody"]
 size = Vector3(1.0, 0.75, 0.8)
@@ -46,6 +51,7 @@ shadow_enabled = true
 
 [node name="MainCamera" type="Camera3D" parent="."]
 position = Vector3(16, 13, 15)
+current = true
 fov = 50.0
 
 [node name="CameraController" type="Node" parent="MainCamera"]
@@ -54,10 +60,10 @@ script = ExtResource("2")
 [node name="PhotoViewport" type="SubViewport" parent="."]
 size = Vector2i(640, 360)
 render_target_update_mode = 4
+msaa_3d = 2
 
 [node name="PhotoCamera" type="Camera3D" parent="PhotoViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 12)
-current = true
 fov = 45.0
 near = 0.1
 far = 120.0

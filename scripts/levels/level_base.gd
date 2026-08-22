@@ -147,9 +147,49 @@ func _kill_and_respawn(player: PlayerController) -> void:
 	await get_tree().create_timer(RESPAWN_WAIT).timeout
 	marker.queue_free()
 
-## 場地範圍內隨機一點
+## 場地範圍內隨機一點（按舞台 AABB 鉗制，避免復活到地圖外）
 func _random_spawn_position() -> Vector3:
-	return Vector3(randf_range(-SPAWN_RANGE, SPAWN_RANGE), 1.0, randf_range(-SPAWN_RANGE, SPAWN_RANGE))
+	var bounds := _get_stage_bounds()
+	if bounds.size.x <= 0.1 or bounds.size.z <= 0.1:
+		return Vector3(randf_range(-SPAWN_RANGE, SPAWN_RANGE), 1.0, randf_range(-SPAWN_RANGE, SPAWN_RANGE))
+	const MARGIN := 0.5
+	var x := randf_range(bounds.position.x + MARGIN, bounds.end.x - MARGIN)
+	var z := randf_range(bounds.position.z + MARGIN, bounds.end.z - MARGIN)
+	return Vector3(x, 1.0, z)
+
+## 舞台 AABB（由 Stage 下所有 mesh 的全局包圍盒合併），失敗時回退 SPAWN_RANGE
+func _get_stage_bounds() -> AABB:
+	var root: Node = _stage_root if _stage_root else self
+	var bounds := AABB()
+	var found := false
+	for mi in _collect_mesh_instances(root):
+		var mesh: Mesh = mi.mesh
+		if mesh == null:
+			continue
+		var aabb := mesh.get_aabb()
+		for cx in [aabb.position.x, aabb.end.x]:
+			for cy in [aabb.position.y, aabb.end.y]:
+				for cz in [aabb.position.z, aabb.end.z]:
+					var p := mi.global_transform * Vector3(cx, cy, cz)
+					if found:
+						bounds = bounds.expand(p)
+					else:
+						bounds = AABB(p, Vector3.ZERO)
+						found = true
+	if not found:
+		return AABB(Vector3(-SPAWN_RANGE, 0.0, -SPAWN_RANGE), Vector3(SPAWN_RANGE * 2.0, 0.0, SPAWN_RANGE * 2.0))
+	return bounds
+
+func _collect_mesh_instances(root: Node) -> Array[MeshInstance3D]:
+	var result: Array[MeshInstance3D] = []
+	var stack: Array[Node] = [root]
+	while not stack.is_empty():
+		var n: Node = stack.pop_back()
+		if n is MeshInstance3D:
+			result.append(n as MeshInstance3D)
+		for c in n.get_children():
+			stack.append(c)
+	return result
 
 ## 讀秒期間在複活點顯示可見標記（黃色半透明光柱）
 func _create_respawn_marker(pos: Vector3) -> Node3D:
