@@ -13,6 +13,8 @@ enum EffectKind {
 	PLAYER_SPEED,    # 移速乘數 buff
 	SPAWN_TRAP,           # 在使用者位置生成放置物
 	BANANA_SLIDE,         # 香蕉皮滑行衝量 + 躺下
+	THROW_BOMB,           # 投擲炸彈：拋出物理體，引信後範圍爆炸
+	PLAYER_GRAY,          # 灰頭土臉：角色身上疊臟污貼花，隨時間褪去
 	# 服装专属效果（on_wear 生效 / on_remove 还原，duration = 0 永久持续）
 	GARMENT_HEAD_SCALE,   # 放大头部
 	GARMENT_BODY_SCALE,   # 放大身躯 + 加宽

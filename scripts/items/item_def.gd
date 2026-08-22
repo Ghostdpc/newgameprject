@@ -69,6 +69,8 @@ static func _parse_kind(s: String) -> ItemTypes.EffectKind:
 		"player_ragdoll":          return ItemTypes.EffectKind.PLAYER_RAGDOLL
 		"player_speed":            return ItemTypes.EffectKind.PLAYER_SPEED
 		"spawn_trap":              return ItemTypes.EffectKind.SPAWN_TRAP
+		"throw_bomb":              return ItemTypes.EffectKind.THROW_BOMB
+		"player_gray":             return ItemTypes.EffectKind.PLAYER_GRAY
 		"garment_head_scale":      return ItemTypes.EffectKind.GARMENT_HEAD_SCALE
 		"garment_body_scale":      return ItemTypes.EffectKind.GARMENT_BODY_SCALE
 		"garment_spring_wobble":   return ItemTypes.EffectKind.GARMENT_SPRING_WOBBLE

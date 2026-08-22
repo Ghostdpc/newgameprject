@@ -82,14 +82,17 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 			# 综合：相对加权分 × 质心接近系数（两者都好才高分）
 			center_norm = relative_cw * proximity
 
-		var outfit: float = clampf(float(meta.get("outfit", 0.0)), 0.0, 1.0)
-		var facing: float = 0.0 if ratio == 0.0 else clampf(float(meta.get("facing", 0.0)), 0.0, 1.0)
+		# 出镜（in_photo=false）玩家四维全 0：没被拍到就没有任何得分（含服装分）
+		var outfit: float = clampf(float(meta.get("outfit", 0.0)), 0.0, 1.0) if in_photo else 0.0
+		var facing: float = clampf(float(meta.get("facing", 0.0)), 0.0, 1.0) if in_photo else 0.0
 
 		var total01: float = weights.get("ratio", 0.0) * ratio \
 			+ weights.get("center", 0.0) * center_norm \
 			+ weights.get("outfit", 0.0) * outfit \
 			+ weights.get("facing", 0.0) * facing
-		var score := roundi(total01 * 100.0)
+		# 负面效果（被炸）积分惩罚：从总分扣除，clamp 到 0 下限
+		var penalty: int = int(meta.get("penalty", 0))
+		var score := maxi(0, roundi(total01 * 100.0) - penalty)
 
 		actor_results.append({
 			"player_index": idx,
@@ -101,6 +104,7 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 			"center": center_norm,
 			"outfit": outfit,
 			"facing": facing,
+			"penalty": penalty,
 			"dimensions": {
 				"ratio": {"label": "画面比例", "score": ratio * 100.0},
 				"center": {"label": "C位", "score": center_norm * 100.0},

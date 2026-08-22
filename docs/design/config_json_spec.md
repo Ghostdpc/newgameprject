@@ -150,6 +150,8 @@ data/configs/
 | `spawn_trap` | `world` | `trap_id: string` | 在使用者当前位置生成一个放置物（陷阱），trap_id 对应 `traps[]` 中的定义；见放置物系统 |
 | `player_stun` | `self` / `others` / `all` | `seconds: float` | 眩晕玩家（待实现）|
 | `player_ragdoll` | `self` / `others` / `all` | — | 触发布娃娃（待实现）|
+| `throw_bomb` | `world` | `throw_speed: float`<br>`fuse: float`<br>`radius: float`<br>`gray_duration: float`<br>`score_penalty: int` | 从使用者手前抛出炸弹（物理抛物线），`fuse` 秒后引爆；爆炸对半径 `radius` 内所有玩家施加灰头土脸贴花（持续 `gray_duration` 秒）并累计 `score_penalty` 积分惩罚 |
+| `player_gray` | `self` / `others` / `all` | `duration: float` | 灰头土脸：在目标玩家身上叠程序生成的脏污贴花，`duration` 秒后淡出 |
 
 ---
 
