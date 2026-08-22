@@ -126,6 +126,24 @@ func set_ragdoll_enabled(enabled: bool) -> void:
 		_set_collisions_enabled(false)
 		call_deferred("_stop_sim")
 
+## 動畫+物理混合模擬（active ragdoll 弱效果）：
+## influence 0~1 = 物理佔比，其餘由動畫提供目標姿態。
+## influence 小（0.15~0.4）→ 走路時四肢帶物理彈性/遲滯，不脫離動畫
+func set_blended_simulation(influence: float) -> void:
+	_ragdoll_enabled = true
+	if not _simulator:
+		push_error("RagdollRig: setup() 尚未調用")
+		return
+	_set_collisions_enabled(true)
+	if skeleton:
+		skeleton.reset_bone_poses()
+		skeleton.force_update_all_bone_transforms()
+	# 動畫繼續播（作為目標姿態）
+	if animation_player and not animation_player.is_playing():
+		animation_player.play("Walking_A")
+	for bone_name in RIG_BONES:
+		_simulator.physical_bones_start_simulation_on_bone(bone_name, influence)
+
 ## 控制物理骨碰撞啟用（未 ragdoll 時禁用避免推擠玩家）
 func _set_collisions_enabled(enabled: bool) -> void:
 	if not _simulator:
@@ -168,11 +186,17 @@ func _start_sim() -> void:
 	if skeleton:
 		skeleton.reset_bone_poses()
 		skeleton.force_update_all_bone_transforms()
-	# 應用最新調試阻尼（軟倒手感可運行時調）
+	# 應用最新調試阻尼（軟倒手感可運行時調）；TuneConfig 為 autoload，無則用默認
+	var tc := get_node_or_null("/root/TuneConfig")
+	var lin_damp := 0.3
+	var ang_damp := 0.3
+	if tc:
+		lin_damp = tc.ragdoll_linear_damp
+		ang_damp = tc.ragdoll_angular_damp
 	for bone in _simulator.find_children("*", "PhysicalBone3D", true, false):
 		var pb := bone as PhysicalBone3D
-		pb.linear_damp = TuneConfig.ragdoll_linear_damp
-		pb.angular_damp = TuneConfig.ragdoll_angular_damp
+		pb.linear_damp = lin_damp
+		pb.angular_damp = ang_damp
 	_simulator.physical_bones_start_simulation(sim_bones)
 
 ## 對全身施以衝量（僅主幹骨，避免四肢放大位移）
