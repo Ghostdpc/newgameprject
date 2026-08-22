@@ -17,6 +17,8 @@ const SHUTTER_SLOWMO_MS := 550
 @onready var _hud: HUD = get_node_or_null("HUD/MainLayer") as HUD
 
 var _slowmo_end_msec: int = 0
+## 拍照前 3 秒逐步减速慢放控制器（battle 倒數至 threshold 時啟動；道具加時回升則取消復原）
+var _shutter_slowmo: ShutterSlowmoController
 
 # ------------------------------------------------------------------
 # 碰撞分类：按 mesh 名称关键字匹配（不同资源命名不同，可在 Inspector 覆盖）
@@ -66,6 +68,10 @@ func _setup_level() -> void:
 	_ensure_room()
 	_generate_collisions()
 	_add_item_hotspots()
+	# 拍照前 3 秒逐步减速慢放（快門張力）：道具加時回升時自動取消復原
+	_shutter_slowmo = ShutterSlowmoController.new()
+	_shutter_slowmo.name = "ShutterSlowmo"
+	add_child(_shutter_slowmo)
 	# 结算界面：连接 player_hud + flow_finished
 	var scoring := get_node_or_null("ScoringScreen") as ScoringScreen
 	if scoring:
@@ -175,10 +181,16 @@ func _on_level_ready() -> void:
 	GameManager.start_game()
 
 func _on_level_battle_ended() -> void:
+	# 拍照觸發：取消减速慢放，回到正常再進 0.5x 定格快門
+	if _shutter_slowmo and _shutter_slowmo.active:
+		_shutter_slowmo.cancel()
 	Engine.time_scale = 0.5
 	_slowmo_end_msec = Time.get_ticks_msec() + SHUTTER_SLOWMO_MS
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# 倒數至拍照前 3 秒 → 逐步减速慢放（道具加時回升時 controller 內部會取消復原）
+	if _shutter_slowmo and GameManager.current_stage == GameManager.GameStage.BATTLE:
+		_shutter_slowmo.update_trigger(GameManager.stage_time_remaining)
 	if _slowmo_end_msec > 0 and Time.get_ticks_msec() >= _slowmo_end_msec:
 		_slowmo_end_msec = 0
 		Engine.time_scale = 1.0
