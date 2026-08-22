@@ -15,6 +15,7 @@ func apply(ctx: ItemContext) -> void:
 		push_warning("SpawnTrapEffect: unknown trap_id '%s'" % trap_id)
 		return
 	var instance := TrapInstance.new()
-	ctx.source_player.get_parent().add_child(instance)
+	# setup 先於 add_child，確保 collision_layer/mask 在進入物理世界前設置好
 	instance.setup(trap_def, ctx.source_player)
+	ctx.source_player.get_tree().current_scene.add_child(instance)
 	instance.global_position = ctx.source_player.global_position

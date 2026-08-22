@@ -14,12 +14,25 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 	owner_player = placer
 	_lifetime_timer = def.lifetime
 
+	collision_layer = 0  # 放置物自身不占物理層
+	collision_mask  = 2  # 檢測 layer=2（玩家層）
+
 	var shape := CollisionShape3D.new()
 	var capsule := CapsuleShape3D.new()
-	capsule.radius = 0.4
-	capsule.height = 0.2
+	capsule.radius = 0.45
+	capsule.height = 0.1
 	shape.shape = capsule
 	add_child(shape)
+
+	# 黃色扁平 Cube 占位（香蕉皮視覺）
+	var mesh_inst := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3(0.6, 0.05, 0.6)
+	mesh_inst.mesh = box
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.9, 0.1)
+	mesh_inst.material_override = mat
+	add_child(mesh_inst)
 
 	body_entered.connect(_on_body_entered)
 	add_to_group("traps")
