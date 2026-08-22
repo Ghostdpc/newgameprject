@@ -5,11 +5,13 @@
 extends Node
 
 enum GameStage {
-	MAIN_MENU,       # 主界面
-	THEME_ANNOUNCE,  # 主題公布
-	GRAB_CLOTHES,    # 搶衣服
-	BATTLE,          # 倒計時混戰（搶鏡頭）
-	SCORING,         # 系統評分
+	MAIN_MENU,       # S0 标题
+	LOBBY,           # S1+S2 玩家加入与人数确认
+	THEME_ANNOUNCE,  # S3 主題公布（3 秒）
+	GRAB_CLOTHES,    # （V1.3 流程已取消，duration=0 自动跳过）
+	BATTLE,          # S4 倒計時混戰（搶鏡頭）
+	SCORE_SHUTTER,   # S5 快门（由关卡演出，流程不驻留）
+	SCORING,         # S6+S7 系統評分 → 冠军结算
 }
 
 ## 階段推進順序（不含 MAIN_MENU，由 start_game 觸發）
@@ -24,6 +26,11 @@ var current_stage: GameStage = GameStage.MAIN_MENU
 var stage_time_remaining: float = 0.0
 var config: GameConfig
 
+## 倒计时倍率（时间道具：快进 2.0 / 慢放 0.5，默认 1.0）
+var time_rate: float = 1.0
+## 大厅确认的玩家数（2~4，由大厅界面写入，关卡读取）
+var lobby_player_count: int = 4
+
 var _stage_index: int = -1
 var _timer_active: bool = false
 
@@ -34,6 +41,7 @@ func _ready() -> void:
 ## 從主界面進入遊戲，重置流程
 func start_game() -> void:
 	_stage_index = -1
+	time_rate = 1.0
 	_advance_stage()
 
 ## 結算階段由玩家手動確認結束（用於 scoring_duration = 0 的情況）
@@ -55,6 +63,11 @@ func _transition_to(stage: GameStage) -> void:
 	if stage == GameStage.MAIN_MENU:
 		_timer_active = false
 		get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+		return
+
+	if stage == GameStage.LOBBY:
+		_timer_active = false
+		get_tree().change_scene_to_file("res://scenes/ui/lobby.tscn")
 		return
 
 	if stage == GameStage.BATTLE:
@@ -86,11 +99,37 @@ func _get_stage_duration(stage: GameStage) -> float:
 func _process(delta: float) -> void:
 	if not _timer_active:
 		return
-	stage_time_remaining -= delta
+	stage_time_remaining -= delta * time_rate
 	stage_time_remaining = maxf(stage_time_remaining, 0.0)
 	EventBus.stage_timer_updated.emit(stage_time_remaining)
 	if stage_time_remaining <= 0.0:
 		_timer_active = false
+		time_rate = 1.0
 		if current_stage == GameStage.BATTLE:
 			EventBus.battle_ended.emit()
 		_advance_stage()
+
+## 加时/减时（交互文档：减时最低保留 1 秒）。返回实际变化量（供飞字显示）
+func add_time(delta_seconds: float) -> float:
+	var before := stage_time_remaining
+	var after := before + delta_seconds
+	if delta_seconds < 0.0:
+		after = maxf(after, 1.0)
+	after = maxf(after, 0.0)
+	stage_time_remaining = after
+	EventBus.stage_timer_updated.emit(stage_time_remaining)
+	return after - before
+
+## 进入大厅（返回房间 / 标题→进入）
+func enter_lobby() -> void:
+	get_tree().paused = false
+	time_rate = 1.0
+	_timer_active = false
+	_transition_to(GameStage.LOBBY)
+
+## 返回标题
+func enter_title() -> void:
+	get_tree().paused = false
+	time_rate = 1.0
+	_timer_active = false
+	_transition_to(GameStage.MAIN_MENU)

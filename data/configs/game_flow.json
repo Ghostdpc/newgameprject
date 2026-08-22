@@ -1,7 +1,7 @@
 {
-  "_comment": "遊戲流程各階段時長（秒）。0 = 跳過；SCORING 的 0 = 等待玩家手動確認",
-  "theme_announce_duration": 0,
+  "_comment": "游戏流程各阶段时长（秒）。0 = 跳过；SCORING 的 0 = 等待结算界面驱动。对照交互文档 V1.0：主题 3 秒、混战 45 秒",
+  "theme_announce_duration": 3,
   "grab_clothes_duration": 0,
-  "battle_duration": 15,
+  "battle_duration": 45,
   "scoring_duration": 0
 }
