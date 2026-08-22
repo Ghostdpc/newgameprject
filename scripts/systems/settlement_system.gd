@@ -35,9 +35,12 @@ const DEFAULT_ID_COLORS: Array = [
 
 var _mask_viewport: SubViewport
 var _mask_camera: Camera3D
+var _mask_env: Environment
 var _busy: bool = false
 var _score_config: Dictionary = {}
 var _id_materials: Array = []   # Array[StandardMaterial3D]，按 player_index 索引
+var _suspended_effects: Array = []   # 掩码渲染期间挂起处理的 CharacterEffects
+var _main_cull_saved: Array = []     # 掩码渲染期间临时排除 MASK 层的主相机 cull_mask
 
 func _ready() -> void:
 	EventBus.photo_taken.connect(_on_photo_taken)
@@ -61,7 +64,23 @@ func _build_mask_viewport() -> void:
 	# 场景物体颜色不匹配任何 ID 色，不影响像素统计
 	_mask_camera.cull_mask = 1 | MASK_LAYER_BIT
 	_mask_camera.current = true
+	# 关键：给掩码相机一套干净 Environment，覆盖世界环境的 tonemap/glow/adjustment。
+	# 否则主场景 WorldEnvironment（Filmic tonemap + 去饱和 + glow）会把纯 ID 色偏移，
+	# 使 _match_actor 全部失配 → 掩码「看不到」玩家 → ratio/center 算不出。
+	_build_mask_env()
+	_mask_camera.environment = _mask_env
 	_mask_viewport.add_child(_mask_camera)
+
+## 干净掩码环境：线性 tonemap、无 glow/adjustment/ssao、纯黑背景。
+## unshaded ID 色原样输出（纯原色在 sRGB/linear 下不变），背景/天空为 0。
+func _build_mask_env() -> void:
+	_mask_env = Environment.new()
+	_mask_env.background_mode = Environment.BG_COLOR
+	_mask_env.background_color = Color(0.0, 0.0, 0.0, 1.0)
+	_mask_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	_mask_env.ambient_light_color = Color.WHITE
+	_mask_env.ambient_light_energy = 1.0
+	_mask_env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 
 func _build_id_materials() -> void:
 	_id_materials.clear()
@@ -97,16 +116,34 @@ func _analyze_async(texture: ViewportTexture) -> void:
 	var actors := _get_actors()
 	var override_table := _apply_id_overrides(actors)
 
+	# 隔离主画面：演员 mesh 已被改为「只在 MASK 层」，再让主相机排除 MASK 层，
+	# 则主相机既不渲染带 ID 材质的演员（不会变纯色），也不会误显示 MASK。
+	# 演员在主画面短暂不绘制（被快门白闪盖住），远好于闪现纯色。
+	_hide_mask_layer_from_main()
+
+	# 冻结 PhotoViewport：照片相机 cull_mask=1 已排除 MASK 层（此刻演员只在 MASK 层，
+	# 不冻结会渲成「没有演员的场景」）。冻结后照片 RT 保持快门那帧的干净画面。
+	var photo_vp := _get_photo_viewport() as SubViewport
+	var prev_photo_mode: int = -1
+	if photo_vp != null:
+		prev_photo_mode = photo_vp.render_target_update_mode
+		photo_vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
+
 	_sync_mask_camera(cam)
 	_mask_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var mask_image := _mask_viewport.get_texture().get_image()
 	if mask_image == null:
-		mask_image = Image.create_empty(MASK_SIZE.x, MASK_SIZE.y, false, Image.FORMAT_RGBA8)
+		mask_image = Image.create_empty(_mask_viewport.size.x, _mask_viewport.size.y, false, Image.FORMAT_RGBA8)
 	_mask_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 
 	_revert_id_overrides(override_table)
+	_restore_main_cull()
+
+	# 还原 PhotoViewport 更新模式（override 已撤销，恢复渲染的是干净照片）
+	if photo_vp != null and prev_photo_mode >= 0:
+		photo_vp.render_target_update_mode = prev_photo_mode
 
 	var results := _analyze(photo_image, mask_image, cam, actors)
 	_busy = false
@@ -114,14 +151,23 @@ func _analyze_async(texture: ViewportTexture) -> void:
 
 ## ---- ID 材质 override ----
 
-## 给所有演员 mesh 追加 layer 2 + ID 材质。
+## 给所有演员 mesh 设为「只在 MASK 层」 + ID 材质。
 ## 返回 override_table：Array[{mi, orig_layers, orig_override}]，还原用。
+##
+## 关键：设为 MASK-only（移除原 layer1）——配合主相机排除 MASK 层，
+## 主画面就不会渲染这些带 ID 材质的 mesh（不会闪现纯色）；MaskCamera 仍渲染它们。
+##
+## 注意：CharacterEffects._process 每帧把身体 mesh 的 material_override 重写成玩家 tint 色，
+## 会在掩码渲染的 await 帧里覆盖掉 ID 材质 → 掩码变真实色 → 颜色匹配失败。
+## 因此染色前挂起演员的 CharacterEffects 处理，还原时恢复。
 func _apply_id_overrides(actors: Array) -> Array:
 	var table: Array = []
+	_suspended_effects.clear()
 	for actor in actors:
 		var node := actor as Node3D
 		if node == null:
 			continue
+		_suspend_material_writers(node)
 		var idx: int = clampi(int(actor.player_index) if "player_index" in actor else 0, 0, _id_materials.size() - 1)
 		var mat: StandardMaterial3D = _id_materials[idx]
 		for mi in _collect_meshes(node):
@@ -130,17 +176,44 @@ func _apply_id_overrides(actors: Array) -> Array:
 				"orig_layers": mi.layers,
 				"orig_override": mi.material_override,
 			})
-			mi.layers = mi.layers | MASK_LAYER_BIT   # 追加 layer 2，保留 layer 1
+			mi.layers = MASK_LAYER_BIT   # 只在 MASK 层，主/照片相机（不含 MASK）不渲染
 			mi.material_override = mat
 	return table
 
-## 还原所有被修改的 mesh 的 layers 和 material_override
+## 还原所有被修改的 mesh 的 layers 和 material_override，并恢复被挂起的效果组件
 func _revert_id_overrides(table: Array) -> void:
 	for entry in table:
 		var mi: MeshInstance3D = entry["mi"]
 		if is_instance_valid(mi):
 			mi.layers = entry["orig_layers"]
 			mi.material_override = entry["orig_override"]
+	for fx in _suspended_effects:
+		if is_instance_valid(fx):
+			fx.set_process(true)
+	_suspended_effects.clear()
+
+## 挂起会每帧重写 material_override 的组件（CharacterEffects），避免覆盖 ID 材质
+func _suspend_material_writers(actor: Node3D) -> void:
+	var fx := actor.get_node_or_null("CharacterEffects")
+	if fx != null and fx.is_processing():
+		fx.set_process(false)
+		_suspended_effects.append(fx)
+
+## 掩码渲染期间让主相机排除 MASK 层：演员（此刻只在 MASK 层）不会显示在主画面上，
+## 避免快门瞬间人物闪现纯 ID 色。渲完 _restore_main_cull 还原。
+func _hide_mask_layer_from_main() -> void:
+	_main_cull_saved.clear()
+	for cam in get_tree().get_nodes_in_group("main_camera"):
+		if cam is Camera3D:
+			_main_cull_saved.append({"cam": cam, "cull": (cam as Camera3D).cull_mask})
+			(cam as Camera3D).cull_mask &= ~MASK_LAYER_BIT
+
+func _restore_main_cull() -> void:
+	for e in _main_cull_saved:
+		var cam: Camera3D = e["cam"]
+		if is_instance_valid(cam):
+			cam.cull_mask = e["cull"]
+	_main_cull_saved.clear()
 
 ## ---- 工具 ----
 
@@ -166,11 +239,28 @@ func _get_photo_camera() -> Camera3D:
 		return null
 	return controller.get_camera()
 
+## 掩码相机完全对齐拍照相机：位姿 + 投影（FRUSTUM/frustum_offset/size/keep_aspect）
+## + 视口分辨率。只复制 transform/fov 不够——PhotoCamera 用 PROJECTION_FRUSTUM
+## 裁到取景框，漏掉这些参数会导致掩码取景与照片完全对不上。
 func _sync_mask_camera(photo_cam: Camera3D) -> void:
 	_mask_camera.global_transform = photo_cam.global_transform
+	_mask_camera.projection = photo_cam.projection
+	_mask_camera.keep_aspect = photo_cam.keep_aspect
 	_mask_camera.fov = photo_cam.fov
+	_mask_camera.size = photo_cam.size
+	_mask_camera.frustum_offset = photo_cam.frustum_offset
 	_mask_camera.near = photo_cam.near
 	_mask_camera.far = photo_cam.far
+	# 视口分辨率必须与 PhotoViewport 一致，否则 KEEP_HEIGHT 下水平视野不同 → 取景错位
+	var photo_vp := _get_photo_viewport()
+	if photo_vp != null and photo_vp.size.x > 0 and photo_vp.size.y > 0:
+		_mask_viewport.size = photo_vp.size
+
+func _get_photo_viewport() -> Viewport:
+	var controller := CameraSystem.get_photo_controller()
+	if controller == null or not controller.has_method("get_render_viewport"):
+		return null
+	return controller.get_render_viewport()
 
 func _collect_meshes(root: Node) -> Array:
 	var result: Array = []
@@ -205,7 +295,9 @@ func _analyze(photo: Image, mask: Image, cam: Camera3D, actors: Array) -> Dictio
 	analyzer.color_tolerance = float(_score_config.get("color_tolerance", 0.06))
 	analyzer.min_visible_px = int(_score_config.get("min_visible_px", 20))
 
-	var results := analyzer.analyze(mask, meta, MASK_SIZE)
+	# 掩码尺寸以实际图像为准（视口分辨率已对齐 PhotoViewport）
+	var size: Vector2i = mask.get_size()
+	var results := analyzer.analyze(mask, meta, size)
 	results["photo"] = photo
 	results["mask"] = mask
 	return results

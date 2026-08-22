@@ -97,11 +97,10 @@
       "trigger": "on_use",
       "effects": [
         {
-          "_comment": "camera_offset 接口已预留，待实现",
           "kind": "camera_offset",
-          "target": "self",
-          "duration": 0.0,
-          "params": { "duration": 2.5 }
+          "target": "world",
+          "duration": 2.5,
+          "params": {}
         }
       ]
     }

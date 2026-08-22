@@ -2,7 +2,7 @@
 ## 输入：ID 掩码 Image + 每名演员元数据（颜色/朝向/服装绝对分）
 ## 输出：每名演员四维绝对分 + 0~100 总分 + 排名
 ##
-## 画面比例：玩家像素 ÷ 所有玩家像素总和（相对归一，占比最大者接近 1）
+## 画面比例：玩家像素 ÷ 所有玩家像素总和（玩家间相对占比，如 20/20 → 各 50%）
 ## C 位：    玩家中心加权 ÷ 所有玩家中心加权总和（相对归一），再乘距中心比例系数
 ## 服装/朝向：绝对分（0~1），不归一
 ##
@@ -47,7 +47,7 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 			counts[i] += 1
 			center_weights[i] += _center_weight(Vector2(x, y), center, half_diag)
 
-	# 所有玩家像素总和 / 中心加权总和（用于相对归一）
+	# 所有玩家像素总和 / 中心加权总和（用于玩家间相对归一）
 	var total_player_px: int = 0
 	var total_player_cw: float = 0.0
 	for i in actor_meta.size():
@@ -64,7 +64,7 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 		var visible_px: int = counts[i]
 		var in_photo: bool = visible_px >= min_visible_px
 
-		# 画面比例：玩家像素 ÷ 所有玩家像素和（相对归一）
+		# 画面比例：玩家像素 ÷ 所有玩家像素总和（玩家间相对占比，如 20/20 → 各 50%）
 		var ratio: float = 0.0
 		if in_photo and total_player_px > 0:
 			ratio = float(visible_px) / float(total_player_px)

@@ -175,8 +175,8 @@ func test_id_override_reverts_layers_and_material() -> void:
 	var actors: Array = [a]
 	var table: Array = settle._apply_id_overrides(actors)
 
-	# 染色后：layer 1 | layer 2；override = ID 材质
-	assert_eq(mi.layers, 1 | settle.MASK_LAYER_BIT, "染色后应追加 layer 2")
+	# 染色后：只在 MASK 层（移除原 layer 1）；override = ID 材质
+	assert_eq(mi.layers, settle.MASK_LAYER_BIT, "染色后应只在 MASK 层")
 	assert_ne(mi.material_override, orig_mat, "染色后应换成 ID 材质")
 
 	settle._revert_id_overrides(table)
