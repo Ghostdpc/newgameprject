@@ -12,8 +12,8 @@ const TINT_SHADER := preload("res://resources/ui/card_tint.gdshader")
 const BUBBLE_SIZE := 96.0        # 泡泡边长
 const ICON_SIZE := 52.0          # 图标边长
 const HEAD_OFFSET := Vector3(0.0, 1.7, 0.0)
-const LIFE_TOTAL := 2.5          # 总时长
-const LIFE_FLOAT := 1.4          # 开始上浮的时间点
+const LIFE_TOTAL := 2.0          # 总时长
+const LIFE_FLOAT := 0.7          # 开始上浮的时间点
 const FLOAT_PX := 70.0           # 上浮距离
 
 ## player_index -> 当前气泡数据 { root, player, age, visible_ok, tint_mat }

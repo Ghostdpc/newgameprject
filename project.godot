@@ -131,6 +131,10 @@ use_item_p2={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=2
 textures/vram_compression/import_etc2_astc=true
+textures/default_filters/use_nearest_mipmap_filter=true
 textures/default_filters/anisotropic_filtering_level=4
+anti_aliasing/quality/msaa_2d=2
 anti_aliasing/quality/msaa_3d=2
+textures/default_filters/texture_filter=2

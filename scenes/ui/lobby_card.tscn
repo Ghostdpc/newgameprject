@@ -1,0 +1,166 @@
+[gd_scene format=3 uid="uid://c4flh3blbm08c"]
+
+[ext_resource type="Script" uid="uid://cms547sx7s2hl" path="res://scripts/ui/lobby_card.gd" id="1_card"]
+[ext_resource type="Texture2D" uid="uid://bis023m2wwb5h" path="res://assets/textures/ui/lobby/card_face.png" id="2_face"]
+[ext_resource type="Texture2D" uid="uid://bdp6eo2rylwgu" path="res://assets/textures/ui/lobby/avatar_wire.png" id="3_wire"]
+[ext_resource type="Texture2D" uid="uid://bfgxappfd02ev" path="res://assets/textures/ui/card/card_p1.png" id="4_badge"]
+[ext_resource type="Texture2D" uid="uid://2tn6qrw6teda" path="res://assets/textures/ui/lobby/joined_banner.png" id="5_bjoin"]
+[ext_resource type="Texture2D" uid="uid://bh4xxe6q4ylsx" path="res://assets/textures/ui/lobby/ready_banner.png" id="6_bready"]
+[ext_resource type="Texture2D" uid="uid://du0m8m2cw67qw" path="res://assets/textures/ui/lobby/btn_triangle.png" id="7_tri"]
+[ext_resource type="Texture2D" uid="uid://dd2pql55ek6cf" path="res://assets/textures/ui/lobby/btn_cross.png" id="8_cr"]
+[ext_resource type="Texture2D" uid="uid://cirs45jbeb1m2" path="res://assets/textures/ui/lobby/btn_square.png" id="9_sq"]
+
+[node name="Card" type="Control" unique_id=1314249905]
+custom_minimum_size = Vector2(300, 480)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 300.0
+offset_bottom = 480.0
+script = ExtResource("1_card")
+
+[node name="CardFace" type="TextureRect" parent="." unique_id=255166469]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_face")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PBadge" type="TextureRect" parent="." unique_id=1049553478]
+layout_mode = 1
+offset_left = 17.0
+offset_top = -37.0
+offset_right = 115.0
+offset_bottom = 53.0
+texture = ExtResource("4_badge")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Avatar" type="TextureRect" parent="." unique_id=1033636172]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -95.0
+offset_top = 56.0
+offset_right = 95.0
+offset_bottom = 296.0
+grow_horizontal = 2
+texture = ExtResource("3_wire")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BannerJoined" type="TextureRect" parent="." unique_id=127823147]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 265.0
+offset_right = 287.0
+offset_bottom = 393.0
+texture = ExtResource("5_bjoin")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BannerReady" type="TextureRect" parent="." unique_id=1682670350]
+visible = false
+layout_mode = 1
+offset_left = 12.0
+offset_top = 265.0
+offset_right = 287.0
+offset_bottom = 393.0
+texture = ExtResource("6_bready")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PromptReady" type="Control" parent="." unique_id=673438631]
+visible = false
+anchors_preset = 0
+offset_left = 14.0
+offset_top = 396.0
+offset_right = 289.0
+offset_bottom = 446.0
+
+[node name="Icon" type="TextureRect" parent="PromptReady" unique_id=1206874415]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 0
+offset_left = 47.0
+offset_top = -7.0
+offset_right = 111.0
+offset_bottom = 57.0
+size_flags_vertical = 4
+texture = ExtResource("7_tri")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="PromptReady" unique_id=2075472567]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 3.0
+offset_right = 166.0
+offset_bottom = 42.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "准备就绪"
+
+[node name="PromptCancelReady" type="Control" parent="." unique_id=469436110]
+visible = false
+anchors_preset = 0
+offset_left = 14.0
+offset_top = 396.0
+offset_right = 289.0
+offset_bottom = 446.0
+
+[node name="Icon" type="TextureRect" parent="PromptCancelReady" unique_id=216726642]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 0
+offset_left = 46.0
+offset_top = -7.0
+offset_right = 110.0
+offset_bottom = 57.0
+size_flags_vertical = 4
+texture = ExtResource("8_cr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="PromptCancelReady" unique_id=1852023366]
+layout_mode = 0
+offset_left = 113.0
+offset_top = 6.0
+offset_right = 225.0
+offset_bottom = 45.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 26
+text = "取消准备"
+
+[node name="PromptJoin" type="Control" parent="." unique_id=658131734]
+anchors_preset = 0
+offset_left = 14.0
+offset_top = 396.0
+offset_right = 289.0
+offset_bottom = 446.0
+
+[node name="Icon" type="TextureRect" parent="PromptJoin" unique_id=511091026]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 0
+offset_left = 47.0
+offset_top = -7.0
+offset_right = 111.0
+offset_bottom = 57.0
+size_flags_vertical = 4
+texture = ExtResource("9_sq")
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="PromptJoin" unique_id=662657271]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 3.0
+offset_right = 166.0
+offset_bottom = 42.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "加入游戏"
