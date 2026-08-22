@@ -36,10 +36,11 @@ func set_ragdoll(enabled: bool) -> void:
 		return
 	ragdoll_rig.set_ragdoll_enabled(enabled)
 
-## 布娃娃啟動後對全身施衝量（用於擊飛）
-func ragdoll_impulse(direction: Vector3) -> void:
-	if ragdoll_rig:
-		ragdoll_rig.apply_impulse(direction)
+## 擊飛：body 位移（不施加到物理骨，避免 mesh 脫離 body）
+func knockback(direction: Vector3) -> void:
+	velocity.x = direction.x
+	velocity.z = direction.z
+	velocity.y = direction.y
 
 ## 倒地後站起，由調用方確保已關閉 ragdoll
 func stand_up() -> void:

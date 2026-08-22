@@ -28,15 +28,15 @@ func enter() -> void:
 		controller.velocity.x = _dive_direction.x * DIVE_FORCE
 		controller.velocity.z = _dive_direction.z * DIVE_FORCE
 
-## 擊中目標：使目標進入倒地狀態（布娃娃 + 擊飛）
+## 擊中目標：使目標進入倒地狀態（布娃娃 + 擊飛位移）
 func hit_target(target: PlayerController) -> void:
 	if _has_hit:
 		return
 	_has_hit = true
 	# 目標進入 Stunned（啟用布娃娃倒地）
 	target.state_machine.transition_to("Stunned")
-	# 布娃娃啟動為延遲操作，衝量也延遲，確保模擬已開啟
-	target.call_deferred("ragdoll_impulse", _dive_direction * HIT_FORCE + Vector3.UP * HIT_UPWARD)
+	# body 擊飛位移（mesh 跟隨 body，不脫節）
+	target.knockback(_dive_direction * HIT_FORCE + Vector3.UP * HIT_UPWARD)
 	EventBus.item_used.emit(-1, null)
 
 func physics_update(delta: float) -> void:
