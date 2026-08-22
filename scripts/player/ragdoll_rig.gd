@@ -18,6 +18,27 @@ const RIG_BONES: Array[String] = [
 
 var _ragdoll_enabled: bool = false
 var _simulator: PhysicalBoneSimulator3D
+var _stand_from: Array[Transform3D] = []
+var _stand_to: Array[Transform3D] = []
+var _stand_timer: float = -1.0
+
+const STAND_DURATION: float = 0.4
+
+func _ready() -> void:
+	set_process(true)
+
+func _process(delta: float) -> void:
+	# 站起插值：骨骼從癱倒姿態平滑過渡到站立
+	if _stand_timer < 0.0:
+		return
+	_stand_timer += delta
+	var t := clampf(_stand_timer / STAND_DURATION, 0.0, 1.0)
+	for i in skeleton.get_bone_count():
+		skeleton.set_bone_global_pose(i, _stand_from[i].interpolate_with(_stand_to[i], t))
+	if t >= 1.0:
+		_stand_timer = -1.0
+		if animation_player:
+			animation_player.play("T-Pose")
 
 ## 初始化：為骨架的 RIG_BONES 生成 PhysicalBone（掛在 simulator 下）
 func setup(skel: Skeleton3D, anim: AnimationPlayer) -> void:
@@ -48,6 +69,9 @@ func _build_physical_bones() -> void:
 		phys.linear_damp = 3.0
 		phys.angular_damp = 3.0
 		phys.can_sleep = true
+		# 物理骨僅與地面(1)和其他物理骨(4)碰撞，不與玩家 body(2)交互
+		phys.collision_layer = 4
+		phys.collision_mask = 5   # 1(地面) + 4(物理骨)
 		_simulator.add_child(phys)
 		var shape := CapsuleShape3D.new()
 		shape.radius = 0.1
@@ -80,8 +104,6 @@ func set_ragdoll_enabled(enabled: bool) -> void:
 	else:
 		_set_collisions_enabled(false)
 		call_deferred("_stop_sim")
-		if animation_player:
-			animation_player.play("T-Pose")
 
 ## 控制物理骨碰撞啟用（未 ragdoll 時禁用避免推擠玩家）
 func _set_collisions_enabled(enabled: bool) -> void:
@@ -92,19 +114,34 @@ func _set_collisions_enabled(enabled: bool) -> void:
 			if child is CollisionShape3D:
 				(child as CollisionShape3D).disabled = not enabled
 
-## 延遲關閉模擬並恢復站姿（保留骨架當前位置，避免站起彈回）
+## 延遲關閉模擬，啟動站起插值（避免瞬移）
 func _stop_sim() -> void:
 	if not _simulator:
 		return
 	var saved_gt: Transform3D = skeleton.global_transform
+	# 先記錄當前（癱倒）姿態 stop 之前，stop 會立即恢復站姿
+	_stand_from.clear()
+	for i in skeleton.get_bone_count():
+		_stand_from.append(skeleton.get_bone_global_pose(i))
 	_simulator.physical_bones_stop_simulation()
 	skeleton.reset_bone_poses()
+	# 記錄目標（站立）姿態
+	_stand_to.clear()
+	for i in skeleton.get_bone_count():
+		_stand_to.append(skeleton.get_bone_global_pose(i))
 	skeleton.global_transform = saved_gt
+	_stand_timer = 0.0
+
+## 是否正在站起插值（插值期間動畫播放器不應接管骨骼）
+func is_standing_up() -> bool:
+	return _stand_timer >= 0.0
 
 ## 延遲啟動模擬（確保物理骨已入樹並初始化）
 func _start_sim() -> void:
 	if _simulator:
 		_simulator.physical_bones_start_simulation()
+	if skeleton:
+		skeleton.force_update_all_bone_transforms()
 
 ## 對全身施以衝量（僅主幹骨，避免四肢放大位移）
 func apply_impulse(direction: Vector3) -> void:

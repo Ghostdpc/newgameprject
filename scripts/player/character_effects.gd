@@ -22,7 +22,13 @@ const PART_PATTERNS: Dictionary = {
 
 @export var character_root: Node3D
 
-var _base_colors: Dictionary = {}
+## 角色基礎色（玩家色），paint/gray 在此之上疊加
+var base_color: Color = Color.WHITE:
+	set(value):
+		base_color = value
+		_apply_all()
+
+var _base_materials: Dictionary = {}  # instance_id -> 初始材質
 var _meshes: Array[MeshInstance3D] = []
 
 var _paints: Dictionary = {}   # instance_id -> {color, amount, tween}
@@ -135,29 +141,21 @@ func _apply_all() -> void:
 		var gray_amt: float = 0.0
 		if _grays.has(id):
 			gray_amt = float(_grays[id].get("amount", 0.0))
-		if paint_amt <= 0.0 and gray_amt <= 0.0:
-			mesh.material_override = null
-			continue
-		var col := _collect_base_color(mesh)
+		var col := base_color
 		if paint_amt > 0.0:
 			col = col.lerp(paint_col, paint_amt)
 		if gray_amt > 0.0:
 			col = col.lerp(GRAY_COLOR, gray_amt)
 		mesh.material_override = _make_tinted_material(mesh, col)
 
-func _collect_base_color(mesh: MeshInstance3D) -> Color:
+func _initial_material(mesh: MeshInstance3D) -> Material:
 	var id := mesh.get_instance_id()
-	if _base_colors.has(id):
-		return _base_colors[id]
-	var base := Color.WHITE
-	var src: Material = mesh.get_active_material(0)
-	if src is StandardMaterial3D:
-		base = (src as StandardMaterial3D).albedo_color
-	_base_colors[id] = base
-	return base
+	if not _base_materials.has(id):
+		_base_materials[id] = mesh.get_active_material(0)
+	return _base_materials[id]
 
 func _make_tinted_material(mesh: MeshInstance3D, color: Color) -> Material:
-	var src: Material = mesh.get_active_material(0)
+	var src: Material = _initial_material(mesh)
 	if src:
 		var mat: Material = src.duplicate()
 		if mat is StandardMaterial3D:

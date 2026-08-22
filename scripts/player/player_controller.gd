@@ -19,6 +19,8 @@ const ANIM_DIVE: String = "Jump_Full_Short"
 var player_input: PlayerInput
 var state_machine: PlayerStateMachine
 var ragdoll_rig: RagdollRig
+var outfit_manager: OutfitManager
+var character_effects: CharacterEffects
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
@@ -27,7 +29,8 @@ func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
 	_setup_state_machine()
 	_setup_model()
-	_apply_player_color()
+	_setup_outfit()
+	apply_player_color(player_color)
 	add_to_group("players")
 
 ## 開關布娃娃（被擊倒時進入物理倒地）
@@ -56,6 +59,11 @@ func _physics_process(delta: float) -> void:
 	state_machine.physics_update(delta)
 	move_and_slide()
 	_check_dive_hit()
+	# ragdoll 時強制骨架 mesh 對齊 body，避免 mesh 滯後於擊飛
+	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
+		var model := get_node_or_null("Model")
+		if model:
+			(model as Node3D).global_position = global_position
 
 ## 飛撲狀態碰撞檢測：命中其他玩家則擊飛
 func _check_dive_hit() -> void:
@@ -142,6 +150,8 @@ func _update_animation() -> void:
 		return
 	if state_machine.current_state_name == "Stunned":
 		return
+	if ragdoll_rig and ragdoll_rig.is_standing_up():
+		return
 	var anim_name := _anim_for_state(state_machine.current_state_name)
 	if anim_name != _current_anim:
 		_animation_player.play(anim_name)
@@ -167,17 +177,15 @@ func _find_animation_player(n: Node) -> AnimationPlayer:
 			return r
 	return null
 
-func _apply_player_color() -> void:
-	var model := get_node_or_null("Model")
-	if not model:
-		return
-	var material := StandardMaterial3D.new()
-	material.albedo_color = player_color
-	_set_mesh_override(model, material)
+## 定位換裝系統與角色效果組件
+func _setup_outfit() -> void:
+	outfit_manager = get_node_or_null("OutfitManager") as OutfitManager
+	character_effects = get_node_or_null("CharacterEffects") as CharacterEffects
 
-func _set_mesh_override(n: Node, material: Material) -> void:
-	if n is MeshInstance3D:
-		for i in (n as MeshInstance3D).get_surface_override_material_count():
-			(n as MeshInstance3D).set_surface_override_material(i, material)
-	for c in n.get_children():
-		_set_mesh_override(c, material)
+## 設定玩家顏色（走 OutfitManager + CharacterEffects 統一處理）
+func apply_player_color(color: Color) -> void:
+	player_color = color
+	if outfit_manager:
+		outfit_manager.player_color = color
+	if character_effects:
+		character_effects.base_color = color

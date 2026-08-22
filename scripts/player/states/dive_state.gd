@@ -6,8 +6,8 @@ extends BaseState
 const DIVE_FORCE: float = 9.0
 const DIVE_DURATION: float = 0.4
 const RECOVER_DURATION: float = 0.5
-const HIT_FORCE: float = 1.25
-const HIT_UPWARD: float = 0.75
+const HIT_FORCE: float = 4.0
+const HIT_UPWARD: float = 2.0
 
 var _timer: float = 0.0
 var _recover_timer: float = 0.0

@@ -45,3 +45,10 @@ func reload(config_name: String) -> Dictionary:
 func get_value(config_name: String, key: String, default_value: Variant = null) -> Variant:
 	var cfg := load_config(config_name)
 	return cfg.get(key, default_value)
+
+## 檢查某配置文件是否存在（未加載時只做文件存在判斷，不解析）
+func has_config(config_name: String) -> bool:
+	if _cache.has(config_name):
+		return true
+	var path := CONFIG_ROOT + config_name + ".json"
+	return FileAccess.file_exists(path)
