@@ -70,6 +70,12 @@ func is_dead() -> bool:
 	var st := state_machine.current_state_name
 	return st == "Death" or st == "RespawnWaiting" or st == "RespawnFall"
 
+## 香蕉皮踩中：进入倒地滑行状态（沿途撞人，类似飞扑）
+func start_banana_slide() -> void:
+	if is_dead():
+		return
+	state_machine.transition_to("BananaSlide")
+
 func _ready() -> void:
 	player_input = PlayerInput.new(player_index)
 	# 身材缩放要排在动画(priority 0)与弹簧骨骼(100)之后，避免骨骼 scale 被动画覆盖
@@ -372,6 +378,7 @@ func _setup_state_machine() -> void:
 	var dive := DiveState.new()
 	var fly := FlyState.new()
 	var stunned := StunnedState.new()
+	var banana_slide := BananaSlideState.new()
 	var death := DeathState.new()
 	var respawn_waiting := RespawnWaitingState.new()
 	var respawn_fall := RespawnFallState.new()
@@ -382,6 +389,7 @@ func _setup_state_machine() -> void:
 	dive.init(self)
 	fly.init(self)
 	stunned.init(self)
+	banana_slide.init(self)
 	death.init(self)
 	respawn_waiting.init(self)
 	respawn_fall.init(self)
@@ -392,6 +400,7 @@ func _setup_state_machine() -> void:
 	state_machine.register_state("Dive", dive)
 	state_machine.register_state("Fly", fly)
 	state_machine.register_state("Stunned", stunned)
+	state_machine.register_state("BananaSlide", banana_slide)
 	state_machine.register_state("Death", death)
 	state_machine.register_state("RespawnWaiting", respawn_waiting)
 	state_machine.register_state("RespawnFall", respawn_fall)
@@ -535,7 +544,7 @@ func _kowtow_impulse(head_impulse: Vector3, body_impulse: Vector3) -> void:
 func _ragdoll_in_use() -> bool:
 	if ragdoll_rig and ragdoll_rig.is_ragdoll_enabled():
 		return true
-	return state_machine.current_state_name == "Stunned"
+	return state_machine.current_state_name == "Stunned" or state_machine.current_state_name == "BananaSlide"
 
 func _reset_bone_scale(bone_idx: int) -> void:
 	if _model_skeleton and bone_idx != -1:
@@ -552,7 +561,7 @@ func _update_animation() -> void:
 		return
 	if is_dead():
 		return
-	if state_machine.current_state_name == "Stunned":
+	if state_machine.current_state_name == "Stunned" or state_machine.current_state_name == "BananaSlide":
 		return
 	if ragdoll_rig and ragdoll_rig.is_standing_up():
 		return
