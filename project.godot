@@ -24,6 +24,7 @@ CameraSystem="*res://scripts/autoload/camera_system.gd"
 ItemSystem="*res://scripts/items/item_system.gd"
 ItemSpawner="*res://scripts/items/item_spawner.gd"
 TuneConfig="*res://scripts/autoload/tune_config.gd"
+PropVfx="*res://scenes/fx/prop_vfx_layer.tscn"
 
 [display]
 
