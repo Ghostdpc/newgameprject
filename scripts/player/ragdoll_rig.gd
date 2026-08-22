@@ -190,6 +190,14 @@ func apply_impulse(direction: Vector3) -> void:
 		if (bone as PhysicalBone3D).name in core_names:
 			(bone as PhysicalBone3D).apply_impulse(direction)
 
+## 對單根物理骨施以衝量（磕头：head 骨向前下砸）
+func apply_bone_impulse(bone_name: String, direction: Vector3) -> void:
+	if not _ragdoll_enabled or not _simulator:
+		return
+	var target := _simulator.get_node_or_null("Phys_" + bone_name) as PhysicalBone3D
+	if target:
+		target.apply_impulse(direction)
+
 ## 重置布娃娃
 func reset() -> void:
 	set_ragdoll_enabled(false)
