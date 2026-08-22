@@ -113,6 +113,8 @@ func _analyze_async(texture: ViewportTexture) -> void:
 	if photo_image == null:
 		photo_image = _photo_or_empty(texture)
 
+	_save_photo_png(photo_image)
+
 	var cam := _get_photo_camera()
 	if cam == null:
 		push_warning("SettlementSystem: 找不到攝影相機，無法結算")
@@ -239,6 +241,23 @@ func _photo_or_empty(texture: ViewportTexture) -> Image:
 		push_warning("SettlementSystem: 截图为空（headless 渲染降级为零）")
 		return Image.create_empty(MASK_SIZE.x, MASK_SIZE.y, false, Image.FORMAT_RGBA8)
 	return img
+
+## 每轮结束把拍照照片落地为 png（user://photos/ 目录）
+func _save_photo_png(img: Image) -> void:
+	if img == null or img.is_empty():
+		return
+	var dir := "user://photos"
+	var d := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
+	if d != OK and d != ERR_ALREADY_EXISTS:
+		push_warning("SettlementSystem: 创建 %s 失败（err=%d）" % [dir, d])
+		return
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	var path := "%s/photo_%s.png" % [dir, stamp]
+	var err := img.save_png(path)
+	if err == OK:
+		print("SettlementSystem: 照片已保存 %s" % ProjectSettings.globalize_path(path))
+	else:
+		push_warning("SettlementSystem: 照片保存失败（err=%d）" % err)
 
 func _get_photo_camera() -> Camera3D:
 	var controller := CameraSystem.get_photo_controller()

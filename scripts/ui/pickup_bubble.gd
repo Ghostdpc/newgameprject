@@ -1,8 +1,9 @@
-## 职责：拾取反馈气泡（交互文档 §8 头顶拾取气泡）
-## - 捡到道具/服装时，玩家头顶浮现「泡泡+图标」气泡（沿用玩家卡泡泡视觉语言）
+## 职责：服装拾取反馈气泡（交互文档 §8 头顶拾取气泡）
+## - 装备服装时，玩家头顶浮现「泡泡+图标」气泡（沿用玩家卡泡泡视觉语言）
 ## - 泡泡染玩家身份色（card_tint 保明度染色），图标居中
 ## - 演出：弹入(0.18s) → 停留跟随 → 上浮+淡出；总时长 2.5s
 ## - 连续拾取时旧气泡立即替换；玩家在镜头外/隐藏时不显示
+## - 道具拾取图标已改由 PlayerHeadIcon 单独显示，此处不再响应 item_picked_up
 
 class_name PickupBubbles
 extends Control
@@ -22,15 +23,9 @@ var _active: Dictionary = {}
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	EventBus.item_picked_up.connect(_on_picked)
 	EventBus.outfit_changed.connect(_on_outfit_changed)
 
 # ---------------------------------------------------------------- 事件
-func _on_picked(player_index: int, item_id: String) -> void:
-	if not _stage_ok():
-		return
-	_spawn(player_index, _load_icon(item_id))
-
 func _on_outfit_changed(player_index: int, _slot: int, item_id: String) -> void:
 	if not _stage_ok() or item_id == "":
 		return
