@@ -50,9 +50,29 @@ func stand_up() -> void:
 	if ragdoll_rig:
 		ragdoll_rig.reset()
 
+## 持有的道具 id，空字符串表示无道具
+var held_item_id: String = ""
+
+## 拾取道具（覆盖式，捡到新的直接替换）
+func pickup_item(item_id: String) -> void:
+	held_item_id = item_id
+	var def := ItemSystem._item_config.get_item(item_id) if ItemSystem else null
+	if def and def.trigger == ItemTypes.Trigger.ON_PICKUP:
+		ItemSystem.use_item(self, item_id)
+		held_item_id = ""
+
+## 使用当前持有的道具（供输入系统或外部调用）
+func use_held_item() -> void:
+	if held_item_id.is_empty():
+		return
+	ItemSystem.use_item(self, held_item_id)
+	held_item_id = ""
+
 func _process(delta: float) -> void:
 	state_machine.update(delta)
 	_update_animation()
+	if player_input.is_use_item_just_pressed():
+		use_held_item()
 
 func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)

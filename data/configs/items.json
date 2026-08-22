@@ -1,0 +1,31 @@
+{
+  "_comment": "道具表。每条道具包含 trigger + effects[]",
+  "items": [
+    {
+      "id": "time_bomb",
+      "display_name": "时间炸弹",
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "timer_add",
+          "target": "world",
+          "duration": 0.0,
+          "params": { "delta": -3.0 }
+        }
+      ]
+    },
+    {
+      "id": "time_gift",
+      "display_name": "时间礼物",
+      "trigger": "on_pickup",
+      "effects": [
+        {
+          "kind": "timer_add",
+          "target": "world",
+          "duration": 0.0,
+          "params": { "delta": 5.0 }
+        }
+      ]
+    }
+  ]
+}

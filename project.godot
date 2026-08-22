@@ -21,6 +21,7 @@ ConfigLoader="*res://scripts/autoload/config_loader.gd"
 EventBus="*res://scripts/autoload/event_bus.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
 CameraSystem="*res://scripts/autoload/camera_system.gd"
+ItemSystem="*res://scripts/items/item_system.gd"
 
 [display]
 
