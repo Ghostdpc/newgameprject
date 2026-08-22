@@ -22,7 +22,7 @@ func apply(ctx: ItemContext) -> void:
 		push_warning("CameraOffsetEffect: no main camera controller")
 		return
 	# 记录触发前的相机位姿，供归位使用
-	var cam := controller.get_camera()
+	var cam: Camera3D = controller.get_camera() as Camera3D
 	if cam:
 		_origin_transform = cam.global_transform
 	_focus_behavior = PlayerFocusBehavior.new()

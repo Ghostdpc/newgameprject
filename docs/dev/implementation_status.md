@@ -192,6 +192,19 @@ camera_behavior_push_requested(target, behavior) / camera_behavior_pop_requested
 - 尾巴随角色屏幕左右半自动镜像；镜头外/角色隐藏时不显示。
 - 图标映射：服装 id 直查 ItemIcons，道具 id 兜底走 `ItemConfig.get_item_icon`。
 
+### 脚底朝向/位置指示（v1.3 美术升级）
+- 旧 ImmediateMesh 线段瓜子环 → 美术贴花：`assets/textures/fx/ground_marker.png`
+  （DreamMaker 生成：水滴环+实心核心+前向箭头，白形；已预处理 alpha=亮度）。
+- `player_marker.gd`：QuadMesh + StandardMaterial3D（unshaded + ALPHA，**正常深度测试**：
+  光圈贴地被角色身体自然遮挡，不渲染到角色之上；albedo_color 染 PlayerConfig 身份色），
+  箭头随角色朝 +Z（模型正面）旋转；呼吸脉冲 ±3.5%；
+  `player_index` 从父节点 PlayerController 同步（修了全红的旧问题）。
+- 尺寸常量 `MARKER_SIZE=2.0`；layer 4 不进合照。
+
+### 顺手修复
+- `camera_offset_effect.gd:25` 类型推断 Parse Error（`var cam :=` → 显式 `Camera3D`），
+  此前导致 camera_remote 道具效果注册失败。
+
 ### 流程归属整理
 - ScoringScreen 的 `setup/show_results/flow_finished` 统一由 `LevelBase` 接管；
   `demo_stage.gd` 移除重复接线，只保留 `_on_level_settlement` 里 `enter_scoring_mode()`。
