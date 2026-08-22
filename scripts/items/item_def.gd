@@ -3,6 +3,12 @@
 class_name ItemDef
 extends RefCounted
 
+enum VfxMode {
+	WORLD,          # 在世界坐標播放（使用者當前位置）
+	ATTACH_PLAYER,  # 作為使用者子節點跟隨移動
+	ATTACH_CAMERA,  # 掛載到相機前方（類全屏效果）
+}
+
 var id: String = ""
 var display_name: String = ""
 var icon: String = ""
@@ -12,6 +18,10 @@ var model: String = ""
 var texture: String = ""
 ## 模型統一縮放（貼合道具箱體積）
 var model_scale: float = 1.0
+## 使用/觸發道具時播放的特效場景路徑（res://，空 = 不播放）
+var use_vfx: String = ""
+## 特效播放位置模式
+var use_vfx_mode: VfxMode = VfxMode.WORLD
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_USE
 var effects: Array[ItemEffect] = []
 
@@ -24,6 +34,8 @@ static func from_dict(d: Dictionary) -> ItemDef:
 	def.model        = str(d.get("model", ""))
 	def.texture      = str(d.get("texture", ""))
 	def.model_scale  = float(d.get("model_scale", 1.0))
+	def.use_vfx      = str(d.get("use_vfx", ""))
+	def.use_vfx_mode = _parse_vfx_mode(str(d.get("use_vfx_mode", "world")))
 	def.trigger      = _parse_trigger(str(d.get("trigger", "on_use")))
 
 	var raw_effects: Array = d.get("effects", []) as Array
@@ -33,6 +45,12 @@ static func from_dict(d: Dictionary) -> ItemDef:
 		if effect:
 			def.effects.append(effect)
 	return def
+
+static func _parse_vfx_mode(s: String) -> VfxMode:
+	match s.to_lower():
+		"attach_player": return VfxMode.ATTACH_PLAYER
+		"attach_camera": return VfxMode.ATTACH_CAMERA
+		_:               return VfxMode.WORLD
 
 static func _parse_trigger(s: String) -> ItemTypes.Trigger:
 	match s.to_lower():

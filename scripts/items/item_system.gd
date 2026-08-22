@@ -52,6 +52,8 @@ func use_item(source_player: PlayerController, item_id: String, extra: Dictionar
 		push_warning("ItemSystem: unknown item_id '%s'" % item_id)
 		return
 
+	_spawn_use_vfx(def, source_player)
+
 	for effect in def.effects:
 		var targets := _resolve_targets(effect.target, source_player)
 		for target_player in targets:
@@ -70,6 +72,56 @@ func use_item(source_player: PlayerController, item_id: String, extra: Dictionar
 
 	var src_index: int = source_player.player_index if source_player else -1
 	EventBus.item_used.emit(src_index, item_id)
+
+## 在使用者位置實例化並播放一次性特效，播完自動銷毀
+func _spawn_use_vfx(def: ItemDef, source_player: PlayerController) -> void:
+	if def.use_vfx.is_empty():
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var scene: PackedScene = load(def.use_vfx)
+	if scene == null:
+		push_warning("ItemSystem: use_vfx scene not found '%s'" % def.use_vfx)
+		return
+	var vfx: Node3D = scene.instantiate() as Node3D
+	if vfx == null:
+		return
+	if "autoplay" in vfx:
+		vfx.autoplay = false
+	if "one_shot" in vfx:
+		vfx.one_shot = true
+
+	match def.use_vfx_mode:
+		ItemDef.VfxMode.ATTACH_PLAYER:
+			if source_player:
+				source_player.add_child(vfx)
+				vfx.position = Vector3.ZERO
+			else:
+				current_scene.add_child(vfx)
+		ItemDef.VfxMode.ATTACH_CAMERA:
+			var cam := get_viewport().get_camera_3d()
+			if cam:
+				cam.add_child(vfx)
+				vfx.position = Vector3(0.0, 0.0, -1.5)
+			else:
+				current_scene.add_child(vfx)
+				if source_player:
+					vfx.global_position = source_player.global_position
+		_: # VfxMode.WORLD
+			current_scene.add_child(vfx)
+			if source_player:
+				vfx.global_position = source_player.global_position
+
+	if vfx.has_method("play"):
+		vfx.play()
+	var anim: AnimationPlayer = vfx.get_node_or_null("AnimationPlayer")
+	if anim:
+		await anim.animation_finished
+	else:
+		await get_tree().create_timer(0.5).timeout
+	if is_instance_valid(vfx):
+		vfx.queue_free()
 
 func _process(delta: float) -> void:
 	var i := _active_effects.size() - 1

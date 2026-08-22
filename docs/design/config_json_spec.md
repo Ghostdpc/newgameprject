@@ -109,7 +109,17 @@ data/configs/
 | `id` | string | 唯一 ID，代码通过此查询 |
 | `display_name` | string | 显示名称（UI 用）|
 | `trigger` | string | 触发时机，见下方 **trigger 类型表** |
+| `use_vfx` | string（可选） | 使用道具时播放的特效场景路径（`res://`）；缺省则不播放 |
+| `use_vfx_mode` | string（可选） | 特效播放位置，见下方 **use_vfx_mode 说明**；缺省 `world` |
 | `effects` | array | 效果列表（顺序执行）|
+
+#### use_vfx_mode 说明
+
+| 值 | 行为 | 适用场景 |
+|----|------|---------|
+| `world` | 在使用者当前世界坐标播放，不跟随 | 放置物类（香蕉皮扔出）、原地触发 |
+| `attach_player` | 挂载到使用者节点，跟随玩家移动直到播完 | 自身增益类（能量饮料加速）|
+| `attach_camera` | 挂载到当前相机节点，靠近镜头呈现全屏感 | 全局效果类（时间加减、相机遥控）|
 
 #### trigger 类型表
 
@@ -176,6 +186,8 @@ data/configs/
 | `display_name` | string | 显示名称（UI 用）|
 | `lifetime` | number（秒） | 放置物在场上存活时长，到期自动消失；`0` = 永久存在直到触发 |
 | `trigger` | string | 放置物触发时机，当前仅支持 `on_step` |
+| `use_vfx` | string（可选） | 放置物被触发时播放的特效场景路径（`res://`）；缺省则不播放 |
+| `use_vfx_mode` | string（可选） | 特效播放位置，同道具 `use_vfx_mode`；放置物通常固定为 `world`（触发点） |
 | `effects` | array | 触发后对踩踏者执行的效果列表，字段同 effects[] |
 
 > **规则补充：**

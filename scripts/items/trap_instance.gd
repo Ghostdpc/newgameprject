@@ -72,6 +72,8 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 	_triggered = true
 
+	_spawn_trigger_vfx(player.global_position)
+
 	for effect in trap_def.effects:
 		var targets := _resolve_targets(effect.target, player)
 		for target_player in targets:
@@ -82,6 +84,32 @@ func _on_body_entered(body: Node3D) -> void:
 
 	EventBus.trap_triggered.emit(trap_def.id, player.player_index)
 	queue_free()
+
+func _spawn_trigger_vfx(spawn_pos: Vector3) -> void:
+	if trap_def.use_vfx.is_empty():
+		return
+	var scene: PackedScene = load(trap_def.use_vfx)
+	if scene == null:
+		return
+	var vfx: Node3D = scene.instantiate() as Node3D
+	if vfx == null:
+		return
+	if "autoplay" in vfx:
+		vfx.autoplay = false
+	if "one_shot" in vfx:
+		vfx.one_shot = true
+	# 放置物觸發固定在世界坐標（觸發點）播放
+	get_tree().current_scene.add_child(vfx)
+	vfx.global_position = spawn_pos
+	if vfx.has_method("play"):
+		vfx.play()
+	var anim: AnimationPlayer = vfx.get_node_or_null("AnimationPlayer")
+	if anim:
+		await anim.animation_finished
+	else:
+		await get_tree().create_timer(0.5).timeout
+	if is_instance_valid(vfx):
+		vfx.queue_free()
 
 ## 放置者離開後武裝：之後再踩（含放置者自己）才會觸發
 func _on_body_exited(body: Node3D) -> void:
