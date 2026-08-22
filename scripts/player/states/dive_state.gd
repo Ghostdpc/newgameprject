@@ -6,8 +6,8 @@ extends BaseState
 const DIVE_FORCE: float = 9.0
 const DIVE_DURATION: float = 0.4
 const RECOVER_DURATION: float = 0.5
-const HIT_FORCE: float = 14.0
-const HIT_UPWARD: float = 6.0
+const HIT_FORCE: float = 1.25
+const HIT_UPWARD: float = 0.75
 
 var _timer: float = 0.0
 var _recover_timer: float = 0.0
@@ -28,14 +28,15 @@ func enter() -> void:
 		controller.velocity.x = _dive_direction.x * DIVE_FORCE
 		controller.velocity.z = _dive_direction.z * DIVE_FORCE
 
-## 擊中目標：施加飛撲方向的擊飛衝量（單次）
+## 擊中目標：使目標進入倒地狀態（布娃娃 + 擊飛）
 func hit_target(target: PlayerController) -> void:
 	if _has_hit:
 		return
 	_has_hit = true
-	target.velocity.x = _dive_direction.x * HIT_FORCE
-	target.velocity.z = _dive_direction.z * HIT_FORCE
-	target.velocity.y = HIT_UPWARD
+	# 目標進入 Stunned（啟用布娃娃倒地）
+	target.state_machine.transition_to("Stunned")
+	# 布娃娃啟動為延遲操作，衝量也延遲，確保模擬已開啟
+	target.call_deferred("ragdoll_impulse", _dive_direction * HIT_FORCE + Vector3.UP * HIT_UPWARD)
 	EventBus.item_used.emit(-1, null)
 
 func physics_update(delta: float) -> void:

@@ -18,6 +18,7 @@ const ANIM_DIVE: String = "Jump_Full_Short"
 
 var player_input: PlayerInput
 var state_machine: PlayerStateMachine
+var ragdoll_rig: RagdollRig
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
@@ -28,6 +29,22 @@ func _ready() -> void:
 	_setup_model()
 	_apply_player_color()
 	add_to_group("players")
+
+## 開關布娃娃（被擊倒時進入物理倒地）
+func set_ragdoll(enabled: bool) -> void:
+	if not ragdoll_rig:
+		return
+	ragdoll_rig.set_ragdoll_enabled(enabled)
+
+## 布娃娃啟動後對全身施衝量（用於擊飛）
+func ragdoll_impulse(direction: Vector3) -> void:
+	if ragdoll_rig:
+		ragdoll_rig.apply_impulse(direction)
+
+## 倒地後站起，由調用方確保已關閉 ragdoll
+func stand_up() -> void:
+	if ragdoll_rig:
+		ragdoll_rig.reset()
 
 func _process(delta: float) -> void:
 	state_machine.update(delta)
@@ -71,16 +88,19 @@ func _setup_state_machine() -> void:
 	var move := MoveState.new()
 	var jump := JumpState.new()
 	var dive := DiveState.new()
+	var stunned := StunnedState.new()
 
 	idle.init(self)
 	move.init(self)
 	jump.init(self)
 	dive.init(self)
+	stunned.init(self)
 
 	state_machine.register_state("Idle", idle)
 	state_machine.register_state("Move", move)
 	state_machine.register_state("Jump", jump)
 	state_machine.register_state("Dive", dive)
+	state_machine.register_state("Stunned", stunned)
 
 	state_machine.start("Idle")
 
@@ -94,6 +114,21 @@ func _setup_model() -> void:
 	_set_animation_looping(ANIM_MOVE)
 	_set_animation_looping(ANIM_JUMP)
 	_set_animation_looping(ANIM_DIVE)
+	# 初始化布娃娃（綁定模型骨架）
+	ragdoll_rig = get_node_or_null("RagdollRig") as RagdollRig
+	if ragdoll_rig:
+		var skeleton := _find_skeleton(model)
+		if skeleton and _animation_player:
+			ragdoll_rig.setup(skeleton, _animation_player)
+
+func _find_skeleton(n: Node) -> Skeleton3D:
+	if n is Skeleton3D:
+		return n
+	for c in n.get_children():
+		var r := _find_skeleton(c)
+		if r:
+			return r
+	return null
 
 ## 設定單個動畫循環
 func _set_animation_looping(anim_name: String) -> void:
@@ -103,6 +138,8 @@ func _set_animation_looping(anim_name: String) -> void:
 ## 依當前狀態切換動畫
 func _update_animation() -> void:
 	if not _animation_player:
+		return
+	if state_machine.current_state_name == "Stunned":
 		return
 	var anim_name := _anim_for_state(state_machine.current_state_name)
 	if anim_name != _current_anim:
