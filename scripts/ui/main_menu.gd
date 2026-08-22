@@ -58,8 +58,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if (event as InputEventJoypadButton).button_index == JOY_BUTTON_B:
 			get_tree().quit()
 		else:
+			SoundMgr.play("confirm")
 			GameManager.enter_lobby()
 		return
 	if event is InputEventKey:
 		get_viewport().set_input_as_handled()
+		SoundMgr.play("confirm")
 		GameManager.enter_lobby()

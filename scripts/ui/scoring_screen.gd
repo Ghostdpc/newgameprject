@@ -58,6 +58,7 @@ func _bind_button(btn: Control, action: String) -> void:
 			_do_action(action))
 
 func _do_action(action: String) -> void:
+	SoundMgr.play("confirm" if action == "restart" else "ui_click")
 	flow_finished.emit(action)
 
 ## 评分 RT（ID 遮罩）调试面板：贴在结算画面右侧
@@ -151,6 +152,8 @@ func _pop_plus(index: int, score: float) -> void:
 	_run_total[index] = total
 	panel.set_total(total)
 	panel.pop_plus(score)
+	if score > 0.01:
+		SoundMgr.play("score_tick", true)
 
 var _run_total: Dictionary = {}
 
@@ -166,6 +169,7 @@ func _finish_champion() -> void:
 	var champion: Dictionary = actors[0]
 	var idx := int(champion.get("player_index", 0))
 	_player_hud.get_panel(idx).show_crown(true)
+	SoundMgr.play("champion")
 
 # ---------------------------------------------------------------- 输入
 func _unhandled_input(event: InputEvent) -> void:
