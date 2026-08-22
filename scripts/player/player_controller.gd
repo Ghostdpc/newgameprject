@@ -218,17 +218,30 @@ func _pickup_item_id() -> String:
 	var items := get_tree().get_nodes_in_group("pickup_items")
 	if items.is_empty():
 		return ""
-	# 取拾取範圍內最近的一個
-	var nearest: Node3D = null
-	var best_d := INF
+	# 只拾取面前的道具：半徑內 + 前向夾角在範圍內，取最正前方者
+	var fwd := global_basis.z  # 玩家面向
 	var range_sq := PICKUP_RANGE * PICKUP_RANGE
+	var nearest: Node3D = null
+	var best_score := -INF  # 越大越正前方
 	for item in items:
 		var n := item as Node3D
 		if not n:
 			continue
-		var d := global_position.distance_squared_to(n.global_position)
-		if d < range_sq and d < best_d:
-			best_d = d
+		var to := n.global_position - global_position
+		to.y = 0.0
+		var d_sq := to.length_squared()
+		if d_sq > range_sq:
+			continue
+		if d_sq < 0.0001:
+			d_sq = 0.0001
+		var dist := sqrt(d_sq)
+		# 正前方 = 夾角餘弦大 + 距離近 → 加權
+		var facing := to.normalized().dot(fwd)
+		if facing < 0.15:
+			continue  # 明確在背後或側後方，不拾
+		var score := facing - dist / PICKUP_RANGE * 0.5
+		if score > best_score:
+			best_score = score
 			nearest = n
 	if nearest and nearest.has_method("pickup_for"):
 		return nearest.pickup_for(self)

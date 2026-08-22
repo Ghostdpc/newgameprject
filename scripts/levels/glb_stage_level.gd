@@ -64,6 +64,13 @@ func get_spawn_points() -> Array[Vector3]:
 		Vector3(2.5, 0.5, -3.0),
 	]
 
+## 复活从策划摆放的出生点中选取，避免随机落在房间外。
+func _random_spawn_position() -> Vector3:
+	var spawn_points := get_spawn_points()
+	if not spawn_points.is_empty():
+		return spawn_points.pick_random()
+	return super._random_spawn_position()
+
 func _setup_level() -> void:
 	_ensure_room()
 	_generate_collisions()

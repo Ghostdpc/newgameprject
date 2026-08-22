@@ -99,7 +99,7 @@ func test_total_min_is_zero() -> void:
 # --- 完全出镜 ---
 
 func test_out_of_photo_zeroes_pixel_dims() -> void:
-	# 仅 5px 可见（低于 min_visible_px=20）→ 画面比例/C位归零，朝向/服装保留
+	# 仅 5px 可见（低于 min_visible_px=20）→ 画面比例/C位/朝向归零，服装保留
 	var img := _image_with_region(Color.RED, Rect2i(0, 0, 2, 2))
 	var analyzer = SA.new()
 	var results: Dictionary = analyzer.analyze(img, [_meta(0, Color.RED, 0.8, 0.6)], SIZE)
@@ -107,8 +107,18 @@ func test_out_of_photo_zeroes_pixel_dims() -> void:
 	assert_false(actor["in_photo"], "可见像素不足应判完全出镜")
 	assert_eq(actor["ratio"], 0.0, "出镜后画面比例应为 0")
 	assert_eq(actor["center"], 0.0, "出镜后 C 位应为 0")
-	assert_almost_eq(actor["facing"], 0.8, 0.001, "朝向不受出镜影响")
+	assert_eq(actor["facing"], 0.0, "出镜后朝向应为 0")
 	assert_almost_eq(actor["outfit"], 0.6, 0.001, "服装不受出镜影响")
+
+func test_facing_zero_when_ratio_zero() -> void:
+	# ratio=0 时 facing 强制为 0，即使 meta 中 facing=1.0
+	var img := Image.create_empty(SIZE.x, SIZE.y, false, Image.FORMAT_RGBA8)
+	img.fill(Color.BLACK)
+	var analyzer = SA.new()
+	var results: Dictionary = analyzer.analyze(img, [_meta(0, Color.RED, 1.0, 0.5)], SIZE)
+	var actor: Dictionary = results["actors"][0]
+	assert_eq(actor["ratio"], 0.0, "无像素时 ratio 应为 0")
+	assert_eq(actor["facing"], 0.0, "ratio=0 时 facing 应强制为 0")
 
 # --- 排名 ---
 

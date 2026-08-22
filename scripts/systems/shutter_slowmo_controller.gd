@@ -10,7 +10,7 @@
 class_name ShutterSlowmoController
 extends Node
 
-@export var trigger_seconds: float = 1.5   ## 剩餘秒 ≤ 此值啟動减速
+@export var trigger_seconds: float = 2.0   ## 剩餘秒 ≤ 此值啟動减速
 @export var decel_time: float = 3.0        ## 减速時長（秒，1→min_scale）
 @export var decel_curve: float = 0.3       ## <1 先快後慢
 @export var min_scale: float = 0.3         ## 最低時間流速：倒計時隨此速率收尾（過低會卡死流程）

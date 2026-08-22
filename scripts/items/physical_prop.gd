@@ -20,10 +20,15 @@ extends RigidBody3D
 @export var prop_angular_damp: float = 0.5
 ## 物品撞到玩家所需最小速度（低於此不算撞，避免被推時誤觸發）
 @export var hit_player_min_speed: float = 4.0
+## 被擊飛後對該玩家冷卻（毫秒）：同一玩家短時間內不重複被物品擊飛
+const LAUNCH_COOLDOWN_MS: int = 400
+
+## 每個玩家最後被此物品擊飛的時刻（instance_id -> msec），按玩家獨立冷卻
+var _player_launch_msec: Dictionary = {}
 
 func _ready() -> void:
 	collision_layer = 4
-	collision_mask = 3  # 地面(1) + 玩家(2)
+	collision_mask = 7  # 地面(1) + 玩家(2) + 其他物品(4)：物品間也互相碰撞
 	mass = prop_mass
 	linear_damp = prop_linear_damp
 	angular_damp = prop_angular_damp
@@ -37,15 +42,24 @@ func _ready() -> void:
 		_add_auto_shape()
 
 ## 飛出的物品撞到玩家：玩家進入 Fly 被擊飛 → 倒地
+## 防反覆：同一玩家擊飛後冷卻內不重複觸發；玩家已在倒地態(Fly/Stunned)不疊加
 func _on_body_entered(body: Node) -> void:
 	if freeze:
 		return
 	if body is PlayerController and linear_velocity.length() > hit_player_min_speed:
 		var player := body as PlayerController
+		var pid := player.get_instance_id()
+		var last: int = _player_launch_msec.get(pid, -100000)
+		if Time.get_ticks_msec() - last < LAUNCH_COOLDOWN_MS:
+			return
+		var cur := player.state_machine.current_state_name
+		if cur == "Fly" or cur == "Stunned":
+			return
 		var dir := linear_velocity.normalized()
 		player.state_machine.transition_to("Fly")
 		var fly := player.state_machine.get_current_state() as FlyState
 		fly.launch(dir * (linear_velocity.length() * 0.8) + Vector3.UP * 3.0)
+		_player_launch_msec[pid] = Time.get_ticks_msec()
 
 ## 玩家推動：沿方向施加連續推力（解決 move_and_slide 卡住不推）
 func push(direction: Vector3) -> void:

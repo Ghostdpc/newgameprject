@@ -83,7 +83,7 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 			center_norm = relative_cw * proximity
 
 		var outfit: float = clampf(float(meta.get("outfit", 0.0)), 0.0, 1.0)
-		var facing: float = clampf(float(meta.get("facing", 0.0)), 0.0, 1.0)
+		var facing: float = 0.0 if ratio == 0.0 else clampf(float(meta.get("facing", 0.0)), 0.0, 1.0)
 
 		var total01: float = weights.get("ratio", 0.0) * ratio \
 			+ weights.get("center", 0.0) * center_norm \
