@@ -116,7 +116,41 @@ func _process(delta: float) -> void:
 	state_machine.update(delta)
 	_update_animation()
 	if player_input.is_use_item_just_pressed():
+		_handle_interact_key()
+
+## 處理 E 互動鍵：有道具→使用；無道具→拾取附近道具
+func _handle_interact_key() -> void:
+	if held_item_id.is_empty():
+		# 身上无道具：尝试拾取附近的道具
+		var id := _pickup_item_id()
+		if not id.is_empty():
+			pickup_item(id)
+	else:
+		# 身上已有道具：使用它
 		use_held_item()
+
+## 拾取：讓地上道具實體自己把 id 告訴我們（實體未實現，返回空）
+func _pickup_item_id() -> String:
+	if not held_item_id.is_empty():
+		return ""
+	# 地上道具實體（group "pickup_items"）待同事/後續實現
+	var items := get_tree().get_nodes_in_group("pickup_items")
+	if items.is_empty():
+		return ""
+	# 取最近的一個
+	var nearest: Node3D = null
+	var best_d := INF
+	for item in items:
+		var n := item as Node3D
+		if not n:
+			continue
+		var d := global_position.distance_squared_to(n.global_position)
+		if d < best_d:
+			best_d = d
+			nearest = n
+	if nearest and (nearest as Node3D).has_method("pickup_for"):
+		return (nearest as Node3D).pickup_for(self)
+	return ""
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
