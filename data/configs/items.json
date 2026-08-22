@@ -124,6 +124,29 @@
           "params": {}
         }
       ]
+    },
+    {
+      "id": "bomb",
+      "display_name": "炸弹",
+      "icon": "item_bomb",
+      "model": "",
+      "texture": "",
+      "model_scale": 1.0,
+      "trigger": "on_use",
+      "effects": [
+        {
+          "kind": "throw_bomb",
+          "target": "world",
+          "duration": 0.0,
+          "params": {
+            "throw_speed": 8.0,
+            "fuse": 1.2,
+            "radius": 3.0,
+            "gray_duration": 6.0,
+            "score_penalty": 15
+          }
+        }
+      ]
     }
   ],
   "traps": [

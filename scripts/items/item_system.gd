@@ -44,6 +44,14 @@ func _register_effects() -> void:
 		load("res://scripts/items/effects/banana_slide_effect.gd")
 	)
 	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.THROW_BOMB,
+		load("res://scripts/items/effects/throw_bomb_effect.gd")
+	)
+	ItemEffectRegistry.register(
+		ItemTypes.EffectKind.PLAYER_GRAY,
+		load("res://scripts/items/effects/player_gray_effect.gd")
+	)
+	ItemEffectRegistry.register(
 		ItemTypes.EffectKind.GARMENT_HEAD_SCALE,
 		load("res://scripts/items/effects/garment_head_scale_effect.gd")
 	)

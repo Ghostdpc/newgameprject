@@ -302,6 +302,7 @@ func _analyze(photo: Image, mask: Image, cam: Camera3D, actors: Array) -> Dictio
 			"color": id_color,
 			"facing": _compute_facing(node, cam),
 			"outfit": _read_outfit_norm(node),
+			"penalty": actor.score_penalty if "score_penalty" in actor else 0,
 		})
 
 	var analyzer = ScoreAnalyzerScript.new()

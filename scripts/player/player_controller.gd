@@ -45,6 +45,8 @@ var spring_rig: SpringBoneRig
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
+## 被炸等负面效果累计的积分惩罚，快门结算时从总分扣除（clamp 到 0）
+var score_penalty: int = 0
 ## 移速乘數（1.0 = 正常；由 player_speed_effect 臨時修改）
 var speed_multiplier: float = 1.0
 ## 身材缩放（服装效果）：head_scale 放大头部 / body_scale 放大身躯 / body_width 加宽
@@ -88,6 +90,7 @@ func _ready() -> void:
 	_head_icon = get_node_or_null("PlayerHeadIcon") as PlayerHeadIcon
 	apply_player_color(player_color)
 	add_to_group("players")
+	EventBus.battle_started.connect(func(): score_penalty = 0)
 
 ## 開關布娃娃（被擊倒時進入物理倒地）
 func set_ragdoll(enabled: bool) -> void:

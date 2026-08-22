@@ -137,6 +137,21 @@ func _run_scoring() -> void:
 			_pop_plus(idx, float(d.get("score", 0.0)))
 			await _wait(0.12)
 		await _wait(0.5)
+	# 惩罚扣分（被炸等）：四维加分后统一亮出 -xx
+	var has_penalty := false
+	for actor in _results.get("actors", []):
+		if int(actor.get("penalty", 0)) > 0:
+			has_penalty = true
+			break
+	if has_penalty:
+		await _wait(0.4)
+		for actor in _results.get("actors", []):
+			var idx := int(actor.get("player_index", -1))
+			var penalty := int(actor.get("penalty", 0))
+			if penalty > 0:
+				_pop_minus(idx, float(penalty))
+				await _wait(0.12)
+		await _wait(0.5)
 	_sequence_running = false
 	_sequence_done = true
 	await _wait(0.6)
@@ -155,6 +170,18 @@ func _pop_plus(index: int, score: float) -> void:
 	if score > 0.01:
 		SoundMgr.play("score_tick", true)
 
+## -xx 弹字（惩罚）+ 总分扣减，clamp 到 0
+func _pop_minus(index: int, score: float) -> void:
+	if not _player_hud:
+		return
+	var panel: PlayerPanel = _player_hud.get_panel(index)
+	if not panel:
+		return
+	var total: float = maxf(0.0, _run_total.get(index, 0.0) - score)
+	_run_total[index] = total
+	panel.set_total(total)
+	panel.pop_minus(score)
+
 var _run_total: Dictionary = {}
 
 func _wait(seconds: float) -> void:
@@ -166,9 +193,15 @@ func _finish_champion() -> void:
 	var actors: Array = _results.get("actors", [])
 	if actors.is_empty() or not _player_hud:
 		return
-	var champion: Dictionary = actors[0]
-	var idx := int(champion.get("player_index", 0))
-	_player_hud.get_panel(idx).show_crown(true)
+	# 最高分（actors 已按 total 降序）；≤0 视为无人上镜，无冠军
+	var top: float = float(actors[0].get("total", 0.0))
+	if top <= 0.0:
+		return
+	# 并列冠军：所有 total == 最高分的玩家都戴皇冠
+	for actor in actors:
+		if is_equal_approx(float(actor.get("total", 0.0)), top):
+			var idx := int(actor.get("player_index", 0))
+			_player_hud.get_panel(idx).show_crown(true)
 	SoundMgr.play("champion")
 
 # ---------------------------------------------------------------- 输入
