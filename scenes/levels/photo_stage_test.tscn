@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/levels/photo_stage_test.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/camera/camera_controller.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/systems/settlement_system.gd" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/results_panel.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/ui/player_hud.gd" id="6"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
 
@@ -76,7 +77,7 @@ script = ExtResource("2")
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("3")
 
-[node name="PhotoPanel" type="TextureRect" parent="HUD"]
+[node name="CameraViewfinder" type="Control" parent="HUD"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -86,24 +87,62 @@ offset_right = 320.0
 offset_bottom = 384.0
 grow_horizontal = 2
 mouse_filter = 2
+
+[node name="PhotoRect" type="TextureRect" parent="HUD/CameraViewfinder"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="VBox" type="VBoxContainer" parent="HUD"]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 280.0
-offset_bottom = 200.0
+[node name="TimerLabel" type="Label" parent="HUD/CameraViewfinder"]
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = -70.0
+offset_right = 0.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 52
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
 
-[node name="StageLabel" type="Label" parent="HUD/VBox"]
-layout_mode = 2
+[node name="TopBar" type="Control" parent="HUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 40.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="StageLabel" type="Label" parent="HUD/TopBar"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -140.0
+offset_top = 6.0
+offset_right = 140.0
+offset_bottom = 34.0
+grow_horizontal = 2
+mouse_filter = 2
 theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
 text = "等待开始"
 
-[node name="TimerLabel" type="Label" parent="HUD/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 52
-text = ""
+[node name="PlayerHUD" type="Control" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6")
 
 [node name="ShutterFlash" type="ColorRect" parent="HUD"]
 anchors_preset = 15

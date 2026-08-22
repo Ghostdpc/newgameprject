@@ -19,6 +19,9 @@ signal player_exited_zone(player_index: int)
 signal item_picked_up(player_index: int, item_id: String)
 signal item_used(player_index: int, item_id: String)
 
+# 服装（槽位：0 头部 / 1 身体 / 2 手持）
+signal outfit_changed(player_index: int, slot: int, item_id: String)
+
 # 相機
 signal camera_behavior_push_requested(camera_target: String, behavior: Object)
 signal camera_behavior_pop_requested(camera_target: String, behavior: Object)

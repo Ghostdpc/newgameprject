@@ -9,7 +9,7 @@ extends LevelBase
 @export var human_player_count: int = 4
 
 ## 决胜时刻倒计时变红（HUD 标签）
-@onready var _timer_label: Label = get_node_or_null("HUD/VBox/TimerLabel") as Label
+@onready var _timer_label: Label = get_node_or_null("HUD/CameraViewfinder/TimerLabel") as Label
 
 func get_player_count() -> int:
 	return clampi(human_player_count, 2, 4)
