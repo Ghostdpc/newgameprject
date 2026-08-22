@@ -1,6 +1,8 @@
 ## 職責：開發調試可視化（碰撞體 / 骨骼線 / 角色數據面板），熱鍵 F1/F2/F3 切換
 ## 碰撞體與骨骼線均自繪並開啟 no_depth_test，穿透模型可見
 ## F3 數據面板：遍歷所有玩家，實時顯示角色持有道具/速度/狀態等運行時數據
+## F4 暫停/恢復倒計時（凍結結算用）
+## F5 對 P1 注入道具並立即使用（測試道具效果用）
 
 class_name DebugVisualizer
 extends Node3D
@@ -15,6 +17,19 @@ const PANEL_PADDING: int = 10
 var _collisions_on: bool = false
 var _bones_on: bool = false
 var _data_panel_on: bool = false
+var _timer_paused: bool = false
+
+## F5 循環注入的道具 id 列表（按順序循環）
+const DEBUG_ITEM_CYCLE: Array[String] = [
+	"energy_drink",
+	"banana_peel",
+	"fast_forward_crank",
+	"slow_hourglass",
+	"time_battery",
+	"time_scissors",
+	"camera_remote",
+]
+var _debug_item_index: int = 0
 
 var _bone_mesh: MeshInstance3D
 var _collision_mesh: MeshInstance3D
@@ -60,6 +75,12 @@ func _input(event: InputEvent) -> void:
 		elif event.physical_keycode == KEY_F3:
 			_toggle_data_panel()
 			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_F4:
+			_toggle_timer_pause()
+			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_F5:
+			_inject_item_to_p1()
+			get_viewport().set_input_as_handled()
 
 func _toggle_collisions() -> void:
 	_collisions_on = not _collisions_on
@@ -75,6 +96,32 @@ func _toggle_data_panel() -> void:
 	_data_panel_on = not _data_panel_on
 	_overlay.visible = _data_panel_on
 	print("DebugVisualizer: data_panel = ", _data_panel_on)
+
+## F4：暫停 / 恢復倒計時（凍結結算用）
+func _toggle_timer_pause() -> void:
+	_timer_paused = not _timer_paused
+	# time_scale = 0 凍結，1 恢復；不觸碰 stage_time_remaining 值
+	GameManager.time_scale = 0.0 if _timer_paused else 1.0
+	print("DebugVisualizer: timer_paused = ", _timer_paused,
+		"  (time_scale = ", GameManager.time_scale, ")")
+
+## F5：對 P1 注入下一個道具並立即使用
+func _inject_item_to_p1() -> void:
+	var players: Array = get_tree().get_nodes_in_group("players")
+	var p1: PlayerController = null
+	for node in players:
+		var pc := node as PlayerController
+		if pc and pc.player_index == 0:
+			p1 = pc
+			break
+	if p1 == null:
+		push_warning("DebugVisualizer: P1 not found")
+		return
+	var item_id: String = DEBUG_ITEM_CYCLE[_debug_item_index % DEBUG_ITEM_CYCLE.size()]
+	_debug_item_index += 1
+	p1.held_item_id = item_id
+	p1.use_held_item()
+	print("DebugVisualizer: injected item '%s' to P1" % item_id)
 
 func _process(_delta: float) -> void:
 	if _bones_on:

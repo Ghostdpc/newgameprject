@@ -24,6 +24,8 @@ const STAGE_ORDER: Array = [
 
 var current_stage: GameStage = GameStage.MAIN_MENU
 var stage_time_remaining: float = 0.0
+## 倒計時速率乘數（1.0 = 正常；由 timer_scale_effect 臨時修改）
+var time_scale: float = 1.0
 var config: GameConfig
 
 ## 倒计时倍率（时间道具：快进 2.0 / 慢放 0.5，默认 1.0）

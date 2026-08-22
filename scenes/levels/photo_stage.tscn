@@ -40,6 +40,26 @@ shadow_enabled = true
 
 [node name="Stage" type="Node3D" parent="."]
 
+[node name="ItemHotspots" type="Node3D" parent="."]
+
+[node name="Hotspot1" type="Node3D" parent="ItemHotspots"]
+position = Vector3(-4.0, 0.5, 0.0)
+
+[node name="Hotspot2" type="Node3D" parent="ItemHotspots"]
+position = Vector3(4.0, 0.5, 0.0)
+
+[node name="Hotspot3" type="Node3D" parent="ItemHotspots"]
+position = Vector3(0.0, 0.5, -3.5)
+
+[node name="Hotspot4" type="Node3D" parent="ItemHotspots"]
+position = Vector3(-3.0, 0.5, 3.0)
+
+[node name="Hotspot5" type="Node3D" parent="ItemHotspots"]
+position = Vector3(3.0, 0.5, 3.0)
+
+[node name="Hotspot6" type="Node3D" parent="ItemHotspots"]
+position = Vector3(0.0, 0.5, 0.0)
+
 [node name="Actors" type="Node3D" parent="."]
 
 [node name="SpawnPoints" type="Node3D" parent="."]

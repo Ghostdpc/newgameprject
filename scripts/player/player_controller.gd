@@ -6,6 +6,8 @@ extends CharacterBody3D
 const GRAVITY: float = 20.0
 const MOVE_SPEED: float = 6.0
 const ACCELERATION: float = 15.0
+## 拾取有效距離（米）
+const PICKUP_RANGE: float = 1.5
 
 const ANIM_IDLE: String = "Idle_A"
 const ANIM_MOVE: String = "Running_A"
@@ -34,6 +36,8 @@ var character_effects: CharacterEffects
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
+## 移速乘數（1.0 = 正常；由 player_speed_effect 臨時修改）
+var speed_multiplier: float = 1.0
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
@@ -120,13 +124,13 @@ func _process(delta: float) -> void:
 		return
 	state_machine.update(delta)
 	_update_animation()
-	if held_item_id.is_empty():
-		# 身上无道具：长按 E 拾取（可被打断）
-		_update_pickup_hold(delta)
-	else:
-		# 身上有道具：按 E 立即使用
-		if player_input.is_use_item_just_pressed():
+	if player_input.is_use_item_just_pressed():
+		if not held_item_id.is_empty():
+			# 身上有道具：立即使用
 			use_held_item()
+		else:
+			# 身上無道具：嘗試拾取附近道具
+			_try_pickup()
 
 ## 长按拾取逻辑：按住 0.8s 触发；移动/受控 打断
 func _update_pickup_hold(delta: float) -> void:
@@ -157,23 +161,23 @@ func _try_pickup() -> void:
 func _pickup_item_id() -> String:
 	if not held_item_id.is_empty():
 		return ""
-	# 地上道具實體（group "pickup_items"）待同事/後續實現
 	var items := get_tree().get_nodes_in_group("pickup_items")
 	if items.is_empty():
 		return ""
-	# 取最近的一個
+	# 取拾取範圍內最近的一個
 	var nearest: Node3D = null
 	var best_d := INF
+	var range_sq := PICKUP_RANGE * PICKUP_RANGE
 	for item in items:
 		var n := item as Node3D
 		if not n:
 			continue
 		var d := global_position.distance_squared_to(n.global_position)
-		if d < best_d:
+		if d < range_sq and d < best_d:
 			best_d = d
 			nearest = n
-	if nearest and (nearest as Node3D).has_method("pickup_for"):
-		return (nearest as Node3D).pickup_for(self)
+	if nearest and nearest.has_method("pickup_for"):
+		return nearest.pickup_for(self)
 	return ""
 
 func _physics_process(delta: float) -> void:
@@ -197,7 +201,7 @@ func _check_dive_hit() -> void:
 			dive.hit_target(collider as PlayerController)
 
 func apply_move(direction: Vector2) -> void:
-	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED
+	var target_velocity := Vector3(direction.x, 0.0, direction.y) * MOVE_SPEED * speed_multiplier
 	velocity.x = move_toward(velocity.x, target_velocity.x, ACCELERATION * get_physics_process_delta_time())
 	velocity.z = move_toward(velocity.z, target_velocity.z, ACCELERATION * get_physics_process_delta_time())
 	if direction.length_squared() > 0.0:

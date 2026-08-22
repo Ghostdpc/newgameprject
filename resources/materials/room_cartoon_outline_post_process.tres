@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://cys3207nm65pj"]
+
+[ext_resource type="Shader" uid="uid://b7nkq4hpx51qq" path="res://resources/shaders/toon_screen_outline.gdshader" id="1_outline"]
+
+[resource]
+resource_name = "RoomCartoonOutlinePostProcess"
+shader = ExtResource("1_outline")
+shader_parameter/outline_color = Color(0.055, 0.028, 0.075, 1)
+shader_parameter/outline_opacity = 0.7999999821184
+shader_parameter/outline_size = 3.0
+shader_parameter/edge_threshold = 0.1499999966472
+shader_parameter/edge_softness = 0.14000000665

@@ -22,13 +22,13 @@ EventBus="*res://scripts/autoload/event_bus.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
 CameraSystem="*res://scripts/autoload/camera_system.gd"
 ItemSystem="*res://scripts/items/item_system.gd"
+ItemSpawner="*res://scripts/items/item_spawner.gd"
 TuneConfig="*res://scripts/autoload/tune_config.gd"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/resizable=true
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

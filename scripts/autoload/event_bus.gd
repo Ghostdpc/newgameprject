@@ -18,6 +18,8 @@ signal player_exited_zone(player_index: int)
 # 道具
 signal item_picked_up(player_index: int, item_id: String)
 signal item_used(player_index: int, item_id: String)
+signal item_spawned(item_id: String, position: Vector3)
+signal trap_triggered(trap_id: String, player_index: int)
 
 # 服装（槽位：0 头部 / 1 身体 / 2 手持）
 signal outfit_changed(player_index: int, slot: int, item_id: String)
