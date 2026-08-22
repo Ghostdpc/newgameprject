@@ -62,11 +62,12 @@ func sync_body_to_ragdoll() -> void:
 		return
 	global_position = Vector3(hips_pos.x, global_position.y, hips_pos.z)
 
-## 出界死亡：停物理、關布娃娃、隱藏（等待重生）
+## 出界死亡：停物理、關布娃娃、清道具、隱藏（等待重生）
 func die() -> void:
 	if is_dead:
 		return
 	is_dead = true
+	clear_item()
 	set_ragdoll(false)
 	velocity = Vector3.ZERO
 	visible = false
@@ -110,6 +111,8 @@ func clear_item() -> void:
 	item_cleared.emit()
 
 func _process(delta: float) -> void:
+	if is_dead:
+		return
 	state_machine.update(delta)
 	_update_animation()
 	if player_input.is_use_item_just_pressed():
