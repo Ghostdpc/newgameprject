@@ -12,8 +12,8 @@
 
 [node name="RoomStageBattle" type="Node3D" unique_id=587974176]
 script = ExtResource("1")
-main_cam_pos = Vector3(6.857163, 15.9678135, -28.890018)
-main_cam_look = Vector3(0.458, -3.972, 3.455)
+main_cam_pos = Vector3(10, 7, 7)
+main_cam_look = Vector3(1, 1, -4)
 main_cam_fov = 45.0
 photo_cam_pos = Vector3(0, 2.5, 6)
 photo_cam_look = Vector3(0, 1.2, -1)
@@ -28,6 +28,18 @@ scene_path = "res://scenes/levels/room_stage.tscn"
 
 [node name="SpawnPoints" type="Node3D" parent="." unique_id=894845059]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.96382236, 0)
+
+[node name="PlayerSpawn1" type="Node3D" parent="SpawnPoints"]
+position = Vector3(-1, -0.46382236, 1)
+
+[node name="PlayerSpawn2" type="Node3D" parent="SpawnPoints"]
+position = Vector3(2.5, -0.46382236, -1)
+
+[node name="PlayerSpawn3" type="Node3D" parent="SpawnPoints"]
+position = Vector3(-1, -0.46382236, -3)
+
+[node name="PlayerSpawn4" type="Node3D" parent="SpawnPoints"]
+position = Vector3(2.5, -0.46382236, -3)
 
 [node name="ItemHotspots" type="Node3D" parent="." unique_id=21663240]
 
@@ -47,7 +59,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -2)
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1940083208]
-transform = Transform3D(0.110057555, 0.50661516, -0.85511893, 0, 0.8603454, 0.5097115, 0.9939252, -0.056097604, 0.09468751, -27.348568, 12.212242, 7.376967)
+transform = Transform3D(0.7739573, 0, -0.6332378, -0.2462803, 0.9212706, -0.3010092, 0.5833834, 0.3889222, 0.7130241, 10, 7, 7)
 current = true
 fov = 50.0
 

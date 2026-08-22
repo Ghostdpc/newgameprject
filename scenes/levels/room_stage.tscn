@@ -69,6 +69,7 @@
 [ext_resource type="Texture2D" uid="uid://dmtsxxq00ovdk" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_WildWest_BedRoll_1_D.png" id="64_pjk34"]
 [ext_resource type="Environment" uid="uid://bly4kk5loghdq" path="res://resources/environments/room_post_process.tres" id="99_post_process"]
 [ext_resource type="Material" uid="uid://cys3207nm65pj" path="res://resources/materials/room_cartoon_outline_post_process.tres" id="100_outline_post"]
+[ext_resource type="PackedScene" uid="uid://dof4nv68roj65" path="res://assets/models/human/Human.fbx" id="101_human"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q6di3"]
 render_priority = 0
@@ -3885,6 +3886,15 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_urk7n")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_scale_reference"]
+albedo_color = Color(1, 0.82, 0.12, 1)
+emission_enabled = true
+emission = Color(0.35, 0.23, 0.02, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_scale_reference"]
+material = SubResource("StandardMaterial_scale_reference")
+size = Vector3(1, 1, 1)
+
 [node name="RoomStage" type="Node3D" unique_id=568602606]
 script = ExtResource("1_style")
 fill_light = 0.055
@@ -3923,7 +3933,6 @@ light_color = Color(0.94, 0.89, 0.81, 1)
 light_energy = 0.38
 
 [node name="FortniteSkyeRoom" parent="." unique_id=964906877 instance=ExtResource("2_room")]
-transform = Transform3D(16.818626, 0, 0, 0, 16.818626, 0, 0, 0, 16.818626, 0, 0, 0)
 
 [node name="Agency_Door_01_mo" parent="FortniteSkyeRoom" index="0" unique_id=532632689]
 surface_material_override/0 = SubResource("ShaderMaterial_q6di3")
@@ -4615,5 +4624,16 @@ surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
 transform = Transform3D(-0.0087802615, 0, -9.103951e-06, 0, 0.0071193916, 0, 1.1227346e-05, 0, -0.0071193827, -2.2664356, 2.7419178, -10.41858)
 mesh = SubResource("ArrayMesh_ryjjf")
 surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
+
+[node name="ScaleReference" type="Node3D" parent="."]
+position = Vector3(0, 0, -4.5)
+
+[node name="OneMeterCube" type="MeshInstance3D" parent="ScaleReference"]
+position = Vector3(-1.2, 0.5, 0)
+mesh = SubResource("BoxMesh_scale_reference")
+
+[node name="HumanOneMeterReference" parent="ScaleReference" instance=ExtResource("101_human")]
+position = Vector3(1.2, -0.3345498, 0)
+scale = Vector3(0.01122195, 0.01122195, 0.01122195)
 
 [editable path="FortniteSkyeRoom"]
