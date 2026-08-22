@@ -47,11 +47,18 @@ static func build(model_path: String, texture_path: String, target_size: float, 
 			model.position.y += (aabb.size.y * 0.5) * fit
 	return root
 
+## 手動遞歸收集 MeshInstance3D，用 is 替代 find_children 類名字符串
+## （未入樹的實例上 find_children 類型過濾在 Godot 4 有時失效）
 static func _collect_meshes(node: Node) -> Array:
 	var result: Array = []
-	for child in node.find_children("*", "MeshInstance3D", true, false):
-		result.append(child)
+	_collect_meshes_recursive(node, result)
 	return result
+
+static func _collect_meshes_recursive(node: Node, result: Array) -> void:
+	if node is MeshInstance3D:
+		result.append(node)
+	for child in node.get_children():
+		_collect_meshes_recursive(child, result)
 
 static func _apply_texture(meshes: Array, texture_path: String) -> void:
 	if texture_path.is_empty():

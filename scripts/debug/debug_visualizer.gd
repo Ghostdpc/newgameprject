@@ -4,6 +4,7 @@
 ## F4 暫停/恢復倒計時（凍結結算用）
 ## F5 對 P1 注入道具並立即使用（測試道具效果用）
 ## F6 打開/關閉道具調試列表（點擊道具名立即對 P1 觸發效果）
+## F7 清除場上全部陷阱，在 P1 腳下强制生成一個香蕉皮（視覺排查用）
 
 class_name DebugVisualizer
 extends Node3D
@@ -92,6 +93,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif event.physical_keycode == KEY_F6:
 			_toggle_item_list()
+			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_F7:
+			_force_respawn_banana()
 			get_viewport().set_input_as_handled()
 
 func _toggle_collisions() -> void:
@@ -374,3 +378,33 @@ func _on_debug_item_btn(item_id: String) -> void:
 	p1.held_item_id = item_id
 	p1.use_held_item()
 	print("DebugVisualizer: [F6 list] used item '%s' on P1" % item_id)
+
+# ─── F7 強制刷新香蕉皮 ───────────────────────────────────────────────────────
+
+## F7：清除場上所有陷阱，在 P1 腳下重新生成一個香蕉皮（視覺排查用）
+func _force_respawn_banana() -> void:
+	# 1. 清除所有現有陷阱
+	for node in get_tree().get_nodes_in_group("traps"):
+		node.queue_free()
+	# 2. 找 P1
+	var p1: PlayerController = null
+	for node in get_tree().get_nodes_in_group("players"):
+		var pc := node as PlayerController
+		if pc and pc.player_index == 0:
+			p1 = pc
+			break
+	if p1 == null:
+		push_warning("DebugVisualizer F7: P1 not found")
+		return
+	# 3. 直接構建 TrapInstance 並放在 P1 前方 1m 處（y 貼地）
+	var trap_def: TrapDef = ItemSystem._item_config.get_trap("banana_peel")
+	if trap_def == null:
+		push_warning("DebugVisualizer F7: banana_peel trap_def not found")
+		return
+	var inst := TrapInstance.new()
+	inst.setup(trap_def, p1)
+	get_tree().current_scene.add_child(inst)
+	var forward := -p1.global_transform.basis.z.normalized()
+	var spawn_pos := p1.global_position + forward * 1.0
+	spawn_pos.y = 0.8
+	inst.global_position = spawn_pos

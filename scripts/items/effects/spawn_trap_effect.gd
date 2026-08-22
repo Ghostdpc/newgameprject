@@ -23,4 +23,6 @@ func apply(ctx: ItemContext) -> void:
 	# setup 先於 add_child，確保 collision_layer/mask 在進入物理世界前設置好
 	instance.setup(trap_def, placer)
 	placer.get_tree().current_scene.add_child(instance)
-	instance.global_position = placer.global_position
+	var spawn_pos := placer.global_position
+	spawn_pos.y = 0.8
+	instance.global_position = spawn_pos

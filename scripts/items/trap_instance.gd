@@ -40,6 +40,7 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = Color(0.6, 0.1, 1.0)
 		mesh_inst.material_override = mat
+		mesh_inst.position.y = 0.3  # 半高偏移，使方塊底部貼地
 		visual = mesh_inst
 	add_child(visual)
 
