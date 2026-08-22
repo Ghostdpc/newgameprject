@@ -10,8 +10,6 @@ extends LevelBase
 const SHUTTER_SLOWMO_MS := 550
 
 @onready var _hud: HUD = $HUD/MainLayer as HUD
-@onready var _player_hud: PlayerHUD = get_node_or_null("HUD/PlayerLayer/PlayerHUD") as PlayerHUD
-@onready var _scoring: ScoringScreen = get_node_or_null("ScoringScreen") as ScoringScreen
 
 var _slowmo_end_msec: int = 0
 
@@ -60,7 +58,17 @@ func _process(_delta: float) -> void:
 		_slowmo_end_msec = 0
 		Engine.time_scale = 1.0
 
-## S6/S7：结算完成 → 隐藏战斗 HUD 顶部/取景框（结算展示由 LevelBase 接管）
+## S6/S7：结算完成 → 隐藏战斗 HUD 顶部/取景框（show_results 由 level_base 统一调用）
 func _on_level_settlement(_results: Dictionary) -> void:
 	if _hud:
 		_hud.enter_scoring_mode()
+
+func _on_flow_finished(action: String) -> void:
+	Engine.time_scale = 1.0
+	GameManager.time_rate = 1.0
+	if action == "restart":
+		# 重开：直接进入下一轮主题展示，保留当前玩家（大厅人数不变）
+		get_tree().change_scene_to_file("res://scenes/levels/demo_stage.tscn")
+	else:
+		# 返回房间：回到加入状态，保留设备识别
+		GameManager.enter_lobby()
