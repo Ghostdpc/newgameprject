@@ -50,6 +50,7 @@ var speed_multiplier: float = 1.0
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
+var _suicide_was_pressed: bool = false
 
 var _pickup_hold_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
@@ -206,6 +207,7 @@ func _physics_process(delta: float) -> void:
 		state_machine.physics_update(delta)
 		move_and_slide()
 		return
+	_handle_suicide()
 	if GameManager.current_stage == GameManager.GameStage.SCORING:
 		velocity.x = move_toward(velocity.x, 0.0, ACCELERATION * delta)
 		velocity.z = move_toward(velocity.z, 0.0, ACCELERATION * delta)
@@ -216,6 +218,14 @@ func _physics_process(delta: float) -> void:
 	_check_dive_hit()
 	_push_contacted_props()
 	_update_grab(delta)
+
+## 自殺快捷鍵（測試用）：P1=O / P2=P，按下立即觸發完整死亡+重生流程
+func _handle_suicide() -> void:
+	var pressed := player_input.is_suicide_just_pressed()
+	if pressed and not _suicide_was_pressed:
+		# 把玩家移到出界下方，讓 LevelBase._physics_process 接管重生流程
+		global_position.y = -100.0
+	_suicide_was_pressed = pressed
 
 ## 玩家移動時推動接觸到的場景物理物（解決 move_and_slide 卡住不推）
 func _push_contacted_props() -> void:
@@ -265,7 +275,7 @@ func _find_nearest_prop() -> PhysicalProp:
 	var best := INF
 	for node in props:
 		var prop := node as PhysicalProp
-		if not prop or prop.freeze:
+		if not prop:
 			continue
 		var d := global_position.distance_to(prop.global_position)
 		if d < best:
