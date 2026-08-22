@@ -90,28 +90,21 @@ func _load_icon(item_id: String) -> Texture2D:
 		return null
 	return ItemIcons.load_icon(icon_key)
 
-# ---------------------------------------------------------------- S6/S7 支持
-## 给所有面板创建评分区
-func prepare_scoreboards(dim_defs: Array) -> void:
+# ---------------------------------------------------------------- 结算复用
+## 结算时刷新面板：只做数据/动画透传，不另建卡片
+func get_panel(player_index: int) -> PlayerPanel:
+	return _get_panel(player_index)
+
+func reset_scoreboards() -> void:
 	for p in _panels:
-		p.clear_scoring()
-		p.begin_scoring(dim_defs)
+		p.reset_scoring()
 
-func reveal_dimension(player_index: int, key: String, score: float) -> void:
-	var panel := _get_panel(player_index)
-	if panel:
-		panel.reveal_dim(key, score)
-
-func set_total(player_index: int, total: float) -> void:
-	var panel := _get_panel(player_index)
-	if panel:
-		panel.set_total(total)
-
-## 冠军皇冠（其他人收起）
-func set_champion(player_index: int) -> void:
-	for i in _panels.size():
-		_panels[i].show_crown(i == player_index)
-
-func clear_scoreboards() -> void:
+## 进入结算：隐藏全部战斗道具槽
+func enter_scoring_style() -> void:
 	for p in _panels:
-		p.clear_scoring()
+		p.enter_scoring_style()
+
+## 退出结算：恢复道具槽
+func exit_scoring_style() -> void:
+	for p in _panels:
+		p.exit_scoring_style()
