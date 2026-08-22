@@ -34,7 +34,6 @@ PropVfx="*res://scenes/fx/prop_vfx_layer.tscn"
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/size/mode=3
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
@@ -134,3 +133,4 @@ use_item_p2={
 textures/vram_compression/import_etc2_astc=true
 textures/default_filters/anisotropic_filtering_level=4
 anti_aliasing/quality/msaa_3d=2
+display/window/vsync/vsync_mode=0
