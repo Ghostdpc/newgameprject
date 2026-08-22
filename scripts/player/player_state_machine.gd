@@ -35,3 +35,6 @@ func physics_update(delta: float) -> void:
 
 func get_current_state() -> BaseState:
 	return _current_state
+
+func get_state(state_name: String) -> BaseState:
+	return _states.get(state_name, null)

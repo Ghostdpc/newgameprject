@@ -84,24 +84,25 @@ func _process(_delta: float) -> void:
 	if _data_panel_on:
 		_refresh_data_panel()
 
-## 遍歷場景所有 Skeleton3D，畫骨線（父骨→子骨）
+## 遍歷所有玩家身上的 Skeleton3D 畫骨線（父骨→子骨）
 func _rebuild_bone_lines() -> void:
 	var imm: ImmediateMesh = _bone_mesh.mesh as ImmediateMesh
 	imm.clear_surfaces()
 	imm.surface_begin(Mesh.PRIMITIVE_LINES, _line_mat)
-	var skeletons := _find_all_skeletons(get_tree().current_scene)
-	for skeleton in skeletons:
-		var sk := skeleton as Skeleton3D
-		if not sk:
-			continue
-		for i in sk.get_bone_count():
-			var parent_idx: int = sk.get_bone_parent(i)
-			if parent_idx == -1:
+	for player in get_tree().get_nodes_in_group("players"):
+		var skeletons := _find_all_skeletons(player as Node)
+		for skeleton in skeletons:
+			var sk := skeleton as Skeleton3D
+			if not sk:
 				continue
-			var from: Vector3 = sk.global_transform * sk.get_bone_global_pose(parent_idx).origin
-			var to: Vector3 = sk.global_transform * sk.get_bone_global_pose(i).origin
-			imm.surface_add_vertex(from)
-			imm.surface_add_vertex(to)
+			for i in sk.get_bone_count():
+				var parent_idx: int = sk.get_bone_parent(i)
+				if parent_idx == -1:
+					continue
+				var from: Vector3 = sk.global_transform * sk.get_bone_global_pose(parent_idx).origin
+				var to: Vector3 = sk.global_transform * sk.get_bone_global_pose(i).origin
+				imm.surface_add_vertex(from)
+				imm.surface_add_vertex(to)
 	imm.surface_end()
 
 ## 遍歷所有角色（players 組），只畫角色身上的碰撞體線框

@@ -4,12 +4,11 @@
 class_name StunnedState
 extends BaseState
 
-const STUN_DURATION: float = 1.8
-
+## 倒地時長改用 TuneConfig.stun_duration（F3 面板可調），默認 5s
 var _timer: float = 0.0
 
 func enter() -> void:
-	_timer = STUN_DURATION
+	_timer = TuneConfig.stun_duration
 	var controller := _player as PlayerController
 	if controller:
 		controller.set_ragdoll(true)

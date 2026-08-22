@@ -21,6 +21,9 @@ signal item_used(player_index: int, item_id: String)
 signal item_spawned(item_id: String, position: Vector3)
 signal trap_triggered(trap_id: String, player_index: int)
 
+# 服装（槽位：0 头部 / 1 身体 / 2 手持）
+signal outfit_changed(player_index: int, slot: int, item_id: String)
+
 # 相機
 signal camera_behavior_push_requested(camera_target: String, behavior: Object)
 signal camera_behavior_pop_requested(camera_target: String, behavior: Object)

@@ -34,6 +34,12 @@ func is_pickup_just_pressed() -> bool:
 		return true
 	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_B)
 
+## 拾取按鍵是否持續按住（長按拾取用）
+func is_pickup_held() -> bool:
+	if player_index >= 0 and player_index <= 1 and Input.is_action_pressed("pickup_p%d" % (player_index + 1)):
+		return true
+	return Input.is_joy_button_pressed(_joy_device(), JOY_BUTTON_B)
+
 func is_use_item_just_pressed() -> bool:
 	if player_index >= 0 and player_index <= 1 and Input.is_action_just_pressed("use_item_p%d" % (player_index + 1)):
 		return true
