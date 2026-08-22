@@ -1,109 +1,124 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://c2n7u1ehtdsk1"]
 
-[ext_resource type="Script" path="res://scripts/ui/lobby.gd" id="1_lobby"]
-[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+[ext_resource type="Script" uid="uid://c7hbyftw66bf7" path="res://scripts/ui/lobby.gd" id="1_lobby"]
+[ext_resource type="Theme" uid="uid://by40wu0dwxghk" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://cg3j6fi8nnhup" path="res://assets/textures/ui/lobby/bg.png" id="3_bg"]
+[ext_resource type="PackedScene" uid="uid://c4flh3blbm08c" path="res://scenes/ui/lobby_card.tscn" id="4_card"]
+[ext_resource type="Texture2D" uid="uid://cjmhuvf8ly03w" path="res://assets/textures/ui/lobby/btn_circle.png" id="5_ci"]
 
-[node name="Lobby" type="Control"]
+[node name="Lobby" type="Control" unique_id=822654088]
 layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_lobby")
 
-[node name="BG" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=416206638]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.055, 0.07, 0.115, 1)
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Header" type="VBoxContainer" parent="."]
+[node name="ScrollLayer" type="Control" parent="." unique_id=1271970884]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Header" type="VBoxContainer" parent="." unique_id=1867107421]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 36.0
-offset_bottom = 160.0
+offset_top = 30.0
+offset_bottom = 230.0
 grow_horizontal = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
-[node name="TitleLabel" type="Label" parent="Header"]
+[node name="TitleLabel" type="Label" parent="Header" unique_id=1495966872]
 layout_mode = 2
-theme_override_font_sizes/font_size = 44
-text = "玩家加入与识别"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.02, 0.14, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 100
+text = "加入游戏"
 horizontal_alignment = 1
 
-[node name="CountLabel" type="Label" parent="Header"]
+[node name="SubLabel" type="Label" parent="Header" unique_id=1184097739]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.9, 1, 1)
-theme_override_font_sizes/font_size = 26
-text = "已加入 0 / 4"
+theme_override_colors/font_color = Color(0.82, 0.86, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.02, 0.14, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "按下按钮加入"
 horizontal_alignment = 1
 
-[node name="HostHint" type="Label" parent="Header"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.7, 0.82, 1)
-theme_override_font_sizes/font_size = 20
-text = "等待玩家加入…"
-horizontal_alignment = 1
-
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Center" type="CenterContainer" parent="." unique_id=1046183584]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 120.0
-offset_bottom = -150.0
+offset_top = 150.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CardRow" type="HBoxContainer" parent="Center"]
+[node name="CardRow" type="HBoxContainer" parent="Center" unique_id=380130844]
 layout_mode = 2
-theme_override_constants/separation = 30
+theme_override_constants/separation = 34
 alignment = 1
 
-[node name="Footer" type="VBoxContainer" parent="."]
+[node name="Card0" parent="Center/CardRow" unique_id=1474594976 instance=ExtResource("4_card")]
+layout_mode = 2
+
+[node name="Card1" parent="Center/CardRow" unique_id=451321384 instance=ExtResource("4_card")]
+layout_mode = 2
+
+[node name="Card2" parent="Center/CardRow" unique_id=1735502443 instance=ExtResource("4_card")]
+layout_mode = 2
+
+[node name="Card3" parent="Center/CardRow" unique_id=957907706 instance=ExtResource("4_card")]
+layout_mode = 2
+
+[node name="Tips" type="HBoxContainer" parent="." unique_id=1243461624]
 layout_mode = 1
-anchors_preset = 12
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = -160.0
-offset_right = -40.0
-offset_bottom = -24.0
+offset_left = -110.0
+offset_top = -120.0
+offset_right = 110.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 10
+alignment = 1
 
-[node name="ButtonRow" type="HBoxContainer" parent="Footer"]
+[node name="Icon" type="TextureRect" parent="Tips" unique_id=1780723103]
+custom_minimum_size = Vector2(70, 80)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 40
+size_flags_vertical = 4
+texture = ExtResource("5_ci")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="BackButton" type="Button" parent="Footer/ButtonRow"]
-custom_minimum_size = Vector2(220, 56)
+[node name="Label" type="Label" parent="Tips" unique_id=716951175]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "← 返回标题"
-
-[node name="StartButton" type="Button" parent="Footer/ButtonRow"]
-custom_minimum_size = Vector2(340, 56)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "至少 2 人才能开始"
-disabled = true
-
-[node name="StartHint" type="Label" parent="Footer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "加入至少 2 名玩家后，房主确认开始"
-horizontal_alignment = 1
-
-[node name="KeyHint" type="Label" parent="Footer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.5, 0.56, 0.66, 1)
-theme_override_font_sizes/font_size = 17
-text = "数字键 1~4 加入/取消对应槽位 · Enter 加入下一空位 / 开始 · Backspace 取消 · Esc 返回"
-horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.86, 0.89, 0.96, 1)
+theme_override_colors/font_outline_color = Color(0.06, 0.02, 0.14, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "取消加入"

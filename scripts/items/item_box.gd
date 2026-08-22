@@ -61,12 +61,13 @@ func _build_visuals() -> void:
 	label.name = "NameLabel"
 	label.position = Vector3(0.0, 0.7, 0.0)
 	label.layers = 4
-	label.pixel_size = 0.005
+	# 栅格化 3 倍分辨率再缩小显示，文字更清晰（世界尺寸保持不变）
+	label.pixel_size = 0.0016667
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
-	label.font_size = 32
+	label.font_size = 96
 	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
-	label.outline_size = 8
+	label.outline_size = 24
 	label.outline_modulate = Color(0.0, 0.0, 0.0, 0.9)
 	label.text = item_id  # 先用 id 占位，_ready 后在 _refresh_label 中更新
 	add_child(label)
