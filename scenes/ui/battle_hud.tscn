@@ -46,10 +46,13 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[node name="BattleHUD" type="CanvasLayer"]
+[node name="BattleHUD" type="Node"]
+
+[node name="MainLayer" type="CanvasLayer" parent="."]
+layer = 1
 script = ExtResource("1_hud")
 
-[node name="CameraViewfinder" type="Control" parent="."]
+[node name="CameraViewfinder" type="Control" parent="MainLayer"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -60,7 +63,7 @@ offset_bottom = 384.0
 grow_horizontal = 2
 mouse_filter = 2
 
-[node name="Backing" type="ColorRect" parent="CameraViewfinder"]
+[node name="Backing" type="ColorRect" parent="MainLayer/CameraViewfinder"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -70,7 +73,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.32)
 
-[node name="PhotoRect" type="TextureRect" parent="CameraViewfinder"]
+[node name="PhotoRect" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,7 +84,7 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="FrameBorder" type="Panel" parent="CameraViewfinder"]
+[node name="FrameBorder" type="Panel" parent="MainLayer/CameraViewfinder"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -91,7 +94,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("frame_border")
 
-[node name="CornerTL" type="TextureRect" parent="CameraViewfinder"]
+[node name="CornerTL" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 0
@@ -102,7 +105,7 @@ texture = ExtResource("4_corner")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CornerTR" type="TextureRect" parent="CameraViewfinder"]
+[node name="CornerTR" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 1
@@ -119,7 +122,7 @@ texture = ExtResource("4_corner")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CornerBR" type="TextureRect" parent="CameraViewfinder"]
+[node name="CornerBR" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 3
@@ -140,7 +143,7 @@ texture = ExtResource("4_corner")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CornerBL" type="TextureRect" parent="CameraViewfinder"]
+[node name="CornerBL" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 1
 anchors_preset = 2
@@ -157,7 +160,7 @@ texture = ExtResource("4_corner")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CaptionBL" type="Label" parent="CameraViewfinder"]
+[node name="CaptionBL" type="Label" parent="MainLayer/CameraViewfinder"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -172,7 +175,7 @@ theme_override_colors/font_color = Color(0.9, 0.95, 1, 0.75)
 theme_override_font_sizes/font_size = 15
 text = "PHOTO CAM · 固定机位"
 
-[node name="ShutterIcon" type="TextureRect" parent="CameraViewfinder"]
+[node name="ShutterIcon" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 custom_minimum_size = Vector2(26, 26)
 layout_mode = 1
 anchors_preset = 3
@@ -192,7 +195,7 @@ texture = ExtResource("5_shutter")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TimerRow" type="HBoxContainer" parent="CameraViewfinder"]
+[node name="TimerRow" type="HBoxContainer" parent="MainLayer/CameraViewfinder"]
 layout_mode = 1
 anchors_preset = 12
 anchor_right = 1.0
@@ -207,18 +210,18 @@ mouse_filter = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="TimerPanel" type="PanelContainer" parent="CameraViewfinder/TimerRow"]
+[node name="TimerPanel" type="PanelContainer" parent="MainLayer/CameraViewfinder/TimerRow"]
 custom_minimum_size = Vector2(160, 64)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 
-[node name="PulsePanel" type="Panel" parent="CameraViewfinder/TimerRow/TimerPanel"]
+[node name="PulsePanel" type="Panel" parent="MainLayer/CameraViewfinder/TimerRow/TimerPanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("pulse_border")
 
-[node name="TimerLabel" type="Label" parent="CameraViewfinder/TimerRow/TimerPanel"]
+[node name="TimerLabel" type="Label" parent="MainLayer/CameraViewfinder/TimerRow/TimerPanel"]
 layout_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
@@ -231,13 +234,13 @@ text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RateBadge" type="PanelContainer" parent="CameraViewfinder/TimerRow"]
+[node name="RateBadge" type="PanelContainer" parent="MainLayer/CameraViewfinder/TimerRow"]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("badge_style")
 
-[node name="RateLabel" type="Label" parent="CameraViewfinder/TimerRow/RateBadge"]
+[node name="RateLabel" type="Label" parent="MainLayer/CameraViewfinder/TimerRow/RateBadge"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 0.6, 0.2, 1)
@@ -246,7 +249,7 @@ text = "2.0x"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TopBar" type="Control" parent="."]
+[node name="TopBar" type="Control" parent="MainLayer"]
 anchors_preset = 10
 anchor_right = 1.0
 offset_top = 400.0
@@ -254,7 +257,7 @@ offset_bottom = 440.0
 grow_horizontal = 2
 mouse_filter = 2
 
-[node name="StageLabel" type="Label" parent="TopBar"]
+[node name="StageLabel" type="Label" parent="MainLayer/TopBar"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -270,7 +273,18 @@ theme_override_font_sizes/font_size = 22
 text = ""
 horizontal_alignment = 1
 
-[node name="PlayerHUD" type="Control" parent="."]
+[node name="FloatLayer" type="Control" parent="MainLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayerLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="PlayerHUD" type="Control" parent="PlayerLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -279,15 +293,10 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_phud")
 
-[node name="FloatLayer" type="Control" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="FlashLayer" type="CanvasLayer" parent="."]
+layer = 200
 
-[node name="ShutterFlash" type="ColorRect" parent="."]
+[node name="ShutterFlash" type="ColorRect" parent="FlashLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

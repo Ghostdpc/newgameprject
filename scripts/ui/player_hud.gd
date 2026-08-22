@@ -5,13 +5,6 @@
 class_name PlayerHUD
 extends Control
 
-const PANEL_COLORS: Array[Color] = [
-	Color(0.2, 0.45, 0.9),   # P1 蓝
-	Color(0.9, 0.55, 0.1),   # P2 橙
-	Color(0.2, 0.8, 0.3),    # P3 绿
-	Color(0.6, 0.3, 0.9),    # P4 紫
-]
-
 ## 玩家数量（2-4，由关卡/流程注入，默认 4）
 var player_count: int = 4
 
@@ -35,7 +28,7 @@ func _clear_panels() -> void:
 func _build_panels() -> void:
 	for i in player_count:
 		var panel := PlayerPanel.new()
-		panel.setup(i, PANEL_COLORS[i])
+		panel.setup(i, PlayerConfig.get_color(i))
 		add_child(panel)
 		_position_panel(panel, i)
 		_panels.append(panel)

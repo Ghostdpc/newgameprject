@@ -15,13 +15,6 @@ const RESPAWN_WAIT: float = 2.0     ## 死亡讀秒到重生
 const RESPAWN_HEIGHT: float = 8.0   ## 重生空中高度（落下）
 const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
 
-const PLAYER_COLORS: Array[Color] = [
-	Color(0.2, 0.45, 0.9),   # P1 蓝
-	Color(0.9, 0.55, 0.1),   # P2 橙
-	Color(0.2, 0.8, 0.3),    # P3 绿
-	Color(0.6, 0.3, 0.9),    # P4 紫
-]
-
 # ---- 相机默认参数 ----（子类可覆写）
 @export var main_cam_pos: Vector3 = Vector3(16.0, 13.0, 15.0)
 @export var main_cam_look: Vector3 = Vector3(0.0, 1.0, 1.0)
@@ -37,7 +30,7 @@ const PLAYER_COLORS: Array[Color] = [
 @onready var _main_controller: CameraController = get_node_or_null("MainCamera/CameraController") as CameraController
 @onready var _settlement: Node = get_node_or_null("SettlementSystem")
 @onready var _scoring_screen: Node = get_node_or_null("ScoringScreen")
-@onready var _flash: ColorRect = get_node_or_null("HUD/ShutterFlash") as ColorRect
+@onready var _flash: ColorRect = get_node_or_null("HUD/FlashLayer/ShutterFlash") as ColorRect
 @onready var _stage_root: Node3D = get_node_or_null("Stage") as Node3D
 @onready var _actors_root: Node3D = get_node_or_null("Actors") as Node3D
 @onready var _spawn_root: Node3D = get_node_or_null("SpawnPoints") as Node3D
@@ -122,14 +115,14 @@ func _spawn_players() -> void:
 	for i in count:
 		var player: PlayerController = PLAYER_SCENE.instantiate() as PlayerController
 		player.player_index = i
-		player.player_color = PLAYER_COLORS[i % PLAYER_COLORS.size()]
+		player.player_color = PlayerConfig.get_color(i)
 		player.position = spawns[i % spawns.size()]
 		player.add_to_group("settlement_actor")
 		(_actors_root if _actors_root else self).add_child(player)
 
 ## 同步四角玩家面板数量
 func _setup_player_hud() -> void:
-	var hud := get_node_or_null("HUD/PlayerHUD")
+	var hud := get_node_or_null("HUD/PlayerLayer/PlayerHUD")
 	if hud and hud.has_method("setup"):
 		hud.setup(get_player_count())
 
@@ -244,7 +237,7 @@ func _do_shutter_flash() -> void:
 
 func _on_settlement_completed(results: Dictionary) -> void:
 	if _scoring_screen:
-		var hud := get_node_or_null("HUD/PlayerHUD")
+		var hud := get_node_or_null("HUD/PlayerLayer/PlayerHUD")
 		if hud and _scoring_screen.has_method("setup"):
 			_scoring_screen.setup(hud)
 		if _scoring_screen.has_method("show_results"):
