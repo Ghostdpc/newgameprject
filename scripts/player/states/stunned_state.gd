@@ -4,7 +4,7 @@ class_name StunnedState
 extends BaseState
 
 const STUN_DURATION: float = 1.5
-const KNOCKBACK_DAMP: float = 8.0
+const KNOCKBACK_DAMP: float = 3.0
 
 var _timer: float = 0.0
 
