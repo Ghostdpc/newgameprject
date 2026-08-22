@@ -21,7 +21,8 @@ const DECISIVE_SECONDS := 3.0
 @onready var _rate_badge: PanelContainer = get_node_or_null("CameraViewfinder/TimerRow/RateBadge")
 @onready var _rate_label: Label = get_node_or_null("CameraViewfinder/TimerRow/RateBadge/RateLabel")
 @onready var _stage_label: Label = get_node_or_null("TopBar/StageLabel")
-@onready var _photo_rect: TextureRect = get_node_or_null("CameraViewfinder/PhotoRect")
+@onready var _photo_rect: TextureRect = get_node_or_null("CameraViewfinder/MiniPhoto")
+@onready var _reticle: FocusReticle = get_node_or_null("CameraViewfinder/Reticle") as FocusReticle
 @onready var _float_layer: Control = get_node_or_null("FloatLayer")
 @onready var _viewfinder: Control = get_node_or_null("CameraViewfinder")
 @onready var _top_bar: Control = get_node_or_null("TopBar")
@@ -29,6 +30,7 @@ const DECISIVE_SECONDS := 3.0
 var _last_seconds: float = -1.0
 var _active_rate_type: int = -1
 var _pulse_tween: Tween = null
+var _reticle_tween: Tween = null
 
 func _ready() -> void:
 	EventBus.stage_changed.connect(_on_stage_changed)
@@ -69,15 +71,17 @@ func _refresh_timer_look() -> void:
 		return
 	var decisive := _last_seconds <= DECISIVE_SECONDS and _last_seconds > 0.0 \
 		and GameManager.current_stage == GameManager.GameStage.BATTLE
-	# 颜色优先级：倍率效果 > 决胜红 > 白
+	# 颜色优先级：倍率效果 > 决胜红 > 白；倒计时与取景标线同色
+	var look := COLOR_NORMAL
 	if _active_rate_type == TimeEffect.FAST:
-		_timer_label.add_theme_color_override("font_color", COLOR_FAST)
+		look = COLOR_FAST
 	elif _active_rate_type == TimeEffect.SLOW:
-		_timer_label.add_theme_color_override("font_color", COLOR_SLOW)
+		look = COLOR_SLOW
 	elif decisive:
-		_timer_label.add_theme_color_override("font_color", COLOR_DECISIVE)
-	else:
-		_timer_label.add_theme_color_override("font_color", COLOR_NORMAL)
+		look = COLOR_DECISIVE
+	_timer_label.add_theme_color_override("font_color", look)
+	if _reticle:
+		_reticle.set_line_color(Color(look.r, look.g, look.b, 0.92))
 	# 红框脉冲（仅决胜时刻）
 	if decisive:
 		_start_pulse()
@@ -85,18 +89,26 @@ func _refresh_timer_look() -> void:
 		_stop_pulse()
 
 func _start_pulse() -> void:
-	if not _pulse_panel or _pulse_tween and _pulse_tween.is_running():
-		return
-	_pulse_tween = create_tween().set_loops()
-	_pulse_tween.tween_property(_pulse_panel, "modulate:a", 1.0, 0.25)
-	_pulse_tween.tween_property(_pulse_panel, "modulate:a", 0.25, 0.25)
+	if _pulse_panel and not (_pulse_tween and _pulse_tween.is_running()):
+		_pulse_tween = create_tween().set_loops()
+		_pulse_tween.tween_property(_pulse_panel, "modulate:a", 1.0, 0.25)
+		_pulse_tween.tween_property(_pulse_panel, "modulate:a", 0.25, 0.25)
+	if _reticle and not (_reticle_tween and _reticle_tween.is_running()):
+		_reticle_tween = create_tween().set_loops()
+		_reticle_tween.tween_property(_reticle, "modulate:a", 1.0, 0.25)
+		_reticle_tween.tween_property(_reticle, "modulate:a", 0.45, 0.25)
 
 func _stop_pulse() -> void:
 	if _pulse_tween:
 		_pulse_tween.kill()
 		_pulse_tween = null
+	if _reticle_tween:
+		_reticle_tween.kill()
+		_reticle_tween = null
 	if _pulse_panel:
 		_pulse_panel.modulate.a = 0.0
+	if _reticle:
+		_reticle.modulate.a = 1.0
 
 # ---------------------------------------------------------------- 时间道具
 func _on_time_effect(effect_type: int, value: float) -> void:
@@ -165,16 +177,14 @@ func _shake_timer() -> void:
 func _on_stage_changed(stage: int) -> void:
 	if stage == GameManager.GameStage.MAIN_MENU or stage == GameManager.GameStage.LOBBY:
 		return
-	if _stage_label:
-		match stage:
-			GameManager.GameStage.THEME_ANNOUNCE:
-				_stage_label.text = "主题公布"
-			GameManager.GameStage.GRAB_CLOTHES:
-				_stage_label.text = "抢衣服！"
-			GameManager.GameStage.BATTLE:
-				_stage_label.text = "抢镜头！"
-			_:
-				_stage_label.text = ""
+		if _stage_label:
+			match stage:
+				GameManager.GameStage.THEME_ANNOUNCE:
+					_stage_label.text = "主题公布"
+				GameManager.GameStage.BATTLE:
+					_stage_label.text = ""
+				_:
+					_stage_label.text = ""
 	# 非混战阶段隐藏倒计时数字
 	if stage != GameManager.GameStage.BATTLE and _timer_label:
 		_timer_label.text = ""

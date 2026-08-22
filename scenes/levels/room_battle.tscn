@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://d2uglmfmyx2w0"]
+
+[ext_resource type="Script" uid="uid://dcwfw31jkxml7" path="res://scripts/levels/room_battle.gd" id="1"]
+[ext_resource type="Script" uid="uid://dmtsr5hwrm3wf" path="res://scripts/camera/camera_controller.gd" id="2"]
+[ext_resource type="Script" uid="uid://5wsik8geadre" path="res://scripts/systems/settlement_system.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/flow_overlay.tscn" id="5_flow"]
+[ext_resource type="Script" uid="uid://bshrgo2iebyrc" path="res://scripts/debug/debug_visualizer.gd" id="6"]
+[ext_resource type="PackedScene" uid="uid://4lljd7ononot" path="res://scenes/camera/photo_camera_rig.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battle_hud.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/ui/scoring_screen.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://crkxjlq0xv184" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb" id="11_room"]
+[ext_resource type="Script" uid="uid://bvarewras16w0" path="res://scripts/levels/room_preview.gd" id="12_rpreview"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+
+[sub_resource type="Sky" id="SkyRes"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="EnvRes"]
+background_mode = 2
+sky = SubResource("SkyRes")
+ambient_light_source = 3
+ambient_light_energy = 0.9
+
+[node name="RoomBattle" type="Node3D" unique_id=889601719]
+script = ExtResource("1")
+main_cam_pos = Vector3(6.857163, 15.9678135, -28.890018)
+main_cam_look = Vector3(0.458, -3.972, 3.455)
+main_cam_fov = 45.0
+photo_cam_pos = Vector3(0, 2.5, 6)
+photo_cam_look = Vector3(0, 1.2, -1)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1170299691]
+environment = SubResource("EnvRes")
+
+[node name="ToonKeyLight" type="DirectionalLight3D" parent="." unique_id=1336429035]
+transform = Transform3D(0.9393727, -0.31959414, 0.12425166, 0, 0.3623577, 0.9320391, -0.3428978, -0.8755321, 0.34038895, 0, 0, 0)
+light_color = Color(1, 0.9, 0.95, 1)
+light_energy = 1.4
+shadow_enabled = true
+shadow_bias = 0.06
+shadow_normal_bias = 1.5
+shadow_opacity = 0.55
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
+
+[node name="ToonFillLight" type="DirectionalLight3D" parent="." unique_id=1031495603]
+transform = Transform3D(-0.12884454, 0.6538886, -0.7455393, 0, 0.7518057, 0.65938467, 0.9916648, 0.084958114, -0.096866064, 0, 0, 0)
+light_color = Color(0.82, 0.75, 1, 1)
+light_energy = 0.72
+
+[node name="Stage" type="Node3D" parent="." unique_id=1172279687]
+
+[node name="Room" parent="Stage" unique_id=2078285664 instance=ExtResource("11_room")]
+transform = Transform3D(2.8339908, 0, 0, 0, 2.8339908, 0, 0, 0, 2.8339908, 0, 0, 0)
+script = ExtResource("12_rpreview")
+room_scale = 30.0
+
+[node name="Actors" type="Node3D" parent="." unique_id=491013080]
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=717198121]
+
+[node name="ItemHotspots" type="Node3D" parent="." unique_id=546894303]
+
+[node name="Hotspot1" type="Node3D" parent="ItemHotspots" unique_id=2123559641]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0.5, 1.5)
+
+[node name="Hotspot2" type="Node3D" parent="ItemHotspots" unique_id=1546352508]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, 0)
+
+[node name="Hotspot3" type="Node3D" parent="ItemHotspots" unique_id=1093280073]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -4)
+
+[node name="Hotspot4" type="Node3D" parent="ItemHotspots" unique_id=1194746589]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -2)
+
+[node name="Hotspot5" type="Node3D" parent="ItemHotspots" unique_id=685069363]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -2)
+
+[node name="MainCamera" type="Camera3D" parent="." unique_id=529860567]
+transform = Transform3D(1, 0, 0, 0, 0.8603454, 0.5097115, 0, -0.5097115, 0.8603454, 0.72814155, 6.9369698, 7.376967)
+fov = 50.0
+
+[node name="CameraController" type="Node" parent="MainCamera" unique_id=861699394]
+script = ExtResource("2")
+
+[node name="PhotoCameraRig" parent="." unique_id=200494307 instance=ExtResource("8")]
+transform = Transform3D(-0.9998681, 0, 0.016243307, 0, 1, 0, -0.016243307, 0, -0.9998681, 3.5546427, 3.9304352, -12.7073555)
+fov = 45.0
+use_rig_rotation = true
+
+[node name="LookTarget" parent="PhotoCameraRig" index="0" unique_id=1650118133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.06094718, 0.20823145, -2.5437088)
+
+[node name="PhotoCamera" parent="PhotoCameraRig/PhotoViewport" parent_id_path=PackedInt32Array(200494307, 1584729222) index="0" unique_id=1696668447]
+transform = Transform3D(-1, -8.8191535e-16, -8.742278e-08, -7.802793e-09, 0.99600893, 0.08925352, 8.707387e-08, 0.08925352, -0.99600893, 3.8359137, 4.2445846, -11.7399435)
+fov = 30.0
+near = 1.0
+far = 100.0
+
+[node name="Model" parent="PhotoCameraRig" index="2" unique_id=60863782]
+transform = Transform3D(1, 0, -7.450581e-09, 0, 1, 0, 7.450581e-09, 0, 1, 0, 0, 0)
+
+[node name="HUD" parent="." unique_id=1466803817 instance=ExtResource("9")]
+
+[node name="FlowOverlay" parent="." unique_id=579250935 instance=ExtResource("5_flow")]
+
+[node name="ScoringScreen" parent="." unique_id=1511282054 instance=ExtResource("10")]
+
+[node name="SettlementSystem" type="Node" parent="." unique_id=1201772107]
+script = ExtResource("4")
+
+[node name="DebugVisualizer" type="Node3D" parent="." unique_id=2008755827]
+script = ExtResource("6")
+
+[editable path="PhotoCameraRig"]

@@ -182,7 +182,7 @@ func _try_start() -> void:
 	if _joined_count() < 2:
 		return
 	GameManager.lobby_player_count = _joined_count()
-	get_tree().change_scene_to_file("res://scenes/levels/demo_stage.tscn")
+	get_tree().change_scene_to_file("res://scenes/levels/room_battle.tscn")
 
 func _on_back() -> void:
 	GameManager.enter_title()

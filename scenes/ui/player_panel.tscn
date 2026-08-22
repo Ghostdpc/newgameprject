@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://c5pjrcwr4n23b"]
+
+[ext_resource type="Script" uid="uid://dod5bsccwtknt" path="res://scripts/ui/player_panel.gd" id="1_panel"]
+[ext_resource type="Texture2D" uid="uid://ddkit5rjl15ti" path="res://assets/textures/ui/card/card_bubble.png" id="2_bubble"]
+[ext_resource type="Texture2D" uid="uid://c24punqinjdwh" path="res://assets/textures/ui/card/card_body.png" id="3_body"]
+[ext_resource type="Texture2D" uid="uid://eihmm7ca5ou0" path="res://assets/textures/ui/card/card_eyes.png" id="4_eyes"]
+[ext_resource type="Texture2D" uid="uid://blxw6g4l8kkhy" path="res://assets/textures/ui/card/card_hex.png" id="5_hex"]
+[ext_resource type="Texture2D" uid="uid://dcxcvyr6le2nr" path="res://assets/textures/ui/card/card_p1.png" id="6_p1"]
+[ext_resource type="Texture2D" uid="uid://m4fwtfre6it6" path="res://assets/textures/ui/crown.svg" id="7_crown"]
+
+[node name="PlayerPanel" type="Control" unique_id=1842084075]
+custom_minimum_size = Vector2(260, 320)
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_panel")
+
+[node name="Bubble" type="TextureRect" parent="." unique_id=403730474]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 76.0
+offset_right = 245.0
+offset_bottom = 276.0
+mouse_filter = 2
+texture = ExtResource("2_bubble")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Body" type="TextureRect" parent="." unique_id=163615005]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 7.0
+offset_right = 250.0
+offset_bottom = 237.0
+mouse_filter = 2
+texture = ExtResource("3_body")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Eyes" type="TextureRect" parent="." unique_id=1698215382]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 85.0
+offset_right = 189.0
+offset_bottom = 122.0
+mouse_filter = 2
+texture = ExtResource("4_eyes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="TextureRect" parent="." unique_id=1832719494]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 30.0
+offset_right = 81.0
+offset_bottom = 98.0
+mouse_filter = 2
+texture = ExtResource("6_p1")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Hex" type="TextureRect" parent="." unique_id=954676064]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 228.0
+offset_right = 83.0
+offset_bottom = 308.0
+mouse_filter = 2
+texture = ExtResource("5_hex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemIcon" type="TextureRect" parent="." unique_id=152165185]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 25.0
+offset_top = 245.0
+offset_right = 71.0
+offset_bottom = 291.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Crown" type="TextureRect" parent="." unique_id=1747975620]
+visible = false
+layout_mode = 0
+offset_left = 90.0
+offset_top = -48.0
+offset_right = 150.0
+offset_bottom = 12.0
+mouse_filter = 2
+texture = ExtResource("7_crown")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ScorePanel" type="Panel" parent="." unique_id=475769634]
+visible = false
+layout_mode = 0
+offset_left = 25.0
+offset_top = 80.0
+offset_right = 215.0
+offset_bottom = 210.0
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="ScorePanel" unique_id=1589403074]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = -10.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 2

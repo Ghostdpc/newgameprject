@@ -34,10 +34,6 @@ func _setup_level() -> void:
 		add_child(builder)
 		builder.build_show_stage(_stage_root)
 	_apply_doc_player_colors()
-	if _scoring:
-		if _player_hud:
-			_scoring.setup(_player_hud)
-		_scoring.flow_finished.connect(_on_flow_finished)
 
 ## 3D 角色颜色对齐三重辨识规格（与四角面板一致，结算遮罩按此色匹配）
 func _apply_doc_player_colors() -> void:
@@ -64,19 +60,7 @@ func _process(_delta: float) -> void:
 		_slowmo_end_msec = 0
 		Engine.time_scale = 1.0
 
-## S6/S7：结算完成 → 隐藏战斗 HUD 顶部/取景框，交给结算界面演出
-func _on_level_settlement(results: Dictionary) -> void:
+## S6/S7：结算完成 → 隐藏战斗 HUD 顶部/取景框（结算展示由 LevelBase 接管）
+func _on_level_settlement(_results: Dictionary) -> void:
 	if _hud:
 		_hud.enter_scoring_mode()
-	if _scoring:
-		_scoring.show_results(results)
-
-func _on_flow_finished(action: String) -> void:
-	Engine.time_scale = 1.0
-	GameManager.time_rate = 1.0
-	if action == "restart":
-		# 重开：直接进入下一轮主题展示，保留当前玩家（大厅人数不变）
-		get_tree().change_scene_to_file("res://scenes/levels/demo_stage.tscn")
-	else:
-		# 返回房间：回到加入状态，保留设备识别
-		GameManager.enter_lobby()

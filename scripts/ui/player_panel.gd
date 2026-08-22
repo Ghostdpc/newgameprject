@@ -1,197 +1,112 @@
-## 职责：单个玩家角标面板（四角之一）
-## 内容：颜色+编号+形状头像（三重辨识）、道具槽、皇冠（冠军）、评分行（S6 逐维刷分）。
-## 服装槽已按新交互设计移除（服装不展示图标）。
+## 职责：单个玩家卡片（四角之一，新设计）
+## 组成：泡泡外框(染色) + 小人身体(染色) + 眼睛 + P#字标(染色) + 六边形道具槽
+## 附加：皇冠（S7 冠军）、评分面板（S6 逐维刷分）。
+## 零件布局在 player_panel.tscn 中可视化摆放（策划可拖动），
+## 本脚本只负责：染色、左右/上下翻转、镜像定位、动画、数据逻辑。
 
 class_name PlayerPanel
-extends PanelContainer
+extends Control
 
-## 道具槽索引（唯一槽位）
-const ITEM_SLOT_INDEX := 0
+const TINT_SHADER := preload("res://resources/ui/card_tint.gdshader")
+
+# ---- 卡片尺寸基准（用于镜像定位计算）----
+const CARD_W := 240.0
+const LABEL_H := 68.0
 
 var player_index: int = 0
 var player_color: Color = Color.WHITE
 
-var _avatar_bg: ColorRect
-var _avatar_shape: TextureRect
-var _name_label: Label
-var _crown: TextureRect
-# 槽位：[0] 道具
-var _slot_ghosts: Array[TextureRect] = []
-var _slot_icons: Array[TextureRect] = []
-var _score_box: VBoxContainer
-var _total_label: Label
-var _dim_labels: Dictionary = {}   # key -> ScoreLabel
-var _shown_total: float = 0.0
+@onready var _bubble: TextureRect = $Bubble
+@onready var _body: TextureRect = $Body
+@onready var _eyes: TextureRect = $Eyes
+@onready var _label: TextureRect = $Label
+@onready var _hex: TextureRect = $Hex
+@onready var _item_icon: TextureRect = $ItemIcon
+@onready var _crown: TextureRect = $Crown
+@onready var _score_panel: Panel = $ScorePanel
+@onready var _score_box: VBoxContainer = $ScorePanel/VBox
 
-static var SHAPE_IDS: Array[String] = ["shape_0", "shape_1", "shape_2", "shape_3"]
+var _dim_labels: Dictionary = {}
+var _total_label: Label
 
 func setup(index: int, color: Color) -> void:
 	player_index = index
 	player_color = color
-	custom_minimum_size = Vector2(240, 0)
-	_build_style()
-	_build_ui()
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_apply_tint(_bubble)
+	_apply_tint(_body)
+	_apply_tint(_label)
+	_setup_label_texture()
+	_apply_orientation()
+	_apply_score_style()
 
-func _build_style() -> void:
+func _is_right() -> bool:
+	return player_index % 2 == 1
+
+func _is_bottom() -> bool:
+	return player_index >= 2
+
+## P# 字标：每玩家一张图（card_p1~p4），按图宽高比重算宽度
+func _setup_label_texture() -> void:
+	_label.texture = ItemIcons.load_icon("card_p%d" % (player_index + 1))
+	var lw := LABEL_H * _label.texture.get_size().x / _label.texture.get_size().y
+	_label.size = Vector2(lw, LABEL_H)
+
+## 泡泡翻转 + 字标/六边形镜像（右/下角卡尾巴朝屏幕中心）
+func _apply_orientation() -> void:
+	_bubble.flip_h = _is_right()
+	_bubble.flip_v = _is_bottom()
+
+	if _is_right():
+		_label.position.x = CARD_W - _label.size.x + 16.0
+		_hex.position.x = CARD_W - _hex.size.x + 12.0
+	_item_icon.position = _hex.position + Vector2(
+		_hex.size.x * 0.5 - _item_icon.size.x * 0.5,
+		_hex.size.y * 0.5 - _item_icon.size.y * 0.5)
+
+func _apply_score_style() -> void:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.07, 0.085, 0.13, 0.88)
-	style.border_color = player_color
+	style.bg_color = Color(0.03, 0.04, 0.08, 0.82)
+	style.border_color = Color(player_color.r, player_color.g, player_color.b, 0.8)
 	style.set_border_width_all(2)
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_right = 12
-	style.corner_radius_bottom_left = 12
+	style.corner_radius_top_left = 10
+	style.corner_radius_top_right = 10
+	style.corner_radius_bottom_right = 10
+	style.corner_radius_bottom_left = 10
 	style.content_margin_left = 10.0
 	style.content_margin_top = 8.0
 	style.content_margin_right = 10.0
 	style.content_margin_bottom = 8.0
-	add_theme_stylebox_override("panel", style)
+	_score_panel.add_theme_stylebox_override("panel", style)
 
-func _build_ui() -> void:
-	var hbox := HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 12)
-	add_child(hbox)
+func _apply_tint(rect: TextureRect) -> void:
+	var m := ShaderMaterial.new()
+	m.shader = TINT_SHADER
+	m.set_shader_parameter("tint", player_color)
+	rect.material = m
 
-	hbox.add_child(_build_avatar())
-
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 5)
-	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hbox.add_child(vbox)
-
-	_name_label = Label.new()
-	_name_label.text = "P%d" % (player_index + 1)
-	_name_label.add_theme_font_size_override("font_size", 24)
-	_name_label.add_theme_color_override("font_color", player_color)
-	vbox.add_child(_name_label)
-
-	# 道具槽（单槽）
-	var item_row := HBoxContainer.new()
-	item_row.add_theme_constant_override("separation", 6)
-	vbox.add_child(item_row)
-	item_row.add_child(_build_slot(Vector2(38, 38)))
-	var item_hint := Label.new()
-	item_hint.text = "道具"
-	item_hint.add_theme_font_size_override("font_size", 14)
-	item_hint.add_theme_color_override("font_color", Color(0.6, 0.66, 0.76))
-	item_hint.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	item_row.add_child(item_hint)
-
-	# 评分区（S6 才展开）
-	_score_box = VBoxContainer.new()
-	_score_box.add_theme_constant_override("separation", 2)
-	_score_box.hide()
-	vbox.add_child(_score_box)
-
-func _build_avatar() -> Control:
-	var box := Control.new()
-	box.custom_minimum_size = Vector2(64, 64)
-
-	_avatar_bg = ColorRect.new()
-	_avatar_bg.color = player_color
-	_avatar_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	box.add_child(_avatar_bg)
-
-	_avatar_shape = TextureRect.new()
-	_avatar_shape.texture = ItemIcons.load_icon(SHAPE_IDS[player_index % 4])
-	_avatar_shape.self_modulate = Color(0.06, 0.07, 0.1, 0.95)
-	_avatar_shape.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_avatar_shape.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_avatar_shape.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_avatar_shape.offset_left = 8.0
-	_avatar_shape.offset_top = 8.0
-	_avatar_shape.offset_right = -8.0
-	_avatar_shape.offset_bottom = -8.0
-	box.add_child(_avatar_shape)
-
-	# 皇冠（冠军，默认隐藏）
-	_crown = TextureRect.new()
-	_crown.texture = ItemIcons.load_icon("crown")
-	_crown.custom_minimum_size = Vector2(40, 40)
-	_crown.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_crown.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_crown.position = Vector2(12, -34)
-	_crown.hide()
-	box.add_child(_crown)
-	return box
-
-func _build_slot(size: Vector2) -> Control:
-	var holder := Control.new()
-	holder.custom_minimum_size = size
-
-	var bg := Panel.new()
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.05, 0.06, 0.1, 0.8)
-	style.border_color = Color(0.45, 0.5, 0.6, 0.7)
-	style.set_border_width_all(1)
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_right = 6
-	style.corner_radius_bottom_left = 6
-	bg.add_theme_stylebox_override("panel", style)
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	holder.add_child(bg)
-
-	# 空槽轮廓
-	var ghost := TextureRect.new()
-	ghost.texture = ItemIcons.load_icon("slot_2")
-	ghost.modulate = Color(1, 1, 1, 0.4)
-	ghost.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	ghost.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	ghost.set_anchors_preset(Control.PRESET_FULL_RECT)
-	ghost.offset_left = 3.0
-	ghost.offset_top = 3.0
-	ghost.offset_right = -3.0
-	ghost.offset_bottom = -3.0
-	holder.add_child(ghost)
-	_slot_ghosts.append(ghost)
-
-	# 实际图标（装备后显示）
-	var icon := TextureRect.new()
-	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
-	icon.offset_left = 2.0
-	icon.offset_top = 2.0
-	icon.offset_right = -2.0
-	icon.offset_bottom = -2.0
-	icon.modulate.a = 0.0
-	holder.add_child(icon)
-	_slot_icons.append(icon)
-	return holder
-
-# ---------------------------------------------------------------- 道具
+# ---------------------------------------------------------------- 道具槽
 func set_item(icon: Texture2D) -> void:
-	_set_slot_icon(ITEM_SLOT_INDEX, icon)
-
-func _set_slot_icon(index: int, icon: Texture2D) -> void:
-	var ghost := _slot_ghosts[index]
-	var rect := _slot_icons[index]
 	if icon == null:
-		rect.modulate.a = 0.0
-		rect.texture = null
-		ghost.modulate.a = 1.0
+		_item_icon.modulate.a = 0.0
+		_item_icon.texture = null
 		return
-	ghost.modulate.a = 0.0
-	rect.texture = icon
-	rect.pivot_offset = rect.size * 0.5
-	rect.modulate.a = 1.0
-	rect.scale = Vector2(1.5, 1.5)
+	_item_icon.texture = icon
+	_item_icon.pivot_offset = _item_icon.size * 0.5
+	_item_icon.modulate.a = 1.0
+	_item_icon.scale = Vector2(1.5, 1.5)
 	var tw := create_tween()
-	tw.tween_property(rect, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_item_icon, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-## 使用道具：图标清空 + 灰闪
 func flash_item_used() -> void:
-	var rect := _slot_icons[ITEM_SLOT_INDEX]
-	if rect.texture == null:
+	if _item_icon.texture == null:
 		return
 	var tw := create_tween()
-	tw.tween_property(rect, "self_modulate", Color(0.4, 0.4, 0.4, 0.6), 0.1)
-	tw.tween_property(rect, "modulate:a", 0.0, 0.15)
+	tw.tween_property(_item_icon, "self_modulate", Color(0.4, 0.4, 0.4, 0.6), 0.1)
+	tw.tween_property(_item_icon, "modulate:a", 0.0, 0.15)
 	tw.tween_callback(func():
-		rect.texture = null
-		rect.self_modulate = Color.WHITE
-		_slot_ghosts[ITEM_SLOT_INDEX].modulate.a = 1.0)
+		_item_icon.texture = null
+		_item_icon.self_modulate = Color.WHITE)
 
 # ---------------------------------------------------------------- 冠军皇冠
 func show_crown(on: bool) -> void:
@@ -199,13 +114,12 @@ func show_crown(on: bool) -> void:
 		_crown.hide()
 		return
 	_crown.show()
-	_crown.pivot_offset = Vector2(20, 20)
+	_crown.pivot_offset = Vector2(30, 30)
 	_crown.scale = Vector2.ZERO
 	var tw := create_tween()
 	tw.tween_property(_crown, "scale", Vector2.ONE, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 # ---------------------------------------------------------------- S6 评分
-## 展开评分区并创建维度行（dim_defs: [[key, 名称], ...]）
 func begin_scoring(dim_defs: Array) -> void:
 	for c in _score_box.get_children():
 		c.queue_free()
@@ -215,7 +129,7 @@ func begin_scoring(dim_defs: Array) -> void:
 		var name_label := Label.new()
 		name_label.text = String(d[1])
 		name_label.add_theme_font_size_override("font_size", 15)
-		name_label.add_theme_color_override("font_color", Color(0.72, 0.78, 0.88))
+		name_label.add_theme_color_override("font_color", Color(0.78, 0.84, 0.92))
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(name_label)
 		var score_label := Label.new()
@@ -231,9 +145,8 @@ func begin_scoring(dim_defs: Array) -> void:
 	_total_label.add_theme_font_size_override("font_size", 19)
 	_total_label.add_theme_color_override("font_color", player_color.lightened(0.35))
 	_score_box.add_child(_total_label)
-	_score_box.show()
+	_score_panel.show()
 
-## 刷一维分数（弹入动画）
 func reveal_dim(key: String, score: float) -> void:
 	var label: Label = _dim_labels.get(key)
 	if label == null:
@@ -246,7 +159,6 @@ func reveal_dim(key: String, score: float) -> void:
 	var tw := create_tween()
 	tw.tween_property(label, "scale", Vector2.ONE, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-## 总分滚动
 func set_total(target: float) -> void:
 	if _total_label == null:
 		return
@@ -259,5 +171,7 @@ func clear_scoring() -> void:
 		for c in _score_box.get_children():
 			c.queue_free()
 		_dim_labels.clear()
-		_score_box.hide()
-	_crown.hide()
+	if _score_panel:
+		_score_panel.hide()
+	if _crown:
+		_crown.hide()

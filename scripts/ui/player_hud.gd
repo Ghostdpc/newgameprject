@@ -5,6 +5,8 @@
 class_name PlayerHUD
 extends Control
 
+const PANEL_SCENE: PackedScene = preload("res://scenes/ui/player_panel.tscn")
+
 ## 玩家数量（2-4，由关卡/流程注入，默认 4）
 var player_count: int = 4
 
@@ -27,52 +29,38 @@ func _clear_panels() -> void:
 
 func _build_panels() -> void:
 	for i in player_count:
-		var panel := PlayerPanel.new()
-		panel.setup(i, PlayerConfig.get_color(i))
+		var panel: PlayerPanel = PANEL_SCENE.instantiate() as PlayerPanel
 		add_child(panel)
+		panel.setup(i, PlayerConfig.get_color(i))
 		_position_panel(panel, i)
 		_panels.append(panel)
 
+## 根节点矩形精确等于卡片尺寸，四角留 margin
 func _position_panel(panel: Control, index: int) -> void:
 	var margin := 24.0
-	panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	var w: float = panel.custom_minimum_size.x
+	var h: float = panel.custom_minimum_size.y
 	match index:
 		0:  # 左上
-			panel.anchor_left = 0.0
-			panel.anchor_top = 0.0
-			panel.anchor_right = 0.0
-			panel.anchor_bottom = 0.0
-			panel.offset_left = margin
-			panel.offset_top = margin
-			panel.grow_horizontal = Control.GROW_DIRECTION_END
-			panel.grow_vertical = Control.GROW_DIRECTION_END
+			panel.anchor_left = 0.0; panel.anchor_top = 0.0
+			panel.anchor_right = 0.0; panel.anchor_bottom = 0.0
+			panel.offset_left = margin; panel.offset_top = margin
+			panel.offset_right = margin + w; panel.offset_bottom = margin + h
 		1:  # 右上
-			panel.anchor_left = 1.0
-			panel.anchor_top = 0.0
-			panel.anchor_right = 1.0
-			panel.anchor_bottom = 0.0
-			panel.offset_left = -margin
-			panel.offset_top = margin
-			panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-			panel.grow_vertical = Control.GROW_DIRECTION_END
+			panel.anchor_left = 1.0; panel.anchor_top = 0.0
+			panel.anchor_right = 1.0; panel.anchor_bottom = 0.0
+			panel.offset_left = -margin - w; panel.offset_top = margin
+			panel.offset_right = -margin; panel.offset_bottom = margin + h
 		2:  # 左下
-			panel.anchor_left = 0.0
-			panel.anchor_top = 1.0
-			panel.anchor_right = 0.0
-			panel.anchor_bottom = 1.0
-			panel.offset_left = margin
-			panel.offset_top = -margin
-			panel.grow_horizontal = Control.GROW_DIRECTION_END
-			panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+			panel.anchor_left = 0.0; panel.anchor_top = 1.0
+			panel.anchor_right = 0.0; panel.anchor_bottom = 1.0
+			panel.offset_left = margin; panel.offset_top = -margin - h
+			panel.offset_right = margin + w; panel.offset_bottom = -margin
 		3:  # 右下
-			panel.anchor_left = 1.0
-			panel.anchor_top = 1.0
-			panel.anchor_right = 1.0
-			panel.anchor_bottom = 1.0
-			panel.offset_left = -margin
-			panel.offset_top = -margin
-			panel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-			panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+			panel.anchor_left = 1.0; panel.anchor_top = 1.0
+			panel.anchor_right = 1.0; panel.anchor_bottom = 1.0
+			panel.offset_left = -margin - w; panel.offset_top = -margin - h
+			panel.offset_right = -margin; panel.offset_bottom = -margin
 
 func _connect_signals() -> void:
 	EventBus.item_picked_up.connect(_on_item_picked_up)

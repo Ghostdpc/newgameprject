@@ -34,6 +34,14 @@ func _ready() -> void:
 	_root.hide()
 	_restart_btn.pressed.connect(func(): flow_finished.emit("restart"))
 	_lobby_btn.pressed.connect(func(): flow_finished.emit("lobby"))
+	EventBus.stage_changed.connect(_on_stage_changed)
+
+## 新一轮开始（重开/返回）时收起结算界面与评分面板
+func _on_stage_changed(stage: int) -> void:
+	if stage != GameManager.GameStage.SCORING and _root.visible:
+		_root.hide()
+		if _player_hud:
+			_player_hud.clear_scoreboards()
 
 func setup(player_hud: PlayerHUD) -> void:
 	_player_hud = player_hud

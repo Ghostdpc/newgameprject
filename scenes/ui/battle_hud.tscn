@@ -1,22 +1,9 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="Script" path="res://scripts/ui/player_hud.gd" id="2_phud"]
 [ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="3_theme"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/frame_corner.svg" id="4_corner"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/shutter_icon.svg" id="5_shutter"]
-
-[sub_resource type="StyleBoxFlat" id="frame_border"]
-bg_color = Color(0, 0, 0, 0)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.92, 0.96, 1, 0.42)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+[ext_resource type="Script" path="res://scripts/ui/focus_reticle.gd" id="4_ret"]
 
 [sub_resource type="StyleBoxFlat" id="badge_style"]
 content_margin_left = 10.0
@@ -53,17 +40,20 @@ layer = 1
 script = ExtResource("1_hud")
 
 [node name="CameraViewfinder" type="Control" parent="MainLayer"]
-anchors_preset = 5
+anchors_preset = 8
 anchor_left = 0.5
+anchor_top = 0.5
 anchor_right = 0.5
-offset_left = -280.0
-offset_top = 24.0
-offset_right = 280.0
-offset_bottom = 384.0
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -170.0
+offset_right = 230.0
+offset_bottom = 170.0
 grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
-[node name="Backing" type="ColorRect" parent="MainLayer/CameraViewfinder"]
+[node name="Reticle" type="Control" parent="MainLayer/CameraViewfinder"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,127 +61,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0, 0, 0, 0.32)
+script = ExtResource("4_ret")
 
-[node name="PhotoRect" type="TextureRect" parent="MainLayer/CameraViewfinder"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="FrameBorder" type="Panel" parent="MainLayer/CameraViewfinder"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("frame_border")
-
-[node name="CornerTL" type="TextureRect" parent="MainLayer/CameraViewfinder"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
-anchors_preset = 0
-offset_right = 44.0
-offset_bottom = 44.0
-mouse_filter = 2
-texture = ExtResource("4_corner")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CornerTR" type="TextureRect" parent="MainLayer/CameraViewfinder"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
+[node name="MiniPhoto" type="TextureRect" parent="MainLayer/CameraViewfinder"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -44.0
-offset_right = 0.0
-offset_bottom = 44.0
-grow_horizontal = 0
-pivot_offset = Vector2(22, 22)
-mouse_filter = 2
-rotation = 1.5708
-texture = ExtResource("4_corner")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CornerBR" type="TextureRect" parent="MainLayer/CameraViewfinder"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -44.0
-offset_top = -44.0
-offset_right = 0.0
-offset_bottom = 0.0
-grow_horizontal = 0
-grow_vertical = 0
-pivot_offset = Vector2(22, 22)
-mouse_filter = 2
-rotation = 3.14159
-texture = ExtResource("4_corner")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CornerBL" type="TextureRect" parent="MainLayer/CameraViewfinder"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -44.0
-offset_right = 44.0
-offset_bottom = 0.0
-grow_vertical = 0
-pivot_offset = Vector2(22, 22)
-mouse_filter = 2
-rotation = 4.71239
-texture = ExtResource("4_corner")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="CaptionBL" type="Label" parent="MainLayer/CameraViewfinder"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = -30.0
-offset_right = 300.0
-offset_bottom = -8.0
-grow_vertical = 0
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 0.75)
-theme_override_font_sizes/font_size = 15
-text = "PHOTO CAM · 固定机位"
-
-[node name="ShutterIcon" type="TextureRect" parent="MainLayer/CameraViewfinder"]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -38.0
-offset_top = -36.0
+offset_left = -140.0
+offset_top = 12.0
 offset_right = -12.0
-offset_bottom = -10.0
+offset_bottom = 84.0
 grow_horizontal = 0
-grow_vertical = 0
 mouse_filter = 2
-modulate = Color(1, 1, 1, 0.8)
-texture = ExtResource("5_shutter")
 expand_mode = 1
 stretch_mode = 5
 
@@ -252,8 +133,8 @@ vertical_alignment = 1
 [node name="TopBar" type="Control" parent="MainLayer"]
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 400.0
-offset_bottom = 440.0
+offset_top = 716.0
+offset_bottom = 748.0
 grow_horizontal = 2
 mouse_filter = 2
 

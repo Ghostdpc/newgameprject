@@ -162,3 +162,30 @@ camera_behavior_push_requested(target, behavior) / camera_behavior_pop_requested
 | 玩家名/头像数据（面板姓名） | 流程/匹配同事 | 待定 |
 | 仿相机装饰图（取景框边框精修） | 美术 | 占位中 |
 | 暂停/断线 UI | 流程/系统同事 | 待定 |
+
+---
+
+## 10. UI 改版 v1.1（2026-08-22，对照新设计示意图）
+
+### 玩家卡片（PlayerPanel 重写）
+- 美术初版 `resources/ui/player.png`（灰阶 atlas）已拆为 8 个零件：
+  `assets/textures/ui/card/`：card_bubble / card_body / card_eyes / card_hex / card_p1~p4
+  （拆分脚本用边界 flood-fill 抠透明背景，保留封闭白色高光）。
+- 染色：`resources/ui/card_tint.gdshader`（保明度 tint：黑描边保持黑、灰阶染玩家色）。
+- 合成：泡泡外框(按象限 flip_h/flip_v，尾巴朝屏幕中心) + 小人身体 + 眼睛 +
+  P#字标(外上角) + 六边形道具槽(外下角)；卡片尺寸 `CARD_W/H = 240x268`，
+  `player_hud.gd:_position_panel` 按四角精确锚定。
+- 评分面板（S6）改为半透明小面板叠在头像上；服装槽保持移除状态。
+
+### 相机取景框（新设计：透明标线）
+- 删除旧实心取景框（Backing/PhotoRect/FrameBorder/四角贴花/快门图标/Caption）。
+- 新 `scripts/ui/focus_reticle.gd`（FocusReticle，`_draw()`）：四角直角括号 +
+  中心留缺口对焦圆 + 内侧回声弧 + 十字；取景框居中，`460x340`。
+- 拍照 RT 不再常驻 HUD（PhotoCameraRig 仍负责快门截图）。
+- `hud.gd`：倒计时/倍率色同步染标线；决胜 3 秒标线一起红脉冲（独立 tween）。
+- 倒计时位置保持取景框内底部中央（既有决策不变）。
+
+### 流程归属整理
+- ScoringScreen 的 `setup/show_results/flow_finished` 统一由 `LevelBase` 接管；
+  `demo_stage.gd` 移除重复接线，只保留 `_on_level_settlement` 里 `enter_scoring_mode()`。
+- `scoring_screen.gd`：新一轮（stage != SCORING）自动收起并清空评分面板。

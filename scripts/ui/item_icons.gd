@@ -17,6 +17,15 @@ const MAP: Dictionary = {
 	"slot_2": "slot_hand.svg",
 	# 装饰
 	"crown": "crown.svg",
+	# 玩家卡片零件（player.png atlas 拆分，灰阶件走 card_tint 染色）
+	"card_bubble": "card/card_bubble.png",
+	"card_body": "card/card_body.png",
+	"card_eyes": "card/card_eyes.png",
+	"card_hex": "card/card_hex.png",
+	"card_p1": "card/card_p1.png",
+	"card_p2": "card/card_p2.png",
+	"card_p3": "card/card_p3.png",
+	"card_p4": "card/card_p4.png",
 	# 服装组件（9 件：槽位 0 头 / 1 身 / 2 手）
 	"outfit_cap": "outfit_cap.svg",
 	"outfit_tophat": "outfit_tophat.svg",
