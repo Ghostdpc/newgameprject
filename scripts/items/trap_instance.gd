@@ -26,15 +26,20 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 	shape.shape = box_shape
 	add_child(shape)
 
-	# 紫色 Cube 占位（道具放置物通用視覺）
-	var mesh_inst := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(0.6, 0.6, 0.6)
-	mesh_inst.mesh = box
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.6, 0.1, 1.0)
-	mesh_inst.material_override = mat
-	add_child(mesh_inst)
+	# 放置物视觉：优先配置模型（香蕉皮），失败回退紫色 Cube 占位
+	var visual: Node3D = null
+	if not def.model.is_empty():
+		visual = PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale, true)
+	if visual == null:
+		var mesh_inst := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = Vector3(0.6, 0.6, 0.6)
+		mesh_inst.mesh = box
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.6, 0.1, 1.0)
+		mesh_inst.material_override = mat
+		visual = mesh_inst
+	add_child(visual)
 
 	body_entered.connect(_on_body_entered)
 	add_to_group("traps")

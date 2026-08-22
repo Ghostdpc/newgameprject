@@ -35,19 +35,6 @@ func _build_visuals() -> void:
 	static_body.add_child(phys_shape)
 	add_child(static_body)
 
-	# 视觉 Mesh（黄色旋转 Cube）
-	var mesh_inst := MeshInstance3D.new()
-	var box_mesh := BoxMesh.new()
-	box_mesh.size = Vector3(0.5, 0.5, 0.5)
-	mesh_inst.mesh = box_mesh
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 0.85, 0.1)
-	mat.emission_enabled = true
-	mat.emission = Color(1.0, 0.85, 0.1) * 0.4
-	mesh_inst.material_override = mat
-	mesh_inst.name = "Mesh"
-	add_child(mesh_inst)
-
 	# 道具名 Label3D（悬浮在箱子上方，layer 3 = UI 标识，不进拍照 RT）
 	var label := Label3D.new()
 	label.name = "NameLabel"
@@ -64,6 +51,31 @@ func _build_visuals() -> void:
 	add_child(label)
 	# 延迟一帧更新，确保 item_id 已由 ItemSpawner 赋值
 	call_deferred("_refresh_label")
+	call_deferred("_build_model")
+
+## 依道具配置构建 3D 模型，失败回退黄色旋转方块（视觉命名统一为 "Mesh"）
+func _build_model() -> void:
+	var visual: Node3D = null
+	if ItemSystem and ItemSystem._item_config:
+		var def := ItemSystem._item_config.get_item(item_id)
+		if def and not def.model.is_empty():
+			visual = PropModelBuilder.build(def.model, def.texture, 0.5, def.model_scale)
+	if visual == null:
+		visual = _make_placeholder_mesh()
+	visual.name = "Mesh"
+	add_child(visual)
+
+func _make_placeholder_mesh() -> Node3D:
+	var mesh_inst := MeshInstance3D.new()
+	var box_mesh := BoxMesh.new()
+	box_mesh.size = Vector3(0.5, 0.5, 0.5)
+	mesh_inst.mesh = box_mesh
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(1.0, 0.85, 0.1)
+	mat.emission_enabled = true
+	mat.emission = Color(1.0, 0.85, 0.1) * 0.4
+	mesh_inst.material_override = mat
+	return mesh_inst
 
 func _refresh_label() -> void:
 	var label := get_node_or_null("NameLabel") as Label3D
@@ -77,6 +89,6 @@ func _refresh_label() -> void:
 	label.text = display
 
 func _process(delta: float) -> void:
-	var mesh := get_node_or_null("Mesh") as MeshInstance3D
+	var mesh := get_node_or_null("Mesh") as Node3D
 	if mesh:
 		mesh.rotate_y(delta * 1.5)
