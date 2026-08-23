@@ -78,6 +78,11 @@ var _head_prev_override: Material = null
 func apply_head_texture() -> bool:
 	if use_head_texture == false:
 		return false
+	if _paths.is_empty():
+		# 確保已掃描表情素材（打包版 pck 內 DirAccess 可能掃不到 → count 0 → 回退）
+		_index_files()
+		if _paths.is_empty():
+			return false
 	var player := get_parent() as PlayerController
 	if player == null:
 		return false
@@ -104,6 +109,9 @@ func apply_head_texture() -> bool:
 				head_mi = m
 				head_surf = i
 	if head_mi == null or head_surf < 0:
+		return false
+	# 打包版 DirAccess 可能掃不到 pck 內表情素材 → count()==0, 此時不貼臉回退平面, 避免越界崩潰
+	if count() <= 0:
 		return false
 	# 計算臉片 UV 範圍 → 表情材質的 uv1_scale/offset（一張鋪滿，避免平鋪/半張）
 	_calc_face_uv_scale(head_mi, head_surf)
@@ -357,6 +365,9 @@ func show_expression(index: int) -> void:
 const MAX_EDGE := 512
 
 func _get_texture(index: int) -> Texture2D:
+	if _paths.is_empty():
+		return null
+	index = clampi(index, 0, _paths.size() - 1)
 	var path := IMAGE_FOLDER + "/" + _paths[index]
 	if _cache.has(path):
 		return _cache[path]
