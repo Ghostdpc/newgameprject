@@ -85,11 +85,15 @@ func setup_aura(player: Node3D) -> void:
 	_aura.draw_pass_1 = quad
 
 func _process(delta: float) -> void:
+	if not is_inside_tree():
+		return
 	_time += delta
 	var hue := fmod(_time * 0.18, 1.0)         # 彩虹流：hue 循環
 	var pulse := 0.5 + 0.5 * sin(_time * 3.0)  # 脈衝：0~1 正弦
 	var col := Color.from_hsv(hue, 0.75, 1.0)
 	for mi in _meshes:
+		if not is_instance_valid(mi):
+			continue
 		var mat := mi.material_override as StandardMaterial3D
 		if mat == null:
 			continue
@@ -98,10 +102,10 @@ func _process(delta: float) -> void:
 		mat.emission_energy_multiplier = 2.0 + pulse * 3.0
 	# 光環粒子顏色跟隨彩虹（新發射粒子生效；不 restart 以保持粒子自然循環）
 	var pm := _particles.process_material as ParticleProcessMaterial
-	if pm:
+	if pm and is_instance_valid(_particles):
 		pm.color = col
 	# 角色周圍光塵粒子也跟隨彩虹
-	if _aura:
+	if _aura and is_instance_valid(_aura):
 		var apm := _aura.process_material as ParticleProcessMaterial
 		if apm:
 			apm.color = col.lerp(Color(1, 1, 1), 0.4)

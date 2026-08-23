@@ -43,6 +43,13 @@ func apply(ctx: ItemContext) -> void:
 
 func revert(ctx: ItemContext) -> void:
 	if _halo_fx and is_instance_valid(_halo_fx):
+		# 先停 _process，避免 queue_free 後同一幀殘留幀再驅動已釋放的粒子/材質
+		# 順帶清掉掛在玩家身上的 aura 粒子（setup_aura add_child 到玩家根，不會隨服裝 free）
+		if _halo_fx.get("_aura") != null:
+			var aura = _halo_fx.get("_aura")
+			if aura is Node and is_instance_valid(aura):
+				aura.queue_free()
+		_halo_fx.set_process(false)
 		_halo_fx.queue_free()
 		_halo_fx = null
 	for mi in _modified_meshes:

@@ -142,7 +142,7 @@
           "target": "world",
           "duration": 0.0,
           "params": {
-            "throw_speed": 8.0,
+            "throw_speed": 4.0,
             "fuse": 1.2,
             "radius": 3.0,
             "gray_duration": 6.0,

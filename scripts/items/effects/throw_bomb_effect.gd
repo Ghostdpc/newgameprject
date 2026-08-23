@@ -29,8 +29,8 @@ func apply(ctx: ItemContext) -> void:
 	thrower.get_tree().current_scene.add_child(bomb)
 	var forward := thrower.global_basis.z
 	bomb.global_position = thrower.global_position + forward * 0.8 + Vector3.UP * 1.2
-	var throw_speed: float = float(params.get("throw_speed", 8.0))
-	bomb.release(forward * throw_speed + Vector3.UP * 3.0)
+	var throw_speed: float = float(params.get("throw_speed", 4.0))
+	bomb.release(forward * throw_speed + Vector3.UP * 1.5)
 
 func _placeholder_visual() -> Node3D:
 	var mi := MeshInstance3D.new()

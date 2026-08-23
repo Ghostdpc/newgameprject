@@ -12,7 +12,7 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 # ---- 出界與重生（玩家順應，基類預設）----
 const FALL_Y: float = -5.0          ## 低於此高度視為出界死亡
 const RESPAWN_WAIT: float = 2.0     ## 死亡讀秒到重生
-const RESPAWN_HEIGHT: float = 8.0   ## 重生空中高度（落下）
+const RESPAWN_HEIGHT: float = 4.0   ## 重生空中高度（落下；場景有屋頂，8m 會穿頂）
 const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
 
 # ---- 相机默认参数 ----（子类可覆写）
@@ -198,7 +198,7 @@ func _collect_mesh_instances(root: Node) -> Array[MeshInstance3D]:
 			stack.append(c)
 	return result
 
-## 讀秒期間在複活點顯示可見標記（黃色半透明光柱）
+## 讀秒期間在複活點顯示可見標記（黃色能量柱，能量自下而上湧動）
 func _create_respawn_marker(pos: Vector3) -> Node3D:
 	var m := MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
@@ -206,13 +206,15 @@ func _create_respawn_marker(pos: Vector3) -> Node3D:
 	cyl.bottom_radius = 0.6
 	cyl.height = RESPAWN_HEIGHT
 	m.mesh = cyl
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(1.0, 1.0, 0.0, 0.35)
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.emission_enabled = true
-	mat.emission = Color.YELLOW
+	# 噪波動畫能量柱：自下而上湧動 + 底部光源向上衰減 + 呼吸脈衝
+	var shader := load("res://resources/shaders/respawn_marker.gdshader") as Shader
+	var mat := ShaderMaterial.new()
+	mat.shader = shader
+	mat.set_shader_parameter("col", Color(1.0, 0.95, 0.4, 0.45))
+	mat.set_shader_parameter("flow_speed", 1.5)
+	mat.set_shader_parameter("pulse", 0.7)
 	m.material_override = mat
-	m.layers = 4  # layer 3 = UI 标识，不进拍照 RT
+	m.layers = 4  # layer = UI 標識，不進拍照 RT
 	m.position = Vector3(pos.x, RESPAWN_HEIGHT * 0.5, pos.z)
 	add_child(m)
 	return m

@@ -9,6 +9,9 @@ var _fuse: float = 1.2
 var _radius: float = 3.0
 var _gray_duration: float = 6.0
 var _score_penalty: int = 15
+## 爆炸擊飛力度倍率（相對飛撲 hit_force/hit_upward），可調
+var _blast_force_mult: float = 1.4
+var _blast_up_mult: float = 1.3
 var _thrower: PlayerController
 var _exploded: bool = false
 
@@ -38,12 +41,34 @@ func _explode() -> void:
 		var player := node as PlayerController
 		if player == null:
 			continue
-		if global_position.distance_to(player.global_position) > _radius:
+		var d := global_position.distance_to(player.global_position)
+		if d > _radius:
 			continue
 		if player.character_effects:
 			player.character_effects.apply_dirt_decal(_gray_duration)
 		player.score_penalty += _score_penalty
+		# 爆炸物理擊飛（類似被飛撲）：按離爆心距離衰減力度，水平向外炸飛 + 上拋
+		_knockback_player(player, d)
 	queue_free()
+
+## 被炸飛：進入 Fly 飛行狀態並拋出（復用飛撲對目標的擊飛機制）
+func _knockback_player(player: PlayerController, dist: float) -> void:
+	if player == null or player.state_machine == null:
+		return
+	# 爆炸方向（水平），從爆心指向玩家；靠爆心越近力度越大
+	var to_player := player.global_position - global_position
+	to_player.y = 0.0
+	var dir := to_player.normalized()
+	if dir.length_squared() < 0.0001:
+		dir = Vector3(0.1, 0.0, 0.1).normalized()
+	# 半徑內衰減：中心 1.0 → 邊緣 0.4
+	var falloff := clampf(1.0 - dist / maxf(_radius, 0.01), 0.4, 1.0)
+	var blast := TuneConfig.hit_force * _blast_force_mult * falloff
+	var up := TuneConfig.hit_upward * _blast_up_mult * falloff
+	player.state_machine.transition_to("Fly")
+	var fly := player.state_machine.get_current_state() as FlyState
+	if fly:
+		fly.launch(dir * blast + Vector3.UP * up)
 
 ## 爆炸視覺：GPUParticles3D 火光+煙（代碼生成，無需美術資源）+ 橙色膨脹球占位
 func _spawn_flash() -> void:

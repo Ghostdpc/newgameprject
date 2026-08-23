@@ -224,20 +224,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if not _sequence_done:
 		return
-	# 重开：ui_accept / 键盘 A / 手柄 A
-	var is_restart := event.is_action_pressed("ui_accept") \
-		or (event is InputEventKey and event.physical_keycode == KEY_A) \
-		or (event is InputEventJoypadButton \
-			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A)
-	# 返回大厅：ui_cancel / 键盘 X / 手柄 B
-	var is_lobby := event.is_action_pressed("ui_cancel") \
-		or (event is InputEventKey and event.physical_keycode == KEY_X) \
-		or (event is InputEventJoypadButton \
-			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B)
-	if is_restart:
+	# 键盘：A/Enter=重开、X/Esc=返回；手柄（房主设备）：✕(X)=重开、○(O)=返回
+	var dev := _host_device()
+	var restart_pressed := false
+	var lobby_pressed := false
+	if dev == -1 or dev == -2:
+		restart_pressed = event.is_action_pressed("ui_accept") \
+			or (event is InputEventKey and event.physical_keycode == KEY_A)
+		lobby_pressed = event.is_action_pressed("ui_cancel") \
+			or (event is InputEventKey and event.physical_keycode == KEY_X)
+	elif event is InputEventJoypadButton:
+		var jb := event as InputEventJoypadButton
+		if jb.device == dev:
+			restart_pressed = jb.button_index == JOY_BUTTON_A
+			lobby_pressed = jb.button_index == JOY_BUTTON_B
+	if restart_pressed:
 		get_viewport().set_input_as_handled()
 		_do_action("restart")
-	elif is_lobby:
+	elif lobby_pressed:
 		get_viewport().set_input_as_handled()
 		_do_action("lobby")
 

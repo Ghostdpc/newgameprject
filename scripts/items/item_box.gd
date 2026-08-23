@@ -45,12 +45,10 @@ func _start_drop() -> void:
 	tw.tween_callback(func(): _landed = true)
 
 func _build_visuals() -> void:
-	# 物理碰撞体（StaticBody3D）；collidable 配置决定是否让玩家撞飞
+	# 物理碰撞体：原来 layer=1 让玩家/飞扑撞上去（阻挡）。现改到 layer=8
+	# （不在玩家 collision_mask=1+2+4 内）→ 玩家可穿过，不阻挡移动/飞扑。
 	var static_body := StaticBody3D.new()
-	var collidable := true
-	if ItemSystem and ItemSystem._item_config:
-		collidable = bool(ItemSystem._item_config.get_spawn_config().get("collidable", true))
-	static_body.collision_layer = 1 if collidable else 0
+	static_body.collision_layer = 8
 	static_body.collision_mask  = 0
 	var phys_shape := CollisionShape3D.new()
 	var phys_box := BoxShape3D.new()
