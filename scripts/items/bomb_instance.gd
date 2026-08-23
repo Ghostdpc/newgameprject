@@ -45,11 +45,98 @@ func _explode() -> void:
 		player.score_penalty += _score_penalty
 	queue_free()
 
-## 爆炸視覺占位：快速膨脹後消失的橙色球（無需美術資源）
+## 爆炸視覺：GPUParticles3D 火光+煙（代碼生成，無需美術資源）+ 橙色膨脹球占位
 func _spawn_flash() -> void:
 	var scene := get_tree().current_scene
 	if scene == null:
 		return
+	_spawn_fire_particles(scene)
+	_spawn_smoke_particles(scene)
+	_spawn_expand_ball(scene)
+
+## 火光粒子：短壽命高速向外爆開，重力回落，疊加碰撞地面爆散
+func _spawn_fire_particles(scene: Node) -> void:
+	var fire := GPUParticles3D.new()
+	fire.name = "FireBurst"
+	fire.global_position = global_position
+	scene.add_child(fire)
+	var mat := ParticleProcessMaterial.new()
+	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	mat.emission_sphere_radius = 0.1
+	mat.direction = Vector3(0, 1, 0)
+	mat.spread = 180.0
+	mat.gravity = Vector3(0, -9.0, 0)
+	mat.initial_velocity_min = 4.0
+	mat.initial_velocity_max = 9.0
+	mat.scale_min = 0.25
+	mat.scale_max = 0.6
+	mat.scale_curve = _make_curve_tex([Vector2(0, 0.4), Vector2(1, 1.4)])
+	mat.color = Color(1.0, 0.62, 0.2)
+	mat.color_ramp = _make_gradient_tex([
+		Color(1.0, 0.95, 0.6), Color(1.0, 0.55, 0.15), Color(0.7, 0.15, 0.05),
+	])
+	mat.damping_min = 1.0
+	mat.damping_max = 3.0
+	fire.process_material = mat
+	fire.amount = 80
+	fire.lifetime = 0.6
+	fire.one_shot = true
+	fire.explosiveness = 1.0
+	fire.local_coords = true
+	fire.visibility_aabb = AABB(Vector3(-3, -3, -3), Vector3(6, 6, 6))
+	# GPUParticles3D 須有 mesh 才渲染；用 billboard QuadMesh 作粒子面片
+	_set_particle_mesh(fire)
+	fire.finished.connect(fire.queue_free)
+
+## 煙粒子：慢速擴散上浮，壽命較長
+func _spawn_smoke_particles(scene: Node) -> void:
+	var smoke := GPUParticles3D.new()
+	smoke.name = "SmokePuff"
+	smoke.global_position = global_position
+	scene.add_child(smoke)
+	var mat := ParticleProcessMaterial.new()
+	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	mat.emission_sphere_radius = 0.2
+	mat.direction = Vector3(0, 1, 0)
+	mat.spread = 60.0
+	mat.gravity = Vector3(0, -1.2, 0)
+	mat.initial_velocity_min = 0.5
+	mat.initial_velocity_max = 2.0
+	mat.scale_min = 0.6
+	mat.scale_max = 1.6
+	mat.scale_curve = _make_curve_tex([Vector2(0, 0.5), Vector2(1, 2.2)])
+	mat.color = Color(0.25, 0.22, 0.2)
+	mat.color_ramp = _make_gradient_tex([
+		Color(0.35, 0.3, 0.28, 0.85), Color(0.2, 0.18, 0.16, 0.4),
+	])
+	mat.damping_min = 0.5
+	mat.damping_max = 1.5
+	smoke.process_material = mat
+	smoke.amount = 35
+	smoke.lifetime = 1.6
+	smoke.one_shot = true
+	smoke.explosiveness = 1.0
+	smoke.local_coords = true
+	smoke.visibility_aabb = AABB(Vector3(-4, -4, -4), Vector3(8, 8, 8))
+	_set_particle_mesh(smoke)
+	smoke.finished.connect(smoke.queue_free)
+
+## 給 GPUParticles3D 設 3D 球體粒子（SphereMesh），立體體積感，非 billboard 面片。
+## 附 unshaded 材質讓 color_ramp 的顏色直接可見（火光/煙）。
+func _set_particle_mesh(particles: GPUParticles3D) -> void:
+	var sphere := SphereMesh.new()
+	sphere.radius = 0.09
+	sphere.height = 0.18
+	sphere.radial_segments = 8
+	sphere.rings = 4
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.no_depth_test = false
+	sphere.material = mat
+	particles.draw_pass_1 = sphere
+
+## 原有橙色膨脹球（簡易衝擊波視覺）
+func _spawn_expand_ball(scene: Node) -> void:
 	var flash := MeshInstance3D.new()
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.3
@@ -67,3 +154,25 @@ func _spawn_flash() -> void:
 	tw.parallel().tween_property(flash, "scale", Vector3.ONE * (_radius * 2.0), 0.25)
 	tw.parallel().tween_property(mat, "albedo_color:a", 0.0, 0.25)
 	tw.tween_callback(flash.queue_free)
+
+func _make_curve_tex(points: Array) -> CurveTexture:
+	var c := Curve.new()
+	for i in points.size():
+		c.add_point(Vector2(points[i].x, points[i].y))
+	var ct := CurveTexture.new()
+	ct.curve = c
+	return ct
+
+func _make_gradient_tex(stops: Array) -> GradientTexture1D:
+	var g := Gradient.new()
+	var cols := PackedColorArray()
+	for s in stops:
+		cols.append(s)
+	if cols.size() >= 3:
+		g.offsets = PackedFloat32Array([0.0, 0.5, 1.0])
+	else:
+		g.offsets = PackedFloat32Array([0.0, 1.0])
+	g.colors = cols
+	var gt := GradientTexture1D.new()
+	gt.gradient = g
+	return gt
