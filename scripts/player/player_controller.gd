@@ -50,7 +50,7 @@ const THROW_SPEED: float = 5.0
 ## 抓取吸向手的速度（大=更快抓到；小=緩慢飛來）
 const GRAB_LERP: float = 8.0
 
-@export var jump_force: float = 10.0
+@export var jump_force: float = 8.16
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
 ## human 模型本體 Y 軸朝向補償（deg）。若走路側身，在 player.tscn 調整讓模型正面朝移動方向。
@@ -624,8 +624,8 @@ func _apply_body_scale() -> void:
 	if not _model_skeleton:
 		return
 	if _ragdoll_in_use():
-		_reset_bone_scale(_head_bone_idx)
-		_reset_bone_scale(_body_bone_idx)
+		# 布娃娃/軟倒：重置身材縮放，物理接管骨骼姿態（避免殘留縮放錯亂）
+		_reset_body_scale()
 		return
 	if _body_bone_idx != -1:
 		_model_skeleton.set_bone_pose_scale(_body_bone_idx, Vector3.ONE * body_scale)
@@ -719,6 +719,26 @@ func _ragdoll_in_use() -> bool:
 func _reset_bone_scale(bone_idx: int) -> void:
 	if _model_skeleton and bone_idx != -1:
 		_model_skeleton.set_bone_pose_scale(bone_idx, Vector3.ONE)
+
+## 重置身材缩放涉及的骨到 scale=1（布娃娃/軟倒時，避免殘留放大縮小錯亂）
+func _reset_body_scale() -> void:
+	if not _model_skeleton:
+		return
+	_reset_bone_scale(_body_bone_idx)
+	if _is_human_model:
+		# human 放大頭部涉及多根骨，全部復位（骨骼.004/.005/.005_end_end_end_end）
+		var head_bones := ["骨骼.004", "骨骼.005", "骨骼.005_end_end_end_end"]
+		for bname in head_bones:
+			var idx := _model_skeleton.find_bone(bname)
+			if idx != -1:
+				_model_skeleton.set_bone_pose_scale(idx, Vector3.ONE)
+	else:
+		_reset_bone_scale(_head_bone_idx)
+	# 帽子逆補償還原（避免軟倒後帽子大小殘留）
+	if outfit_manager:
+		var hat := outfit_manager.get_item("hat_slot")
+		if hat:
+			hat.scale = Vector3.ONE
 
 ## 設定單個動畫循環
 func _set_animation_looping(anim_name: String) -> void:

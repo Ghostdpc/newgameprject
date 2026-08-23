@@ -13,8 +13,8 @@
 
 [node name="RoomStageBattle" type="Node3D" unique_id=587974176]
 script = ExtResource("1")
-main_cam_pos = Vector3(0.97, 5.47, 6.09)
-main_cam_look = Vector3(0.97, 0, -1.72)
+main_cam_pos = Vector3(0.97, 3.05, 2.1)
+main_cam_look = Vector3(1, 0.15, -4.45)
 photo_cam_pos = Vector3(0, 2.5, 6)
 photo_cam_look = Vector3(0, 1.2, -1)
 
@@ -70,7 +70,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, 0.78)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, -2.62)
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1940083208]
-transform = Transform3D(1, 0, 0, 0, 0.6917021, 0.722183, 0, -0.722183, 0.6917021, 0.97, 4.830517, 2.1085906)
+transform = Transform3D(0.99999, 0, 0.00458, 0.001854, 0.914388, -0.404835, -0.004188, 0.404839, 0.914378, 0.97, 3.05, 2.1)
 current = true
 fov = 60.0
 

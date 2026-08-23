@@ -10,8 +10,8 @@ Godot_v4.7.2-stable_win64.exe/
 # Godot UID files (editor-generated)
 *.uid
 
-# Export presets (may contain paths/credentials)
-export_presets.cfg
+# Packaged build output
+/package/
 
 # Mono/C# build artifacts
 .mono/
