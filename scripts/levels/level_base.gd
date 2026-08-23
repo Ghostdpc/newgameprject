@@ -149,6 +149,7 @@ func _kill_and_respawn(player: PlayerController) -> void:
 	var pos := _random_spawn_position()
 	player.configure_respawn(Vector3(pos.x, RESPAWN_HEIGHT, pos.z), RESPAWN_WAIT)
 	var marker := _create_respawn_marker(pos)
+	SoundMgr.play("respawn")
 	player.die()
 	# 讀秒結束由狀態機轉 RespawnFall，此處清理光柱
 	await get_tree().create_timer(RESPAWN_WAIT).timeout

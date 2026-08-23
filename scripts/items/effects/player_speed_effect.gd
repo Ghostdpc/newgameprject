@@ -4,6 +4,7 @@ class_name PlayerSpeedEffect
 extends ItemEffect
 
 func apply(ctx: ItemContext) -> void:
+	SoundMgr.play("boost")
 	if ctx.source_player == null:
 		return
 	var multiplier: float = float(params.get("multiplier", 1.0))

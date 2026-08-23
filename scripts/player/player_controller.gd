@@ -181,6 +181,7 @@ func sync_body_to_ragdoll() -> void:
 
 ## 出界死亡：進入死亡狀態（清道具、藏體、停物理）
 func die() -> void:
+	SoundMgr.play("die")
 	if state_machine.current_state_name == "Death":
 		return
 	death_started.emit(self)
@@ -391,6 +392,7 @@ func _update_grab(delta: float) -> void:
 			else:
 				release_velocity = carry + throw_dir * 0.5 + Vector3.UP * 1.0
 			_grabbed_prop.release(release_velocity)
+			SoundMgr.play("throw_prop", true)
 			_grabbed_prop = null
 		return
 	# 未抓取：R 按下 → 抓最近的物理物件
@@ -398,6 +400,7 @@ func _update_grab(delta: float) -> void:
 		_grabbed_prop = _find_nearest_prop()
 		if _grabbed_prop:
 			_grabbed_prop.grab()
+			SoundMgr.play("grab", true)
 
 ## 物品碰撞半尺寸（xyz），用於調整抓取點位置避免大件卡身位。無碰撞/未知時返回原固定檔位。
 func _prop_half_extents(prop: PhysicalProp) -> Vector3:
@@ -444,6 +447,7 @@ func _check_dive_hit() -> void:
 		elif collider is PhysicalProp:
 			dive.knock_prop(collider as PhysicalProp)
 			# 撞到物品自己也立刻停下並進入倒地（與被撞同等）
+			SoundMgr.play("hit")
 			_knocked_down_by_prop(dive)
 			return
 

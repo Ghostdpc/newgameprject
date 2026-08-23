@@ -114,6 +114,7 @@ func _mount(slot_name: String, item: Node3D, item_id: String) -> Node3D:
 	_items[slot_name] = item
 	_item_ids[slot_name] = item_id
 	_recolor(item)
+	SoundMgr.play("equip", true)
 	item_equipped.emit(slot_name, item)
 	return item
 

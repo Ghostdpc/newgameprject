@@ -36,6 +36,7 @@ func _explode() -> void:
 	if _exploded:
 		return
 	_exploded = true
+	SoundMgr.play("explode")
 	_spawn_flash()
 	for node in get_tree().get_nodes_in_group("players"):
 		var player := node as PlayerController

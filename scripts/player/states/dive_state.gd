@@ -20,6 +20,7 @@ var _dive_direction: Vector3 = Vector3.ZERO
 var _has_hit: bool = false
 
 func enter() -> void:
+	SoundMgr.play("dive", true)
 	_phase = Phase.PREPARE
 	_phase_timer = PREPARE_DURATION
 	_has_hit = false
