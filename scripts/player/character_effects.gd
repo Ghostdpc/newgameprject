@@ -9,11 +9,14 @@ signal effect_started(effect: String)
 signal effect_finished(effect: String)
 
 const GRAY_COLOR := Color(0.4, 0.4, 0.45, 1.0)
+const PLAYER_TOON_MATERIAL: ShaderMaterial = preload("res://resources/materials/player_toon_preview.tres")
+const PLAYER_TOON_OUTLINE_MATERIAL: ShaderMaterial = preload("res://resources/materials/player_toon_outline_preview.tres")
 
 ## 隐形「模板写入」通道：让玩家真实网格在 main 视口写 stencil=1，
 ## 供地面取景光圈(CaptureZoneHighlight)读取 → 实现「只有玩家遮挡光圈」。
 ## 作为每个玩家材质的 next_pass，轮廓精确贴合模型且不改变外观。
 static var _stencil_writer_material: ShaderMaterial
+static var _toon_outline_material: ShaderMaterial
 
 static func _get_stencil_writer() -> ShaderMaterial:
 	if _stencil_writer_material == null:
@@ -22,6 +25,13 @@ static func _get_stencil_writer() -> ShaderMaterial:
 		m.render_priority = -8  # 早于光圈(=8)绘制，保证光圈读到 stencil
 		_stencil_writer_material = m
 	return _stencil_writer_material
+
+static func _get_toon_outline_material() -> ShaderMaterial:
+	if _toon_outline_material == null:
+		var material := PLAYER_TOON_OUTLINE_MATERIAL.duplicate() as ShaderMaterial
+		material.next_pass = _get_stencil_writer()
+		_toon_outline_material = material
+	return _toon_outline_material
 
 ## 臟污貼花（灰頭土臉）：手繪煙熏紋理，全場靜態緩存複用
 static var _dirt_texture: Texture2D
@@ -44,8 +54,8 @@ var base_color: Color = Color.WHITE:
 		base_color = value
 		_apply_all()
 
-var _base_materials: Dictionary = {}  # instance_id -> 初始材質
 var _meshes: Array[MeshInstance3D] = []
+var _toon_materials: Dictionary = {} # "mesh_instance_id:surface" -> ShaderMaterial
 
 ## 表情貼圖覆蓋：mesh instance_id -> { tex, surf }（表情只貼到指定 surface，不動其它）
 var face_textures: Dictionary = {}   # instance_id -> {tex, surf}
@@ -216,55 +226,29 @@ func _apply_all() -> void:
 		if gray_amt > 0.0:
 			col = col.lerp(GRAY_COLOR, gray_amt)
 		# 表情貼圖：對每個 surface 單獨設 override，臉片用表情、其它用玩家色
-		if face_textures.has(id):
-			var info: Dictionary = face_textures[id]
-			var tex: Texture2D = info.get("tex")
-			var ft_surf: int = int(info.get("surf", -1))
-			for si in mesh.mesh.get_surface_count():
-				if si == ft_surf:
-					mesh.set_surface_override_material(si, _make_tinted_material_with_tex(mesh, col, tex))
-				else:
-					mesh.set_surface_override_material(si, _make_tinted_material(mesh, col))
-			mesh.material_override = null
-		else:
-			mesh.material_override = _make_tinted_material(mesh, col)
+		for surface in mesh.mesh.get_surface_count():
+			var texture: Texture2D = null
+			if face_textures.has(id):
+				var info: Dictionary = face_textures[id]
+				if surface == int(info.get("surf", -1)):
+					texture = info.get("tex")
+			mesh.set_surface_override_material(surface, _toon_material(mesh, surface, col, texture))
+		mesh.material_override = null
 
-func _initial_material(mesh: MeshInstance3D) -> Material:
-	var id := mesh.get_instance_id()
-	if not _base_materials.has(id):
-		_base_materials[id] = mesh.get_active_material(0)
-	return _base_materials[id]
-
-## 帶表情紋理的著色材質（玩家色 tint × 表情紋理原色）
-func _make_tinted_material_with_tex(mesh: MeshInstance3D, color: Color, tex: Texture2D) -> Material:
-	var src: Material = _initial_material(mesh)
-	var mat := src.duplicate() if src else StandardMaterial3D.new()
-	if mat is StandardMaterial3D:
-		var sm := mat as StandardMaterial3D
-		sm.albedo_texture = tex
-		sm.albedo_color = color   # 白 × 紋理 = 表情原色
-		sm.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-		sm.cull_mode = BaseMaterial3D.CULL_DISABLED
-		# 對齊臉片 UV：把表情圖縮放到剛好一張鋪滿整個臉片 surface，
-		# 避免 UV 超出 [0,1] 造成重複平鋪/半張錯位。
-		# 由 face 控制器在 apply 前通過 mesh_uv_scale 提供（默認 1）。
+func _toon_material(mesh: MeshInstance3D, surface: int, color: Color, texture: Texture2D = null) -> ShaderMaterial:
+	var key := "%s:%s" % [mesh.get_instance_id(), surface]
+	var material := _toon_materials.get(key) as ShaderMaterial
+	if material == null:
+		material = PLAYER_TOON_MATERIAL.duplicate() as ShaderMaterial
+		material.next_pass = _get_toon_outline_material()
+		_toon_materials[key] = material
+	material.set_shader_parameter(&"tint_color", color)
+	material.set_shader_parameter(&"albedo_texture", texture)
+	if texture:
 		var uv_scale: Vector3 = mesh_uv_scale if mesh_uv_scale != Vector3.ZERO else Vector3.ONE
-		sm.uv1_scale = uv_scale
-		sm.uv1_offset = mesh_uv_offset
-	mat.next_pass = _get_stencil_writer()
-	return mat
-
-func _make_tinted_material(mesh: MeshInstance3D, color: Color) -> Material:
-	var src: Material = _initial_material(mesh)
-	if src:
-		var mat: Material = src.duplicate()
-		if mat is StandardMaterial3D:
-			(mat as StandardMaterial3D).albedo_color = color
-			# human 模型原始材質為 unshaded（泛白/發光主因），統一強制受光照
-			(mat as StandardMaterial3D).shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
-		mat.next_pass = _get_stencil_writer()
-		return mat
-	var mat2 := StandardMaterial3D.new()
-	mat2.albedo_color = color
-	mat2.next_pass = _get_stencil_writer()
-	return mat2
+		material.set_shader_parameter(&"texture_uv_scale", Vector2(uv_scale.x, uv_scale.y))
+		material.set_shader_parameter(&"texture_uv_offset", Vector2(mesh_uv_offset.x, mesh_uv_offset.y))
+	else:
+		material.set_shader_parameter(&"texture_uv_scale", Vector2.ONE)
+		material.set_shader_parameter(&"texture_uv_offset", Vector2.ZERO)
+	return material
