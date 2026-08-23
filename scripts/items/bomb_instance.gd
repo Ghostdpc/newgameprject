@@ -84,8 +84,8 @@ func _spawn_fire_particles(scene: Node) -> void:
 	fire.explosiveness = 1.0
 	fire.local_coords = true
 	fire.visibility_aabb = AABB(Vector3(-3, -3, -3), Vector3(6, 6, 6))
-	# GPUParticles3D 須有 mesh 才渲染；用 billboard QuadMesh 作粒子面片
-	_set_particle_mesh(fire)
+	# GPUParticles3D 須有 mesh 才渲染；用 3D 球體 + 橘黃基色（火花）
+	_set_particle_mesh(fire, Color(1.0, 0.62, 0.2))
 	fire.finished.connect(fire.queue_free)
 
 ## 煙粒子：慢速擴散上浮，壽命較長
@@ -118,12 +118,12 @@ func _spawn_smoke_particles(scene: Node) -> void:
 	smoke.explosiveness = 1.0
 	smoke.local_coords = true
 	smoke.visibility_aabb = AABB(Vector3(-4, -4, -4), Vector3(8, 8, 8))
-	_set_particle_mesh(smoke)
+	_set_particle_mesh(smoke, Color(0.45, 0.42, 0.4))
 	smoke.finished.connect(smoke.queue_free)
 
 ## 給 GPUParticles3D 設 3D 球體粒子（SphereMesh），立體體積感，非 billboard 面片。
-## 附 unshaded 材質讓 color_ramp 的顏色直接可見（火光/煙）。
-func _set_particle_mesh(particles: GPUParticles3D) -> void:
+## 附 unshaded 材質讓 color_ramp 的顏色直接可見（火光/煙）。tint 固定粒子基色。
+func _set_particle_mesh(particles: GPUParticles3D, tint: Color = Color.WHITE) -> void:
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.09
 	sphere.height = 0.18
@@ -132,6 +132,7 @@ func _set_particle_mesh(particles: GPUParticles3D) -> void:
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.no_depth_test = false
+	mat.albedo_color = tint
 	sphere.material = mat
 	particles.draw_pass_1 = sphere
 
