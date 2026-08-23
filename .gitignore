@@ -10,10 +10,6 @@ Godot_v4.7.2-stable_win64.exe/
 # Godot UID files (editor-generated)
 *.uid
 
-# Export presets (may contain paths/credentials)
-# Only ignore the auto-generated root copy; package_tool keeps the tracked template.
-/export_presets.cfg
-
 # Packaged build output
 /package/
 

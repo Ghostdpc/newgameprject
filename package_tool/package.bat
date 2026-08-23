@@ -15,6 +15,10 @@ set "GODOT_EXE=%GODOT_BIN%"
 set "PRESET=Windows Desktop"
 set "OUTPUT_NAME=MyGame.exe"
 
+REM  Export templates (auto-installed if missing)
+set "TEMPLATE_VERSION=4.7.2.stable"
+set "TEMPLATE_URL=https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz"
+
 REM ---- Resolve paths ----
 set "SCRIPT_DIR=%~dp0"
 pushd "%SCRIPT_DIR%.." || (echo [ERROR] cannot enter project root & exit /b 1)
@@ -35,6 +39,13 @@ REM ---- Sync export preset to project root (root copy is git-ignored) ----
 copy /Y "%SCRIPT_DIR%export_presets.cfg" "%PROJECT_ROOT%\export_presets.cfg" >nul
 if errorlevel 1 (
   echo [ERROR] failed to copy export_presets.cfg
+  exit /b 1
+)
+
+REM ---- Ensure export templates (auto-download+install if missing) ----
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%install_templates.ps1" -Version "%TEMPLATE_VERSION%" -Url "%TEMPLATE_URL%"
+if errorlevel 1 (
+  echo [ERROR] export templates install failed.
   exit /b 1
 )
 

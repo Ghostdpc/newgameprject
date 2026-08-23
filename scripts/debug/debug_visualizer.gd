@@ -5,6 +5,7 @@
 ## F5 對 P1 注入道具並立即使用（測試道具效果用）
 ## F6 打開/關閉道具調試列表（點擊道具名立即對 P1 觸發效果）
 ## F7 清除場上全部陷阱，在 P1 腳下强制生成一個香蕉皮（視覺排查用）
+## F9 在 Output 按世界 AABB 體積排序輸出碰撞體，定位超大或偏移的形狀
 
 class_name DebugVisualizer
 extends Node3D
@@ -112,6 +113,9 @@ func _input(event: InputEvent) -> void:
 		elif event.physical_keycode == KEY_F8:
 			_toggle_zone_panel()
 			get_viewport().set_input_as_handled()
+		elif event.physical_keycode == KEY_F9:
+			_report_collision_bounds()
+			get_viewport().set_input_as_handled()
 
 func _toggle_collisions() -> void:
 	_collision_show = (_collision_show + 1) % 3
@@ -205,6 +209,81 @@ func _draw_shape(imm: ImmediateMesh, cs: CollisionShape3D) -> void:
 		_draw_capsule(imm, tf, cs.shape as CapsuleShape3D)
 	elif cs.shape is BoxShape3D:
 		_draw_box(imm, tf, cs.shape as BoxShape3D)
+	else:
+		_draw_aabb(imm, _get_shape_world_aabb(cs))
+
+func _draw_aabb(imm: ImmediateMesh, aabb: AABB) -> void:
+	if aabb.size == Vector3.ZERO:
+		return
+	var corners: Array[Vector3] = [
+		aabb.position,
+		Vector3(aabb.end.x, aabb.position.y, aabb.position.z),
+		Vector3(aabb.end.x, aabb.position.y, aabb.end.z),
+		Vector3(aabb.position.x, aabb.position.y, aabb.end.z),
+		Vector3(aabb.position.x, aabb.end.y, aabb.position.z),
+		Vector3(aabb.end.x, aabb.end.y, aabb.position.z),
+		Vector3(aabb.end.x, aabb.end.y, aabb.end.z),
+		Vector3(aabb.position.x, aabb.end.y, aabb.end.z),
+	]
+	var edges: Array = [
+		[0, 1], [1, 2], [2, 3], [3, 0],
+		[4, 5], [5, 6], [6, 7], [7, 4],
+		[0, 4], [1, 5], [2, 6], [3, 7],
+	]
+	for edge in edges:
+		imm.surface_add_vertex(corners[edge[0]])
+		imm.surface_add_vertex(corners[edge[1]])
+
+func _get_shape_world_aabb(cs: CollisionShape3D) -> AABB:
+	var debug_mesh := cs.shape.get_debug_mesh()
+	if debug_mesh == null:
+		return AABB()
+	var local_aabb := debug_mesh.get_aabb()
+	var world_aabb := AABB()
+	var has_point := false
+	for x in [local_aabb.position.x, local_aabb.end.x]:
+		for y in [local_aabb.position.y, local_aabb.end.y]:
+			for z in [local_aabb.position.z, local_aabb.end.z]:
+				var point := cs.global_transform * Vector3(x, y, z)
+				if has_point:
+					world_aabb = world_aabb.expand(point)
+				else:
+					world_aabb = AABB(point, Vector3.ZERO)
+					has_point = true
+	return world_aabb
+
+func _report_collision_bounds() -> void:
+	var rows: Array[Dictionary] = []
+	for child in get_tree().root.find_children("*", "CollisionShape3D", true, false):
+		var collision_shape := child as CollisionShape3D
+		if collision_shape == null or collision_shape.shape == null:
+			continue
+		var bounds := _get_shape_world_aabb(collision_shape)
+		var size := bounds.size
+		rows.append({
+			"volume": size.x * size.y * size.z,
+			"path": str(collision_shape.get_path()),
+			"shape": collision_shape.shape.get_class(),
+			"size": size,
+			"center": bounds.get_center(),
+		})
+	rows.sort_custom(func(left: Dictionary, right: Dictionary) -> bool:
+		return float(left.volume) > float(right.volume)
+	)
+	print("=== Collision AABB report: %d shapes ===" % rows.size())
+	for index in mini(20, rows.size()):
+		var row := rows[index]
+		print(
+			"COLLIDER[%02d] volume=%.3f size=%s center=%s shape=%s path=%s" % [
+				index + 1,
+				float(row.volume),
+				row.size,
+				row.center,
+				row.shape,
+				row.path,
+			]
+		)
+	print("=== End collision AABB report ===")
 
 func _draw_capsule(imm: ImmediateMesh, tf: Transform3D, shape: CapsuleShape3D) -> void:
 	var radius: float = shape.radius
