@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://m6wkaui35yss"]
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1"]
-[ext_resource type="PackedScene" path="res://assets/models/human/human.fbx" id="2"]
+[ext_resource type="PackedScene" path="res://assets/models/human/newnewhuman.fbx" id="2"]
 [ext_resource type="Script" path="res://scripts/player/ragdoll_rig.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/player/outfit_manager.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/player/character_effects.gd" id="5"]

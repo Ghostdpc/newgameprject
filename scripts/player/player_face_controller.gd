@@ -7,6 +7,12 @@ class_name PlayerFaceController
 extends Node
 
 const IMAGE_FOLDER := "res://assets/textures/faces"
+## 半球面具 mesh（貼死在 head 骨曲面，任何角度不穿幫）—— use_face_mask 開啟時替代 Sprite3D
+const FACE_MASK_MESH := "res://assets/models/face_mask_hemisphere.mesh"
+
+## 是否用半球面具貼膚替代平面 Sprite（貼死頭部曲面）
+## 面具綁 head 骨，飛撲/軟倒時也緊貼頭骨不穿幫。默認關閉，保留原平面方案。
+@export var use_face_mask: bool = false
 
 ## 貼面距離：表情離骨心沿骨骼前向(-Z)的前方距離（世界單位）
 const FACE_DISTANCE := 0.42
@@ -22,6 +28,8 @@ const FACE_LAYER := 4
 @export var bone_offset: Vector3 = Vector3(-0.16, -0.62, 0.04)
 ## 貼皮模式的 Sprite 局部旋轉（弧度）
 @export var bone_rotation: Vector3 = Vector3(0.0, deg_to_rad(-90.0), 0.0)
+## 半球面具的局部旋轉（弧度）—— 由 tools/calc_face_geom.gd 自動算得，讓面具 +Z 對齊面部
+@export var mask_rotation: Vector3 = Vector3(deg_to_rad(40.95), deg_to_rad(132.77), 0.0)
 
 ## 表情所掛的骨（預設 head；找不到時用 fallback_attach 節點）
 ## 支援多候選：依序嘗試，命中第一個存在的骨（head → Human 的頭骨 → 骨骼.004 等 Blender 預設名）
@@ -43,11 +51,195 @@ signal expression_changed(id: String, total: int)
 
 var skeleton: Skeleton3D
 var _attachment: Node3D
-var _sprite: Sprite3D
+var _sprite: Node3D
 var _paths: Array[String] = []
 var _cache: Dictionary = {}
 var _current_index: int = -1
 var _used_fallback: bool = false
+## 服裝貼圖宿主（apply_garment_attach 時使用）
+var _garment_host: MeshInstance3D = null
+## 頭部材質宿主（apply_head_texture 時使用）
+var _head_mi: MeshInstance3D = null
+var _head_surf: int = -1
+## 臉片 UV 縮放/偏移（表情一張鋪滿用）
+var _face_uv_scale: Vector3 = Vector3.ONE
+var _face_uv_offset: Vector3 = Vector3.ZERO
+## 貼頭材前的原 material_override（還原用）
+var _head_prev_override: Material = null
+
+## 是否把表情貼紙附著到頭部服裝（玩家穿上的"臉"服裝）而非貼頭骨。開啟時優先掛服裝。
+## 驗證用：假設美術做的"臉"是帽子槽服裝，表情貼到它上面，隨服裝/頭部移動。
+@export var attach_to_garment: bool = false
+## 是否直接把表情貼到模型頭部材質（如 newhuman 有獨立頭部 mesh/UV 的模型）。開啟時替換頭部外表材質。
+@export var use_head_texture: bool = false
+
+## 直接把表情圖貼到模型頭部 mesh 的材質（利用独立头部 UV/surface）。
+## 適用 newhuman 這類頭部有獨立 UV 島/材質的模型。返回是否成功。
+func apply_head_texture() -> bool:
+	if use_head_texture == false:
+		return false
+	var player := get_parent() as PlayerController
+	if player == null:
+		return false
+	var root := player.get_node_or_null("Model") as Node
+	if root == null:
+		root = get_parent().get_node_or_null("Model") as Node
+	if root == null:
+		return false
+	# 找頭部表面：優先「獨立小面片」（多-surface mesh 中頂點最少的），即美術加的 mesh 臉。
+	var head_mi: MeshInstance3D = null
+	var head_surf := -1
+	var best_verts := 9e9
+	for mi in root.find_children("*", "MeshInstance3D", true, false):
+		var m := mi as MeshInstance3D
+		if m == null or m.mesh == null:
+			continue
+		if m.mesh.get_surface_count() < 2:
+			continue
+		for i in m.mesh.get_surface_count():
+			var a := m.mesh.surface_get_arrays(i)
+			var verts: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
+			if verts.size() < best_verts:
+				best_verts = verts.size()
+				head_mi = m
+				head_surf = i
+	if head_mi == null or head_surf < 0:
+		return false
+	# 計算臉片 UV 範圍 → 表情材質的 uv1_scale/offset（一張鋪滿，避免平鋪/半張）
+	_calc_face_uv_scale(head_mi, head_surf)
+	if _sprite:
+		_sprite.visible = false
+	_head_mi = head_mi
+	_head_surf = head_surf
+	if _current_index < 0 and count() > 0:
+		_current_index = 0
+	_apply_head_texture(maxi(_current_index, 0))
+	return true
+
+## 統計臉片 UV 範圍，得出讓表情一張鋪滿的 uv1_scale/offset
+func _calc_face_uv_scale(mi: MeshInstance3D, surf: int) -> void:
+	_face_uv_scale = Vector3.ONE
+	_face_uv_offset = Vector3.ZERO
+	if mi == null or mi.mesh == null:
+		return
+	if surf < 0 or surf >= mi.mesh.get_surface_count():
+		return
+	var a := mi.mesh.surface_get_arrays(surf)
+	var uvs: PackedVector2Array = a[Mesh.ARRAY_TEX_UV]
+	if uvs.size() == 0:
+		return
+	var minu := 9e9; var maxu := -9e9; var minv := 9e9; var maxv := -9e9
+	for uv in uvs:
+		minu = min(minu, uv.x); maxu = max(maxu, uv.x)
+		minv = min(minv, uv.y); maxv = max(maxv, uv.y)
+	var rangeu := maxf(maxu - minu, 1e-4)
+	var rangev := maxf(maxv - minv, 1e-4)
+	_face_uv_scale = Vector3(1.0 / rangeu, 1.0 / rangev, 1.0)
+	_face_uv_offset = Vector3(-minu / rangeu, -minv / rangev, 0.0)
+
+## 把表情圖設為頭部 surface 材質 albedo
+func _apply_head_texture(index: int) -> void:
+	if _head_mi == null:
+		return
+	var tex := _get_texture(index)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = tex
+	mat.albedo_color = Color.WHITE
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_apply_head_material(mat)
+
+func _apply_head_material(mat: Material) -> void:
+	if _head_mi == null:
+		return
+	# 經由 CharacterEffects 應用：玩家色 + 表情紋理，避免被每幀 tint 覆蓋
+	var player := get_parent() as PlayerController
+	if player and player.character_effects:
+		var tex := (mat as StandardMaterial3D).albedo_texture
+		player.character_effects.mesh_uv_scale = _face_uv_scale
+		player.character_effects.mesh_uv_offset = _face_uv_offset
+		player.character_effects.set_face_texture(_head_mi, tex, _head_surf)
+	else:
+		if _head_surf >= 0 and _head_surf < _head_mi.mesh.get_surface_count():
+			_head_mi.set_surface_override_material(_head_surf, mat)
+
+## 還原頭部材質（卸下頭部貼圖模式）
+func revert_head_texture() -> void:
+	var player := get_parent() as PlayerController
+	if player and player.character_effects and _head_mi:
+		player.character_effects.set_face_texture(_head_mi, null)
+	else:
+		if _head_mi != null and _head_surf >= 0 and _head_surf < _head_mi.mesh.get_surface_count():
+			_head_mi.set_surface_override_material(_head_surf, null)
+	_head_mi = null
+	_head_surf = -1
+	use_head_texture = false
+
+## 把表情圖直接貼到玩家已穿服裝的材質上（服裝即"臉"）。返回是否成功。
+## 不建 Sprite —— 表情變成服裝的 albedo 貼圖，長在 mesh 表面不穿幫。
+## 需 face 是 PlayerController 直接子節點（Player/Face）
+func apply_garment_attach() -> bool:
+	if attach_to_garment == false:
+		return false
+	var player := get_parent() as PlayerController
+	if player == null or player.outfit_manager == null:
+		return false
+	# 找服裝節點下的 mesh（優先帽子槽，頭部載體）
+	var host: Node3D = null
+	for slot in ["hat_slot", "shirt_slot", "accessory_slot"]:
+		var item := player.outfit_manager.get_item(slot)
+		if item is Node3D:
+			host = item as Node3D
+			break
+	if host == null:
+		return false
+	var garment_mesh: MeshInstance3D = null
+	for child in host.find_children("*", "MeshInstance3D", true, false):
+		var mi := child as MeshInstance3D
+		if mi.mesh and mi.mesh.get_surface_count() > 0:
+			garment_mesh = mi
+			break
+	if garment_mesh == null:
+		return false
+	_garment_host = garment_mesh
+	# 隱藏舊 sprite（若存在）
+	if _sprite:
+		_sprite.visible = false
+	# 附著後自動顯示一個表情
+	if _current_index < 0 and count() > 0:
+		_current_index = 0
+	_apply_garment_texture(maxi(_current_index, 0))
+	return true
+
+## 把表情圖設為服裝材質 albedo
+func _apply_garment_texture(index: int) -> void:
+	if _garment_host == null:
+		return
+	var tex := _get_texture(index)
+	for i in _garment_host.mesh.get_surface_count():
+		var mat := StandardMaterial3D.new()
+		mat.albedo_texture = tex
+		mat.albedo_color = Color.WHITE
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_garment_host.set_surface_override_material(i, mat)
+
+## 卸下服裝貼圖模式：還原服裝材質，恢復 sprite 貼骨
+func detach_garment(new_skel: Skeleton3D) -> void:
+	# 還原服裝 override 材質
+	if _garment_host:
+		for i in _garment_host.mesh.get_surface_count():
+			_garment_host.set_surface_override_material(i, null)
+	_garment_host = null
+	attach_to_garment = false
+	# 重建 sprite 到頭骨
+	if _sprite:
+		_sprite.queue_free()
+	_sprite = null
+	if new_skel:
+		_used_fallback = false
+		setup(new_skel)
+	if _current_index >= 0:
+		show_expression(_current_index)
 
 ## 讓外部（如 PlayerController._setup_model）注入骨架
 func setup(skel: Skeleton3D) -> void:
@@ -59,8 +251,8 @@ func setup(skel: Skeleton3D) -> void:
 		att.name = "FaceAttachment"
 		att.bone_name = bound_bone
 		skeleton.add_child(att)
-		_sprite = _new_sprite(false)
-		_sprite.rotation = bone_rotation
+		_sprite = _new_display(false)
+		_sprite.rotation = mask_rotation if use_face_mask else bone_rotation
 		_sprite.position = bone_offset
 		att.add_child(_sprite)
 	else:
@@ -69,7 +261,7 @@ func setup(skel: Skeleton3D) -> void:
 		if host == null:
 			host = skeleton
 		_used_fallback = true
-		_sprite = _new_sprite(fallback_billboard)
+		_sprite = _new_display(fallback_billboard)
 		_sprite.position = fallback_offset
 		host.add_child(_sprite)
 		if not fallback_billboard:
@@ -85,7 +277,14 @@ func _find_bone_name() -> String:
 				return n
 	return ""
 
-func _new_sprite(billboard: bool) -> Sprite3D:
+func _new_display(billboard: bool) -> Node3D:
+	if use_face_mask:
+		var m := MeshInstance3D.new()
+		m.name = "FaceMask"
+		m.mesh = load(FACE_MASK_MESH) as ArrayMesh
+		m.layers = FACE_LAYER
+		m.visible = false
+		return m
 	var s := Sprite3D.new()
 	s.name = "FaceSprite"
 	s.billboard = BaseMaterial3D.BILLBOARD_ENABLED if billboard else BaseMaterial3D.BILLBOARD_DISABLED
@@ -126,11 +325,31 @@ func show_expression(index: int) -> void:
 	if index == -1:
 		clear()
 		return
+	# 服裝貼圖模式：直接換服裝材質，不走 sprite
+	if attach_to_garment and _garment_host != null:
+		_apply_garment_texture(index)
+		return
+	# 頭部材質模式：直接換頭部 surface 材質
+	if use_head_texture and _head_mi != null:
+		_apply_head_texture(index)
+		return
 	if not _sprite:
 		return
-	_sprite.texture = _get_texture(index)
-	_sprite.pixel_size = ICON_HEIGHT / float(maxi(_sprite.texture.get_height(), 1))
-	_sprite.scale = Vector3.ONE
+	if _sprite is MeshInstance3D:
+		var tex := _get_texture(index)
+		var m := _sprite as MeshInstance3D
+		var mat := StandardMaterial3D.new()
+		mat.albedo_texture = tex
+		mat.albedo_color = Color.WHITE
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		for i in m.mesh.get_surface_count():
+			m.set_surface_override_material(i, mat)
+	else:
+		var sp := _sprite as Sprite3D
+		sp.texture = _get_texture(index)
+		sp.pixel_size = ICON_HEIGHT / float(maxi(sp.texture.get_height(), 1))
+		sp.scale = Vector3.ONE
 	_sprite.visible = true
 
 ## 懶加載單張表情圖（帶快取，原圖 2000px 縮到 512 以下省顯存）

@@ -562,7 +562,9 @@ func _setup_model() -> void:
 		_apply_human_material(model)
 		# human 自帶動畫，不 merge KayKit Idle（骨骼名不匹配會報警）
 		_set_human_animation_looping()
-		_split_human_idle()
+		# 若已有獨立 Walk/jump 分活動畫（newnewhuman），不按帧拆分（免切錯段）
+		if not _has_anim_suffix("Walk"):
+			_split_human_idle()
 	else:
 		_merge_idle_animation()
 		_set_animation_looping(ANIM_IDLE)
@@ -602,6 +604,11 @@ func _setup_model() -> void:
 	face = get_node_or_null("Face") as PlayerFaceController
 	if face:
 		face.setup(_model_skeleton)
+		# 若有模型帶獨立臉片（newnewhuman），自動改貼臉到臉片材質；無則保持平面貼紙
+		face.use_head_texture = true
+		var face_ok := face.apply_head_texture()
+		if not face_ok:
+			face.use_head_texture = false
 
 func _find_skeleton(n: Node) -> Skeleton3D:
 	if n is Skeleton3D:
@@ -878,16 +885,17 @@ func _update_animation() -> void:
 
 func _anim_for_state(state_name: String) -> String:
 	if _is_human_model:
-		# human 動畫統一塞在一個主動畫裡，按帧號拆成子段，各自點播
+		# human 動畫：優先按後綴直接匹配獨立動畫（新模型 Idle/Walk/jump 分立），找不到再退回帧拆分槽
 		match state_name:
 			"Move":
-				return _match_slot_anim("Human_Move")
+				return _human_anim_or_slot("Walk", "Human_Move")
 			"Dive":
-				return _match_slot_anim("Human_Dive")
+				return _human_anim_or_slot("Dive", "Human_Dive")
 			"Jump", "Fly":
-				return _match_human_anim(HUMAN_ANIM_JUMP)
+				var j := _match_human_anim(HUMAN_ANIM_JUMP)
+				return j if _is_valid_anim_name(j) else _match_slot_anim("Human_Jump")
 			_:
-				return _match_slot_anim("Human_Idle")
+				return _human_anim_or_slot("Idle", "Human_Idle")
 	match state_name:
 		"Move":
 			return ANIM_MOVE
@@ -921,6 +929,28 @@ func _match_slot_anim(name: String) -> String:
 	if s == ANIM_IDLE:
 		s = _match_human_anim(HUMAN_ANIM_IDLE)
 	return s
+
+## 嘗試用後綴直接匹配獨立動畫；無效則退回帧拆分槽動畫
+func _human_anim_or_slot(suffix: String, slot: String) -> String:
+	var matched := _match_human_anim(suffix)
+	if _is_valid_anim_name(matched):
+		return matched
+	return _match_slot_anim(slot)
+
+## 檢查動畫庫是否存在以指定後綴結尾的動畫
+func _has_anim_suffix(suffix: String) -> bool:
+	if not _animation_player:
+		return false
+	for an in _animation_player.get_animation_list():
+		if an.ends_with(suffix) or an.ends_with("|" + suffix):
+			return true
+	return false
+
+## 檢查動畫名是否真正存在於動畫庫（避免 _match_human_anim 找不到時回退到任意首個動畫）
+func _is_valid_anim_name(name: String) -> bool:
+	if name.is_empty() or name == ANIM_IDLE:
+		return false
+	return _animation_player != null and _animation_player.has_animation(name)
 
 func _find_animation_player(n: Node) -> AnimationPlayer:
 	if n is AnimationPlayer:
