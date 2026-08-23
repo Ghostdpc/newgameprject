@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://resources/shaders/toon_room_material.gdshader" id="1_toon"]
+
+[resource]
+resource_name = "RoomStageWoodFloor"
+render_priority = 0
+shader = ExtResource("1_toon")
+shader_parameter/procedural_wood_floor = true
+shader_parameter/wood_base_color = Color(0.26, 0.075, 0.02, 1)
+shader_parameter/wood_light_color = Color(0.5, 0.2, 0.055, 1)
+shader_parameter/wood_seam_color = Color(0.06, 0.012, 0.003, 1)
+shader_parameter/wood_plank_width = 0.38
+shader_parameter/wood_plank_length = 1.28
+shader_parameter/wood_seam_width = 0.018
+shader_parameter/fill_light = 0.035
+shader_parameter/color_saturation = 0.9
+shader_parameter/color_saturation_multiplier = 0.82

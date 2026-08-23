@@ -64,6 +64,9 @@ func equip_garment(player: PlayerController, garment_id: String) -> void:
 				# 占位 tint：僅在「無貼圖且配置了非白 tint」時套用（純白 unshaded 白模上色）
 				if item and def.texture.is_empty() and def.tint != Color.WHITE:
 					_tint_model(item, def.tint)
+				# 服裝專屬挂點偏移（覆蓋槽位預設偏移；用於同槽不同裝需要不同位置）
+				if item and def.mount_offset != Vector3.ZERO:
+					item.position = def.mount_offset
 
 	# 应用效果
 	var ctx := ItemContext.new()
