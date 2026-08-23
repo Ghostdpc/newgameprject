@@ -44,8 +44,20 @@ func _ready() -> void:
 		character_root = get_parent() as Node3D
 	if not skeleton and character_root:
 		skeleton = character_root.find_child("Skeleton3D", true, false) as Skeleton3D
+	if not skeleton and character_root:
+		# fbx 导入的骨架节点名不一定是 "Skeleton3D"，按类型递归兜底查找
+		skeleton = _find_skeleton_by_type(character_root)
 	_detect_human()
 	_build_slots()
+
+func _find_skeleton_by_type(n: Node) -> Skeleton3D:
+	if n is Skeleton3D:
+		return n as Skeleton3D
+	for c in n.get_children():
+		var r := _find_skeleton_by_type(c)
+		if r:
+			return r
+	return null
 
 ## 偵測骨架是否為 Human（含「骨骼」無語義骨名），決定是否用映射
 func _detect_human() -> void:

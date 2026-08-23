@@ -10,6 +10,8 @@ signal battle_ended()
 
 # 拍照
 signal photo_taken(viewport_texture: ViewportTexture)
+# 实拍照片已完成（capture_high_res 拍摄完成，服装等演出道具可安全清空）
+signal photo_captured()
 
 # 玩家
 signal player_entered_zone(player_index: int)

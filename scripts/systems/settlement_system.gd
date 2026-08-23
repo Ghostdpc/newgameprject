@@ -113,6 +113,9 @@ func _analyze_async(texture: ViewportTexture) -> void:
 	if photo_image == null:
 		photo_image = _photo_or_empty(texture)
 
+	# 实拍照片完成：服装等演出道具可安全清空（评分读的是数据层，不依赖 mesh）
+	EventBus.photo_captured.emit()
+
 	_save_photo_png(photo_image)
 
 	var cam := _get_photo_camera()
@@ -192,7 +195,7 @@ func _apply_id_overrides(actors: Array) -> Array:
 ## 还原所有被修改的 mesh 的 layers 和 material_override，并恢复被挂起的效果组件
 func _revert_id_overrides(table: Array) -> void:
 	for entry in table:
-		var mi: MeshInstance3D = entry["mi"]
+		var mi = entry["mi"]
 		if is_instance_valid(mi):
 			mi.layers = entry["orig_layers"]
 			mi.material_override = entry["orig_override"]

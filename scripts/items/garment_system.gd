@@ -2,7 +2,7 @@
 ## - 加载 GarmentConfig
 ## - equip_garment / unequip_garment：穿脱服装 + 效果触发
 ## - get_equipped_score：返回玩家服装得分（0~1，供 ScoreAnalyzer）
-## - battle_ended 时自动清空所有玩家服装
+## - photo_captured 时清空服装 mesh/效果；battle_started 时清空数据
 
 extends Node
 
@@ -14,7 +14,24 @@ var _equipped: Dictionary = {}
 func _ready() -> void:
 	_garment_config = GarmentConfig.new()
 	_garment_config.load()
-	EventBus.battle_ended.connect(_on_battle_ended)
+	# 所有清理都在拍照完成之后：battle_ended 不再清任何东西，
+	# 否则实拍照片里会没有服装。
+	EventBus.photo_captured.connect(_on_photo_captured)
+	# 新一局开始：清空上局残留的服装数据（mesh/效果已在 photo_captured 清空）
+	EventBus.battle_started.connect(_on_battle_started)
+
+## 新局开始：清空上局残留的服装数据（mesh/效果已在 photo_captured 清空）
+func _on_battle_started() -> void:
+	for pid in _equipped.keys():
+		var player := _find_player_by_instance_id(pid)
+		if player and player.equipped_garments:
+			player.equipped_garments.clear()
+	_equipped.clear()
+
+## 实拍照片完成后清空所有玩家服装 mesh/效果。
+## 注意：保留 _equipped 数据，结算评分仍要读它（outfit 字段）。
+func _on_photo_captured() -> void:
+	_clear_visuals_only()
 
 ## 給服裝模型套用 tint 色（覆蓋純白 unshaded 材質，占位可視化）
 func _tint_model(item: Node3D, color: Color) -> void:
@@ -100,8 +117,8 @@ func get_equipped_score(player: PlayerController) -> float:
 			score += def.score_bonus
 	return clampf(score, 0.0, 1.0)
 
-## 战斗结束时清空所有玩家服装效果
-func _on_battle_ended() -> void:
+## 只清服装 mesh 与效果（保留 _equipped 数据，评分读 outfit 分用）
+func _clear_visuals_only() -> void:
 	for pid in _equipped.keys():
 		var slot_map: Dictionary = _equipped[pid]
 		for slot_data in slot_map.values():
@@ -110,13 +127,9 @@ func _on_battle_ended() -> void:
 			if def and ctx:
 				for effect in def.effects:
 					effect.revert(ctx)
-		# 清 PlayerController 记录（找玩家节点）
 		var player := _find_player_by_instance_id(pid)
-		if player:
-			player.equipped_garments.clear()
-			if player.outfit_manager:
-				player.outfit_manager.clear_all()
-	_equipped.clear()
+		if player and player.outfit_manager:
+			player.outfit_manager.clear_all()
 
 ## 卸下指定槽位（内部用）
 func _unequip_slot(player: PlayerController, slot_name: String) -> void:

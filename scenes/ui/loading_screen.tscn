@@ -1,20 +1,21 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://5qx6t75gjoic"]
 
-[ext_resource type="Script" path="res://scripts/ui/loading_screen.gd" id="1_ls"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/lobby/bg.png" id="2_bg"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/menu/title.png" id="3_logo"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/load_bar_track.png" id="4_trk"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/load_bar_fill.png" id="5_fill"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_cross.png" id="6_hx"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_circle.png" id="7_hc"]
-[ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_triangle.png" id="8_ht"]
-[ext_resource type="FontFile" path="res://assets/fonts/Kaph-Regular.otf" id="9_font"]
+[ext_resource type="Script" uid="uid://kfklff1ded0g" path="res://scripts/ui/loading_screen.gd" id="1_ls"]
+[ext_resource type="Texture2D" uid="uid://cg3j6fi8nnhup" path="res://assets/textures/ui/lobby/bg.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://civ0r3n1bcli" path="res://assets/textures/ui/menu/title.png" id="3_logo"]
+[ext_resource type="Texture2D" uid="uid://bcwsfwg7d3xeh" path="res://assets/textures/ui/load_bar_track.png" id="4_trk"]
+[ext_resource type="Texture2D" uid="uid://blpeee75c88fh" path="res://assets/textures/ui/load_bar_fill.png" id="5_fill"]
+[ext_resource type="Texture2D" uid="uid://b7np6d6ah2mh3" path="res://assets/textures/ui/load_hint_cross.png" id="6_hx"]
+[ext_resource type="Texture2D" uid="uid://du4frrfmqmqpx" path="res://assets/textures/ui/load_hint_circle.png" id="7_hc"]
+[ext_resource type="Texture2D" uid="uid://c1355llca4co2" path="res://assets/textures/ui/load_hint_triangle.png" id="8_ht"]
+[ext_resource type="FontFile" uid="uid://oj7ndrgx0uv2" path="res://assets/fonts/Kaph-Regular.otf" id="9_font"]
+[ext_resource type="Texture2D" uid="uid://d3nb0stlfnqpo" path="res://assets/textures/ui/loading_hint_square.png" id="10_pqjuo"]
 
-[node name="LoadingScreen" type="CanvasLayer"]
+[node name="LoadingScreen" type="CanvasLayer" unique_id=1473121164]
 layer = 100
 script = ExtResource("1_ls")
 
-[node name="Screen" type="Control" parent="."]
+[node name="Screen" type="Control" parent="." unique_id=589921700]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,7 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="BG" type="TextureRect" parent="Screen"]
+[node name="BG" type="TextureRect" parent="Screen" unique_id=1807169532]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,8 +36,8 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ScrollLayer" type="Control" parent="Screen"]
-layout_mode = 3
+[node name="ScrollLayer" type="Control" parent="Screen" unique_id=1003041663]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -44,7 +45,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Logo" type="TextureRect" parent="Screen"]
+[node name="Logo" type="TextureRect" parent="Screen" unique_id=548421797]
 layout_mode = 0
 offset_left = 410.0
 offset_top = 110.0
@@ -55,8 +56,8 @@ texture = ExtResource("3_logo")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="BarArea" type="Control" parent="Screen"]
-layout_mode = 3
+[node name="BarArea" type="Control" parent="Screen" unique_id=1287538322]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -64,41 +65,39 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="LoadingLabel" type="Label" parent="Screen/BarArea"]
+[node name="LoadingLabel" type="Label" parent="Screen/BarArea" unique_id=442492160]
 layout_mode = 0
 offset_left = 1060.0
 offset_top = 712.0
 offset_right = 1500.0
 offset_bottom = 760.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "加载中..."
 horizontal_alignment = 2
 
-[node name="LoadBar" type="TextureProgressBar" parent="Screen/BarArea"]
+[node name="LoadBar" type="TextureProgressBar" parent="Screen/BarArea" unique_id=1703149296]
 layout_mode = 0
 offset_left = 420.0
 offset_top = 774.0
 offset_right = 1500.0
 offset_bottom = 846.0
 mouse_filter = 2
-value = 0.0
+value = 10.0
 nine_patch_stretch = true
-stretch_margin_left = 30
+stretch_margin_left = 40
 stretch_margin_top = 36
-stretch_margin_right = 30
+stretch_margin_right = 40
 stretch_margin_bottom = 36
 texture_under = ExtResource("4_trk")
 texture_progress = ExtResource("5_fill")
 
-[node name="PercentLabel" type="Label" parent="Screen/BarArea"]
+[node name="PercentLabel" type="Label" parent="Screen/BarArea" unique_id=1046383430]
 layout_mode = 0
-offset_left = 420.0
+offset_left = 440.0
 offset_top = 774.0
-offset_right = 760.0
+offset_right = 780.0
 offset_bottom = 846.0
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.11, 0.07, 0.2, 1)
 theme_override_constants/outline_size = 8
@@ -107,7 +106,7 @@ theme_override_font_sizes/font_size = 40
 text = "0%"
 vertical_alignment = 1
 
-[node name="HintsRow" type="HBoxContainer" parent="Screen"]
+[node name="HintsRow" type="HBoxContainer" parent="Screen" unique_id=1085849140]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -121,12 +120,12 @@ mouse_filter = 2
 theme_override_constants/separation = 64
 alignment = 1
 
-[node name="HintJump" type="HBoxContainer" parent="Screen/HintsRow"]
+[node name="HintJump" type="HBoxContainer" parent="Screen/HintsRow" unique_id=1434717196]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintJump"]
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintJump" unique_id=783976610]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
@@ -134,19 +133,18 @@ texture = ExtResource("6_hx")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="Label" parent="Screen/HintsRow/HintJump"]
+[node name="Text" type="Label" parent="Screen/HintsRow/HintJump" unique_id=888454487]
 layout_mode = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "跳跃"
 
-[node name="HintPickup" type="HBoxContainer" parent="Screen/HintsRow"]
+[node name="HintPickup" type="HBoxContainer" parent="Screen/HintsRow" unique_id=2003258135]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintPickup"]
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintPickup" unique_id=339499932]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
@@ -154,19 +152,18 @@ texture = ExtResource("7_hc")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="Label" parent="Screen/HintsRow/HintPickup"]
+[node name="Text" type="Label" parent="Screen/HintsRow/HintPickup" unique_id=220926943]
 layout_mode = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "拾取\\使用 道具"
 
-[node name="HintDive" type="HBoxContainer" parent="Screen/HintsRow"]
+[node name="HintDive" type="HBoxContainer" parent="Screen/HintsRow" unique_id=1109574706]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintDive"]
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintDive" unique_id=441794558]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
@@ -174,9 +171,26 @@ texture = ExtResource("8_ht")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="Label" parent="Screen/HintsRow/HintDive"]
+[node name="Text" type="Label" parent="Screen/HintsRow/HintDive" unique_id=1041456031]
 layout_mode = 2
-mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "飞扑"
+
+[node name="HintSuicide" type="HBoxContainer" parent="Screen/HintsRow" unique_id=1221349376]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintSuicide" unique_id=967424606]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_pqjuo")
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="Screen/HintsRow/HintSuicide" unique_id=527868941]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "自杀"
