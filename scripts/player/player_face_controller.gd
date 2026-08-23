@@ -1,6 +1,6 @@
 ## 職責：表情貼臉。用 Sprite3D billboard 貼在 head 骨骼前側，跟隨動畫/布娃娃。
 ## - 附著點：BoneAttachment3D 掛到 Skeleton3D 的 head 骨
-## - 表情圖：res://assets/textures/faces 下所有「子沐创意素材 (N).png」，每張即單一表情
+## - 表情圖：res://assets/textures/faces 下所有 face_N.png，每張即單一表情
 ## - 懶加載：只解碼當前顯示的表情，避免 209 張大圖全佔顯存
 
 class_name PlayerFaceController
@@ -293,7 +293,7 @@ func _new_display(billboard: bool) -> Node3D:
 	s.visible = false
 	return s
 
-## 掃描表情資料夾：每張 png 即一個表情，捨棄 "(N)(1).png" 重複副本
+## 掃描表情資料夾：每張 png 即一個表情
 func _index_files() -> void:
 	_paths.clear()
 	var dir := DirAccess.open(IMAGE_FOLDER)
@@ -303,8 +303,8 @@ func _index_files() -> void:
 	for f in dir.get_files():
 		if not f.ends_with(".png"):
 			continue
-		# 捨棄 "(N)(1).png" 重複副本（含閉括號+開括號相鄰的尾元素）
-		if f.contains(")(1).png"):
+		# 捨棄帶尾部副本標記的檔案（如 name_dup.png），避免重複表情
+		if f.contains("_dup.png") or f.contains("(1).png"):
 			continue
 		_paths.append(f)
 	_paths.sort()
