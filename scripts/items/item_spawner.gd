@@ -8,6 +8,8 @@ var _active_boxes: Array[Node] = []
 var _respawn_timer: float = 0.0
 var _max_active: int = 5
 var _respawn_interval: float = 8.0
+var _initial_multiplier: float = 1.5
+var _refresh_batch: int = 2
 var _running: bool = false
 
 const ITEM_BOX_SCRIPT: String = "res://scripts/items/item_box.gd"
@@ -18,9 +20,11 @@ func _ready() -> void:
 
 func _on_battle_started() -> void:
 	var cfg: Dictionary = ItemSystem._item_config.get_spawn_config()
-	_max_active       = int(cfg.get("max_active", 5))
-	_respawn_interval = float(cfg.get("respawn_interval", 8.0))
-	_item_ids         = ItemSystem._item_config.all_ids()
+	_max_active         = int(cfg.get("max_active", 5))
+	_respawn_interval   = float(cfg.get("respawn_interval", 8.0))
+	_initial_multiplier = float(cfg.get("initial_multiplier", 1.5))
+	_refresh_batch      = int(cfg.get("refresh_batch", 2))
+	_item_ids           = ItemSystem._item_config.all_ids()
 	_respawn_timer = 0.0
 	_running       = true
 	_fill_initial()
@@ -43,11 +47,12 @@ func _process(delta: float) -> void:
 	_respawn_timer += delta
 	if _respawn_timer >= _respawn_interval:
 		_respawn_timer = 0.0
-		_try_spawn()
+		for i in range(_refresh_batch):
+			_try_spawn()
 
-## 開局一次性填滿到 max_active
+## 開局一次性填滿到 max_active * initial_multiplier
 func _fill_initial() -> void:
-	for i in range(_max_active):
+	for i in range(int(_max_active * _initial_multiplier)):
 		_try_spawn()
 
 func _try_spawn() -> void:
