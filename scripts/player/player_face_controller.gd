@@ -301,20 +301,27 @@ func _new_display(billboard: bool) -> Node3D:
 	s.visible = false
 	return s
 
-## 掃描表情資料夾：每張 png 即一個表情
+## 掃描表情資料夾：每張 png 即一個表情。
+## 打包版 PCK 內 DirAccess 無法遍歷目錄(get_files 空)，改用顯式探測 face_N.png（N=1..MAX）
 func _index_files() -> void:
 	_paths.clear()
 	var dir := DirAccess.open(IMAGE_FOLDER)
-	if dir == null:
-		push_warning("PlayerFaceController: 無法開啟表情資料夾 " + IMAGE_FOLDER)
-		return
-	for f in dir.get_files():
-		if not f.ends_with(".png"):
-			continue
-		# 捨棄帶尾部副本標記的檔案（如 name_dup.png），避免重複表情
-		if f.contains("_dup.png") or f.contains("(1).png"):
-			continue
-		_paths.append(f)
+	if dir:
+		for f in dir.get_files():
+			if not f.ends_with(".png"):
+				continue
+			if f.contains("_dup.png") or f.contains("(1).png"):
+				continue
+			if f not in _paths:
+				_paths.append(f)
+	# 打包版 DirAccess 遍歷可能為空 → 顯式探測已知序列 face_1..face_N
+	if _paths.is_empty():
+		for i in range(1, 300):
+			var fn := "face_%d.png" % i
+			if ResourceLoader.exists(IMAGE_FOLDER + "/" + fn):
+				_paths.append(fn)
+			elif i > 2:  # 連續缺失即停止
+				break
 	_paths.sort()
 	expression_changed.emit("", _paths.size())
 

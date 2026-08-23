@@ -130,9 +130,6 @@ func _finish() -> void:
 		GameManager.enter_pending_level()
 		return
 
-	# 手动实例化关卡并设为当前场景，加载界面仍盖在上层。
-	# 关卡 _ready 里的同步重活（RoomSource load GLB、trimesh 碰撞）会阻塞一两帧，
-	# 但本遮罩还在树上，画面不会空白。
 	var level := packed.instantiate()
 	get_tree().root.add_child(level)
 	get_tree().current_scene = level

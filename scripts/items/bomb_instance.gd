@@ -74,9 +74,11 @@ func _knockback_player(player: PlayerController, dist: float) -> void:
 ## 预热：提前编译爆炸粒子着色器 + 缓存炸弹模型，避免首次投弹时临时加载卡顿。
 ## 用离屏 SubViewport 渲染一次爆炸/撞击特效触发着色器编译，主画面不可见；
 ## 着色器缓存是 RenderingServer 全局的，主世界随后复用，投弹时不再卡顿。
+## 预热：提前缓存炸弹模型，避免首次投弹时读盘卡顿。
+## 注：原離屏 SubViewport 渲染 GPUParticles 預編譯著色器在打包 release 版會崩潰，已移除；
+##     首次投彈的粒子著色器編譯卡頓可接受（或後續用更安全方式預熱）。
 static func warmup(scene: Node) -> void:
-	var tree := scene.get_tree() if scene else null
-	if tree == null:
+	if scene == null:
 		return
 	# 预建炸弹模型：load 进资源缓存，首次投弹不再读盘
 	if ItemSystem and ItemSystem._item_config:
@@ -85,21 +87,6 @@ static func warmup(scene: Node) -> void:
 			var vis := PropModelBuilder.build(def.model, def.texture, 0.5, def.model_scale)
 			if vis:
 				vis.free()
-	# 离屏渲染两种特效（16×16 SubViewport + 独立相机）→ 编译粒子/材质着色器
-	var vp := SubViewport.new()
-	vp.size = Vector2i(16, 16)
-	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	scene.add_child(vp)
-	var cam := Camera3D.new()
-	cam.position = Vector3(0.0, 1.0, 6.0)
-	vp.add_child(cam)
-	cam.current = true
-	spawn_explosion_fx(Vector3.ZERO, vp, 3.0)
-	spawn_explosion_fx(Vector3.ZERO, vp, 3.0, true)
-	# 粒子寿命结束后回收离屏视口（烟 1.6s，留足余量）
-	await tree.create_timer(2.0).timeout
-	if is_instance_valid(vp):
-		vp.queue_free()
 
 ## 爆炸視覺：GPUParticles3D 火光+煙（代碼生成，無需美術資源）+ 橙色膨脹球占位
 func _spawn_flash() -> void:
