@@ -315,6 +315,7 @@ func count() -> int:
 
 ## 顯示第 index 個表情；index 超出範圍時繞回；-1 清除
 func show_expression(index: int) -> void:
+	SoundMgr.play("emote", true)
 	if _paths.is_empty():
 		return
 	if index < -1:

@@ -31,6 +31,7 @@ func apply(ctx: ItemContext) -> void:
 	bomb.global_position = thrower.global_position + forward * 0.8 + Vector3.UP * 1.2
 	var throw_speed: float = float(params.get("throw_speed", 4.0))
 	bomb.release(forward * throw_speed + Vector3.UP * 1.5)
+	SoundMgr.play("throw_prop", true)
 
 func _placeholder_visual() -> Node3D:
 	var mi := MeshInstance3D.new()

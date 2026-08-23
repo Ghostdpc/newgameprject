@@ -5,8 +5,9 @@
 class_name OffScreenIndicator
 extends Control
 
-const EDGE_MARGIN := 44.0   # 氣泡離屏幕邊緣留白
-const BUBBLE_SIZE := 30.0   # 氣泡直徑
+const EDGE_MARGIN := 44.0        # 氣泡離屏幕左右邊緣留白
+const TOP_BOTTOM_MARGIN := 120.0 # 氣泡離屏幕上下邊緣留白（避開 FilmBorder 上下黑邊）
+const BUBBLE_SIZE := 30.0        # 氣泡直徑
 
 ## player_index -> 氣泡 Control
 var _bubbles: Dictionary = {}
@@ -68,13 +69,13 @@ func _update_bubble(bubble: Control, player: PlayerController, camera: Camera3D,
 		screen_pos = vsize - screen_pos
 	var on_screen := (not behind
 		and screen_pos.x >= EDGE_MARGIN and screen_pos.x <= vsize.x - EDGE_MARGIN
-		and screen_pos.y >= EDGE_MARGIN and screen_pos.y <= vsize.y - EDGE_MARGIN)
+		and screen_pos.y >= TOP_BOTTOM_MARGIN and screen_pos.y <= vsize.y - TOP_BOTTOM_MARGIN)
 	if on_screen:
 		bubble.hide()
 		return
 	var clamped := Vector2(
 		clampf(screen_pos.x, EDGE_MARGIN, vsize.x - EDGE_MARGIN),
-		clampf(screen_pos.y, EDGE_MARGIN, vsize.y - EDGE_MARGIN))
+		clampf(screen_pos.y, TOP_BOTTOM_MARGIN, vsize.y - TOP_BOTTOM_MARGIN))
 	bubble.position = clamped - Vector2(BUBBLE_SIZE * 0.5, BUBBLE_SIZE * 0.5)
 	bubble.show()
 

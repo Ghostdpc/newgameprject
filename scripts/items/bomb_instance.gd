@@ -36,7 +36,8 @@ func _explode() -> void:
 	if _exploded:
 		return
 	_exploded = true
-	_spawn_explosion(get_tree().current_scene, global_position, _radius)
+	SoundMgr.play("explode")
+	_spawn_flash()
 	for node in get_tree().get_nodes_in_group("players"):
 		var player := node as PlayerController
 		if player == null:
@@ -71,7 +72,7 @@ func _knockback_player(player: PlayerController, dist: float) -> void:
 		fly.launch(dir * blast + Vector3.UP * up)
 
 ## 预热：提前编译爆炸粒子着色器 + 缓存炸弹模型，避免首次投弹时临时加载卡顿。
-## 用离屏 SubViewport 渲染一次爆炸特效来触发着色器编译，主画面不可见；
+## 用离屏 SubViewport 渲染一次爆炸/撞击特效触发着色器编译，主画面不可见；
 ## 着色器缓存是 RenderingServer 全局的，主世界随后复用，投弹时不再卡顿。
 static func warmup(scene: Node) -> void:
 	var tree := scene.get_tree() if scene else null
@@ -84,7 +85,7 @@ static func warmup(scene: Node) -> void:
 			var vis := PropModelBuilder.build(def.model, def.texture, 0.5, def.model_scale)
 			if vis:
 				vis.free()
-	# 离屏渲染爆炸特效（16×16 SubViewport + 独立相机）→ 编译粒子着色器
+	# 离屏渲染两种特效（16×16 SubViewport + 独立相机）→ 编译粒子/材质着色器
 	var vp := SubViewport.new()
 	vp.size = Vector2i(16, 16)
 	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
@@ -93,26 +94,85 @@ static func warmup(scene: Node) -> void:
 	cam.position = Vector3(0.0, 1.0, 6.0)
 	vp.add_child(cam)
 	cam.current = true
-	_spawn_explosion(vp, Vector3.ZERO)
+	spawn_explosion_fx(Vector3.ZERO, vp, 3.0)
+	spawn_explosion_fx(Vector3.ZERO, vp, 3.0, true)
 	# 粒子寿命结束后回收离屏视口（烟 1.6s，留足余量）
 	await tree.create_timer(2.0).timeout
 	if is_instance_valid(vp):
 		vp.queue_free()
 
 ## 爆炸視覺：GPUParticles3D 火光+煙（代碼生成，無需美術資源）+ 橙色膨脹球占位
-static func _spawn_explosion(scene: Node, at: Vector3, radius: float = 3.0) -> void:
+func _spawn_flash() -> void:
+	var scene := get_tree().current_scene
 	if scene == null:
 		return
-	_spawn_fire_particles(scene, at)
-	_spawn_smoke_particles(scene, at)
-	_spawn_expand_ball(scene, at, radius)
+	BombInstance.spawn_explosion_fx(global_position, scene, _radius)
 
-## 火光粒子：短壽命高速向外爆開，重力回落，疊加碰撞地面爆散
-static func _spawn_fire_particles(scene: Node, at: Vector3) -> void:
+## 靜態爆炸特效（供炸彈自身與撞擊撞人/撞牆/撞道具復用）：在 world_pos 生成火光+煙+衝擊球
+## 撞擊用 is_hit=true：更小、更短、白黃爆閃無煙，與炸彈橙紅爆炸區分
+static func spawn_explosion_fx(world_pos: Vector3, parent: Node, radius: float = 3.0, is_hit: bool = false) -> void:
+	if parent == null:
+		return
+	if is_hit:
+		_hit_flash(world_pos, parent, radius)
+	else:
+		_fire_particles(world_pos, parent)
+		_smoke_particles(world_pos, parent)
+		_expand_ball(world_pos, parent, radius)
+
+## 撞擊爆閃：短促白黃火光 + 小衝擊球，無煙（與炸彈爆炸區分）
+static func _hit_flash(world_pos: Vector3, scene: Node, radius: float) -> void:
+	var fire := GPUParticles3D.new()
+	fire.name = "HitFlash"
+	fire.global_position = world_pos
+	scene.add_child(fire)
+	var mat := ParticleProcessMaterial.new()
+	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	mat.emission_sphere_radius = 0.08
+	mat.direction = Vector3(0, 1, 0)
+	mat.spread = 180.0
+	mat.gravity = Vector3(0, -6.0, 0)
+	mat.initial_velocity_min = 2.0
+	mat.initial_velocity_max = 5.0
+	mat.scale_min = 0.12
+	mat.scale_max = 0.3
+	mat.color = Color(1.0, 0.9, 0.5)
+	mat.damping_min = 3.0
+	mat.damping_max = 6.0
+	fire.process_material = mat
+	fire.amount = 24
+	fire.lifetime = 0.3
+	fire.one_shot = true
+	fire.explosiveness = 1.0
+	fire.local_coords = true
+	fire.visibility_aabb = AABB(Vector3(-2, -2, -2), Vector3(4, 4, 4))
+	_set_particle_mesh_static(fire, Color(1.0, 0.9, 0.5))
+	fire.finished.connect(fire.queue_free)
+	# 小衝擊球：白黃短閃
+	var flash := MeshInstance3D.new()
+	var sphere := SphereMesh.new()
+	sphere.radius = 0.2
+	sphere.height = 0.4
+	flash.mesh = sphere
+	var fm := StandardMaterial3D.new()
+	fm.emission_enabled = true
+	fm.emission = Color(1.0, 0.9, 0.55)
+	fm.albedo_color = Color(1.0, 0.92, 0.6, 0.9)
+	fm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	fm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	flash.material_override = fm
+	scene.add_child(flash)
+	flash.global_position = world_pos
+	var tw := flash.create_tween()
+	tw.parallel().tween_property(flash, "scale", Vector3.ONE * (radius * 1.4), 0.18)
+	tw.parallel().tween_property(fm, "albedo_color:a", 0.0, 0.18)
+	tw.tween_callback(flash.queue_free)
+
+static func _fire_particles(world_pos: Vector3, scene: Node) -> void:
 	var fire := GPUParticles3D.new()
 	fire.name = "FireBurst"
+	fire.global_position = world_pos
 	scene.add_child(fire)
-	fire.global_position = at
 	var mat := ParticleProcessMaterial.new()
 	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	mat.emission_sphere_radius = 0.1
@@ -123,13 +183,9 @@ static func _spawn_fire_particles(scene: Node, at: Vector3) -> void:
 	mat.initial_velocity_max = 9.0
 	mat.scale_min = 0.25
 	mat.scale_max = 0.6
-	mat.scale_curve = _make_curve_tex([Vector2(0, 0.4), Vector2(1, 1.4)])
-	mat.color = Color(1.0, 0.62, 0.2)
-	mat.color_ramp = _make_gradient_tex([
-		Color(1.0, 0.95, 0.6), Color(1.0, 0.55, 0.15), Color(0.7, 0.15, 0.05),
-	])
 	mat.damping_min = 1.0
 	mat.damping_max = 3.0
+	mat.color = Color(1.0, 0.62, 0.2)
 	fire.process_material = mat
 	fire.amount = 80
 	fire.lifetime = 0.6
@@ -137,16 +193,14 @@ static func _spawn_fire_particles(scene: Node, at: Vector3) -> void:
 	fire.explosiveness = 1.0
 	fire.local_coords = true
 	fire.visibility_aabb = AABB(Vector3(-3, -3, -3), Vector3(6, 6, 6))
-	# GPUParticles3D 須有 mesh 才渲染；用 3D 球體 + 橘黃基色（火花）
-	_set_particle_mesh(fire, Color(1.0, 0.62, 0.2))
+	_set_particle_mesh_static(fire, Color(1.0, 0.62, 0.2))
 	fire.finished.connect(fire.queue_free)
 
-## 煙粒子：慢速擴散上浮，壽命較長
-static func _spawn_smoke_particles(scene: Node, at: Vector3) -> void:
+static func _smoke_particles(world_pos: Vector3, scene: Node) -> void:
 	var smoke := GPUParticles3D.new()
 	smoke.name = "SmokePuff"
+	smoke.global_position = world_pos
 	scene.add_child(smoke)
-	smoke.global_position = at
 	var mat := ParticleProcessMaterial.new()
 	mat.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 	mat.emission_sphere_radius = 0.2
@@ -157,11 +211,7 @@ static func _spawn_smoke_particles(scene: Node, at: Vector3) -> void:
 	mat.initial_velocity_max = 2.0
 	mat.scale_min = 0.6
 	mat.scale_max = 1.6
-	mat.scale_curve = _make_curve_tex([Vector2(0, 0.5), Vector2(1, 2.2)])
 	mat.color = Color(0.25, 0.22, 0.2)
-	mat.color_ramp = _make_gradient_tex([
-		Color(0.35, 0.3, 0.28, 0.85), Color(0.2, 0.18, 0.16, 0.4),
-	])
 	mat.damping_min = 0.5
 	mat.damping_max = 1.5
 	smoke.process_material = mat
@@ -171,26 +221,41 @@ static func _spawn_smoke_particles(scene: Node, at: Vector3) -> void:
 	smoke.explosiveness = 1.0
 	smoke.local_coords = true
 	smoke.visibility_aabb = AABB(Vector3(-4, -4, -4), Vector3(8, 8, 8))
-	_set_particle_mesh(smoke, Color(0.45, 0.42, 0.4))
+	_set_particle_mesh_static(smoke, Color(0.45, 0.42, 0.4))
 	smoke.finished.connect(smoke.queue_free)
 
-## 給 GPUParticles3D 設 3D 球體粒子（SphereMesh），立體體積感，非 billboard 面片。
-## 附 unshaded 材質讓 color_ramp 的顏色直接可見（火光/煙）。tint 固定粒子基色。
-static func _set_particle_mesh(particles: GPUParticles3D, tint: Color = Color.WHITE) -> void:
-	var sphere := SphereMesh.new()
-	sphere.radius = 0.09
-	sphere.height = 0.18
-	sphere.radial_segments = 8
-	sphere.rings = 4
+static func _set_particle_mesh_static(particles: GPUParticles3D, tint: Color = Color.WHITE) -> void:
+	particles.draw_pass_1 = _particle_sphere()
+	var mat := _particle_sphere_mat(tint)
+	var sp := particles.draw_pass_1 as SphereMesh
+	sp.material = mat
+
+## 緩存粒子球體 mesh（避免每次爆炸重建）
+static var _cached_sphere: SphereMesh = null
+static func _particle_sphere() -> SphereMesh:
+	if _cached_sphere == null:
+		var sphere := SphereMesh.new()
+		sphere.radius = 0.09
+		sphere.height = 0.18
+		sphere.radial_segments = 8
+		sphere.rings = 4
+		_cached_sphere = sphere
+	return _cached_sphere
+
+## 緩存粒子材質（按色）
+static var _cached_mats: Dictionary = {}
+static func _particle_sphere_mat(tint: Color) -> StandardMaterial3D:
+	var key := Color(tint.r, tint.g, tint.b, 1.0)
+	if _cached_mats.has(key):
+		return _cached_mats[key]
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.no_depth_test = false
 	mat.albedo_color = tint
-	sphere.material = mat
-	particles.draw_pass_1 = sphere
+	_cached_mats[key] = mat
+	return mat
 
-## 原有橙色膨脹球（簡易衝擊波視覺）
-static func _spawn_expand_ball(scene: Node, at: Vector3, radius: float = 3.0) -> void:
+static func _expand_ball(world_pos: Vector3, scene: Node, radius: float) -> void:
 	var flash := MeshInstance3D.new()
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.3
@@ -203,13 +268,16 @@ static func _spawn_expand_ball(scene: Node, at: Vector3, radius: float = 3.0) ->
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	flash.material_override = mat
 	scene.add_child(flash)
-	flash.global_position = at
+	flash.global_position = world_pos
 	var tw := flash.create_tween()
 	tw.parallel().tween_property(flash, "scale", Vector3.ONE * (radius * 2.0), 0.25)
 	tw.parallel().tween_property(mat, "albedo_color:a", 0.0, 0.25)
 	tw.tween_callback(flash.queue_free)
 
-static func _make_curve_tex(points: Array) -> CurveTexture:
+## 火光粒子：短壽命高速向外爆開，重力回落，疊加碰撞地面爆散
+## （實現在上方 static _fire_particles，供炸彈與撞擊復用）
+
+func _make_curve_tex(points: Array) -> CurveTexture:
 	var c := Curve.new()
 	for i in points.size():
 		c.add_point(Vector2(points[i].x, points[i].y))
@@ -217,7 +285,7 @@ static func _make_curve_tex(points: Array) -> CurveTexture:
 	ct.curve = c
 	return ct
 
-static func _make_gradient_tex(stops: Array) -> GradientTexture1D:
+func _make_gradient_tex(stops: Array) -> GradientTexture1D:
 	var g := Gradient.new()
 	var cols := PackedColorArray()
 	for s in stops:

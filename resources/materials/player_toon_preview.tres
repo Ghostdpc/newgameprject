@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://c3x2ceaudmxkt"]
+
+[ext_resource type="Shader" uid="uid://grp06ulv8626" path="res://resources/shaders/player_toon.gdshader" id="1_toon"]
+[ext_resource type="Material" uid="uid://cyphf2gxbjvkr" path="res://resources/materials/player_toon_outline_preview.tres" id="2_outline"]
+
+[resource]
+resource_name = "PlayerToonPreview"
+render_priority = 0
+next_pass = ExtResource("2_outline")
+shader = ExtResource("1_toon")
+shader_parameter/tint_color = Color(1, 1, 1, 1)
+shader_parameter/texture_uv_scale = Vector2(1, 1)
+shader_parameter/texture_uv_offset = Vector2(0, 0)
+shader_parameter/toon_light_direction = Vector3(-0.45, 0.78, 0.43)
+shader_parameter/shadow_level = 0.72
+shader_parameter/shadow_softness = 0.16
+shader_parameter/light_wrap = 0.18
+shader_parameter/color_saturation = 1.08

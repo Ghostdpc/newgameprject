@@ -7,12 +7,16 @@ extends Node
 const SFX_DIR := "res://assets/audio/sfx/"
 const BGM_TITLE := preload("res://assets/audio/bgm/title.mp3")
 const BGM_BATTLE := preload("res://assets/audio/bgm/battle.mp3")
+const BGM_SCORING := preload("res://assets/audio/bgm/scoring.mp3")
 const BGM_VOLUME := -6.0
 
 const SFX_NAMES := [
 	"ui_click", "join", "confirm", "tick", "battle_start",
 	"pickup", "interrupt", "item_use", "time_fast", "time_slow",
 	"time_add", "time_sub", "hit", "shutter", "score_tick", "champion",
+	# v2：新操作/道具/特效
+	"dive", "grab", "throw_prop", "explode", "slip", "equip",
+	"emote", "die", "respawn", "pause", "theme_sting", "boost",
 ]
 
 var _streams: Dictionary = {}
@@ -34,7 +38,10 @@ func _ready() -> void:
 
 	EventBus.item_picked_up.connect(func(_i: int, _id: String): play("pickup", true))
 	EventBus.item_used.connect(func(_i: int, _id: String): play("item_use"))
-	EventBus.trap_triggered.connect(func(_t: String, _i: int): play("hit"))
+	EventBus.trap_triggered.connect(func(_t: String, _i: int): play("slip"))
+	EventBus.game_paused_changed.connect(func(paused: bool):
+		if paused:
+			play("pause"))
 	EventBus.time_effect_applied.connect(_on_time_effect)
 	EventBus.battle_started.connect(_on_battle_started)
 	EventBus.photo_taken.connect(func(tex: ViewportTexture):
@@ -89,18 +96,23 @@ func _on_battle_started() -> void:
 
 func _on_stage_changed(stage: int) -> void:
 	match stage:
-		GameManager.GameStage.MAIN_MENU, GameManager.GameStage.LOBBY, \
+		GameManager.GameStage.MAIN_MENU, GameManager.GameStage.LOBBY:
+			_switch_bgm("title")
 		GameManager.GameStage.THEME_ANNOUNCE:
 			_switch_bgm("title")
+			play("theme_sting")
 		GameManager.GameStage.SCORING:
-			_fade_bgm_out()
+			_switch_bgm("scoring")
 
 func _switch_bgm(key: String) -> void:
 	if _bgm_current == key and _bgm.playing:
 		return
 	_bgm_current = key
 	_bgm.volume_db = BGM_VOLUME
-	_bgm.stream = BGM_TITLE if key == "title" else BGM_BATTLE
+	match key:
+		"title": _bgm.stream = BGM_TITLE
+		"battle": _bgm.stream = BGM_BATTLE
+		_: _bgm.stream = BGM_SCORING
 	_bgm.play()
 
 func _fade_bgm_out() -> void:

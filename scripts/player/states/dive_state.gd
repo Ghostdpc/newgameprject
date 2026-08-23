@@ -20,6 +20,7 @@ var _dive_direction: Vector3 = Vector3.ZERO
 var _has_hit: bool = false
 
 func enter() -> void:
+	SoundMgr.play("dive", true)
 	_phase = Phase.PREPARE
 	_phase_timer = PREPARE_DURATION
 	_has_hit = false
@@ -41,6 +42,10 @@ func hit_target(target: PlayerController) -> void:
 	if _has_hit:
 		return
 	_has_hit = true
+	# 撞擊特效固定在發起者位置中心偏前（穩定，不隨目標漂移）
+	if target and PropVfx:
+		var hit_pos := (_player as PlayerController).global_position + _dive_direction * 0.7 + Vector3.UP * 0.5
+		PropVfx.spawn_hit_shockwave(hit_pos, Color(1.0, 0.85, 0.30, 1.0))
 	target.state_machine.transition_to("Fly")
 	var fly := target.state_machine.get_current_state() as FlyState
 	fly.launch(_dive_direction * TuneConfig.hit_force + Vector3.UP * TuneConfig.hit_upward)
@@ -55,6 +60,10 @@ func knock_prop(prop: PhysicalProp) -> void:
 		# 速度增量 = impulse/mass。乘 mass 讓撞飛速度與質量無關（重物也飛得動）；
 		# 亂飛已由物品側的擊飛冷卻解決，此處保持夠大的撞飛力道
 		prop.apply_central_impulse(force * prop.mass)
+	# 撞到道具也觸發爆閃（在玩家前方碰撞點）
+	if PropVfx and not _has_hit:
+		var prop_hit := (_player as Node3D).global_position + _dive_direction * 0.7 + Vector3.UP * 0.5
+		PropVfx.spawn_hit_shockwave(prop_hit, Color(1.0, 0.9, 0.5, 1.0))
 
 func physics_update(delta: float) -> void:
 	var controller: PlayerController = _player as PlayerController
@@ -85,6 +94,14 @@ func physics_update(delta: float) -> void:
 		Phase.DIVE:
 			# 衝刺階段：保持速度，結束後進僵直
 			_phase_timer -= delta
+			# 撞到牆/場景（速度被擋但非撞人）→ 觸發爆閃一次 + 快速停止
+			if not _has_hit and controller.is_on_wall():
+				_has_hit = true
+				if PropVfx:
+					var wall_hit := controller.global_position + _dive_direction * 0.9 + Vector3.UP * 0.55
+					PropVfx.spawn_hit_shockwave(wall_hit, Color(1.0, 0.9, 0.6, 1.0))
+				_phase = Phase.RECOVER
+				_phase_timer = maxf(_phase_timer, 0.1)
 			if _phase_timer <= 0.0:
 				_phase = Phase.RECOVER
 				_phase_timer = RECOVER_DURATION
