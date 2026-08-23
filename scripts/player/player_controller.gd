@@ -352,7 +352,7 @@ func _push_contacted_props() -> void:
 	var input_dir := player_input.get_move_direction()
 	if input_dir.length_squared() < 0.01:
 		return
-	var push_dir := Vector3(input_dir.x, 0.0, input_dir.y).normalized()
+	var push_dir := to_world_dir(input_dir)
 	for i in get_slide_collision_count():
 		var collider := get_slide_collision(i).get_collider()
 		if collider is PhysicalProp:
@@ -444,15 +444,48 @@ func _knocked_down_by_prop(dive: DiveState) -> void:
 	state_machine.transition_to("Stunned")
 
 func apply_move(direction: Vector2) -> void:
-	var target_velocity := Vector3(direction.x, 0.0, direction.y) * TuneConfig.move_speed * speed_multiplier
+	var world_dir := to_world_dir(direction)
+	var target_velocity := world_dir * TuneConfig.move_speed * speed_multiplier
 	velocity.x = move_toward(velocity.x, target_velocity.x, ACCELERATION * get_physics_process_delta_time())
 	velocity.z = move_toward(velocity.z, target_velocity.z, ACCELERATION * get_physics_process_delta_time())
 	if direction.length_squared() > 0.0:
-		_turn_toward(direction)
+		_turn_toward(world_dir)
+
+## 把屏幕直觉的输入方向（x=右, y=下=远离相机）换算成世界水平方向（相机相对）。
+## W=向相机前方，S=远离，A=相机左，D=相机右。
+func to_world_dir(input: Vector2) -> Vector3:
+	var cam := _get_main_camera()
+	if cam == null:
+		return Vector3(input.x, 0.0, input.y).normalized()
+	var fwd := -cam.global_basis.z
+	fwd.y = 0.0
+	var right := cam.global_basis.x
+	right.y = 0.0
+	if fwd.length_squared() < 0.0001:
+		fwd = Vector3.FORWARD
+	else:
+		fwd = fwd.normalized()
+	if right.length_squared() < 0.0001:
+		right = Vector3.RIGHT
+	else:
+		right = right.normalized()
+	return (right * input.x - fwd * input.y).normalized()
+
+func _get_main_camera() -> Camera3D:
+	var ctrl := CameraSystem.get_main_controller()
+	if ctrl and ctrl.has_method("get_camera"):
+		var cam: Camera3D = ctrl.get_camera()
+		if cam and is_instance_valid(cam):
+			return cam
+	return get_viewport().get_camera_3d()
 
 ## 平滑轉身：模型正面朝 +Z，用 yaw 角度插值（避免 slerp 在 180° 退化導致瞬移）
-func _turn_toward(direction: Vector2) -> void:
-	var move_dir := Vector3(direction.x, 0.0, direction.y).normalized()
+func _turn_toward(direction: Vector3) -> void:
+	var move_dir := direction
+	move_dir.y = 0.0
+	if move_dir.length_squared() < 0.0001:
+		return
+	move_dir = move_dir.normalized()
 	var target_yaw := atan2(move_dir.x, move_dir.z)
 	var cur_yaw := rotation.y
 	if is_equal_approx(cur_yaw, target_yaw):

@@ -27,8 +27,8 @@ func _ready() -> void:
 	_lobby_btn.pressed.connect(_return_lobby)
 	_theme_screen.hide()
 	_pause_screen.hide()
-	_theme_name.text = THEME_NAME
-	_theme_bonus.text = THEME_BONUS
+	# _theme_name.text = THEME_NAME
+	# _theme_bonus.text = THEME_BONUS
 
 func _on_stage_changed(stage: int) -> void:
 	if stage == GameManager.GameStage.THEME_ANNOUNCE:

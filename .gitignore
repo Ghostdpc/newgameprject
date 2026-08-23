@@ -32,3 +32,6 @@ zhhw/
 
 # One-off dev verification scripts
 scripts/dev/
+
+# CodeMaker tool metadata
+.codemaker/

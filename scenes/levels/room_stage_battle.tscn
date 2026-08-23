@@ -35,42 +35,165 @@ script = ExtResource("13_zone")
 transform = Transform3D(1, 0, 0, 0, 0.6917021, 0.722183, 0, -0.722183, 0.6917021, 0.97, 4.830517, 2.1085906)
 fov = 60.0
 
-[node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone1" unique_id=1321009500]
+[node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone1" unique_id=826195252]
 
-[node name="PlayerSpawn1" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=1029767827]
+[node name="PlayerSpawn1" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=27055405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92, 0.51, -2.42)
 
-[node name="PlayerSpawn2" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=1984242532]
+[node name="PlayerSpawn2" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=736054589]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, 0.38)
 
-[node name="PlayerSpawn3" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=1251031900]
+[node name="PlayerSpawn3" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=1039639877]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48, 0.51, 0.38)
 
-[node name="PlayerSpawn4" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=323963618]
+[node name="PlayerSpawn4" type="Node3D" parent="CameraZones/Zone1/SpawnPoints" unique_id=1490252834]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, -5.02)
 
-[node name="ItemHotspots" type="Node3D" parent="CameraZones/Zone1" unique_id=773144715]
+[node name="ItemHotspots" type="Node3D" parent="CameraZones/Zone1" unique_id=1295314477]
 
-[node name="Hotspot1" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=652333896]
+[node name="Hotspot1" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1295943320]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92, 0.51, -2.42)
 
-[node name="Hotspot2" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1078055243]
+[node name="Hotspot2" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=660123537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -5.82)
 
-[node name="Hotspot3" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=316394464]
+[node name="Hotspot3" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1521863831]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, -5.82)
 
-[node name="Hotspot4" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1994437826]
+[node name="Hotspot4" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1362605309]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, 0.78)
 
-[node name="Hotspot5" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1360362624]
+[node name="Hotspot5" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1049329220]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, 0.78)
 
-[node name="Hotspot6" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1156066742]
+[node name="Hotspot6" type="Node3D" parent="CameraZones/Zone1/ItemHotspots" unique_id=1884883953]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, -2.62)
 
+[node name="Zone2" type="Node3D" parent="CameraZones" unique_id=1486729713]
+script = ExtResource("13_zone")
+
+[node name="MainCamera" type="Camera3D" parent="CameraZones/Zone2" unique_id=1827670186]
+transform = Transform3D(-1, 6.3098284e-08, -6.050908e-08, -8.633445e-09, 0.61748236, 0.78658485, 8.699544e-08, 0.78658485, -0.61748236, 0.97, 4.830517, -10.282757)
+fov = 60.0
+
+[node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone2" unique_id=138192199]
+
+[node name="PlayerSpawn1" type="Node3D" parent="CameraZones/Zone2/SpawnPoints" unique_id=604595862]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92, 0.51, -2.82)
+
+[node name="PlayerSpawn2" type="Node3D" parent="CameraZones/Zone2/SpawnPoints" unique_id=1531850696]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, -0.42)
+
+[node name="PlayerSpawn3" type="Node3D" parent="CameraZones/Zone2/SpawnPoints" unique_id=1882846033]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48, 0.51, -0.42)
+
+[node name="PlayerSpawn4" type="Node3D" parent="CameraZones/Zone2/SpawnPoints" unique_id=1093251937]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, -5.02)
+
+[node name="ItemHotspots" type="Node3D" parent="CameraZones/Zone2" unique_id=1548360468]
+
+[node name="Hotspot1" type="Node3D" parent="CameraZones/Zone2/ItemHotspots" unique_id=1606826030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92, 0.51, -2.22)
+
+[node name="Hotspot2" type="Node3D" parent="CameraZones/Zone2/ItemHotspots" unique_id=1331318440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -5.82)
+
+[node name="Hotspot3" type="Node3D" parent="CameraZones/Zone2/ItemHotspots" unique_id=1306640368]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, -5.82)
+
+[node name="Hotspot4" type="Node3D" parent="CameraZones/Zone2/ItemHotspots" unique_id=920345525]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, 1.38)
+
+[node name="Hotspot5" type="Node3D" parent="CameraZones/Zone2/ItemHotspots" unique_id=110839835]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, 1.38)
+
+[node name="Hotspot6" type="Node3D" parent="CameraZones/Zone2/ItemHotspots" unique_id=8202541]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -2.42)
+
+[node name="Zone3" type="Node3D" parent="CameraZones" unique_id=902809267]
+script = ExtResource("13_zone")
+
+[node name="MainCamera" type="Camera3D" parent="CameraZones/Zone3" unique_id=184421923]
+transform = Transform3D(0.0021082498, -0.8460451, 0.5331075, 0.0004308155, 0.5331094, 0.8460464, -0.9999978, -0.001554006, 0.0014884169, 4.5520477, 4.830517, -3.0812483)
+fov = 60.0
+
+[node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone3" unique_id=383943907]
+
+[node name="PlayerSpawn1" type="Node3D" parent="CameraZones/Zone3/SpawnPoints" unique_id=1632629196]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92, 0.51, -1.82)
+
+[node name="PlayerSpawn2" type="Node3D" parent="CameraZones/Zone3/SpawnPoints" unique_id=816359297]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, -5.02)
+
+[node name="PlayerSpawn3" type="Node3D" parent="CameraZones/Zone3/SpawnPoints" unique_id=561222812]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48, 0.51, -5.02)
+
+[node name="PlayerSpawn4" type="Node3D" parent="CameraZones/Zone3/SpawnPoints" unique_id=494234612]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.48, 0.51, 1.38)
+
+[node name="ItemHotspots" type="Node3D" parent="CameraZones/Zone3" unique_id=1602507095]
+
+[node name="Hotspot1" type="Node3D" parent="CameraZones/Zone3/ItemHotspots" unique_id=902521066]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.92, 0.51, -1.82)
+
+[node name="Hotspot2" type="Node3D" parent="CameraZones/Zone3/ItemHotspots" unique_id=389108737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -5.82)
+
+[node name="Hotspot3" type="Node3D" parent="CameraZones/Zone3/ItemHotspots" unique_id=1562793519]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, -5.82)
+
+[node name="Hotspot4" type="Node3D" parent="CameraZones/Zone3/ItemHotspots" unique_id=668679365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, 2.18)
+
+[node name="Hotspot5" type="Node3D" parent="CameraZones/Zone3/ItemHotspots" unique_id=298060222]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, 1.18)
+
+[node name="Hotspot6" type="Node3D" parent="CameraZones/Zone3/ItemHotspots" unique_id=438506408]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -2.42)
+
+[node name="Zone4" type="Node3D" parent="CameraZones" unique_id=470526166]
+script = ExtResource("13_zone")
+
+[node name="MainCamera" type="Camera3D" parent="CameraZones/Zone4" unique_id=1533553032]
+transform = Transform3D(-0.0036861969, 0.6222706, -0.7827936, -0.0005018339, 0.7827977, 0.6222762, 0.9999931, 0.002686665, -0.00257327, -2.570717, 4.830517, -3.2955952)
+fov = 60.0
+
+[node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone4" unique_id=63732150]
+
+[node name="PlayerSpawn1" type="Node3D" parent="CameraZones/Zone4/SpawnPoints" unique_id=1591573754]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.52, 0.51, -1.82)
+
+[node name="PlayerSpawn2" type="Node3D" parent="CameraZones/Zone4/SpawnPoints" unique_id=1379323930]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, -5.02)
+
+[node name="PlayerSpawn3" type="Node3D" parent="CameraZones/Zone4/SpawnPoints" unique_id=988565828]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32, 0.51, 1.38)
+
+[node name="PlayerSpawn4" type="Node3D" parent="CameraZones/Zone4/SpawnPoints" unique_id=2129120959]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08, 0.51, -4.82)
+
+[node name="ItemHotspots" type="Node3D" parent="CameraZones/Zone4" unique_id=1238615851]
+
+[node name="Hotspot1" type="Node3D" parent="CameraZones/Zone4/ItemHotspots" unique_id=488276260]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.92, 0.51, -1.82)
+
+[node name="Hotspot2" type="Node3D" parent="CameraZones/Zone4/ItemHotspots" unique_id=628320043]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 0.51, -5.82)
+
+[node name="Hotspot3" type="Node3D" parent="CameraZones/Zone4/ItemHotspots" unique_id=1391246166]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -5.82)
+
+[node name="Hotspot4" type="Node3D" parent="CameraZones/Zone4/ItemHotspots" unique_id=786080996]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, 2.18)
+
+[node name="Hotspot5" type="Node3D" parent="CameraZones/Zone4/ItemHotspots" unique_id=612251324]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.51, 1.78)
+
+[node name="Hotspot6" type="Node3D" parent="CameraZones/Zone4/ItemHotspots" unique_id=1952135994]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 0.51, -3.02)
+
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1940083208]
-transform = Transform3D(0.99999, 0, 0.00458, 0.001854, 0.914388, -0.404835, -0.004188, 0.404839, 0.914378, 0.97, 3.05, 2.1)
+transform = Transform3D(1.0000005, 0, 0, 0, 0.69170207, 0.72218275, 0, -0.722183, 0.6917019, 0.97, 4.830517, 2.1085906)
 current = true
 fov = 60.0
 
