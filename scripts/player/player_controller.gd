@@ -571,6 +571,8 @@ func _setup_model() -> void:
 		_apply_human_material(model)
 		# human 自帶動畫，不 merge KayKit Idle（骨骼名不匹配會報警）
 		_set_human_animation_looping()
+		# 組合主動畫（Idle/Idle_001 含待機+移動+飛撲多段）必須按帧拆出待機段，
+		# 即使有獨立 Walk/jump 也要拆（待機只用組合裡的待機段）
 		_split_human_idle()
 	else:
 		_merge_idle_animation()
@@ -595,9 +597,7 @@ func _setup_model() -> void:
 		spring_rig.skeleton = skel2
 		spring_rig.animation_player = _animation_player
 		spring_rig.is_human = _is_human_model
-		# human：剔除 head，避免 spring 軟糯導致頭骨持續偏移（帽子/掛飾隨之漂移）。四肢仍軟糯。
-		if _is_human_model:
-			spring_rig.bones = spring_rig.bones.filter(func(b): return String(b) != "head")
+		# 保留 head 進 spring（磕頭 kowtow 效果需 head spring）；帽子隨磕頭左右晃屬合理演出
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)
@@ -613,6 +613,11 @@ func _setup_model() -> void:
 	face = get_node_or_null("Face") as PlayerFaceController
 	if face:
 		face.setup(_model_skeleton)
+		# 若有模型帶獨立臉片（newnewhuman），自動改貼臉到臉片材質；無則保持平面貼紙
+		face.use_head_texture = true
+		var face_ok := face.apply_head_texture()
+		if not face_ok:
+			face.use_head_texture = false
 
 func _find_skeleton(n: Node) -> Skeleton3D:
 	if n is Skeleton3D:
@@ -819,11 +824,10 @@ func _split_human_idle() -> void:
 	for an in _animation_player.get_animation_list():
 		if an.begins_with("Human_"):
 			continue   # 略過拆分產生的子動畫，避免用它們當源遞歸拆分
-		for sfx in HUMAN_MASTER_SUFFIXES:
-			if an.ends_with(sfx):
-				src_name = an
-				break
-		if src_name != "":
+		# 組合主動畫：匹配 Idle / Idle_001 / Idle_002 等（Blender 導出可能加 _數字 尾綴）
+		var lower := an.to_lower()
+		if _is_combo_anim(lower):
+			src_name = an
 			break
 	if src_name == "":
 		# 找不到主動畫：退而取第一個非拆分的動畫當源
@@ -842,6 +846,18 @@ func _split_human_idle() -> void:
 		var t0 := f0 / HUMAN_ANIM_FPS
 		var t1 := f1 / HUMAN_ANIM_FPS
 		_slice_animation(src, t0, t1, slot_name)
+
+## 判斷是否為「組合主動畫」（含待機/移動/飛撲多段的單一動畫）。
+## newnewhuman 導出為 Idle_001；舊 human 為 Idle。特徵：名含 Idle 且時長較長（>2s）。
+func _is_combo_anim(lower_name: String) -> bool:
+	if not lower_name.contains("idle"):
+		return false
+	if _animation_player.has_animation(lower_name):
+		return _animation_player.get_animation(lower_name).length > 2.0
+	for an in _animation_player.get_animation_list():
+		if String(an).to_lower() == lower_name:
+			return _animation_player.get_animation(an).length > 2.0
+	return true
 
 ## 從 source 動畫切割 [t0, t1] 時間窗口生成新動畫並加入動畫庫。
 ## 針對每條軌收集窗口内的關鍵幀，時間平移到 0 起。
@@ -889,14 +905,15 @@ func _update_animation() -> void:
 
 func _anim_for_state(state_name: String) -> String:
 	if _is_human_model:
-		# human 動畫統一塞在一個主動畫裡，按帧號拆成子段，各自點播
+		# human 動畫：Move/Dive 可優先匹配獨立動畫；Idle 固定用拆分出的待機段（組合Idle含3段不可整播）
 		match state_name:
 			"Move":
-				return _match_slot_anim("Human_Move")
+				return _human_anim_or_slot("Walk", "Human_Move")
 			"Dive":
-				return _match_slot_anim("Human_Dive")
+				return _human_anim_or_slot("Dive", "Human_Dive")
 			"Jump", "Fly":
-				return _match_human_anim(HUMAN_ANIM_JUMP)
+				var j := _match_human_anim(HUMAN_ANIM_JUMP)
+				return j if _is_valid_anim_name(j) else _match_slot_anim("Human_Jump")
 			_:
 				return _match_slot_anim("Human_Idle")
 	match state_name:
@@ -932,6 +949,28 @@ func _match_slot_anim(name: String) -> String:
 	if s == ANIM_IDLE:
 		s = _match_human_anim(HUMAN_ANIM_IDLE)
 	return s
+
+## 嘗試用後綴直接匹配獨立動畫；無效則退回帧拆分槽動畫
+func _human_anim_or_slot(suffix: String, slot: String) -> String:
+	var matched := _match_human_anim(suffix)
+	if _is_valid_anim_name(matched):
+		return matched
+	return _match_slot_anim(slot)
+
+## 檢查動畫庫是否存在以指定後綴結尾的動畫
+func _has_anim_suffix(suffix: String) -> bool:
+	if not _animation_player:
+		return false
+	for an in _animation_player.get_animation_list():
+		if an.ends_with(suffix) or an.ends_with("|" + suffix):
+			return true
+	return false
+
+## 檢查動畫名是否真正存在於動畫庫（避免 _match_human_anim 找不到時回退到任意首個動畫）
+func _is_valid_anim_name(name: String) -> bool:
+	if name.is_empty() or name == ANIM_IDLE:
+		return false
+	return _animation_player != null and _animation_player.has_animation(name)
 
 func _find_animation_player(n: Node) -> AnimationPlayer:
 	if n is AnimationPlayer:

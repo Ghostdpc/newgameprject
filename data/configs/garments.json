@@ -25,6 +25,7 @@
       "slot": "hat_slot",
       "model": "res://assets/models/garments/halo/halo.fbx",
       "model_scale": 1.0,
+      "mount_offset": [0.00, -1, 0],
       "tint": "gold",
       "score_bonus": 0.12,
       "effects": [
@@ -49,6 +50,11 @@
           "kind": "player_speed",
           "target": "self",
           "params": { "multiplier": 0.6 }
+        },
+        {
+          "kind": "garment_spring_wobble",
+          "target": "self",
+          "params": { "preset": "kowtow" }
         }
       ]
     },

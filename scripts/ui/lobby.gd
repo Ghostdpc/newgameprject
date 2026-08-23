@@ -191,7 +191,7 @@ func _do_start() -> void:
 	SoundMgr.play("confirm")
 	GameManager.lobby_player_count = _joined_count()
 	GameManager.player_devices = _slot_devices.duplicate()
-	get_tree().change_scene_to_file("res://scenes/levels/room_stage_battle.tscn")
+	GameManager.goto_level("res://scenes/levels/room_stage_battle.tscn")
 
 func _on_back() -> void:
 	GameManager.enter_title()

@@ -32,6 +32,17 @@ var config: GameConfig
 var time_rate: float = 1.0
 ## 大厅确认的玩家数（2~4，由大厅界面写入，关卡读取）
 var lobby_player_count: int = 4
+## 加载完成后要进入的关卡场景（goto_level 先展示加载界面）
+var pending_level_path: String = "res://scenes/levels/room_stage_battle.tscn"
+
+## 进入关卡：先展示假加载界面，加载完成后由加载界面调 enter_pending_level 跳关
+func goto_level(path: String) -> void:
+	pending_level_path = path
+	get_tree().change_scene_to_file("res://scenes/ui/loading_screen.tscn")
+
+## 加载界面完成时调用
+func enter_pending_level() -> void:
+	get_tree().change_scene_to_file(pending_level_path)
 ## 每个玩家绑定的输入设备（按槽位 0-3，与 player_index 对齐）：
 ##   -2 = 未绑定（空槽；自动：P1/P2 键盘，P3/P4 手柄）
 ##   -1 = 键盘（仅 P1/P2 有效）

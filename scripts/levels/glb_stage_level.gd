@@ -285,6 +285,6 @@ func _on_flow_finished(action: String) -> void:
 	Engine.time_scale = 1.0
 	GameManager.time_rate = 1.0
 	if action == "restart":
-		get_tree().change_scene_to_file(get_tree().current_scene.scene_file_path)
+		GameManager.goto_level(get_tree().current_scene.scene_file_path)
 	else:
 		GameManager.enter_lobby()
