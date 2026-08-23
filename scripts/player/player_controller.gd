@@ -314,10 +314,18 @@ func _pickup_nearest() -> Dictionary:
 		if d_sq < 0.0001:
 			d_sq = 0.0001
 		var dist := sqrt(d_sq)
-		var facing := to.normalized().dot(fwd)
-		if facing < 0.15:
+		# 直立於道具正上方（水平距離極小）時，水平朝向無意義 → 直接允許拾取
+		if dist > PICKUP_RANGE:
 			continue
-		var score := facing - dist / PICKUP_RANGE * 0.5
+		var score: float
+		if dist <= 0.3:
+			# 貼身/正上方：不受朝向限制
+			score = 1.0 - dist / PICKUP_RANGE * 0.25
+		else:
+			var facing := to.normalized().dot(fwd)
+			if facing < 0.15:
+				continue
+			score = facing - dist / PICKUP_RANGE * 0.5
 		if score > best_score:
 			best_score = score
 			nearest = n
