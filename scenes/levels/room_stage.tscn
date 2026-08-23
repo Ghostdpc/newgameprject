@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://batsr4alw6826"]
 
-[ext_resource type="Script" uid="uid://birpifcx8ks7u" path="res://scripts/levels/cartoon_room_styler.gd" id="1_style"]
+[ext_resource type="Script" uid="uid://dcedyelxonn4" path="res://scripts/levels/cartoon_room_styler.gd" id="1_style"]
 [ext_resource type="PackedScene" uid="uid://crkxjlq0xv184" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only.glb" id="2_room"]
-[ext_resource type="Shader" uid="uid://ca0o8kn6vfy52" path="res://resources/shaders/toon_room_material.gdshader" id="4_piasg"]
+[ext_resource type="Shader" uid="uid://cee53ku7y8ijf" path="res://resources/shaders/toon_room_material.gdshader" id="4_piasg"]
 [ext_resource type="Texture2D" uid="uid://b0swxbpkxefdy" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_Door_D.png" id="5_nfgv6"]
 [ext_resource type="Texture2D" uid="uid://b6ajvp4ar15ix" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_CampingShelve_D.png" id="6_f4cup"]
 [ext_resource type="Texture2D" uid="uid://r7t8kpw6wqox" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Cell_Phone_D.png" id="7_r8t1p"]
@@ -67,9 +67,63 @@
 [ext_resource type="Texture2D" uid="uid://diq2bsk73m60q" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_DoorTrim_D.png" id="62_kkwdf"]
 [ext_resource type="Texture2D" uid="uid://hqkxao4d2f6h" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Trophy_Celebration_D.png" id="63_3x3rt"]
 [ext_resource type="Texture2D" uid="uid://dmtsxxq00ovdk" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_WildWest_BedRoll_1_D.png" id="64_pjk34"]
-[ext_resource type="Environment" uid="uid://bly4kk5loghdq" path="res://resources/environments/room_post_process.tres" id="99_post_process"]
+[ext_resource type="Environment" path="res://resources/environments/room_stage_lighting.tres" id="99_post_process"]
 [ext_resource type="Material" uid="uid://cys3207nm65pj" path="res://resources/materials/room_cartoon_outline_post_process.tres" id="100_outline_post"]
-[ext_resource type="PackedScene" uid="uid://bekeixexq1don" path="res://assets/models/human/human.fbx" id="101_human"]
+[ext_resource type="Texture2D" uid="uid://f44nom60ldst" path="res://assets/textures/fx/stage_disco_gobo.svg" id="102_disco_gobo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial_stage_lamp_lens"]
+albedo_color = Color(1, 0.18, 0.62, 1)
+roughness = 0.28
+emission_enabled = true
+emission = Color(1, 0.055, 0.38, 1)
+emission_energy_multiplier = 5.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_stage_lamp_lens"]
+material = SubResource("StandardMaterial_stage_lamp_lens")
+radius = 0.12
+height = 0.2
+radial_segments = 20
+rings = 10
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kfilt"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 0.18, 0.62, 1)
+shader_parameter/color_replace = Color(0, 0, 0, 0)
+shader_parameter/color_replace_saturation_threshold = 1.0
+shader_parameter/color_replace_softness = 0.08
+shader_parameter/fill_light = 0.055
+shader_parameter/color_saturation = 0.9
+shader_parameter/color_saturation_multiplier = 1.0
+shader_parameter/color_lift_color = Color(1, 1, 1, 1)
+shader_parameter/color_lift_amount = 0.0
+shader_parameter/hue_replace_color = Color(0, 0, 0, 0)
+shader_parameter/hue_replace_target = 0.0
+shader_parameter/hue_replace_tolerance = 0.1
+shader_parameter/hue_replace_min_saturation = 1.0
+shader_parameter/hue_replace_softness = 0.05
+shader_parameter/emission_tint = Color(0, 0, 0, 0)
+shader_parameter/emission_strength = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_djy81"]
+render_priority = 0
+shader = ExtResource("4_piasg")
+shader_parameter/albedo_tint = Color(1, 0.18, 0.62, 1)
+shader_parameter/color_replace = Color(0, 0, 0, 0)
+shader_parameter/color_replace_saturation_threshold = 1.0
+shader_parameter/color_replace_softness = 0.08
+shader_parameter/fill_light = 0.055
+shader_parameter/color_saturation = 0.9
+shader_parameter/color_saturation_multiplier = 1.0
+shader_parameter/color_lift_color = Color(1, 1, 1, 1)
+shader_parameter/color_lift_amount = 0.0
+shader_parameter/hue_replace_color = Color(0, 0, 0, 0)
+shader_parameter/hue_replace_target = 0.0
+shader_parameter/hue_replace_tolerance = 0.1
+shader_parameter/hue_replace_min_saturation = 1.0
+shader_parameter/hue_replace_softness = 0.05
+shader_parameter/emission_tint = Color(0, 0, 0, 0)
+shader_parameter/emission_strength = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q6di3"]
 render_priority = 0
@@ -3811,6 +3865,155 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_j2irb")
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kfilt"]
+resource_name = "MI_Fort_Floors_Generic_TilesClean"
+cull_mode = 2
+albedo_texture = ExtResource("57_302sk")
+metallic = 1.0
+metallic_texture = ExtResource("59_0b7jr")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("59_0b7jr")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("60_gc6jf")
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_djy81"]
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"format": 34896613377,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgABACIAAQAAACMAIwAiAAEAAgAHAAAAJAAiACMAIgAlAAIAJgAjAAAAIgAkACcAJwAlACIAIwAoACQAKAAjACYAKQAnACQAKgAkACgAJAAqACkAJgADACgAKAArACoAKwAoAAMABQApACoABAAqACsAKgAEAAUAKwAGAAQABQAEAAYAAwAsACsAKwAsAAwADAAGACsALQAsAAMADAAsAC0AAwAmAC4ABgAMAAgABgAvAAUACAAvAAYACwAFAC8AKQAFAAsALwAIADAACwAxACkAJwApADEALwAyAAsAMAAyAC8AMwAxAAsACwAyADMAMQAKACcACgAxADMAJQAnAAoANAAzADIAMgAwADQAMwA1AAoANQAzADQACgA2ACUANgAKADUAJQA2AAkACQACACUANQA3ADYACQA2ADcABwACAAkANAA4ADUANwA1ADgAOAA0ADkAOQA0ADAACQAPAAcANwAPAAkAMAANADkADQAwAAgAOQA6ADgACAAOAA0ADgAIAAwAOwA5AA0AOgA5ADsAEQANAA4ADQARADsADAAgAA4APAA4ADoAOAA8ADcADgAfABEAHwAOACAALQAgAAwAEQAfAD0APQA7ABEAIAAhAB8AHwAhAD4APgAhACAAPgA9AB8AIAAtAD4APwA7AD0AOwA/ADoAHgA9AD4APQAeAD8AHQA+AC0APgAdAB4ALQBAAB0AAwBAAC0AQQA6AD8ALgBAAAMAOgBBADwAFgAdAEAAQAAuABYAHQAWABwAHAAeAB0AGwAWAC4AHgAcABAAEAA/AB4APwAQAEEAGQAQABwAQQAQABkAGgAcABYAFgAbABoAHAAaABkAGQAYAEEAEgA8AEEAQQAYABIANwA8ABIAEgAPADcAFwAYABkAEgAYABcAGQAaABcADwASABMAFwATABIAEwAHAA8AFQAXABoAEwAXABUAGgAbABUALgAVABsAFQAUABMAFAAVAC4ABwATABQALgAmABQAFAAAAAcAAAAUACYA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAQAAAAMABAABAAMAAQAEAAUABQACAAEAAwAGAAQABQAEAAYAAgAHAAAABgAIAAUABwACAAkAAgAFAAoACgAJAAIACwAFAAgACwAKAAUABgAMAAgAAwAMAAYACAANAAsACwANAAoADgAIAAwACAAOAA0ACgAPAAkACQAPAAcADQAQAAoAEQANAA4AEAANABEAEgAPAAoAEgAKABAAEwAHAA8ADwASABMABwATABQAFAAAAAcAFAADAAAAFQAUABMAAwAUABYAFAAVABYAFwATABIAEwAXABUAEgAYABcAEAAYABIAFwAYABkAGQAYABAAFQAXABoAGQAaABcAGgAbABUAFgAVABsAFgAbABoAHAAaABkAGgAcABYAGQAQABwAFgAdAAMAHQAWABwADAADAB0AHgAcABAAHAAeAB0AEAARAB4AHwAeABEAHgAfAB0ADgAfABEADAAgAA4AHwAOACAAIAAMAB0AHwAhAB0AHQAhACAAIAAhAB8A")],
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 66,
+"vertex_data": PackedByteArray("//////8/AAD/////AAAAAP///38AAAAA/3////9/AAAAAP//AAAAAAAA/38AAAAAAAD///8/AAD///9//z8AAAAA/3//fwAA//8AAAAAAAD/fwAAAAAAAAAAAAAAAAAAAAD///9/AAAAAAAA/78AAAAA/3//vwAA//8AAP8/AAD/vwAA//8AAAAAAAD//wAA//8AAP9/AAD///9//38AAP//////fwAA//////+/AAD/v/////8AAP///3//vwAA//8AAP+/AAD//wAA//8AAP///3///wAA////////AAD/v/9///8AAP9//////wAA/3//f///AAAAAP9///8AAAAA////vwAAAAD/////AAD/v///AAAAAP+/////PwAA/3///wAAAAD/v/9/AAAAAP+/////fwAA/3//fwAAAAD/f////z8AAP8//38AAAAA/z///wAAAAD/P////z8AAP8/////fwAA/z////+/AAD/v////78AAAAA/3//PwAAAAAAAP9/AAD/PwAAAAAAAAAAAAD/PwAA/z8AAP8/AAD/PwAA/38AAP9/AAD/PwAA/78AAAAAAAD/vwAA/z8AAP9/AAD/fwAA/z8AAP+/AAD/fwAA/78AAP8/AAD//wAA/78AAP9/AAD/P/9///8AAP8//////wAA/38AAP//AAD/f////78AAP+/AAD/vwAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_021mu"]
+resource_name = "Fortnite_Skye_Room_meshes_only_SM_Fort_Floors_Generic_TileBasic_md_004"
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"attribute_data": PackedByteArray("Bv6Bn6qq/78G/gCAqqr/v///AICqqv+///+Bn6qq/78G/gO/qqr/v///A7////+/Bv4Dv////78G/oXe////v///hd7///+///+F3qqq/7///wb+////v///hd7///+/Bv6F3v///78G/gO/////v///gZ////+/Bv6Bn6qq/7///4Gfqqr/vwb+AICqqv+///8AgKqq/7///wb+qqr/vwb+Bv6qqv+/Bv6F3qqq/7///4Xeqqr/v///Bv6qqv+/Bv4G/qqq/78G/oXeqqr/vwCAhd6qqv+/AIAG/v///78Ifgb+qqr/vwh+Bv7///+/CH6F3v///78AgIXe////vwCAA7////+/CH4Dv////78AgIGfqqr/vwCAA7+qqv+/CH4Dv6qq/78IfgCAqqr/vwCAAID///+/AICBn////78NfoGf////vw1+AID///+/AIAAgP///78AgIGf////vw1+A7////+/DX6Bn6qq/78NfgO/qqr/vwCAgZ+qqv+/AIAG/qqq/78Nfgb+qqr/v4XeBv6qqv+/Bv4G/qqq/78G/t//qqr/v4Xe3/+qqv+/A78G/qqq/7+F3t//////vwO/3/////+/A78G/v///78AgN//////vwCABv7///+/hd4Kfv///78G/gp+////vwb+AID///+/hd4AgP///78Dvwp+////vwCAAID/f///A78Kfv9///8AgAp+/3///wb+AID/f///AIAAgP9///8AgA1+/3///wb+DX7/f///AIAG/v9///8Dvwb+/3///wCA////f///Bv7///9///8G/gb+/3///wO/Bv7/f///AIAG/v9///8AgIXe/3///wCAA7//f///A78Dv/9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///4XeBv7/f///Bv4Dv/9///8G/oXe/3///wb+Bv7/f///hd4AgP9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///wb+A7//f///A78G/v9///8AgAb+/3///wb+hd7/f///Bv4G/v9///8IfoGfqqr/vwCAA7+qqv+/DX6F3qqq/78AgIXeqqr/v4GfBv7///+/gZ/f/////78DvwCA/3///4GfCn7/f///gZ8AgP9///+BnwCA/3///4GfDX7/f///A78AgP9///8Dvw1+/3///4XeAID/f///hd4Nfv9///+Bn////3///4GfBv7/f///A7////9///+F3v///3///4XeBv7/f///gZ8G/v9///+Bn4Xe/3///wO/hd7/f///gZ8Dv/9///+F3oXe/3///4GfgZ//f///gZ8AgP9///+F3gO//3///wO/gZ//f///A78AgP9///+F3oGf/3///4XeAID/f///gZ8AgP9///+Bn4Gf/3///wCAA7//f///A7+Bn/9///8DvwCA/3///4GfA7//f///AICF3v9///8DvwO//3///4XegZ//f///hd4Dv/9///+F3oXe/3///4XeBv7/f///A7+F3v9///+Bn4Xe/3///4GfBv7/f///"),
+"format": 34896613431,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAJABkACIAIgBkACUAJQAmACcAKAApACoAKgArACgALAAtACsALwBlAC4AZgAuAGUAZQBnAGYAZgBnADAAMAAxAGYAMgAzADQANAA1ADIANgAyADUANwA4ADkAaAA5ADgAOABpAGgAaABpADoAOgA7AGgAPAA9AD4APgA/ADwAQAA8AD8APwBqAEIAawBCAGoAagBsAGsAawBsAEEAQQBDAGsAbQBFAEYARgBuAG0AbwBtAG4AbgBwAG8AcQBvAHAAcAByAHEAcQByAEcARwBEAHEAcwBKAEgASAB0AHMAdQBzAHQAdABJAHUAdgB1AEkASQB3AHYAdgB3AEwATABLAHYAeABOAE8ATwB5AHgATQB4AHkAeQBPAFAAeQB6AE0AVgBNAHoAUAB7AHkAegB8AFYAWQBWAHwAUQB6AHkAeQB7AFEAfAB6AFEAfABYAFkAVwBYAHwAfQB7AFAAUQB7AH0AUABSAH0AfQBSAFMAUwB+AH0AfAB/AFcAUQB/AHwAVQBXAH8AfQCAAFEAgAB9AH4AfwBRAIAAfgCBAIAAfwCCAFUAgACCAH8AggCAAIEAVABVAIIAgQCDAIIAggCDAFQAWwBcAIQAhACFAFsAhgBbAIUAhwCFAIQAhACIAIcAhQCJAIYAigCGAIkAhQCHAIsAiwCJAIUAjACHAIgAiABaAIwAjABaAF0AXQBeAIwAjABeAF8AhwCMAI0AXwCNAIwAjQCLAIcAjgCNAF8AiwCNAI4AXwBiAI4AjgBiAGMAYwCPAI4AjgCQAIsAkACOAI8AiQCLAJAAjwBgAJAAkACRAIkAkQCQAGAAiQCRAIoAYACSAJEAYQCKAJEAkQCSAGEA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAIgAkACUAJQAmACcAKAApACoAKgArACgALAAtACsALgAvADAAMAAxAC4AMgAzADQANAA1ADIANgAyADUANwA4ADkAOAA6ADkAOgA7ADkAPAA9AD4APgA/ADwAQAA8AD8APwBBAEIAQwBCAEEARABFAEYARgBHAEQASABJAEoASwBKAEkASQBMAEsATQBOAE8ATwBQAE0AUABRAE0AUQBQAFIAUQBSAFMAUwBUAFEAVABVAFEAVgBNAFEAVwBRAFUAUQBXAFYAVwBYAFYAVgBYAFkAWgBbAFwAXQBeAFoAWgBeAF8AWwBaAGAAXwBgAFoAYQBbAGAAXwBiAGAAYABiAGMA")],
+"material": SubResource("StandardMaterial3D_kfilt"),
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(2.03125, 2.03125, 3, 2),
+"vertex_count": 147,
+"vertex_data": PackedByteArray("//////8/VNX/////AABU1f///38AAFTV////f/8/VNX//////39U1f///3//f1TV//////9/VNX//////79U1f///3//v1TV////f/+/VNX///9///9U1f///3//P1TV//8AAP8/VNX//wAA/39U1f///3//v1TV//8AAP+/VNX///9//79U1f//AAD//1TV////f///VNX///9///9U1f///////1TV//////+/VNX///9//z9U1f///38AAFTV//8AAAAAVNX//wAA/z9U1QAA////v1TVAAD/////VNUAAP9///9U1QAA/3///1TVAAD/f/+/VNUAAP///79U1QAA////f1TVAAD/f/9/VNUAAP///z9U1QAA////f1TVAAD/f/9/VNUAAP9/AABU1QAA//8AAFTVAAD///8/VNUAAP9//79U1QAA/3///1TVAAAAAP//VNUAAAAA/79U1QAA/3//f1TVAAD/f/+/VNUAAP9//39U1QAAAAD/v1TVAAAAAAAAVNUAAP9/AABU1f+//////wCA////////AID///9///8AgP+//3///wCA/3//////AID/v/9///8AgP9//3///wCA/3//////AIAAAP9///8AgAAA/////wCA/7//f///AID///9///8AgP//AAD//wCA/78AAP//AID/f/9///8AgAAAAAD//wCA/3//f///AIAAAP9///8AgP////8AAP//AAD//wAA//8AAP9/AAD//////38AAP//AAAAAAAA////fwAAAAD//wAA/38AAP//////fwAA/////wAAAAD///9///////+/AAD//////78AAP///7//vwAA////f/+//3////9//78AAP///z//vwAA//8AAP+//////wAA/7///////z//v/+///////+///////9//7///////7//v/////////+//78AAP///78AAAAA/7//vwAAAAD///+///8AAP///7///wAA/7//v///AAD/f/+//38AAAAA/78AAAAAAAD/v///AAD/P/+///8AAAAA/78AAP9//z9U1QAAAAD/f1TVAAD/f/8/VNUAAAAA/z9U1f8//////wCA/z//f///AID/fwAA//8AgP8//3///wCA/z8AAP//AID/P///AAD///8//38AAP///3///wAA////f/9/AAD///+///8AAP///7//fwAA////P/9/AAD///8/AAAAAP///3//fwAA////v/9/AAD///+/AAAAAP///z///////7//P////7//v/9/////v/+//z////9//7//v////7//v/8/////P/+//z///wAA/7//v////3//v/9/////P/+//3///wAA/7//v////z//v/+///8AAP+//z8AAP///7//PwAA/7//vwAAAAD/f/+//38AAP+//7//fwAA////v/8/AAD/f/+/AAAAAP8//7//fwAA/3//v/+/AAD/v/+//78AAP9//7//vwAA/z//v/+/AAAAAP+//38AAP8//7//PwAA/z//v/8/AAAAAP+/qqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqqqVFWqqlRVqqpUVaoqqiqqKqoqqiqqKqoqqipU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqr/f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9///////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/f1TVVNVUVaqqVFWqqlRVqqr/f////3////9/////f////3///////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_djy81")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_snrcl"]
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"format": 34896613377,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgABACIAAQAAACMAIwAiAAEAAgAHAAAAJAAiACMAIgAlAAIAJgAjAAAAIgAkACcAJwAlACIAIwAoACQAKAAjACYAKQAnACQAKgAkACgAJAAqACkAJgADACgAKAArACoAKwAoAAMABQApACoABAAqACsAKgAEAAUAKwAGAAQABQAEAAYAAwAsACsAKwAsAAwADAAGACsALQAsAAMADAAsAC0AAwAmAC4ABgAMAAgABgAvAAUACAAvAAYACwAFAC8AKQAFAAsALwAIADAACwAxACkAJwApADEALwAyAAsAMAAyAC8AMwAxAAsACwAyADMAMQAKACcACgAxADMAJQAnAAoANAAzADIAMgAwADQAMwA1AAoANQAzADQACgA2ACUANgAKADUAJQA2AAkACQACACUANQA3ADYACQA2ADcABwACAAkANAA4ADUANwA1ADgAOAA0ADkAOQA0ADAACQAPAAcANwAPAAkAMAANADkADQAwAAgAOQA6ADgACAAOAA0ADgAIAAwAOwA5AA0AOgA5ADsAEQANAA4ADQARADsADAAgAA4APAA4ADoAOAA8ADcADgAfABEAHwAOACAALQAgAAwAEQAfAD0APQA7ABEAIAAhAB8AHwAhAD4APgAhACAAPgA9AB8AIAAtAD4APwA7AD0AOwA/ADoAHgA9AD4APQAeAD8AHQA+AC0APgAdAB4ALQBAAB0AAwBAAC0AQQA6AD8ALgBAAAMAOgBBADwAFgAdAEAAQAAuABYAHQAWABwAHAAeAB0AGwAWAC4AHgAcABAAEAA/AB4APwAQAEEAGQAQABwAQQAQABkAGgAcABYAFgAbABoAHAAaABkAGQAYAEEAEgA8AEEAQQAYABIANwA8ABIAEgAPADcAFwAYABkAEgAYABcAGQAaABcADwASABMAFwATABIAEwAHAA8AFQAXABoAEwAXABUAGgAbABUALgAVABsAFQAUABMAFAAVAC4ABwATABQALgAmABQAFAAAAAcAAAAUACYA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAQAAAAMABAABAAMAAQAEAAUABQACAAEAAwAGAAQABQAEAAYAAgAHAAAABgAIAAUABwACAAkAAgAFAAoACgAJAAIACwAFAAgACwAKAAUABgAMAAgAAwAMAAYACAANAAsACwANAAoADgAIAAwACAAOAA0ACgAPAAkACQAPAAcADQAQAAoAEQANAA4AEAANABEAEgAPAAoAEgAKABAAEwAHAA8ADwASABMABwATABQAFAAAAAcAFAADAAAAFQAUABMAAwAUABYAFAAVABYAFwATABIAEwAXABUAEgAYABcAEAAYABIAFwAYABkAGQAYABAAFQAXABoAGQAaABcAGgAbABUAFgAVABsAFgAbABoAHAAaABkAGgAcABYAGQAQABwAFgAdAAMAHQAWABwADAADAB0AHgAcABAAHAAeAB0AEAARAB4AHwAeABEAHgAfAB0ADgAfABEADAAgAA4AHwAOACAAIAAMAB0AHwAhAB0AHQAhACAAIAAhAB8A")],
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 66,
+"vertex_data": PackedByteArray("//////8/AAD/////AAAAAP///38AAAAA/3////9/AAAAAP//AAAAAAAA/38AAAAAAAD///8/AAD///9//z8AAAAA/3//fwAA//8AAAAAAAD/fwAAAAAAAAAAAAAAAAAAAAD///9/AAAAAAAA/78AAAAA/3//vwAA//8AAP8/AAD/vwAA//8AAAAAAAD//wAA//8AAP9/AAD///9//38AAP//////fwAA//////+/AAD/v/////8AAP///3//vwAA//8AAP+/AAD//wAA//8AAP///3///wAA////////AAD/v/9///8AAP9//////wAA/3//f///AAAAAP9///8AAAAA////vwAAAAD/////AAD/v///AAAAAP+/////PwAA/3///wAAAAD/v/9/AAAAAP+/////fwAA/3//fwAAAAD/f////z8AAP8//38AAAAA/z///wAAAAD/P////z8AAP8/////fwAA/z////+/AAD/v////78AAAAA/3//PwAAAAAAAP9/AAD/PwAAAAAAAAAAAAD/PwAA/z8AAP8/AAD/PwAA/38AAP9/AAD/PwAA/78AAAAAAAD/vwAA/z8AAP9/AAD/fwAA/z8AAP+/AAD/fwAA/78AAP8/AAD//wAA/78AAP9/AAD/P/9///8AAP8//////wAA/38AAP//AAD/f////78AAP+/AAD/vwAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qedn4"]
+resource_name = "Fortnite_Skye_Room_meshes_only_SM_Fort_Floors_Generic_TileBasic_md_003"
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"attribute_data": PackedByteArray("Bv6Bn6qq/78G/gCAqqr/v///AICqqv+///+Bn6qq/78G/gO/qqr/v///A7////+/Bv4Dv////78G/oXe////v///hd7///+///+F3qqq/7///wb+////v///hd7///+/Bv6F3v///78G/gO/////v///gZ////+/Bv6Bn6qq/7///4Gfqqr/vwb+AICqqv+///8AgKqq/7///wb+qqr/vwb+Bv6qqv+/Bv6F3qqq/7///4Xeqqr/v///Bv6qqv+/Bv4G/qqq/78G/oXeqqr/vwCAhd6qqv+/AIAG/v///78Ifgb+qqr/vwh+Bv7///+/CH6F3v///78AgIXe////vwCAA7////+/CH4Dv////78AgIGfqqr/vwCAA7+qqv+/CH4Dv6qq/78IfgCAqqr/vwCAAID///+/AICBn////78NfoGf////vw1+AID///+/AIAAgP///78AgIGf////vw1+A7////+/DX6Bn6qq/78NfgO/qqr/vwCAgZ+qqv+/AIAG/qqq/78Nfgb+qqr/v4XeBv6qqv+/Bv4G/qqq/78G/t//qqr/v4Xe3/+qqv+/A78G/qqq/7+F3t//////vwO/3/////+/A78G/v///78AgN//////vwCABv7///+/hd4Kfv///78G/gp+////vwb+AID///+/hd4AgP///78Dvwp+////vwCAAID/f///A78Kfv9///8AgAp+/3///wb+AID/f///AIAAgP9///8AgA1+/3///wb+DX7/f///AIAG/v9///8Dvwb+/3///wCA////f///Bv7///9///8G/gb+/3///wO/Bv7/f///AIAG/v9///8AgIXe/3///wCAA7//f///A78Dv/9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///4XeBv7/f///Bv4Dv/9///8G/oXe/3///wb+Bv7/f///hd4AgP9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///wb+A7//f///A78G/v9///8AgAb+/3///wb+hd7/f///Bv4G/v9///8IfoGfqqr/vwCAA7+qqv+/DX6F3qqq/78AgIXeqqr/v4GfBv7///+/gZ/f/////78DvwCA/3///4GfCn7/f///gZ8AgP9///+BnwCA/3///4GfDX7/f///A78AgP9///8Dvw1+/3///4XeAID/f///hd4Nfv9///+Bn////3///4GfBv7/f///A7////9///+F3v///3///4XeBv7/f///gZ8G/v9///+Bn4Xe/3///wO/hd7/f///gZ8Dv/9///+F3oXe/3///4GfgZ//f///gZ8AgP9///+F3gO//3///wO/gZ//f///A78AgP9///+F3oGf/3///4XeAID/f///gZ8AgP9///+Bn4Gf/3///wCAA7//f///A7+Bn/9///8DvwCA/3///4GfA7//f///AICF3v9///8DvwO//3///4XegZ//f///hd4Dv/9///+F3oXe/3///4XeBv7/f///A7+F3v9///+Bn4Xe/3///4GfBv7/f///"),
+"format": 34896613431,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAJABkACIAIgBkACUAJQAmACcAKAApACoAKgArACgALAAtACsALwBlAC4AZgAuAGUAZQBnAGYAZgBnADAAMAAxAGYAMgAzADQANAA1ADIANgAyADUANwA4ADkAaAA5ADgAOABpAGgAaABpADoAOgA7AGgAPAA9AD4APgA/ADwAQAA8AD8APwBqAEIAawBCAGoAagBsAGsAawBsAEEAQQBDAGsAbQBFAEYARgBuAG0AbwBtAG4AbgBwAG8AcQBvAHAAcAByAHEAcQByAEcARwBEAHEAcwBKAEgASAB0AHMAdQBzAHQAdABJAHUAdgB1AEkASQB3AHYAdgB3AEwATABLAHYAeABOAE8ATwB5AHgATQB4AHkAeQBPAFAAeQB6AE0AVgBNAHoAUAB7AHkAegB8AFYAWQBWAHwAUQB6AHkAeQB7AFEAfAB6AFEAfABYAFkAVwBYAHwAfQB7AFAAUQB7AH0AUABSAH0AfQBSAFMAUwB+AH0AfAB/AFcAUQB/AHwAVQBXAH8AfQCAAFEAgAB9AH4AfwBRAIAAfgCBAIAAfwCCAFUAgACCAH8AggCAAIEAVABVAIIAgQCDAIIAggCDAFQAWwBcAIQAhACFAFsAhgBbAIUAhwCFAIQAhACIAIcAhQCJAIYAigCGAIkAhQCHAIsAiwCJAIUAjACHAIgAiABaAIwAjABaAF0AXQBeAIwAjABeAF8AhwCMAI0AXwCNAIwAjQCLAIcAjgCNAF8AiwCNAI4AXwBiAI4AjgBiAGMAYwCPAI4AjgCQAIsAkACOAI8AiQCLAJAAjwBgAJAAkACRAIkAkQCQAGAAiQCRAIoAYACSAJEAYQCKAJEAkQCSAGEA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAIgAkACUAJQAmACcAKAApACoAKgArACgALAAtACsALgAvADAAMAAxAC4AMgAzADQANAA1ADIANgAyADUANwA4ADkAOAA6ADkAOgA7ADkAPAA9AD4APgA/ADwAQAA8AD8APwBBAEIAQwBCAEEARABFAEYARgBHAEQASABJAEoASwBKAEkASQBMAEsATQBOAE8ATwBQAE0AUABRAE0AUQBQAFIAUQBSAFMAUwBUAFEAVABVAFEAVgBNAFEAVwBRAFUAUQBXAFYAVwBYAFYAVgBYAFkAWgBbAFwAXQBeAFoAWgBeAF8AWwBaAGAAXwBgAFoAYQBbAGAAXwBiAGAAYABiAGMA")],
+"material": SubResource("StandardMaterial3D_kfilt"),
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(2.03125, 2.03125, 3, 2),
+"vertex_count": 147,
+"vertex_data": PackedByteArray("//////8/VNX/////AABU1f///38AAFTV////f/8/VNX//////39U1f///3//f1TV//////9/VNX//////79U1f///3//v1TV////f/+/VNX///9///9U1f///3//P1TV//8AAP8/VNX//wAA/39U1f///3//v1TV//8AAP+/VNX///9//79U1f//AAD//1TV////f///VNX///9///9U1f///////1TV//////+/VNX///9//z9U1f///38AAFTV//8AAAAAVNX//wAA/z9U1QAA////v1TVAAD/////VNUAAP9///9U1QAA/3///1TVAAD/f/+/VNUAAP///79U1QAA////f1TVAAD/f/9/VNUAAP///z9U1QAA////f1TVAAD/f/9/VNUAAP9/AABU1QAA//8AAFTVAAD///8/VNUAAP9//79U1QAA/3///1TVAAAAAP//VNUAAAAA/79U1QAA/3//f1TVAAD/f/+/VNUAAP9//39U1QAAAAD/v1TVAAAAAAAAVNUAAP9/AABU1f+//////wCA////////AID///9///8AgP+//3///wCA/3//////AID/v/9///8AgP9//3///wCA/3//////AIAAAP9///8AgAAA/////wCA/7//f///AID///9///8AgP//AAD//wCA/78AAP//AID/f/9///8AgAAAAAD//wCA/3//f///AIAAAP9///8AgP////8AAP//AAD//wAA//8AAP9/AAD//////38AAP//AAAAAAAA////fwAAAAD//wAA/38AAP//////fwAA/////wAAAAD///9///////+/AAD//////78AAP///7//vwAA////f/+//3////9//78AAP///z//vwAA//8AAP+//////wAA/7///////z//v/+///////+///////9//7///////7//v/////////+//78AAP///78AAAAA/7//vwAAAAD///+///8AAP///7///wAA/7//v///AAD/f/+//38AAAAA/78AAAAAAAD/v///AAD/P/+///8AAAAA/78AAP9//z9U1QAAAAD/f1TVAAD/f/8/VNUAAAAA/z9U1f8//////wCA/z//f///AID/fwAA//8AgP8//3///wCA/z8AAP//AID/P///AAD///8//38AAP///3///wAA////f/9/AAD///+///8AAP///7//fwAA////P/9/AAD///8/AAAAAP///3//fwAA////v/9/AAD///+/AAAAAP///z///////7//P////7//v/9/////v/+//z////9//7//v////7//v/8/////P/+//z///wAA/7//v////3//v/9/////P/+//3///wAA/7//v////z//v/+///8AAP+//z8AAP///7//PwAA/7//vwAAAAD/f/+//38AAP+//7//fwAA////v/8/AAD/f/+/AAAAAP8//7//fwAA/3//v/+/AAD/v/+//78AAP9//7//vwAA/z//v/+/AAAAAP+//38AAP8//7//PwAA/z//v/8/AAAAAP+/qqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqqqVFWqqlRVqqpUVaoqqiqqKqoqqiqqKqoqqipU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqr/f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9///////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/f1TVVNVUVaqqVFWqqlRVqqr/f////3////9/////f////3///////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_snrcl")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6ir8a"]
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"format": 34896613377,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgABACIAAQAAACMAIwAiAAEAAgAHAAAAJAAiACMAIgAlAAIAJgAjAAAAIgAkACcAJwAlACIAIwAoACQAKAAjACYAKQAnACQAKgAkACgAJAAqACkAJgADACgAKAArACoAKwAoAAMABQApACoABAAqACsAKgAEAAUAKwAGAAQABQAEAAYAAwAsACsAKwAsAAwADAAGACsALQAsAAMADAAsAC0AAwAmAC4ABgAMAAgABgAvAAUACAAvAAYACwAFAC8AKQAFAAsALwAIADAACwAxACkAJwApADEALwAyAAsAMAAyAC8AMwAxAAsACwAyADMAMQAKACcACgAxADMAJQAnAAoANAAzADIAMgAwADQAMwA1AAoANQAzADQACgA2ACUANgAKADUAJQA2AAkACQACACUANQA3ADYACQA2ADcABwACAAkANAA4ADUANwA1ADgAOAA0ADkAOQA0ADAACQAPAAcANwAPAAkAMAANADkADQAwAAgAOQA6ADgACAAOAA0ADgAIAAwAOwA5AA0AOgA5ADsAEQANAA4ADQARADsADAAgAA4APAA4ADoAOAA8ADcADgAfABEAHwAOACAALQAgAAwAEQAfAD0APQA7ABEAIAAhAB8AHwAhAD4APgAhACAAPgA9AB8AIAAtAD4APwA7AD0AOwA/ADoAHgA9AD4APQAeAD8AHQA+AC0APgAdAB4ALQBAAB0AAwBAAC0AQQA6AD8ALgBAAAMAOgBBADwAFgAdAEAAQAAuABYAHQAWABwAHAAeAB0AGwAWAC4AHgAcABAAEAA/AB4APwAQAEEAGQAQABwAQQAQABkAGgAcABYAFgAbABoAHAAaABkAGQAYAEEAEgA8AEEAQQAYABIANwA8ABIAEgAPADcAFwAYABkAEgAYABcAGQAaABcADwASABMAFwATABIAEwAHAA8AFQAXABoAEwAXABUAGgAbABUALgAVABsAFQAUABMAFAAVAC4ABwATABQALgAmABQAFAAAAAcAAAAUACYA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAQAAAAMABAABAAMAAQAEAAUABQACAAEAAwAGAAQABQAEAAYAAgAHAAAABgAIAAUABwACAAkAAgAFAAoACgAJAAIACwAFAAgACwAKAAUABgAMAAgAAwAMAAYACAANAAsACwANAAoADgAIAAwACAAOAA0ACgAPAAkACQAPAAcADQAQAAoAEQANAA4AEAANABEAEgAPAAoAEgAKABAAEwAHAA8ADwASABMABwATABQAFAAAAAcAFAADAAAAFQAUABMAAwAUABYAFAAVABYAFwATABIAEwAXABUAEgAYABcAEAAYABIAFwAYABkAGQAYABAAFQAXABoAGQAaABcAGgAbABUAFgAVABsAFgAbABoAHAAaABkAGgAcABYAGQAQABwAFgAdAAMAHQAWABwADAADAB0AHgAcABAAHAAeAB0AEAARAB4AHwAeABEAHgAfAB0ADgAfABEADAAgAA4AHwAOACAAIAAMAB0AHwAhAB0AHQAhACAAIAAhAB8A")],
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 66,
+"vertex_data": PackedByteArray("//////8/AAD/////AAAAAP///38AAAAA/3////9/AAAAAP//AAAAAAAA/38AAAAAAAD///8/AAD///9//z8AAAAA/3//fwAA//8AAAAAAAD/fwAAAAAAAAAAAAAAAAAAAAD///9/AAAAAAAA/78AAAAA/3//vwAA//8AAP8/AAD/vwAA//8AAAAAAAD//wAA//8AAP9/AAD///9//38AAP//////fwAA//////+/AAD/v/////8AAP///3//vwAA//8AAP+/AAD//wAA//8AAP///3///wAA////////AAD/v/9///8AAP9//////wAA/3//f///AAAAAP9///8AAAAA////vwAAAAD/////AAD/v///AAAAAP+/////PwAA/3///wAAAAD/v/9/AAAAAP+/////fwAA/3//fwAAAAD/f////z8AAP8//38AAAAA/z///wAAAAD/P////z8AAP8/////fwAA/z////+/AAD/v////78AAAAA/3//PwAAAAAAAP9/AAD/PwAAAAAAAAAAAAD/PwAA/z8AAP8/AAD/PwAA/38AAP9/AAD/PwAA/78AAAAAAAD/vwAA/z8AAP9/AAD/fwAA/z8AAP+/AAD/fwAA/78AAP8/AAD//wAA/78AAP9/AAD/P/9///8AAP8//////wAA/38AAP//AAD/f////78AAP+/AAD/vwAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_3rb6d"]
+resource_name = "Fortnite_Skye_Room_meshes_only_SM_Fort_Floors_Generic_TileBasic_md_002"
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"attribute_data": PackedByteArray("Bv6Bn6qq/78G/gCAqqr/v///AICqqv+///+Bn6qq/78G/gO/qqr/v///A7////+/Bv4Dv////78G/oXe////v///hd7///+///+F3qqq/7///wb+////v///hd7///+/Bv6F3v///78G/gO/////v///gZ////+/Bv6Bn6qq/7///4Gfqqr/vwb+AICqqv+///8AgKqq/7///wb+qqr/vwb+Bv6qqv+/Bv6F3qqq/7///4Xeqqr/v///Bv6qqv+/Bv4G/qqq/78G/oXeqqr/vwCAhd6qqv+/AIAG/v///78Ifgb+qqr/vwh+Bv7///+/CH6F3v///78AgIXe////vwCAA7////+/CH4Dv////78AgIGfqqr/vwCAA7+qqv+/CH4Dv6qq/78IfgCAqqr/vwCAAID///+/AICBn////78NfoGf////vw1+AID///+/AIAAgP///78AgIGf////vw1+A7////+/DX6Bn6qq/78NfgO/qqr/vwCAgZ+qqv+/AIAG/qqq/78Nfgb+qqr/v4XeBv6qqv+/Bv4G/qqq/78G/t//qqr/v4Xe3/+qqv+/A78G/qqq/7+F3t//////vwO/3/////+/A78G/v///78AgN//////vwCABv7///+/hd4Kfv///78G/gp+////vwb+AID///+/hd4AgP///78Dvwp+////vwCAAID/f///A78Kfv9///8AgAp+/3///wb+AID/f///AIAAgP9///8AgA1+/3///wb+DX7/f///AIAG/v9///8Dvwb+/3///wCA////f///Bv7///9///8G/gb+/3///wO/Bv7/f///AIAG/v9///8AgIXe/3///wCAA7//f///A78Dv/9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///4XeBv7/f///Bv4Dv/9///8G/oXe/3///wb+Bv7/f///hd4AgP9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///wb+A7//f///A78G/v9///8AgAb+/3///wb+hd7/f///Bv4G/v9///8IfoGfqqr/vwCAA7+qqv+/DX6F3qqq/78AgIXeqqr/v4GfBv7///+/gZ/f/////78DvwCA/3///4GfCn7/f///gZ8AgP9///+BnwCA/3///4GfDX7/f///A78AgP9///8Dvw1+/3///4XeAID/f///hd4Nfv9///+Bn////3///4GfBv7/f///A7////9///+F3v///3///4XeBv7/f///gZ8G/v9///+Bn4Xe/3///wO/hd7/f///gZ8Dv/9///+F3oXe/3///4GfgZ//f///gZ8AgP9///+F3gO//3///wO/gZ//f///A78AgP9///+F3oGf/3///4XeAID/f///gZ8AgP9///+Bn4Gf/3///wCAA7//f///A7+Bn/9///8DvwCA/3///4GfA7//f///AICF3v9///8DvwO//3///4XegZ//f///hd4Dv/9///+F3oXe/3///4XeBv7/f///A7+F3v9///+Bn4Xe/3///4GfBv7/f///"),
+"format": 34896613431,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAJABkACIAIgBkACUAJQAmACcAKAApACoAKgArACgALAAtACsALwBlAC4AZgAuAGUAZQBnAGYAZgBnADAAMAAxAGYAMgAzADQANAA1ADIANgAyADUANwA4ADkAaAA5ADgAOABpAGgAaABpADoAOgA7AGgAPAA9AD4APgA/ADwAQAA8AD8APwBqAEIAawBCAGoAagBsAGsAawBsAEEAQQBDAGsAbQBFAEYARgBuAG0AbwBtAG4AbgBwAG8AcQBvAHAAcAByAHEAcQByAEcARwBEAHEAcwBKAEgASAB0AHMAdQBzAHQAdABJAHUAdgB1AEkASQB3AHYAdgB3AEwATABLAHYAeABOAE8ATwB5AHgATQB4AHkAeQBPAFAAeQB6AE0AVgBNAHoAUAB7AHkAegB8AFYAWQBWAHwAUQB6AHkAeQB7AFEAfAB6AFEAfABYAFkAVwBYAHwAfQB7AFAAUQB7AH0AUABSAH0AfQBSAFMAUwB+AH0AfAB/AFcAUQB/AHwAVQBXAH8AfQCAAFEAgAB9AH4AfwBRAIAAfgCBAIAAfwCCAFUAgACCAH8AggCAAIEAVABVAIIAgQCDAIIAggCDAFQAWwBcAIQAhACFAFsAhgBbAIUAhwCFAIQAhACIAIcAhQCJAIYAigCGAIkAhQCHAIsAiwCJAIUAjACHAIgAiABaAIwAjABaAF0AXQBeAIwAjABeAF8AhwCMAI0AXwCNAIwAjQCLAIcAjgCNAF8AiwCNAI4AXwBiAI4AjgBiAGMAYwCPAI4AjgCQAIsAkACOAI8AiQCLAJAAjwBgAJAAkACRAIkAkQCQAGAAiQCRAIoAYACSAJEAYQCKAJEAkQCSAGEA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAIgAkACUAJQAmACcAKAApACoAKgArACgALAAtACsALgAvADAAMAAxAC4AMgAzADQANAA1ADIANgAyADUANwA4ADkAOAA6ADkAOgA7ADkAPAA9AD4APgA/ADwAQAA8AD8APwBBAEIAQwBCAEEARABFAEYARgBHAEQASABJAEoASwBKAEkASQBMAEsATQBOAE8ATwBQAE0AUABRAE0AUQBQAFIAUQBSAFMAUwBUAFEAVABVAFEAVgBNAFEAVwBRAFUAUQBXAFYAVwBYAFYAVgBYAFkAWgBbAFwAXQBeAFoAWgBeAF8AWwBaAGAAXwBgAFoAYQBbAGAAXwBiAGAAYABiAGMA")],
+"material": SubResource("StandardMaterial3D_eiio1"),
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(2.03125, 2.03125, 3, 2),
+"vertex_count": 147,
+"vertex_data": PackedByteArray("//////8/VNX/////AABU1f///38AAFTV////f/8/VNX//////39U1f///3//f1TV//////9/VNX//////79U1f///3//v1TV////f/+/VNX///9///9U1f///3//P1TV//8AAP8/VNX//wAA/39U1f///3//v1TV//8AAP+/VNX///9//79U1f//AAD//1TV////f///VNX///9///9U1f///////1TV//////+/VNX///9//z9U1f///38AAFTV//8AAAAAVNX//wAA/z9U1QAA////v1TVAAD/////VNUAAP9///9U1QAA/3///1TVAAD/f/+/VNUAAP///79U1QAA////f1TVAAD/f/9/VNUAAP///z9U1QAA////f1TVAAD/f/9/VNUAAP9/AABU1QAA//8AAFTVAAD///8/VNUAAP9//79U1QAA/3///1TVAAAAAP//VNUAAAAA/79U1QAA/3//f1TVAAD/f/+/VNUAAP9//39U1QAAAAD/v1TVAAAAAAAAVNUAAP9/AABU1f+//////wCA////////AID///9///8AgP+//3///wCA/3//////AID/v/9///8AgP9//3///wCA/3//////AIAAAP9///8AgAAA/////wCA/7//f///AID///9///8AgP//AAD//wCA/78AAP//AID/f/9///8AgAAAAAD//wCA/3//f///AIAAAP9///8AgP////8AAP//AAD//wAA//8AAP9/AAD//////38AAP//AAAAAAAA////fwAAAAD//wAA/38AAP//////fwAA/////wAAAAD///9///////+/AAD//////78AAP///7//vwAA////f/+//3////9//78AAP///z//vwAA//8AAP+//////wAA/7///////z//v/+///////+///////9//7///////7//v/////////+//78AAP///78AAAAA/7//vwAAAAD///+///8AAP///7///wAA/7//v///AAD/f/+//38AAAAA/78AAAAAAAD/v///AAD/P/+///8AAAAA/78AAP9//z9U1QAAAAD/f1TVAAD/f/8/VNUAAAAA/z9U1f8//////wCA/z//f///AID/fwAA//8AgP8//3///wCA/z8AAP//AID/P///AAD///8//38AAP///3///wAA////f/9/AAD///+///8AAP///7//fwAA////P/9/AAD///8/AAAAAP///3//fwAA////v/9/AAD///+/AAAAAP///z///////7//P////7//v/9/////v/+//z////9//7//v////7//v/8/////P/+//z///wAA/7//v////3//v/9/////P/+//3///wAA/7//v////z//v/+///8AAP+//z8AAP///7//PwAA/7//vwAAAAD/f/+//38AAP+//7//fwAA////v/8/AAD/f/+/AAAAAP8//7//fwAA/3//v/+/AAD/v/+//78AAP9//7//vwAA/z//v/+/AAAAAP+//38AAP8//7//PwAA/z//v/8/AAAAAP+/qqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqqqVFWqqlRVqqpUVaoqqiqqKqoqqiqqKqoqqipU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqr/f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9///////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/f1TVVNVUVaqqVFWqqlRVqqr/f////3////9/////f////3///////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_6ir8a")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_1y3lc"]
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"format": 34896613377,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgABACIAAQAAACMAIwAiAAEAAgAHAAAAJAAiACMAIgAlAAIAJgAjAAAAIgAkACcAJwAlACIAIwAoACQAKAAjACYAKQAnACQAKgAkACgAJAAqACkAJgADACgAKAArACoAKwAoAAMABQApACoABAAqACsAKgAEAAUAKwAGAAQABQAEAAYAAwAsACsAKwAsAAwADAAGACsALQAsAAMADAAsAC0AAwAmAC4ABgAMAAgABgAvAAUACAAvAAYACwAFAC8AKQAFAAsALwAIADAACwAxACkAJwApADEALwAyAAsAMAAyAC8AMwAxAAsACwAyADMAMQAKACcACgAxADMAJQAnAAoANAAzADIAMgAwADQAMwA1AAoANQAzADQACgA2ACUANgAKADUAJQA2AAkACQACACUANQA3ADYACQA2ADcABwACAAkANAA4ADUANwA1ADgAOAA0ADkAOQA0ADAACQAPAAcANwAPAAkAMAANADkADQAwAAgAOQA6ADgACAAOAA0ADgAIAAwAOwA5AA0AOgA5ADsAEQANAA4ADQARADsADAAgAA4APAA4ADoAOAA8ADcADgAfABEAHwAOACAALQAgAAwAEQAfAD0APQA7ABEAIAAhAB8AHwAhAD4APgAhACAAPgA9AB8AIAAtAD4APwA7AD0AOwA/ADoAHgA9AD4APQAeAD8AHQA+AC0APgAdAB4ALQBAAB0AAwBAAC0AQQA6AD8ALgBAAAMAOgBBADwAFgAdAEAAQAAuABYAHQAWABwAHAAeAB0AGwAWAC4AHgAcABAAEAA/AB4APwAQAEEAGQAQABwAQQAQABkAGgAcABYAFgAbABoAHAAaABkAGQAYAEEAEgA8AEEAQQAYABIANwA8ABIAEgAPADcAFwAYABkAEgAYABcAGQAaABcADwASABMAFwATABIAEwAHAA8AFQAXABoAEwAXABUAGgAbABUALgAVABsAFQAUABMAFAAVAC4ABwATABQALgAmABQAFAAAAAcAAAAUACYA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAQAAAAMABAABAAMAAQAEAAUABQACAAEAAwAGAAQABQAEAAYAAgAHAAAABgAIAAUABwACAAkAAgAFAAoACgAJAAIACwAFAAgACwAKAAUABgAMAAgAAwAMAAYACAANAAsACwANAAoADgAIAAwACAAOAA0ACgAPAAkACQAPAAcADQAQAAoAEQANAA4AEAANABEAEgAPAAoAEgAKABAAEwAHAA8ADwASABMABwATABQAFAAAAAcAFAADAAAAFQAUABMAAwAUABYAFAAVABYAFwATABIAEwAXABUAEgAYABcAEAAYABIAFwAYABkAGQAYABAAFQAXABoAGQAaABcAGgAbABUAFgAVABsAFgAbABoAHAAaABkAGgAcABYAGQAQABwAFgAdAAMAHQAWABwADAADAB0AHgAcABAAHAAeAB0AEAARAB4AHwAeABEAHgAfAB0ADgAfABEADAAgAA4AHwAOACAAIAAMAB0AHwAhAB0AHQAhACAAIAAhAB8A")],
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 66,
+"vertex_data": PackedByteArray("//////8/AAD/////AAAAAP///38AAAAA/3////9/AAAAAP//AAAAAAAA/38AAAAAAAD///8/AAD///9//z8AAAAA/3//fwAA//8AAAAAAAD/fwAAAAAAAAAAAAAAAAAAAAD///9/AAAAAAAA/78AAAAA/3//vwAA//8AAP8/AAD/vwAA//8AAAAAAAD//wAA//8AAP9/AAD///9//38AAP//////fwAA//////+/AAD/v/////8AAP///3//vwAA//8AAP+/AAD//wAA//8AAP///3///wAA////////AAD/v/9///8AAP9//////wAA/3//f///AAAAAP9///8AAAAA////vwAAAAD/////AAD/v///AAAAAP+/////PwAA/3///wAAAAD/v/9/AAAAAP+/////fwAA/3//fwAAAAD/f////z8AAP8//38AAAAA/z///wAAAAD/P////z8AAP8/////fwAA/z////+/AAD/v////78AAAAA/3//PwAAAAAAAP9/AAD/PwAAAAAAAAAAAAD/PwAA/z8AAP8/AAD/PwAA/38AAP9/AAD/PwAA/78AAAAAAAD/vwAA/z8AAP9/AAD/fwAA/z8AAP+/AAD/fwAA/78AAP8/AAD//wAA/78AAP9/AAD/P/9///8AAP8//////wAA/38AAP//AAD/f////78AAP+/AAD/vwAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_i3qn6"]
+resource_name = "Fortnite_Skye_Room_meshes_only_SM_Fort_Floors_Generic_TileBasic_md"
+_surfaces = [{
+"aabb": AABB(-256, -7.9999895, -256.00092, 512, 16, 512.00006),
+"attribute_data": PackedByteArray("Bv6Bn6qq/78G/gCAqqr/v///AICqqv+///+Bn6qq/78G/gO/qqr/v///A7////+/Bv4Dv////78G/oXe////v///hd7///+///+F3qqq/7///wb+////v///hd7///+/Bv6F3v///78G/gO/////v///gZ////+/Bv6Bn6qq/7///4Gfqqr/vwb+AICqqv+///8AgKqq/7///wb+qqr/vwb+Bv6qqv+/Bv6F3qqq/7///4Xeqqr/v///Bv6qqv+/Bv4G/qqq/78G/oXeqqr/vwCAhd6qqv+/AIAG/v///78Ifgb+qqr/vwh+Bv7///+/CH6F3v///78AgIXe////vwCAA7////+/CH4Dv////78AgIGfqqr/vwCAA7+qqv+/CH4Dv6qq/78IfgCAqqr/vwCAAID///+/AICBn////78NfoGf////vw1+AID///+/AIAAgP///78AgIGf////vw1+A7////+/DX6Bn6qq/78NfgO/qqr/vwCAgZ+qqv+/AIAG/qqq/78Nfgb+qqr/v4XeBv6qqv+/Bv4G/qqq/78G/t//qqr/v4Xe3/+qqv+/A78G/qqq/7+F3t//////vwO/3/////+/A78G/v///78AgN//////vwCABv7///+/hd4Kfv///78G/gp+////vwb+AID///+/hd4AgP///78Dvwp+////vwCAAID/f///A78Kfv9///8AgAp+/3///wb+AID/f///AIAAgP9///8AgA1+/3///wb+DX7/f///AIAG/v9///8Dvwb+/3///wCA////f///Bv7///9///8G/gb+/3///wO/Bv7/f///AIAG/v9///8AgIXe/3///wCAA7//f///A78Dv/9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///4XeBv7/f///Bv4Dv/9///8G/oXe/3///wb+Bv7/f///hd4AgP9///8AgIGf/3///wCAAID/f///Bv4AgP9///8G/oGf/3///wb+A7//f///A78G/v9///8AgAb+/3///wb+hd7/f///Bv4G/v9///8IfoGfqqr/vwCAA7+qqv+/DX6F3qqq/78AgIXeqqr/v4GfBv7///+/gZ/f/////78DvwCA/3///4GfCn7/f///gZ8AgP9///+BnwCA/3///4GfDX7/f///A78AgP9///8Dvw1+/3///4XeAID/f///hd4Nfv9///+Bn////3///4GfBv7/f///A7////9///+F3v///3///4XeBv7/f///gZ8G/v9///+Bn4Xe/3///wO/hd7/f///gZ8Dv/9///+F3oXe/3///4GfgZ//f///gZ8AgP9///+F3gO//3///wO/gZ//f///A78AgP9///+F3oGf/3///4XeAID/f///gZ8AgP9///+Bn4Gf/3///wCAA7//f///A7+Bn/9///8DvwCA/3///4GfA7//f///AICF3v9///8DvwO//3///4XegZ//f///hd4Dv/9///+F3oXe/3///4XeBv7/f///A7+F3v9///+Bn4Xe/3///4GfBv7/f///"),
+"format": 34896613431,
+"index_count": 384,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAJABkACIAIgBkACUAJQAmACcAKAApACoAKgArACgALAAtACsALwBlAC4AZgAuAGUAZQBnAGYAZgBnADAAMAAxAGYAMgAzADQANAA1ADIANgAyADUANwA4ADkAaAA5ADgAOABpAGgAaABpADoAOgA7AGgAPAA9AD4APgA/ADwAQAA8AD8APwBqAEIAawBCAGoAagBsAGsAawBsAEEAQQBDAGsAbQBFAEYARgBuAG0AbwBtAG4AbgBwAG8AcQBvAHAAcAByAHEAcQByAEcARwBEAHEAcwBKAEgASAB0AHMAdQBzAHQAdABJAHUAdgB1AEkASQB3AHYAdgB3AEwATABLAHYAeABOAE8ATwB5AHgATQB4AHkAeQBPAFAAeQB6AE0AVgBNAHoAUAB7AHkAegB8AFYAWQBWAHwAUQB6AHkAeQB7AFEAfAB6AFEAfABYAFkAVwBYAHwAfQB7AFAAUQB7AH0AUABSAH0AfQBSAFMAUwB+AH0AfAB/AFcAUQB/AHwAVQBXAH8AfQCAAFEAgAB9AH4AfwBRAIAAfgCBAIAAfwCCAFUAgACCAH8AggCAAIEAVABVAIIAgQCDAIIAggCDAFQAWwBcAIQAhACFAFsAhgBbAIUAhwCFAIQAhACIAIcAhQCJAIYAigCGAIkAhQCHAIsAiwCJAIUAjACHAIgAiABaAIwAjABaAF0AXQBeAIwAjABeAF8AhwCMAI0AXwCNAIwAjQCLAIcAjgCNAF8AiwCNAI4AXwBiAI4AjgBiAGMAYwCPAI4AjgCQAIsAkACOAI8AiQCLAJAAjwBgAJAAkACRAIkAkQCQAGAAiQCRAIoAYACSAJEAYQCKAJEAkQCSAGEA"),
+"lods": [0.077507846, PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAYABwAGAAUABQAIAAcABwAJAAoABQALAAwADAANAAUADgAFAA0ADQAPABAAEAAPABEAEQASABAAEwAUABUAFgAXABgAGAAZABYAGgAbABwAHQAeAB8AIAAfAB4AHgAhACAAIgAjACQAIgAkACUAJQAmACcAKAApACoAKgArACgALAAtACsALgAvADAAMAAxAC4AMgAzADQANAA1ADIANgAyADUANwA4ADkAOAA6ADkAOgA7ADkAPAA9AD4APgA/ADwAQAA8AD8APwBBAEIAQwBCAEEARABFAEYARgBHAEQASABJAEoASwBKAEkASQBMAEsATQBOAE8ATwBQAE0AUABRAE0AUQBQAFIAUQBSAFMAUwBUAFEAVABVAFEAVgBNAFEAVwBRAFUAUQBXAFYAVwBYAFYAVgBYAFkAWgBbAFwAXQBeAFoAWgBeAF8AWwBaAGAAXwBgAFoAYQBbAGAAXwBiAGAAYABiAGMA")],
+"material": SubResource("StandardMaterial3D_eiio1"),
+"name": "MI_Fort_Floors_Generic_TilesClean",
+"primitive": 3,
+"uv_scale": Vector4(2.03125, 2.03125, 3, 2),
+"vertex_count": 147,
+"vertex_data": PackedByteArray("//////8/VNX/////AABU1f///38AAFTV////f/8/VNX//////39U1f///3//f1TV//////9/VNX//////79U1f///3//v1TV////f/+/VNX///9///9U1f///3//P1TV//8AAP8/VNX//wAA/39U1f///3//v1TV//8AAP+/VNX///9//79U1f//AAD//1TV////f///VNX///9///9U1f///////1TV//////+/VNX///9//z9U1f///38AAFTV//8AAAAAVNX//wAA/z9U1QAA////v1TVAAD/////VNUAAP9///9U1QAA/3///1TVAAD/f/+/VNUAAP///79U1QAA////f1TVAAD/f/9/VNUAAP///z9U1QAA////f1TVAAD/f/9/VNUAAP9/AABU1QAA//8AAFTVAAD///8/VNUAAP9//79U1QAA/3///1TVAAAAAP//VNUAAAAA/79U1QAA/3//f1TVAAD/f/+/VNUAAP9//39U1QAAAAD/v1TVAAAAAAAAVNUAAP9/AABU1f+//////wCA////////AID///9///8AgP+//3///wCA/3//////AID/v/9///8AgP9//3///wCA/3//////AIAAAP9///8AgAAA/////wCA/7//f///AID///9///8AgP//AAD//wCA/78AAP//AID/f/9///8AgAAAAAD//wCA/3//f///AIAAAP9///8AgP////8AAP//AAD//wAA//8AAP9/AAD//////38AAP//AAAAAAAA////fwAAAAD//wAA/38AAP//////fwAA/////wAAAAD///9///////+/AAD//////78AAP///7//vwAA////f/+//3////9//78AAP///z//vwAA//8AAP+//////wAA/7///////z//v/+///////+///////9//7///////7//v/////////+//78AAP///78AAAAA/7//vwAAAAD///+///8AAP///7///wAA/7//v///AAD/f/+//38AAAAA/78AAAAAAAD/v///AAD/P/+///8AAAAA/78AAP9//z9U1QAAAAD/f1TVAAD/f/8/VNUAAAAA/z9U1f8//////wCA/z//f///AID/fwAA//8AgP8//3///wCA/z8AAP//AID/P///AAD///8//38AAP///3///wAA////f/9/AAD///+///8AAP///7//fwAA////P/9/AAD///8/AAAAAP///3//fwAA////v/9/AAD///+/AAAAAP///z///////7//P////7//v/9/////v/+//z////9//7//v////7//v/8/////P/+//z///wAA/7//v////3//v/9/////P/+//3///wAA/7//v////z//v/+///8AAP+//z8AAP///7//PwAA/7//vwAAAAD/f/+//38AAP+//7//fwAA////v/8/AAD/f/+/AAAAAP8//7//fwAA/3//v/+/AAD/v/+//78AAP9//7//vwAA/z//v/+/AAAAAP+//38AAP8//7//PwAA/z//v/8/AAAAAP+/qqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqqpUVaqqVFWqqlRVqqpUVaqqVFWqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqoqqiqqKqqqVFWqqlRVqqpUVaoqqiqqKqoqqiqqKqoqqipU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VTVVNVU1VRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqpUVaqqVFWqqlRVqqr/f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9///////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/f1TVVNVUVaqqVFWqqlRVqqr/f////3////9/////f////3///////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/////f////3////9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/AAD/fwAA/38AAP9/")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_1y3lc")
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3fd3o"]
 resource_name = "MI_Fort_Floors_BayFloorsAndTrim"
 cull_mode = 2
@@ -3886,15 +4089,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_urk7n")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial_scale_reference"]
-albedo_color = Color(1, 0.82, 0.12, 1)
-emission_enabled = true
-emission = Color(0.35, 0.23, 0.02, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_scale_reference"]
-material = SubResource("StandardMaterial_scale_reference")
-size = Vector3(1, 1, 1)
-
 [node name="RoomStage" type="Node3D" unique_id=568602606]
 script = ExtResource("1_style")
 fill_light = 0.055
@@ -3906,7 +4100,7 @@ environment = ExtResource("99_post_process")
 [node name="ToonKeyLight" type="DirectionalLight3D" parent="." unique_id=1594509699]
 transform = Transform3D(0.9393727, -0.31959414, 0.12425166, 0, 0.3623577, 0.9320391, -0.3428978, -0.8755321, 0.34038895, 0, 0, 0)
 light_color = Color(1, 0.935, 0.82, 1)
-light_energy = 1.35
+light_energy = 0.5
 shadow_enabled = true
 shadow_bias = 0.06
 shadow_normal_bias = 1.5
@@ -3929,540 +4123,773 @@ mouse_filter = 2
 
 [node name="ToonFillLight" type="DirectionalLight3D" parent="." unique_id=2100901971]
 transform = Transform3D(-0.12884454, 0.6538886, -0.7455393, 0, 0.7518057, 0.65938467, 0.9916648, 0.084958114, -0.096866064, 0, 0, 0)
-light_color = Color(0.94, 0.89, 0.81, 1)
-light_energy = 0.38
+light_color = Color(0.8, 0.72, 0.95, 1)
+light_energy = 0.1
+
+[node name="StageLighting" type="Node3D" parent="." unique_id=1976091755]
+
+[node name="CenterWarmSpot" type="SpotLight3D" parent="StageLighting" unique_id=736688840]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1, 3.8, -4.6)
+light_color = Color(1, 0.4, 0.76, 1)
+light_energy = 4.2
+light_indirect_energy = 0.7
+light_volumetric_fog_energy = 0.55
+light_projector = ExtResource("102_disco_gobo")
+shadow_enabled = true
+shadow_bias = 0.045
+shadow_normal_bias = 1.2
+spot_range = 8.5
+spot_attenuation = 1.55
+spot_angle = 61.0
+spot_angle_attenuation = 0.28
+
+[node name="DiscoGoboFront" type="SpotLight3D" parent="StageLighting" unique_id=432388110]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.05, 4.1, -1.7)
+light_energy = 3.8
+light_indirect_energy = 0.65
+light_projector = ExtResource("102_disco_gobo")
+spot_range = 8.5
+spot_attenuation = 1.6
+spot_angle = 61.0
+
+[node name="DiscoSpeckles" type="Node3D" parent="StageLighting" unique_id=1999296677]
+
+[node name="SpecklePinkA" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=1373214430]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.7, 3.7, -8.4)
+light_color = Color(1, 0.22, 0.62, 1)
+light_energy = 2.8
+spot_angle = 4.5
+
+[node name="SpeckleBlueA" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=474996876]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.6, 3.7, -7.2)
+light_color = Color(0.24, 0.72, 1, 1)
+light_energy = 2.8
+spot_angle = 4.0
+
+[node name="SpeckleGoldA" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=637679130]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1.25, 3.7, -8)
+light_color = Color(1, 0.72, 0.18, 1)
+light_energy = 2.85
+spot_angle = 4.8
+
+[node name="SpeckleVioletA" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=2028100075]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3, 3.7, -7.2)
+light_color = Color(0.64, 0.35, 1, 1)
+light_energy = 2.8
+spot_angle = 4.3
+
+[node name="SpeckleMintA" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=971360088]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 4.05, 3.7, -5.8)
+light_color = Color(0.27, 1, 0.72, 1)
+light_energy = 2.8
+spot_angle = 4.0
+
+[node name="SpecklePinkB" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=1263246481]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.3, 3.7, -5.6)
+light_color = Color(1, 0.28, 0.76, 1)
+light_energy = 0.5
+spot_angle = 5.0
+
+[node name="SpeckleCyanB" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=681671370]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.1, 3.7, -4.9)
+light_color = Color(0.25, 0.82, 1, 1)
+light_energy = 2.8
+spot_angle = 3.8
+
+[node name="SpeckleGoldB" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=478456603]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2.5, 3.7, -4.5)
+light_color = Color(1, 0.76, 0.26, 1)
+light_energy = 2.84
+spot_angle = 4.6
+
+[node name="SpeckleVioletB" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=1549734842]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.75, 3.7, -3)
+light_color = Color(0.62, 0.34, 1, 1)
+light_energy = 2.8
+spot_angle = 4.2
+
+[node name="SpeckleMintB" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=721717734]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.85, 3.7, -2.9)
+light_color = Color(0.4, 1, 0.66, 1)
+light_energy = 2.8
+spot_angle = 4.0
+
+[node name="SpecklePinkC" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=2008934941]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.2, 3.7, -1.5150048)
+light_color = Color(1, 0.32, 0.72, 1)
+light_energy = 2.8
+spot_angle = 4.6
+
+[node name="SpeckleBlueC" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=1752234861]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 2, 3.7, -1.35)
+light_color = Color(0.28, 0.68, 1, 1)
+light_energy = 2.8
+spot_angle = 4.1
+
+[node name="SpeckleGoldC" type="SpotLight3D" parent="StageLighting/DiscoSpeckles" unique_id=1842798663]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 3.65, 3.7, 0.25)
+light_color = Color(1, 0.68, 0.18, 1)
+light_energy = 0.5
+spot_angle = 4.5
+
+[node name="CenterHardStageSpot" type="SpotLight3D" parent="StageLighting" unique_id=1536590430]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1, 1.9765882, -4.6)
+light_color = Color(1, 0.96, 0.84, 1)
+light_energy = 0.858
+light_indirect_energy = 1.3
+light_volumetric_fog_energy = 0.18
+shadow_enabled = true
+shadow_bias = 0.025
+shadow_normal_bias = 0.55
+spot_range = 6.4
+spot_attenuation = 0.72
+spot_angle = 44.0
+spot_angle_attenuation = 0.01
+
+[node name="CenterHardStageSpot2" type="SpotLight3D" parent="StageLighting" unique_id=1971987876]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 1, 3.4946856, -4.6)
+light_color = Color(1, 0.96, 0.84, 1)
+light_energy = 2.62
+light_indirect_energy = 1.3
+light_volumetric_fog_energy = 0.18
+shadow_enabled = true
+shadow_bias = 0.025
+shadow_normal_bias = 0.55
+spot_range = 6.4
+spot_attenuation = 0.72
+spot_angle = 44.0
+spot_angle_attenuation = 0.01
+
+[node name="BackWarmWash" type="OmniLight3D" parent="StageLighting" unique_id=2115063544]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.9, -9.15)
+light_color = Color(1, 0.44, 0.27, 1)
+light_energy = 2.0
+light_indirect_energy = 0.65
+omni_range = 5.6
+omni_attenuation = 1.65
+
+[node name="LeftBedsideWarm" type="OmniLight3D" parent="StageLighting" unique_id=1176731495]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3463708, 0.9507228, -8.35)
+light_color = Color(1, 0.56, 0.26, 1)
+light_energy = 1.65
+light_indirect_energy = 0.45
+omni_range = 3.3
+omni_attenuation = 1.85
+
+[node name="LeftBedsideWarm2" type="OmniLight3D" parent="StageLighting" unique_id=1644611484]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2811685, 1.7241708, -3.446856)
+light_color = Color(1, 0.56, 0.26, 1)
+light_energy = 1.65
+light_indirect_energy = 0.45
+omni_range = 3.3
+omni_attenuation = 1.85
+
+[node name="LeftBedsideWarm3" type="OmniLight3D" parent="StageLighting" unique_id=2007697227]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7601247, 1.7241708, 0.8458786)
+light_color = Color(1, 0.56, 0.26, 1)
+light_energy = 1.65
+light_indirect_energy = 0.45
+omni_range = 3.3
+omni_attenuation = 1.85
+
+[node name="RightShelfWarm" type="OmniLight3D" parent="StageLighting" unique_id=1338239802]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2183359, 2.718594, -8.428774)
+light_color = Color(1, 0.34, 0.58, 1)
+light_energy = 1.5
+light_indirect_energy = 0.5
+omni_range = 3.5
+omni_attenuation = 1.8
+
+[node name="RightShelfWarm2" type="OmniLight3D" parent="StageLighting" unique_id=234714963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2183359, 2.718594, 0.8757496)
+light_color = Color(1, 0.34, 0.58, 1)
+light_energy = 1.5
+light_indirect_energy = 0.5
+omni_range = 3.5
+omni_attenuation = 1.8
+
+[node name="FrontCyanWash" type="OmniLight3D" parent="StageLighting" unique_id=259509969]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06789541, 1.1769185, -0.25)
+light_color = Color(0.18, 0.76, 1, 1)
+light_energy = 1.6
+light_indirect_energy = 0.45
+omni_range = 4.1
+omni_attenuation = 1.65
+
+[node name="LeftStageFixture" type="Node3D" parent="StageLighting" unique_id=1679960903]
+transform = Transform3D(-0.9135455, -0.3290568, 0.23907378, 0, 0.5877853, 0.809017, -0.40673658, 0.7390738, -0.5369686, -2.25, 3.12, -9.3)
+
+[node name="Lens" type="MeshInstance3D" parent="StageLighting/LeftStageFixture" unique_id=52005320]
+transform = Transform3D(1, 0, 1.4901161e-08, 0, 1, 0, 0, 0, 1, 2.7937927, -5.076551, 3.6883292)
+visible = false
+mesh = SubResource("SphereMesh_stage_lamp_lens")
+surface_material_override/0 = SubResource("ShaderMaterial_kfilt")
+
+[node name="RightStageFixture" type="Node3D" parent="StageLighting" unique_id=1032216121]
+transform = Transform3D(-0.9135455, 0.3290568, -0.23907378, 0, 0.5877853, 0.809017, 0.40673658, 0.7390738, -0.5369686, 4.2, 3.12, -9.25)
+
+[node name="Lens" type="MeshInstance3D" parent="StageLighting/RightStageFixture" unique_id=390216426]
+transform = Transform3D(1, 0, -1.4901161e-08, 0, 1, 0, 0, 0, 1, 0, 4.699725, 6.4686165)
+visible = false
+mesh = SubResource("SphereMesh_stage_lamp_lens")
+surface_material_override/0 = SubResource("ShaderMaterial_djy81")
 
 [node name="FortniteSkyeRoom" parent="." unique_id=964906877 instance=ExtResource("2_room")]
 
-[node name="Agency_Door_01_mo" parent="FortniteSkyeRoom" index="0" unique_id=532632689]
+[node name="Agency_Door_01_mo" parent="FortniteSkyeRoom" index="0" unique_id=1904245283]
 surface_material_override/0 = SubResource("ShaderMaterial_q6di3")
 
-[node name="CampingShelve_WalkieTalkie_01_mo" parent="FortniteSkyeRoom" index="1" unique_id=1206442745]
+[node name="CampingShelve_WalkieTalkie_01_mo" parent="FortniteSkyeRoom" index="1" unique_id=977035415]
+transform = Transform3D(-0.008424387, 0, -7.364833e-10, 0, 0.008424387, 0, 7.364833e-10, 0, -0.008424387, -1.4926943, 0.5186302, 6.911502)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_felcu")
 
-[node name="Cell_Phone_mo" parent="FortniteSkyeRoom" index="2" unique_id=195595179]
+[node name="Cell_Phone_mo" parent="FortniteSkyeRoom" index="2" unique_id=1800749969]
+transform = Transform3D(-0.0004923769, 0.008390193, -0.007096636, -0.010112315, 0.0024344143, 0.0035797637, 0.004301005, 0.0066841827, 0.0076041482, 2.5697923, 0.45719972, 8.722999)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_xgbhp")
 
-[node name="Cinematic_Prop_Poster_Space_mo_001" parent="FortniteSkyeRoom" index="3" unique_id=444894739]
-transform = Transform3D(0, 0, -0.007969394, 0, 0.007969394, 0, 0.007969394, 0, 0, 4.4455147, 1.7547051, -6.452287)
+[node name="Cinematic_Prop_Poster_Space_mo_001" parent="FortniteSkyeRoom" index="3" unique_id=1672263342]
+transform = Transform3D(-0.867591, 0, -0.497278, -0.264608, 0.846673, 0.461656, 0.421032, 0.532113, -0.734567, 80.79723, 3.1200001, -94.5404)
 surface_material_override/0 = SubResource("ShaderMaterial_dw7u0")
 
-[node name="Cinematic_Prop_Poster_Space_mo_002" parent="FortniteSkyeRoom" index="4" unique_id=957122548]
+[node name="Cinematic_Prop_Poster_Space_mo_002" parent="FortniteSkyeRoom" index="4" unique_id=840554642]
 transform = Transform3D(0.008578016, 0, 0.00047993954, 0, 0.008591429, 0, -0.00047993954, 0, 0.008578016, 0.75732833, 1.8318859, -10.486978)
 surface_material_override/0 = SubResource("ShaderMaterial_qidwv")
 
-[node name="Cinematic_Prop_Poster_Space_mo_003" parent="FortniteSkyeRoom" index="5" unique_id=402797854]
+[node name="Cinematic_Prop_Poster_Space_mo_003" parent="FortniteSkyeRoom" index="5" unique_id=625095127]
 surface_material_override/0 = SubResource("ShaderMaterial_j1iir")
 
-[node name="Neo_Residential_DoorC_mo" parent="FortniteSkyeRoom" index="6" unique_id=923315282]
+[node name="Neo_Residential_DoorC_mo" parent="FortniteSkyeRoom" index="6" unique_id=781143845]
 surface_material_override/0 = SubResource("ShaderMaterial_myq12")
 
-[node name="Neo_Residential_Wall_01_mo" parent="FortniteSkyeRoom" index="7" unique_id=1212965319]
+[node name="Neo_Residential_Wall_01_mo" parent="FortniteSkyeRoom" index="7" unique_id=1532386887]
 surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
 
-[node name="Neo_Residential_Wall_01_mo_001" parent="FortniteSkyeRoom" index="8" unique_id=207465396]
+[node name="Neo_Residential_Wall_01_mo_001" parent="FortniteSkyeRoom" index="8" unique_id=1990469641]
 surface_material_override/0 = SubResource("ShaderMaterial_iaskv")
 
-[node name="Neo_Residential_Wall_01_mo_002" parent="FortniteSkyeRoom" index="9" unique_id=1400667421]
+[node name="Neo_Residential_Wall_01_mo_002" parent="FortniteSkyeRoom" index="9" unique_id=1910032644]
 surface_material_override/0 = SubResource("ShaderMaterial_ry04o")
 
-[node name="Neo_Residential_Wall_01_mo_003" parent="FortniteSkyeRoom" index="10" unique_id=1894721139]
+[node name="Neo_Residential_Wall_01_mo_003" parent="FortniteSkyeRoom" index="10" unique_id=684725761]
 surface_material_override/0 = SubResource("ShaderMaterial_bx2yd")
 
-[node name="Neo_Residential_Wall_01_mo_004" parent="FortniteSkyeRoom" index="11" unique_id=1109396470]
+[node name="Neo_Residential_Wall_01_mo_004" parent="FortniteSkyeRoom" index="11" unique_id=725275528]
 transform = Transform3D(0, 0, 0.007119387, 0, 0.007119387, 0, -0.0087802615, 0, 0, -2.684441, 2.7422984, -3.967187)
 surface_material_override/0 = SubResource("ShaderMaterial_yo4io")
 
-[node name="Neo_Residential_Wall_01_mo_005" parent="FortniteSkyeRoom" index="12" unique_id=1358859116]
+[node name="Neo_Residential_Wall_01_mo_005" parent="FortniteSkyeRoom" index="12" unique_id=148450126]
 surface_material_override/0 = SubResource("ShaderMaterial_ppu5y")
 
-[node name="Neo_Residential_Wall_01_mo_006" parent="FortniteSkyeRoom" index="13" unique_id=1180860751]
+[node name="Neo_Residential_Wall_01_mo_006" parent="FortniteSkyeRoom" index="13" unique_id=1536063659]
 surface_material_override/0 = SubResource("ShaderMaterial_b0fhn")
 
-[node name="Neo_SkyScraper_Window_01_mo" parent="FortniteSkyeRoom" index="14" unique_id=272294191]
+[node name="Neo_SkyScraper_Window_01_mo" parent="FortniteSkyeRoom" index="14" unique_id=1404113247]
 surface_material_override/0 = SubResource("ShaderMaterial_717w7")
 surface_material_override/1 = SubResource("ShaderMaterial_dpk8t")
 
-[node name="Neo_SkyScraper_Window_01_mo_001" parent="FortniteSkyeRoom" index="15" unique_id=1844421482]
+[node name="Neo_SkyScraper_Window_01_mo_001" parent="FortniteSkyeRoom" index="15" unique_id=11055291]
+transform = Transform3D(0.007119386, 0, 0, 0, 0.008194018, 0.006311904, 0, -0.011702269, 0.0044196434, -0.8137971, 2.7790346, 12.212425)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_ibkib")
 surface_material_override/1 = SubResource("ShaderMaterial_8ikp5")
 
-[node name="Neo_SkyScraper_Window_01_mo_002" parent="FortniteSkyeRoom" index="16" unique_id=97712070]
+[node name="Neo_SkyScraper_Window_01_mo_002" parent="FortniteSkyeRoom" index="16" unique_id=747390298]
+transform = Transform3D(0.007119386, 0, 0, 0, 0.008194018, 0.006311904, 0, -0.011702269, 0.0044196434, 3.0529885, 2.7790346, 9.2631855)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_bd3ow")
 surface_material_override/1 = SubResource("ShaderMaterial_brbye")
 
-[node name="Neo_SkyScraper_Window_01_mo_003" parent="FortniteSkyeRoom" index="17" unique_id=454515408]
+[node name="Neo_SkyScraper_Window_01_mo_003" parent="FortniteSkyeRoom" index="17" unique_id=1729243471]
 surface_material_override/0 = SubResource("ShaderMaterial_j7ud4")
 surface_material_override/1 = SubResource("ShaderMaterial_1gunk")
 
-[node name="Paper_Notes_mo" parent="FortniteSkyeRoom" index="18" unique_id=1663582820]
+[node name="Paper_Notes_mo" parent="FortniteSkyeRoom" index="18" unique_id=896412173]
+transform = Transform3D(0, 0.0032969823, 0, -0.00094672345, 0, -0.0031581332, -0.0031581332, 0, 0.00094672356, -2.5029778, 2.2227192, 5.8161516)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_vh7kc")
 
-[node name="Paper_Notes_mo_001" parent="FortniteSkyeRoom" index="19" unique_id=777554334]
+[node name="Paper_Notes_mo_001" parent="FortniteSkyeRoom" index="19" unique_id=237998464]
+transform = Transform3D(0, 0.0032245975, -0.00068706885, -0.0032891626, 4.7292724e-05, 0.00022195735, 0.00022693981, 0.0006854393, 0.0032169493, -2.5013185, 1.1317556, 9.805161)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_tvvkq")
 
-[node name="Paper_Notes_mo_002" parent="FortniteSkyeRoom" index="20" unique_id=493473837]
+[node name="Paper_Notes_mo_002" parent="FortniteSkyeRoom" index="20" unique_id=2065433407]
+transform = Transform3D(-0.0078915255, 0, -0.0057324786, 0, 0.009753846, 0, 0.0057324786, 0, -0.0078915255, 2.5547616, 0.012943149, 5.4231815)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_7lb3x")
 
-[node name="Paper_Notes_mo_003" parent="FortniteSkyeRoom" index="21" unique_id=2124207978]
+[node name="Paper_Notes_mo_003" parent="FortniteSkyeRoom" index="21" unique_id=835375219]
+transform = Transform3D(0, 0.0032969823, 0, -0.00020502065, 0, -0.0032906015, -0.0032906015, 0, 0.00020502065, -2.4957728, 2.1266253, 5.1448154)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_6jpvr")
 
-[node name="Paper_Notes_mo_004" parent="FortniteSkyeRoom" index="22" unique_id=2091741483]
+[node name="Paper_Notes_mo_004" parent="FortniteSkyeRoom" index="22" unique_id=684064832]
+transform = Transform3D(-0.0017210407, 0.00014717541, 0.0028082829, -0.0028121367, -9.007273e-05, -0.0017186822, 5.8954636e-10, -0.003292464, 0.00017255059, -1.8678863, 2.3878548, 4.8748174)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_o6c6n")
 
-[node name="Paper_Notes_mo_005" parent="FortniteSkyeRoom" index="23" unique_id=1001993414]
+[node name="Paper_Notes_mo_005" parent="FortniteSkyeRoom" index="23" unique_id=1924840796]
+transform = Transform3D(0.0024406963, -0.0005477723, 0.002147799, -0.0021633839, -0.001284213, 0.0021308826, 0.00048256046, -0.0029867764, -0.0013101122, -1.0775142, 2.451297, 4.879634)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_hjsew")
 
-[node name="Paper_Notes_mo_006" parent="FortniteSkyeRoom" index="24" unique_id=1416508224]
+[node name="Paper_Notes_mo_006" parent="FortniteSkyeRoom" index="24" unique_id=1381509919]
+transform = Transform3D(-0.0017210407, 0.00014717541, 0.0028082829, -0.0028121367, -9.007273e-05, -0.0017186822, 5.8954636e-10, -0.003292464, 0.00017255059, -1.0085322, 1.6251817, 6.1284523)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_tlklo")
 
-[node name="Pencil_mo" parent="FortniteSkyeRoom" index="25" unique_id=349207617]
+[node name="Pencil_mo" parent="FortniteSkyeRoom" index="25" unique_id=537614612]
 transform = Transform3D(0.011000001, 0, 0, 0, -1.3113023e-09, -0.011000001, 0, 0.011000001, -1.3113023e-09, 0.4335896, 0.019452132, 0.30310428)
 surface_material_override/0 = SubResource("ShaderMaterial_yhqx1")
 
-[node name="Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_mo" parent="FortniteSkyeRoom/Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_ao/Skeleton3D" parent_id_path=PackedInt32Array(964906877, 334161278) index="0" unique_id=614163795]
+[node name="Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_mo" parent="FortniteSkyeRoom/Photographer_Plushie_Gadget_Photographer_Plushie_LOD0_ao/Skeleton3D" parent_id_path=PackedInt32Array(964906877, 950278579) index="0" unique_id=1394854815]
 surface_material_override/0 = SubResource("ShaderMaterial_s0ce3")
 
-[node name="Prop_Trash_01_Can_01_mo" parent="FortniteSkyeRoom" index="27" unique_id=1797115463]
+[node name="Prop_Trash_01_Can_01_mo" parent="FortniteSkyeRoom" index="27" unique_id=930177535]
 surface_material_override/0 = SubResource("ShaderMaterial_x7vwj")
 
-[node name="S_AG_FE_Basket_mo" parent="FortniteSkyeRoom" index="28" unique_id=54088840]
+[node name="S_AG_FE_Basket_mo" parent="FortniteSkyeRoom" index="28" unique_id=796106]
 transform = Transform3D(-0.00026464192, 0, -0.0053155073, 0, 0.0053220894, 0, 0.0053155073, 0, -0.00026464192, 3.8516073, 0, -7.155546)
 surface_material_override/0 = SubResource("ShaderMaterial_v3pdg")
 
-[node name="S_AG_FE_Footrest_mo" parent="FortniteSkyeRoom" index="29" unique_id=173182931]
+[node name="S_AG_FE_Footrest_mo" parent="FortniteSkyeRoom" index="29" unique_id=1265314865]
 transform = Transform3D(0.009573592, 0, 0, 0, 0.009573592, 0, 0, 0, 0.009573592, -1.8748984, 0.003506701, 0.76255465)
 surface_material_override/0 = SubResource("ShaderMaterial_7ihd2")
 
-[node name="S_Agency_Faction_LootCrate_01_mo" parent="FortniteSkyeRoom" index="30" unique_id=889135274]
+[node name="S_Agency_Faction_LootCrate_01_mo" parent="FortniteSkyeRoom" index="30" unique_id=485717872]
 transform = Transform3D(0.0062465975, 0, -8.382061e-05, 0, 0.0063897246, 0, 7.654962e-05, 0, 0.006839922, -0.46126786, 0.018252503, 2.070797)
 surface_material_override/0 = SubResource("ShaderMaterial_3u4xa")
 
-[node name="S_Agency_Midas_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="31" unique_id=1079871550]
+[node name="S_Agency_Midas_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="31" unique_id=2089163132]
 transform = Transform3D(-0.00905803, 0, 0.0010695718, 0, 0.009120959, 0, -0.0010695718, 0, -0.00905803, 1.9570926, 0.60663307, -10.309148)
 surface_material_override/0 = SubResource("ShaderMaterial_afne7")
 
-[node name="S_Agency_Picture_Frame_01_mo" parent="FortniteSkyeRoom" index="32" unique_id=1889169846]
+[node name="S_Agency_Picture_Frame_01_mo" parent="FortniteSkyeRoom" index="32" unique_id=1633897171]
+transform = Transform3D(-0.005003047, 0.00091902335, -0.0036603683, 0.0003316136, 0.0061617396, 0.0010937975, 0.00375938, 0.00067952706, -0.0049677654, 1.5672737, 1.0571312, 7.540784)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_bsbeu")
 
-[node name="S_Agency_Poster_01_mo" parent="FortniteSkyeRoom" index="33" unique_id=781676504]
+[node name="S_Agency_Poster_01_mo" parent="FortniteSkyeRoom" index="33" unique_id=1932573895]
 transform = Transform3D(0.009799406, 0.00039850394, 0.0006201751, -0.00039929987, 0.009818978, -2.7986518e-11, -0.0006196624, -2.5199251e-05, 0.0098075, 2.9433205, 1.5659027, -10.507947)
 surface_material_override/0 = SubResource("ShaderMaterial_vv805")
 
-[node name="S_Agency_Poster_01_mo_001" parent="FortniteSkyeRoom" index="34" unique_id=1805816953]
+[node name="S_Agency_Poster_01_mo_001" parent="FortniteSkyeRoom" index="34" unique_id=237755244]
 surface_material_override/0 = SubResource("ShaderMaterial_7o0r3")
 
-[node name="S_Donut_BlackMarker_01_mo" parent="FortniteSkyeRoom" index="35" unique_id=696836793]
+[node name="S_Donut_BlackMarker_01_mo" parent="FortniteSkyeRoom" index="35" unique_id=284448815]
 transform = Transform3D(0.002987, 0, 0.010586682, 0, 0.011000003, 0, -0.010586682, 0, 0.0029870002, 2.3288147, 0.024179803, -0.09612076)
 surface_material_override/0 = SubResource("ShaderMaterial_3r2e3")
 
-[node name="S_MountainBase_WallLight_01_mo" parent="FortniteSkyeRoom" index="36" unique_id=556756099]
+[node name="S_MountainBase_WallLight_01_mo" parent="FortniteSkyeRoom" index="36" unique_id=703797771]
+transform = Transform3D(-1.0444254e-09, -0.0056069912, 6.6840533e-10, 2.6110636e-09, -6.684055e-10, -0.0056069912, 0.008761276, -6.684052e-10, 1.6710135e-09, -2.5162315, 2.6116385, -13.530593)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_2yfd5")
 
-[node name="S_MountainBase_WallLight_01_mo_001" parent="FortniteSkyeRoom" index="37" unique_id=1716120640]
+[node name="S_MountainBase_WallLight_01_mo_001" parent="FortniteSkyeRoom" index="37" unique_id=43615288]
+transform = Transform3D(5.222127e-10, 0.0056069912, 1.6434029e-16, 2.87217e-09, 5.4780096e-17, -0.0056069912, -0.008761276, 3.3420272e-10, -1.838115e-09, 4.440281, 2.6116385, 3.6860518)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_gki1x")
 
-[node name="S_ObjectiveBoard_MiniMap_mo" parent="FortniteSkyeRoom" index="38" unique_id=1670741499]
-transform = Transform3D(0, -0.014908944, 0.00042358777, 0.01059312, 0, 0, 0, 0.0005966416, 0.010584654, -0.87883407, 1.8116689, -10.518087)
+[node name="S_ObjectiveBoard_MiniMap_mo" parent="FortniteSkyeRoom" index="38" unique_id=1586280737]
+transform = Transform3D(0, -0.014908944, 0.00042358777, 0.01059312, 0, 0, 0, 0.0005966416, 0.010584654, -0.87883407, 1.8116689, -12.429662)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_4yul1")
 surface_material_override/1 = SubResource("ShaderMaterial_5w3o3")
 
-[node name="S_ObjectiveBoard_Pin_A_mo" parent="FortniteSkyeRoom" index="39" unique_id=2006299640]
+[node name="S_ObjectiveBoard_Pin_A_mo" parent="FortniteSkyeRoom" index="39" unique_id=945094312]
 surface_material_override/0 = SubResource("ShaderMaterial_rtudk")
 
-[node name="S_ObjectiveBoard_Pin_A_mo_001" parent="FortniteSkyeRoom" index="40" unique_id=1674616189]
+[node name="S_ObjectiveBoard_Pin_A_mo_001" parent="FortniteSkyeRoom" index="40" unique_id=1465574723]
 surface_material_override/0 = SubResource("ShaderMaterial_inixb")
 
-[node name="S_ObjectiveBoard_Pin_B_mo" parent="FortniteSkyeRoom" index="41" unique_id=498029260]
+[node name="S_ObjectiveBoard_Pin_B_mo" parent="FortniteSkyeRoom" index="41" unique_id=1363566879]
 surface_material_override/0 = SubResource("ShaderMaterial_c1dpq")
 
-[node name="S_ObjectiveBoard_Pin_B_mo_001" parent="FortniteSkyeRoom" index="42" unique_id=1511404396]
+[node name="S_ObjectiveBoard_Pin_B_mo_001" parent="FortniteSkyeRoom" index="42" unique_id=1076561109]
 surface_material_override/0 = SubResource("ShaderMaterial_87kqu")
 
-[node name="S_ObjectiveBoard_Pin_C_mo" parent="FortniteSkyeRoom" index="43" unique_id=2083199744]
+[node name="S_ObjectiveBoard_Pin_C_mo" parent="FortniteSkyeRoom" index="43" unique_id=113070773]
 surface_material_override/0 = SubResource("ShaderMaterial_gq0ka")
 
-[node name="S_ObjectiveBoard_Pin_C_mo_001" parent="FortniteSkyeRoom" index="44" unique_id=1891197854]
+[node name="S_ObjectiveBoard_Pin_C_mo_001" parent="FortniteSkyeRoom" index="44" unique_id=1213924119]
 surface_material_override/0 = SubResource("ShaderMaterial_3dqcm")
 
-[node name="S_OilRig_TrashCan_mo" parent="FortniteSkyeRoom" index="45" unique_id=1761137101]
+[node name="S_OilRig_TrashCan_mo" parent="FortniteSkyeRoom" index="45" unique_id=115824816]
 transform = Transform3D(0.009897562, 0, -0.0035440552, 0, 0.010512952, 0, 0.0035440552, 0, 0.009897562, -0.005749958, 0.028379988, 0.70669705)
 surface_material_override/0 = SubResource("ShaderMaterial_kfx22")
 
-[node name="S_PrincessCastle_Armchair_mo" parent="FortniteSkyeRoom" index="46" unique_id=1262808629]
+[node name="S_PrincessCastle_Armchair_mo" parent="FortniteSkyeRoom" index="46" unique_id=648456745]
 transform = Transform3D(-0.005050825, 0, -0.0087298695, 0, 0.010085703, 0, 0.0087298695, 0, -0.005050825, -1.8545595, 0, -9.623293)
 surface_material_override/0 = SubResource("ShaderMaterial_nhfro")
 
-[node name="S_PrincessCastle_GlowingStar_mo" parent="FortniteSkyeRoom" index="47" unique_id=379455205]
+[node name="S_PrincessCastle_GlowingStar_mo" parent="FortniteSkyeRoom" index="47" unique_id=199189776]
 surface_material_override/0 = SubResource("ShaderMaterial_hrqfm")
 
-[node name="S_PrincessCastle_GlowingStar_mo_001" parent="FortniteSkyeRoom" index="48" unique_id=1724673231]
+[node name="S_PrincessCastle_GlowingStar_mo_001" parent="FortniteSkyeRoom" index="48" unique_id=363893871]
 surface_material_override/0 = SubResource("ShaderMaterial_s7s21")
 
-[node name="S_PrincessCastle_GlowingStar_mo_002" parent="FortniteSkyeRoom" index="49" unique_id=449462721]
+[node name="S_PrincessCastle_GlowingStar_mo_002" parent="FortniteSkyeRoom" index="49" unique_id=144472832]
 surface_material_override/0 = SubResource("ShaderMaterial_eljt4")
 
-[node name="S_PrincessCastle_GlowingStar_mo_003" parent="FortniteSkyeRoom" index="50" unique_id=157112855]
+[node name="S_PrincessCastle_GlowingStar_mo_003" parent="FortniteSkyeRoom" index="50" unique_id=525663012]
 surface_material_override/0 = SubResource("ShaderMaterial_d3ros")
 
-[node name="S_PrincessCastle_GlowingStar_mo_004" parent="FortniteSkyeRoom" index="51" unique_id=1125237411]
+[node name="S_PrincessCastle_GlowingStar_mo_004" parent="FortniteSkyeRoom" index="51" unique_id=1585121178]
 surface_material_override/0 = SubResource("ShaderMaterial_al4x0")
 
-[node name="S_PrincessCastle_GlowingStar_mo_005" parent="FortniteSkyeRoom" index="52" unique_id=1321591705]
+[node name="S_PrincessCastle_GlowingStar_mo_005" parent="FortniteSkyeRoom" index="52" unique_id=50506027]
 surface_material_override/0 = SubResource("ShaderMaterial_7rfm8")
 
-[node name="S_PrincessCastle_GlowingStar_mo_006" parent="FortniteSkyeRoom" index="53" unique_id=182744110]
+[node name="S_PrincessCastle_GlowingStar_mo_006" parent="FortniteSkyeRoom" index="53" unique_id=2085479364]
 surface_material_override/0 = SubResource("ShaderMaterial_5lenj")
 
-[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="54" unique_id=1627800168]
+[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="54" unique_id=2133015449]
 surface_material_override/0 = SubResource("ShaderMaterial_185uh")
 
-[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="55" unique_id=1509657950]
+[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="55" unique_id=1497133276]
 surface_material_override/0 = SubResource("ShaderMaterial_rx4l6")
 
-[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="56" unique_id=662661087]
+[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="56" unique_id=2000421635]
 surface_material_override/0 = SubResource("ShaderMaterial_gehcy")
 
-[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="57" unique_id=1450289007]
+[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="57" unique_id=1236988561]
 surface_material_override/0 = SubResource("ShaderMaterial_21y62")
 
-[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="58" unique_id=413816582]
+[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="58" unique_id=1996915869]
 surface_material_override/0 = SubResource("ShaderMaterial_nm4ic")
 
-[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="59" unique_id=275751714]
+[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="59" unique_id=252941617]
 surface_material_override/0 = SubResource("ShaderMaterial_wmktg")
 
-[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="60" unique_id=1130948555]
+[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="60" unique_id=683460187]
 surface_material_override/0 = SubResource("ShaderMaterial_ugice")
 
-[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="61" unique_id=346995403]
+[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="61" unique_id=1882770985]
 surface_material_override/0 = SubResource("ShaderMaterial_55rxc")
 
-[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="62" unique_id=1527002405]
+[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="62" unique_id=459088707]
 surface_material_override/0 = SubResource("ShaderMaterial_xybmg")
 
-[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="63" unique_id=444415557]
+[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="63" unique_id=759449571]
 surface_material_override/0 = SubResource("ShaderMaterial_ens8c")
 
-[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="64" unique_id=1991038978]
+[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="64" unique_id=1663103800]
 surface_material_override/0 = SubResource("ShaderMaterial_is0yu")
 
-[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="65" unique_id=356892282]
+[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="65" unique_id=730165410]
 surface_material_override/0 = SubResource("ShaderMaterial_ivjpe")
 
-[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="66" unique_id=1494039088]
+[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="66" unique_id=205960112]
 surface_material_override/0 = SubResource("ShaderMaterial_xrjg6")
 
-[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="67" unique_id=930975440]
+[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="67" unique_id=1540530639]
 surface_material_override/0 = SubResource("ShaderMaterial_ttsc5")
 
-[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="68" unique_id=207096169]
+[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="68" unique_id=430881031]
 surface_material_override/0 = SubResource("ShaderMaterial_ar3ht")
 
-[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="69" unique_id=1050975494]
+[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="69" unique_id=428127189]
 surface_material_override/0 = SubResource("ShaderMaterial_c4kl5")
 
-[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="70" unique_id=897288096]
+[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="70" unique_id=1143410543]
 surface_material_override/0 = SubResource("ShaderMaterial_cmcy1")
 
-[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="71" unique_id=1578027913]
+[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="71" unique_id=578751338]
 surface_material_override/0 = SubResource("ShaderMaterial_7gk7s")
 
-[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="72" unique_id=414678596]
+[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="72" unique_id=1080847264]
 surface_material_override/0 = SubResource("ShaderMaterial_u86rm")
 
-[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="73" unique_id=1112258432]
+[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="73" unique_id=2141006479]
 surface_material_override/0 = SubResource("ShaderMaterial_nofs2")
 
-[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="74" unique_id=156126461]
+[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="74" unique_id=183115704]
 surface_material_override/0 = SubResource("ShaderMaterial_i6enq")
 
-[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="75" unique_id=2015741840]
+[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="75" unique_id=1833686938]
 surface_material_override/0 = SubResource("ShaderMaterial_gl1nt")
 
-[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="76" unique_id=2016007288]
+[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="76" unique_id=1506921979]
 surface_material_override/0 = SubResource("ShaderMaterial_g840d")
 
-[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="77" unique_id=1259390838]
-transform = Transform3D(0.011516285, -6.178845e-05, -0.0005020947, 0, 0.011441086, -0.001407956, 0.00050588214, 0.0014065995, 0.011430062, -1.3424525, -0.037101533, 2.421415)
+[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="77" unique_id=420251805]
+transform = Transform3D(0.011516285, -6.178845e-05, -0.0005020947, 0, 0.011441086, -0.001407956, 0.00050588214, 0.0014065995, 0.011430062, -1.3424525, -1.8670661, 2.421415)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_fawp4")
 
-[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="78" unique_id=1806862821]
+[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="78" unique_id=471013850]
 transform = Transform3D(-0.0057783267, -0.0001373021, -0.0066383844, -0.00020225269, 0.009741849, 1.16530955e-05, 0.0066364617, 0.00017734423, -0.0057796445, 0.38088435, 0.016014108, -0.6133693)
 surface_material_override/0 = SubResource("ShaderMaterial_sax22")
 
-[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="79" unique_id=1019755422]
+[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="79" unique_id=1065501491]
 surface_material_override/0 = SubResource("ShaderMaterial_jojyi")
 
-[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="80" unique_id=314017127]
+[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="80" unique_id=1843320377]
 transform = Transform3D(-0.011000003, 0, -9.616509e-10, 0, 0.011000003, 0, 9.616509e-10, 0, -0.011000003, 2.6586459, -4.536277e-07, -7.8214345)
 surface_material_override/0 = SubResource("ShaderMaterial_hq1is")
 
-[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="81" unique_id=159503674]
+[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="81" unique_id=1905024325]
 transform = Transform3D(0, 0, 0.008910157, 0, 0.010213098, 0, -0.010213098, 0, 0, -1.9205475, 0.022831641, -7.416227)
 surface_material_override/0 = SubResource("ShaderMaterial_0hrqj")
 
-[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="82" unique_id=1164826189]
+[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="82" unique_id=425787923]
+transform = Transform3D(-0.007807952, 0, -0.006371916, 0, 0.010077967, 0, 0.006371916, 0, -0.007807952, 2.1959367, -2.2365048, 2.373663)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_kwyu7")
 
-[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="83" unique_id=1528015956]
+[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="83" unique_id=87936500]
+transform = Transform3D(0.003609025, 7.814602e-05, 0.009409265, -8.740132e-05, 0.010077463, -5.0171846e-05, -0.009409184, -6.3634914e-05, 0.003609522, -2.2093813, -1.6242995, -2.815227)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_aislp")
 
-[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=1497990455]
+[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=467940294]
 transform = Transform3D(-1.3113024e-09, 0, 0.011000002, 0, 0.011000002, 0, -0.011000002, 0, -1.3113024e-09, -0.74898607, -4.536277e-07, -9.894549)
 surface_material_override/0 = SubResource("ShaderMaterial_m5epf")
 
-[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=1140287182]
+[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=828185784]
 transform = Transform3D(0.011000003, 0, -1.3347463e-06, 0, 0.011000003, 0, 1.3347463e-06, 0, 0.011000003, 0.67663616, 0.01905337, -10.442815)
 surface_material_override/0 = SubResource("ShaderMaterial_yw301")
 
-[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=673684761]
-transform = Transform3D(0, 0, 0.010308666, 0, 0.010308666, 0, -0.010308666, 0, 0, -2.424532, 0.021120753, 1.1599712)
+[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=1467195051]
+transform = Transform3D(0, 0, 0.010308666, 0, 0.010308666, 0, -0.010308666, 0, 0, -2.424532, -2.5548508, 1.1599712)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_gptj3")
 
-[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=375238207]
-transform = Transform3D(0.008793885, 0, -0.005193741, 0, 0.0102130985, 0, 0.005193741, 0, 0.008793885, -1.0702758, 0.022831641, -7.3923087)
+[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=394854625]
+transform = Transform3D(0.008793885, 0, -0.005193741, 0, 0.0102130985, 0, 0.005193741, 0, 0.008793885, -1.0702758, -2.7218544, -7.3923087)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_5f22q")
 
-[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=30657582]
+[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=2084663966]
+transform = Transform3D(0, 0, 0.010213095, 0, 0.010213095, 0, -0.010213095, 0, 0, -2.001022, -1.5836537, -1.9354403)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_5ek41")
 
-[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=444219775]
-transform = Transform3D(-0.0073266015, 0, 0.007115351, 0, 0.0102130985, 0, -0.007115351, 0, -0.0073266015, -1.8909613, 0.046310063, 2.0354111)
+[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=801591375]
+transform = Transform3D(-0.0073266015, 0, 0.007115351, 0, 0.0102130985, 0, -0.007115351, 0, -0.0073266015, -1.8909613, -2.01684, 2.0354111)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_qroup")
 
-[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="90" unique_id=2109850519]
-transform = Transform3D(-0.0046567908, 0, 0.00656148, 0, 0.011713316, 0, -0.0043743206, 0, -0.0069851875, 3.2928574, 0.35613698, -6.79265)
+[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="90" unique_id=174543654]
+transform = Transform3D(-0.0046567908, 0, 0.00656148, 0, 0.011713316, 0, -0.0043743206, 0, -0.0069851875, 3.2928574, -3.1974974, -6.79265)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_odj0c")
 
-[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=963214997]
+[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=288811796]
 transform = Transform3D(0.009992801, 0, 0.0009680865, 0, 0.010039582, 0, -0.0009680865, 0, 0.009992801, 2.2192428, -0.32402793, -10.5173)
 surface_material_override/0 = SubResource("ShaderMaterial_582gr")
 
-[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=359927294]
+[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=11900622]
 transform = Transform3D(-0.013388757, 0, 0.0026787426, 0, 0.0136541, 0, -0.0026787426, 0, -0.013388757, 2.260562, 0.00832636, 0.6626482)
 surface_material_override/0 = SubResource("ShaderMaterial_7oyxb")
 
-[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="93" unique_id=1126487015]
+[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="93" unique_id=2124566486]
 transform = Transform3D(0.00077371555, 0, -0.0103940675, 0, 0.010422822, 0, 0.0103940675, 0, 0.00077371555, -0.12775724, 0.02389756, -8.289856)
 surface_material_override/0 = SubResource("ShaderMaterial_22avr")
 
-[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="94" unique_id=1444909581]
+[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="94" unique_id=1963856845]
 transform = Transform3D(-0.010513758, 0, 0.001478355, 0, 0.009941802, 0, -0.001580983, 0, -0.009831267, 2.6812901, 0, -5.1590395)
 surface_material_override/0 = SubResource("ShaderMaterial_soiuc")
 
-[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="95" unique_id=1611298714]
+[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="95" unique_id=1258940202]
 transform = Transform3D(0.010039405, 0, -0.0025451903, 0, 0.01035701, 0, 0.0025451903, 0, 0.010039405, 1.3732524, 2.2681385e-07, -0.15249693)
 surface_material_override/0 = SubResource("ShaderMaterial_pspjo")
 
-[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=1109895790]
+[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=1621326823]
 surface_material_override/0 = SubResource("ShaderMaterial_vlw70")
 
-[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=1137457678]
+[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=1395959550]
 surface_material_override/0 = SubResource("ShaderMaterial_2ew4d")
 
-[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=1581641331]
+[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=660064796]
 transform = Transform3D(-0.010996787, 0, -0.00026586326, 0, 0.011000002, 0, 0.00026586326, 0, -0.010996787, 3.8734539, 0.011671415, -3.568455)
 surface_material_override/0 = SubResource("ShaderMaterial_5y8ex")
 
-[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="99" unique_id=2088770452]
+[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="99" unique_id=687657619]
 transform = Transform3D(-0.010656118, 0, -0.0027289458, 0, 0.011000002, 0, 0.0027289458, 0, -0.010656118, 3.6122355, 0.028214112, -3.574685)
 surface_material_override/0 = SubResource("ShaderMaterial_2am1x")
 
-[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=2138271545]
+[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=123852574]
 transform = Transform3D(-0.0006573568, 0, -0.018577047, 0, 0.01858868, 0, 0.018577047, 0, -0.0006573568, 4.480911, 1.8867614, -9.460729)
 surface_material_override/0 = SubResource("ShaderMaterial_42mkq")
 
-[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="101" unique_id=1397954836]
+[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="101" unique_id=68045822]
 transform = Transform3D(0.00013106829, 0, -0.010999221, 0, 0.011000003, 0, 0.010999221, 0, 0.00013106829, 4.4376554, 1.5092351, -3.3882039)
 surface_material_override/0 = SubResource("ShaderMaterial_xcw55")
 
-[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="102" unique_id=2071704873]
+[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="102" unique_id=1474017174]
 surface_material_override/0 = SubResource("ShaderMaterial_bxswn")
 
-[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=1140168413]
+[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=799520645]
+transform = Transform3D(-0.011, 0, -9.616505e-10, 0, 0.011, 0, 9.616505e-10, 0, -0.011, 2.5594416, -3.840562, 1.8807162)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_6xvft")
 
-[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="104" unique_id=1780805785]
+[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="104" unique_id=2105284247]
+transform = Transform3D(-0.0026820304, 0, 0.008390233, 0, 0.008808476, 0, -0.008390233, 0, -0.0026820304, 1.3015784, -2.4856825, 0.32966837)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_orwwl")
 
-[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=1579788238]
+[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=1886023423]
 transform = Transform3D(-0.010852922, 0, -0.001792814, 0, 0.011000003, 0, 0.001792814, 0, -0.010852922, 1.83048, 0.006942302, 1.1937311)
 surface_material_override/0 = SubResource("ShaderMaterial_auh4i")
 
-[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=853512715]
+[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=1368742946]
 surface_material_override/0 = SubResource("ShaderMaterial_y33wc")
 
-[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="107" unique_id=675503112]
+[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="107" unique_id=336238287]
+transform = Transform3D(-0.0067162467, 0, 0.0087116035, 0, 0.011, 0, -0.0087116035, 0, -0.0067162467, 0.22229694, -2.0832202, -2.0716407)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_sy87j")
 
-[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=1542068180]
+[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=1716716006]
 surface_material_override/0 = SubResource("ShaderMaterial_ux3tq")
 
-[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="109" unique_id=1108319165]
+[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="109" unique_id=1190035519]
 surface_material_override/0 = SubResource("ShaderMaterial_qbcaj")
 
-[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="110" unique_id=1332418211]
+[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="110" unique_id=603592948]
 surface_material_override/0 = SubResource("ShaderMaterial_1gjpj")
 
-[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="111" unique_id=938858865]
+[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="111" unique_id=1894302987]
 surface_material_override/0 = SubResource("ShaderMaterial_wyeh6")
 
-[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="112" unique_id=547980066]
+[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="112" unique_id=1313046640]
 surface_material_override/0 = SubResource("ShaderMaterial_12ebo")
 
-[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="113" unique_id=1595784986]
+[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="113" unique_id=2077768330]
 surface_material_override/0 = SubResource("ShaderMaterial_phrvf")
 
-[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="114" unique_id=1540361650]
+[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="114" unique_id=785451219]
 surface_material_override/0 = SubResource("ShaderMaterial_y1a53")
 
-[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="115" unique_id=383766001]
+[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="115" unique_id=1803278051]
+transform = Transform3D(0.0084101185, 0, 0.004871939, 0, 0.009719355, 0, -0.004871939, 0, 0.0084101185, 2.8999043, -0.31643987, -0.15019818)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_r6psu")
 
-[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=703838661]
+[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=1101788329]
+transform = Transform3D(0.0069891475, 0, -0.0067540873, 0, 0.009719355, 0, 0.0067540873, 0, 0.0069891475, 3.8983762, -0.18681876, 0.542075)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_atyw5")
 
-[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="117" unique_id=1778143758]
+[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="117" unique_id=938400987]
+transform = Transform3D(0.0020253044, 1.3239789e-09, 0.0046927975, -1.3239789e-09, -0.0051111844, 2.0134177e-09, 0.0046927975, -2.0134174e-09, -0.0020253044, 1.5377825, -0.20536575, 0.20906776)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_dicji")
 
-[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="118" unique_id=1890005890]
-transform = Transform3D(0.0025394259, 0, 0.00443571, 0, 0.0051111844, 0, -0.00443571, 0, 0.0025394259, 1.3078284, 0.023191834, -9.094613)
+[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="118" unique_id=2096481895]
+transform = Transform3D(0.0025394259, 0, 0.00443571, 0, 0.0051111844, 0, -0.00443571, 0, 0.0025394259, 1.3078284, -0.9810764, -9.094613)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_uisyg")
 
-[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="119" unique_id=1460141318]
+[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="119" unique_id=1046492350]
+transform = Transform3D(0.0050637913, -2.786988e-10, -0.0006944218, 2.786987e-10, -0.0051111844, 4.0836174e-09, -0.0006944218, -4.0836174e-09, -0.0050637913, -1.6891483, -0.60063386, -2.8694913)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_prkiw")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="120" unique_id=434428044]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="120" unique_id=947907287]
 surface_material_override/0 = SubResource("ShaderMaterial_5mo0b")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="121" unique_id=1771016623]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="121" unique_id=1331077283]
 surface_material_override/0 = SubResource("ShaderMaterial_o16lw")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="122" unique_id=1468032646]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="122" unique_id=1983126715]
 surface_material_override/0 = SubResource("ShaderMaterial_hu71u")
 
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="123" unique_id=1079614248]
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="123" unique_id=171090644]
 surface_material_override/0 = SubResource("ShaderMaterial_r1wno")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="124" unique_id=754483136]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="124" unique_id=1661447156]
 surface_material_override/0 = SubResource("ShaderMaterial_gg7y1")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=239165661]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=245699956]
 surface_material_override/0 = SubResource("ShaderMaterial_cxqr8")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=594197469]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=590295962]
 surface_material_override/0 = SubResource("ShaderMaterial_b1yjs")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="127" unique_id=471912723]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="127" unique_id=1486094212]
 surface_material_override/0 = SubResource("ShaderMaterial_7305h")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="128" unique_id=805418270]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="128" unique_id=1405152315]
+transform = Transform3D(0, -0.007119386, -6.484999e-10, -0.007245579, 4.949708e-10, -0.0063405386, 0.010556245, 3.3973727e-10, -0.0043520094, 1.1199331, 6.365731, 1.0817926)
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_h5ue4")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="129" unique_id=786792946]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="129" unique_id=1417629123]
 surface_material_override/0 = SubResource("ShaderMaterial_kg5tv")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="130" unique_id=383531836]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="130" unique_id=2013292504]
 surface_material_override/0 = SubResource("ShaderMaterial_13a3n")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="131" unique_id=1622478757]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="131" unique_id=910161718]
 surface_material_override/0 = SubResource("ShaderMaterial_5tnse")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="132" unique_id=1537946404]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="132" unique_id=2018802853]
 surface_material_override/0 = SubResource("ShaderMaterial_m17n0")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="133" unique_id=550997036]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="133" unique_id=1103602756]
 surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
 
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="134" unique_id=414810682]
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="134" unique_id=1123264317]
 surface_material_override/0 = SubResource("ShaderMaterial_otry8")
 
-[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="135" unique_id=1494544746]
+[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="135" unique_id=1090456561]
 surface_material_override/0 = SubResource("ShaderMaterial_b7doi")
 
-[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="136" unique_id=1564034199]
+[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="136" unique_id=1322445728]
 surface_material_override/0 = SubResource("ShaderMaterial_lgine")
 
-[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="137" unique_id=1871522400]
+[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="137" unique_id=2029395879]
 surface_material_override/0 = SubResource("ShaderMaterial_ios2g")
 
-[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="138" unique_id=1323475995]
+[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="138" unique_id=1300160157]
 transform = Transform3D(0.0005650145, 1.067629e-05, -0.0032646758, -7.766326e-05, 0.0033123128, -2.6090277e-06, 0.003263769, 7.6970144e-05, 0.0005651092, -2.0238373, 0.0003314318, 2.3298473)
 surface_material_override/0 = SubResource("ShaderMaterial_l653v")
 
-[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="139" unique_id=950165497]
+[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="139" unique_id=1456711703]
 surface_material_override/0 = SubResource("ShaderMaterial_ta8wd")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="140" unique_id=409521938]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="140" unique_id=1098181700]
 surface_material_override/0 = SubResource("ShaderMaterial_t8fyj")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="141" unique_id=884931659]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="141" unique_id=1304674566]
 surface_material_override/0 = SubResource("ShaderMaterial_f1mpw")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="142" unique_id=571093257]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="142" unique_id=1868605709]
 surface_material_override/0 = SubResource("ShaderMaterial_im8uk")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="143" unique_id=249974416]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="143" unique_id=425507410]
 surface_material_override/0 = SubResource("ShaderMaterial_qmdsr")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="144" unique_id=302174004]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="144" unique_id=895980978]
 surface_material_override/0 = SubResource("ShaderMaterial_xmg8t")
 
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="145" unique_id=1306732575]
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="145" unique_id=1121444358]
 surface_material_override/0 = SubResource("ShaderMaterial_wf7ne")
 
-[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="146" unique_id=24412122]
+[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="146" unique_id=66705242]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_mxchm")
 
-[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="147" unique_id=616884979]
+[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="147" unique_id=1292896571]
 surface_material_override/0 = SubResource("ShaderMaterial_afqqx")
 
-[node name="Trophy_mo" parent="FortniteSkyeRoom" index="148" unique_id=2090912239]
+[node name="Trophy_mo" parent="FortniteSkyeRoom" index="148" unique_id=50910274]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_yjwit")
 
-[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="149" unique_id=1991815974]
+[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="149" unique_id=735982332]
 visible = false
 surface_material_override/0 = SubResource("ShaderMaterial_amv34")
 
-[node name="Wire03_mo" parent="FortniteSkyeRoom" index="150" unique_id=2086776325]
+[node name="Wire03_mo" parent="FortniteSkyeRoom" index="150" unique_id=384708436]
 surface_material_override/0 = SubResource("ShaderMaterial_u8eqe")
 
-[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="151" unique_id=1298086391]
+[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="151" unique_id=1799892715]
 surface_material_override/0 = SubResource("ShaderMaterial_ys57c")
 
 [node name="Neo_Residential_Wall_01_mo2" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=1497840226]
@@ -4472,6 +4899,16 @@ surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
 
 [node name="Neo_Residential_Wall_01_mo4" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=108037951]
 transform = Transform3D(0.007119387, 0, 0, 0, 0.0071193874, 0, 0, 0, 0.0071193874, 2.7830553, 2.6219497, -10.703004)
+mesh = SubResource("ArrayMesh_qiu2p")
+surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
+
+[node name="Neo_Residential_Wall_01_mo7" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=930611058]
+transform = Transform3D(0.0071193874, 0, 0, 0, 0.007119388, 0, 0, 0, 0.007119388, -0.8548258, 2.6647413, 2.7732592)
+mesh = SubResource("ArrayMesh_qiu2p")
+surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
+
+[node name="Neo_Residential_Wall_01_mo6" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=794413834]
+transform = Transform3D(0.007119387, 0, 0, 0, 0.0071193874, 0, 0, 0, 0.0071193874, 2.7830553, 2.6647413, 2.77326)
 mesh = SubResource("ArrayMesh_qiu2p")
 surface_material_override/0 = SubResource("ShaderMaterial_lp56n")
 
@@ -4605,6 +5042,36 @@ transform = Transform3D(0.007119395, 0, 0, 0, 0.007119387, 0, 0, 0, 0.0087802615
 mesh = SubResource("ArrayMesh_1xegq")
 surface_material_override/0 = SubResource("ShaderMaterial_r1wno")
 
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_010" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=582057254]
+transform = Transform3D(0.007119395, 0, 0, 0, 0.007119387, 0, 0, 0, 0.0087802615, -0.8620714, 5.3865447, -8.435298)
+mesh = SubResource("ArrayMesh_1xegq")
+surface_material_override/0 = SubResource("ShaderMaterial_r1wno")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_009" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=1927494864]
+transform = Transform3D(0.007119387, 0, 0, 0, 0.007119387, 0, 0, 0, 0.0087802615, 2.7830553, 5.3865447, -8.430638)
+mesh = SubResource("ArrayMesh_salpy")
+surface_material_override/0 = SubResource("ShaderMaterial_hu71u")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_008" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=521260826]
+transform = Transform3D(0.007119394, 0, 0, 0, 0.007119386, 0, 0, 0, 0.00878026, -0.8620713, 5.3865447, -3.9692073)
+mesh = SubResource("ArrayMesh_021mu")
+surface_material_override/0 = SubResource("ShaderMaterial_r1wno")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_007" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=576305340]
+transform = Transform3D(0.007119386, 0, 0, 0, 0.007119386, 0, 0, 0, 0.00878026, 2.7830548, 5.3865447, -3.9692073)
+mesh = SubResource("ArrayMesh_qedn4")
+surface_material_override/0 = SubResource("ShaderMaterial_hu71u")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_006" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=512879360]
+transform = Transform3D(0.007119386, 0, 0, 0, 0.007119386, 0, 0, 0, 0.00878026, 2.7830548, 5.3865447, 0.5262865)
+mesh = SubResource("ArrayMesh_3rb6d")
+surface_material_override/0 = SubResource("ShaderMaterial_o16lw")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo2" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=923482861]
+transform = Transform3D(0.007119386, 0, 0, 0, 0.007119386, 0, 0, 0, 0.00878026, -0.8620713, 5.3865447, 0.5262865)
+mesh = SubResource("ArrayMesh_i3qn6")
+surface_material_override/0 = SubResource("ShaderMaterial_5mo0b")
+
 [node name="SM_Fort_Trim_Generic_BayTrim02_mo_014" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=636767387]
 transform = Transform3D(0, 0, 0.0071193865, 0, 0.0071193865, 0, -0.008780261, 0, 0, -2.6022434, 2.7419171, -8.381183)
 mesh = SubResource("ArrayMesh_av7wp")
@@ -4625,15 +5092,7 @@ transform = Transform3D(-0.0087802615, 0, -9.103951e-06, 0, 0.0071193916, 0, 1.1
 mesh = SubResource("ArrayMesh_ryjjf")
 surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
 
-[node name="ScaleReference" type="Node3D" parent="."]
-position = Vector3(0, 0, -4.5)
-
-[node name="OneMeterCube" type="MeshInstance3D" parent="ScaleReference"]
-position = Vector3(-1.2, 0.5, 0)
-mesh = SubResource("BoxMesh_scale_reference")
-
-[node name="HumanOneMeterReference" parent="ScaleReference" instance=ExtResource("101_human")]
-position = Vector3(1.2, -0.3345498, 0)
-scale = Vector3(0.01122195, 0.01122195, 0.01122195)
+[node name="ScaleReference" type="Node3D" parent="." unique_id=709046616]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.5)
 
 [editable path="FortniteSkyeRoom"]
