@@ -79,13 +79,14 @@ func is_grab_pressed() -> bool:
 		return Input.is_key_pressed(KEY_T)
 	return false
 
-## 自殺（測試用）：P1=O / P2=4，按下即死的快捷鍵
+## 自殺（測試用）：鍵盤 P1=O / P2=4，手把=方塊鍵（JOY_BUTTON_X）
 func is_suicide_just_pressed() -> bool:
-	if player_index == 0:
-		return Input.is_physical_key_pressed(KEY_O)
-	if player_index == 1:
-		return Input.is_physical_key_pressed(KEY_4)
-	return false
+	if _keyboard_enabled():
+		if player_index == 0 and Input.is_physical_key_pressed(KEY_O):
+			return true
+		if player_index == 1 and Input.is_physical_key_pressed(KEY_4):
+			return true
+	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_X)
 
 func _keyboard_move(suffix: String) -> Vector2:
 	var dir := Vector2.ZERO

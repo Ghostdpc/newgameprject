@@ -224,10 +224,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if not _sequence_done:
 		return
-	if event.is_action_pressed("ui_accept") or (event is InputEventKey and event.physical_keycode == KEY_A):
+	# 重开：ui_accept / 键盘 A / 手柄 A
+	var is_restart := event.is_action_pressed("ui_accept") \
+		or (event is InputEventKey and event.physical_keycode == KEY_A) \
+		or (event is InputEventJoypadButton \
+			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_A)
+	# 返回大厅：ui_cancel / 键盘 X / 手柄 B
+	var is_lobby := event.is_action_pressed("ui_cancel") \
+		or (event is InputEventKey and event.physical_keycode == KEY_X) \
+		or (event is InputEventJoypadButton \
+			and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B)
+	if is_restart:
 		get_viewport().set_input_as_handled()
 		_do_action("restart")
-	elif event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.physical_keycode == KEY_X):
+	elif is_lobby:
 		get_viewport().set_input_as_handled()
 		_do_action("lobby")
 
