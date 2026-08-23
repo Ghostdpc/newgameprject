@@ -69,10 +69,13 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 		if in_photo and total_player_px > 0:
 			ratio = float(visible_px) / float(total_player_px)
 
+		# 占比分为 0（没被拍到/像素不足）时，其余三维一律 0：没入镜就没有任何得分
+		var scored: bool = ratio > 0.0
+
 		# C 位：相对中心加权归一 × 绝对中心距离系数
 		# 绝对中心距离系数：玩家质心到图像中心的距离，中心=1，半对角线=0
 		var center_norm: float = 0.0
-		if in_photo and total_player_cw > 0.0:
+		if scored and total_player_cw > 0.0:
 			# 相对归一：该玩家中心加权 / 所有玩家中心加权和
 			var relative_cw: float = center_weights[i] / total_player_cw
 			# 绝对中心系数：玩家质心与图像中心的接近程度（0~1）
@@ -82,9 +85,9 @@ func analyze(mask: Image, actor_meta: Array, size: Vector2i) -> Dictionary:
 			# 综合：相对加权分 × 质心接近系数（两者都好才高分）
 			center_norm = relative_cw * proximity
 
-		# 出镜（in_photo=false）玩家四维全 0：没被拍到就没有任何得分（含服装分）
-		var outfit: float = clampf(float(meta.get("outfit", 0.0)), 0.0, 1.0) if in_photo else 0.0
-		var facing: float = clampf(float(meta.get("facing", 0.0)), 0.0, 1.0) if in_photo else 0.0
+		# 占比为 0 的玩家四维全 0：没被拍到就没有任何得分（含服装分）
+		var outfit: float = clampf(float(meta.get("outfit", 0.0)), 0.0, 1.0) if scored else 0.0
+		var facing: float = clampf(float(meta.get("facing", 0.0)), 0.0, 1.0) if scored else 0.0
 
 		var total01: float = weights.get("ratio", 0.0) * ratio \
 			+ weights.get("center", 0.0) * center_norm \

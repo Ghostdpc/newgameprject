@@ -1,9 +1,12 @@
 {
   "_comment": "道具表。spawn_config 控制场上生成；items[] 为道具定义；traps[] 为放置物定义。model/texture 为 3D 模型与贴图路径，model_scale 统一缩放使模型贴合道具箱，未配置则用占位方块。use_vfx 为释放道具时播放的特效场景路径（res://），缺省则不播放；use_vfx_mode 控制特效播放位置：world=世界坐标（使用者当前位置）/ attach_player=挂载到使用者身上跟随 / attach_camera=挂载到相机前方（类全屏）",
   "spawn_config": {
-    "_comment": "max_active: 场上同时存在的道具箱上限，从 items[] 中随机选取类型生成；respawn_interval: 补充间隔（秒）",
+    "_comment": "max_active: 场上同时存在的道具箱上限，从 items[] 中随机选取类型生成；respawn_interval: 补充间隔（秒）；initial_multiplier: 开局初始生成量 = max_active * 该系数；refresh_batch: 每次补充生成的数量；collidable: 道具箱是否具备物理碰撞（false=玩家无法撞飞）",
     "max_active": 5,
-    "respawn_interval": 8.0
+    "respawn_interval": 8.0,
+    "initial_multiplier": 1.5,
+    "refresh_batch": 2,
+    "collidable": false
   },
   "items": [
     {

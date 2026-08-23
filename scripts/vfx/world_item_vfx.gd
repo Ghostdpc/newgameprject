@@ -6,6 +6,9 @@ extends Node3D
 
 enum Kind { FEET_RING, BANANA_STUN }
 
+## 眩晕星星整体缩放（星本体 + 环绕半径），越小越紧凑
+const STUN_SCALE := 0.6
+
 var kind: Kind = Kind.FEET_RING
 var duration := 1.0
 var follow_target: Node3D
@@ -70,6 +73,7 @@ func _build_stun_stars() -> void:
 		var vertical := _box(Color(1.0, 0.94, 0.38, 1.0), Vector3(0.12, 0.42, 0.09))
 		star.add_child(horizontal)
 		star.add_child(vertical)
+		star.scale = Vector3.ONE * STUN_SCALE
 		add_child(star)
 		_stars.append(star)
 
@@ -77,7 +81,7 @@ func _update_stars() -> void:
 	for index in _stars.size():
 		var star := _stars[index]
 		var angle := _age * 5.2 + float(index) * TAU / float(_stars.size())
-		star.position = Vector3(cos(angle) * 0.70, 2.10 + sin(_age * 6.2 + index) * 0.13, sin(angle) * 0.70)
+		star.position = Vector3(cos(angle) * 0.70 * STUN_SCALE, 2.10 + sin(_age * 6.2 + index) * 0.13, sin(angle) * 0.70 * STUN_SCALE)
 		star.rotation = Vector3(0.0, -angle, angle * 1.4)
 
 func _ring(color: Color, inner_radius: float, outer_radius: float) -> MeshInstance3D:

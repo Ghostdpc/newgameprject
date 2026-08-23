@@ -8,7 +8,7 @@ func _table_name() -> String:
 
 func _defaults() -> Dictionary:
 	return {
-		"spawn_config": {"max_active": 5, "respawn_interval": 8.0},
+		"spawn_config": {"max_active": 5, "respawn_interval": 8.0, "initial_multiplier": 1.5, "refresh_batch": 2, "collidable": false},
 		"items": [],
 		"traps": [],
 	}
