@@ -30,14 +30,14 @@ var _shutter_slowmo: ShutterSlowmoController
 @export var static_keywords: Array[String] = [
 	"Fort_Floors", "Residential_Wall", "Residential_DoorC", "Door_01", "DoorTrim",
 	"BayTrim02", "SkyLight", "Window", "Wallpaper",
-	"Bed_Single", "Dresser", "DisplayCase", "Shelf_Tall", "Shelf_Open",
-	"GamingTable", "Desk_01", "NightStand",
+	"Bed_Single", "Dresser", "DisplayCase", "Shelf_Tall", "Shelf_Open", "CampingShelve",
+	"GamingTable", "GamingChair", "Armchair", "Chair", "Desk_01", "NightStand",
 ]
 
 ## 可撞飞物件（转 PhysicalProp）：书、手机、星星、摆件等
 @export var prop_keywords: Array[String] = [
 	"BookPile", "BookStack", "Games_0", "Dice", "PlayerPiece",
-	"Cell_Phone", "GlowingStar", "ArchitectTools", "Pencil",
+	"Cell_Phone", "ArchitectTools", "Pencil",
 	"TrashCan", "BeanBag", "DeskLamp", "Footrest", "Basket",
 	"Plush", "Slippers", "Backpack", "Sword_", "Trophy",
 ]
@@ -50,12 +50,15 @@ var _shutter_slowmo: ShutterSlowmoController
 	"Rug", "Carpet", "Wire", "Wires", "Poster", "BasePhotos",
 	"WeaponBoard", "Sword_Plaque", "WallLight", "RoundLight",
 	"Red_Carpet", "BedRoll", "Telescope", "FrostedGlass", "Concrete_Trim",
-	"CampingShelve", "Trash", "ObjectiveBoard",
+	"GlowingStar", "ObjectiveBoard",
 ]
 
 @onready var _room_root: Node3D = get_node_or_null("Stage/Room") as Node3D
 
 ## 本关所有相机分组（容器下挂 CameraZone 脚本或本脚本子类）
+const GENERATED_STATIC_BODY_NAME := "GeneratedRoomCollision"
+const SKIP_ROOM_COLLISION_META := &"skip_room_collision"
+
 var _zones: Array[CameraZone] = []
 ## 本次游戏选中的分组
 var _active_zone: CameraZone = null
@@ -181,21 +184,32 @@ func _apply_active_zone() -> void:
 	_active_zone.activate_hotspots()
 
 func _generate_collisions() -> void:
-	if not generate_collisions:
-		return
-	if not _room_root:
+	if not generate_collisions or not _room_root:
 		return
 	for mi in _collect_meshes(_room_root):
-		var m: MeshInstance3D = mi as MeshInstance3D
-		if m.mesh == null:
+		var mesh := mi as MeshInstance3D
+		if not _is_collision_candidate(mesh):
 			continue
-		var nm := m.name
-		if _matches_any(nm, ignore_keywords):
+		var mesh_name := mesh.name
+		if _matches_any(mesh_name, ignore_keywords):
 			continue
-		if _matches_any(nm, prop_keywords):
-			_convert_to_prop(m)
-		elif _matches_any(nm, static_keywords):
-			_add_static_body(m)
+		if _matches_any(mesh_name, prop_keywords):
+			_convert_to_prop(mesh)
+		elif _matches_any(mesh_name, static_keywords):
+			_add_static_body(mesh)
+
+## 只为游戏中实际可见的关卡网格生成碰撞。
+## 这会自动排除美术隐藏的旧物件，避免留下“看不见但会挡人”的碰撞体。
+func _is_collision_candidate(mesh: MeshInstance3D) -> bool:
+	if mesh == null or mesh.mesh == null:
+		return false
+	if not mesh.is_visible_in_tree() or mesh.layers == 0:
+		return false
+	if bool(mesh.get_meta(SKIP_ROOM_COLLISION_META, false)):
+		return false
+	if mesh.get_parent() is PhysicalProp:
+		return false
+	return mesh.get_node_or_null(GENERATED_STATIC_BODY_NAME) == null and mesh.get_node_or_null("Col") == null
 
 func _matches_any(name: String, keywords: Array[String]) -> bool:
 	for k in keywords:
@@ -208,7 +222,8 @@ func _convert_to_prop(mi: MeshInstance3D) -> void:
 	var saved_parent := mi.get_parent()
 	saved_parent.remove_child(mi)
 	var prop := PhysicalProp.new()
-	prop.name = "Prop_" + mi.name
+	prop.name = "GeneratedRoomProp_" + mi.name
+	prop.set_meta(SKIP_ROOM_COLLISION_META, true)
 	prop.prop_mass = 2.0
 	prop.freeze = true
 	# RigidBody 不可帶非單位縮放：房間 room_scale 使摆件世界 scale≈0.03，
@@ -226,7 +241,8 @@ func _add_static_body(mi: MeshInstance3D) -> void:
 	if shape == null:
 		return
 	var body := StaticBody3D.new()
-	body.name = "Col"
+	body.name = GENERATED_STATIC_BODY_NAME
+	body.set_meta(SKIP_ROOM_COLLISION_META, true)
 	var cs := CollisionShape3D.new()
 	cs.shape = shape
 	body.add_child(cs)
