@@ -12,7 +12,7 @@ const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 # ---- 出界與重生（玩家順應，基類預設）----
 const FALL_Y: float = -5.0          ## 低於此高度視為出界死亡
 const RESPAWN_WAIT: float = 2.0     ## 死亡讀秒到重生
-const RESPAWN_HEIGHT: float = 8.0   ## 重生空中高度（落下）
+const RESPAWN_HEIGHT: float = 4.0   ## 重生空中高度（落下；場景有屋頂，8m 會穿頂）
 const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
 
 # ---- 相机默认参数 ----（子类可覆写）
@@ -212,7 +212,7 @@ func _create_respawn_marker(pos: Vector3) -> Node3D:
 	mat.emission_enabled = true
 	mat.emission = Color.YELLOW
 	m.material_override = mat
-	m.layers = 4  # layer 3 = UI 标识，不进拍照 RT
+	m.layers = 4  # layer = UI 標識，不進拍照 RT
 	m.position = Vector3(pos.x, RESPAWN_HEIGHT * 0.5, pos.z)
 	add_child(m)
 	return m
