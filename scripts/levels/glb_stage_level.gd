@@ -2,11 +2,13 @@
 ## 用法（见 docs/dev/新关卡接入指南.md）：
 ##   1. 复制模板场景根挂本脚本，Stage/Room 挂 RoomSource
 ##   2. RoomSource 填 scene_path（.tscn 预摆好用 NONE；.glb 用 SCALE_TO_FIT）
-##   3. 编辑器摆 MainCamera / PhotoCameraRig / SpawnPoints / ItemHotspots
+##   3. 编辑器摆 CameraZones（每个 zone 内含主相机 + SpawnPoints + ItemHotspots）
+##      开局随机选一个 zone：其相机生效、出生点/道具点启用
 ##   4. 如需调整碰撞分类，改下方 @export 关键字数组
 ##
-## 内置：主相机读 MainCamera 节点位姿、地板/墙/大家具静态 trimesh 碰撞、
+## 内置：主相机读选中 zone 的相机节点位姿、地板/墙/大家具静态 trimesh 碰撞、
 ##       小摆件转 PhysicalProp（可撞飞）、完整流程交互（S0~S7 对齐 demo_stage）
+## 兼容：无 CameraZone 时回退旧的 MainCamera / SpawnPoints / ItemHotspots 单组结构。
 
 class_name GlbStageLevel
 extends LevelBase
@@ -40,6 +42,9 @@ var _shutter_slowmo: ShutterSlowmoController
 	"Plush", "Slippers", "Backpack", "Sword_", "Trophy",
 ]
 
+## 是否自动生成碰撞（false 时场景物体不加任何碰撞体，可在 Inspector 关闭）
+@export var generate_collisions := true
+
 ## 忽略（无碰撞、无物理）：地毯、线、装饰等
 @export var ignore_keywords: Array[String] = [
 	"Rug", "Carpet", "Wire", "Wires", "Poster", "BasePhotos",
@@ -49,6 +54,11 @@ var _shutter_slowmo: ShutterSlowmoController
 ]
 
 @onready var _room_root: Node3D = get_node_or_null("Stage/Room") as Node3D
+
+## 本关所有相机分组（容器下挂 CameraZone 脚本或本脚本子类）
+var _zones: Array[CameraZone] = []
+## 本次游戏选中的分组
+var _active_zone: CameraZone = null
 
 func get_player_count() -> int:
 	return clampi(GameManager.lobby_player_count, 2, 4)
@@ -61,7 +71,12 @@ func get_player_slots() -> Array[int]:
 	return slots
 
 func get_spawn_points() -> Array[Vector3]:
-	# 优先场景内 SpawnPoints 节点（策划摆放），否则默认四角
+	# 有选中分组则用分组出生点
+	if _active_zone:
+		var pts := _active_zone.get_spawn_points()
+		if not pts.is_empty():
+			return pts
+	# 回退：旧结构 SpawnPoints 节点
 	if _spawn_root and _spawn_root.get_child_count() > 0:
 		return super.get_spawn_points()
 	return [
@@ -77,6 +92,11 @@ func _random_spawn_position() -> Vector3:
 	if not spawn_points.is_empty():
 		return spawn_points.pick_random()
 	return super._random_spawn_position()
+
+## 先选相机分组再走基类流程，保证 _setup_cameras 读到的就是选中相机的位姿
+func _ready() -> void:
+	_select_zone()
+	super._ready()
 
 func _setup_level() -> void:
 	_ensure_room()
@@ -101,8 +121,16 @@ func _ensure_room() -> void:
 		return
 	_room_root = _stage_root.get_node_or_null("Room") as Node3D
 
-## 主相机直接读 MainCamera 节点在编辑器里的位姿（所见即所得）
+## 主相机读选中 zone 的相机节点在编辑器里的位姿（所见即所得）
 func _setup_cameras() -> void:
+	# 有选中分组：把分组相机位姿同步到 MainCamera，使其成为真正生效的相机
+	if _active_zone:
+		var zc := _active_zone.get_camera()
+		if zc and _main_camera:
+			_main_camera.global_transform = zc.global_transform
+			_main_camera.fov = zc.fov
+			_main_camera.near = zc.near
+			_main_camera.far = zc.far
 	if _main_controller and _main_camera:
 		_main_controller.init(_main_camera)
 		var fixed := FixedShotBehavior.new()
@@ -111,6 +139,7 @@ func _setup_cameras() -> void:
 		_main_controller.push_behavior(fixed)
 		CameraSystem.register_main_camera(_main_controller)
 		_main_camera.add_to_group("main_camera")
+		_main_camera.current = true
 	var viewfinder := get_node_or_null("HUD/MainLayer/CameraViewfinder") as Control
 	if viewfinder:
 		viewfinder.add_to_group("camera_viewfinder")
@@ -118,7 +147,42 @@ func _setup_cameras() -> void:
 	if not rigs.is_empty():
 		_photo_rig = rigs[0] as PhotoCameraRig
 
+## 收集所有相机分组并随机选一个；无分组则回退旧单组结构。
+## 在 _setup_cameras 前调用（_onready 变量此时可能尚未初始化，勿依赖）。
+func _select_zone() -> void:
+	_collect_zones()
+	if _zones.is_empty():
+		return
+	_active_zone = _zones.pick_random()
+	_apply_active_zone()
+
+## 收集关卡里的 CameraZone（含根/子节点挂 CameraZone 脚本的）
+func _collect_zones() -> void:
+	_zones.clear()
+	for n in get_tree().get_nodes_in_group("camera_zone"):
+		if n is CameraZone:
+			_zones.append(n as CameraZone)
+	if _zones.is_empty():
+		# 未入组（可能 _ready 前）时直接扫子节点
+		var stack: Array[Node] = [self]
+		while not stack.is_empty():
+			var n: Node = stack.pop_back()
+			if n is CameraZone and n != self:
+				_zones.append(n as CameraZone)
+			for c in n.get_children():
+				stack.append(c)
+
+## 让选中的 zone 生效：只有选中分组的道具点参与落点。
+## 相机位姿由 _setup_cameras 从选中 zone 的相机同步到根 MainCamera；
+## zone 内的相机只是编辑器里的"取景预览"，不直接渲染。
+func _apply_active_zone() -> void:
+	for z in _zones:
+		z.deactivate_hotspots()
+	_active_zone.activate_hotspots()
+
 func _generate_collisions() -> void:
+	if not generate_collisions:
+		return
 	if not _room_root:
 		return
 	for mi in _collect_meshes(_room_root):
@@ -180,6 +244,10 @@ func _collect_meshes(root: Node) -> Array:
 	return result
 
 func _add_item_hotspots() -> void:
+	# 有选中分组则只启用该分组的道具点
+	if _active_zone:
+		_active_zone.activate_hotspots()
+		return
 	var hr := get_node_or_null("ItemHotspots")
 	if not hr:
 		return
