@@ -232,6 +232,11 @@ func setup(skel: Skeleton3D, anim: AnimationPlayer = null) -> void:
 func set_active(on: bool) -> void:
 	active = on
 
+## 重新初始化彈簧狀態（對齊當前骨骼 pose）。布娃娃軟倒/起身後骨骼姿態大變，
+## 若不重設，_spring_rot 殘留軟倒前基於舊姿態的角度，會與服装头骨縮放疊加導致帽子漂走。
+func reinit() -> void:
+	_init_spring()
+
 ## 套用命名預設（見 PRESETS）。返回是否成功。
 func apply_preset(preset_name: String) -> bool:
 	var p: Dictionary = PRESETS.get(preset_name, {})

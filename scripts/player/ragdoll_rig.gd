@@ -30,6 +30,9 @@ var _stand_from: Array[Transform3D] = []
 var _stand_to: Array[Transform3D] = []
 var _stand_timer: float = -1.0
 
+## 起身插值完成、恢復動畫/站姿後發出（外部如 SpringBoneRig 可借此重設彈簧狀態）
+signal stood_up
+
 const STAND_DURATION: float = 0.4
 
 func _ready() -> void:
@@ -55,6 +58,7 @@ func _process(delta: float) -> void:
 					next = an
 					break
 			animation_player.play(next)
+		stood_up.emit()
 
 ## ragdoll 開啟時，把每個 PhysicalBone 的物理變換寫回對應骨骼，驅動 mesh 癱軟
 func _sync_physics_to_skeleton() -> void:
