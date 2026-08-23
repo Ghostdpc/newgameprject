@@ -41,6 +41,9 @@ func _ready() -> void:
 
 # ---------------------------------------------------------------- 倒计时
 func _on_timer_updated(seconds: float) -> void:
+	# 仅混战阶段显示取景框倒计时；主题公布阶段的 321 由 FlowOverlay 负责
+	if GameManager.current_stage != GameManager.GameStage.BATTLE:
+		return
 	_last_seconds = seconds
 	if _timer_label:
 		var n := maxi(1, ceili(seconds))
