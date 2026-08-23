@@ -51,6 +51,11 @@ const THROW_SPEED: float = 5.0
 const GRAB_LERP: float = 8.0
 
 @export var jump_force: float = 8.16
+## 二段跳高度（相對 jump_force 的比例；0 = 關閉二段跳）
+@export var double_jump_ratio: float = 0.9
+
+## 本空中週期是否可用二段跳（JumpState 管理）
+var double_jump_available: bool = false
 @export var player_index: int = 0
 @export var player_color: Color = Color.WHITE
 ## human 模型本體 Y 軸朝向補償（deg）。若走路側身，在 player.tscn 調整讓模型正面朝移動方向。
@@ -548,6 +553,9 @@ func _setup_model() -> void:
 		spring_rig.skeleton = skel2
 		spring_rig.animation_player = _animation_player
 		spring_rig.is_human = _is_human_model
+		# human：剔除 head，避免 spring 軟糯導致頭骨持續偏移（帽子/掛飾隨之漂移）。四肢仍軟糯。
+		if _is_human_model:
+			spring_rig.bones = spring_rig.bones.filter(func(b): return String(b) != "head")
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)
@@ -631,15 +639,17 @@ func _apply_body_scale() -> void:
 		_model_skeleton.set_bone_pose_scale(_body_bone_idx, Vector3.ONE * body_scale)
 	if _head_bone_idx != -1:
 		if _is_human_model:
-			# human 頭部 mesh 綁定骨：骨骼.004/005(頸/頭根) 與 骨骼.005_end_end_end_end(頭主體,236頂點)。
-			# 只放大這幾個有權重的骨，頭部才會真正變大。
+			# human：实测「骨骼.004」放大時頭會變大（body_scale 驗證），故 head_scale 也用它放大頭。
+			# 身体放大用根骨「骨骼.001」（4157頂點=身體主體）。
 			var head_scale_v := head_scale / maxf(body_scale, 0.01)
+			var body_scale_v := maxf(body_scale, 0.01)
 			for i in _model_skeleton.get_bone_count():
 				var nm := String(_model_skeleton.get_bone_name(i))
-				if nm == "骨骼.004" or nm == "骨骼.005" or nm == "骨骼.005_end_end_end_end":
+				# 不縮放「骨骼.005_end_end_end_end」（帽子掛點骨），避免掛點被 scale 拉走/帽子亂
+				if nm == "骨骼.004" or nm == "骨骼.005":
 					_model_skeleton.set_bone_pose_scale(i, Vector3.ONE * head_scale_v)
-			# 帽子掛在頭骨會連帶被放大；對帽子節點做逆補償，保持尺寸適中
-			_compensate_hat_scale(head_scale_v)
+				elif nm == "骨骼.001":
+					_model_skeleton.set_bone_pose_scale(i, Vector3.ONE * body_scale_v)
 		else:
 			# 抵消 chest 继承的缩放，再乘自身的头放大
 			_model_skeleton.set_bone_pose_scale(_head_bone_idx, Vector3.ONE * (head_scale / maxf(body_scale, 0.01)))
@@ -647,13 +657,16 @@ func _apply_body_scale() -> void:
 	_apply_child_compensate(_CHEST_CHILD_BONES, body_scale)
 	_apply_collision_scale()
 
-## 帽子掛在頭骨會隨頭放大而放大；設逆縮放保持帽子視覺尺寸不爆大（另縮 0.85 讓帽子更小）
+## 帽子掛在頭骨會隨頭放大而放大；設逆縮放保持帽子視覺尺寸不爆大。
+## user_hat_scale_mult 供外部（garment_demo）手動微調帽子大小。
+var user_hat_scale_mult: float = 1.0
+
 func _compensate_hat_scale(head_scale_v: float) -> void:
 	if not outfit_manager or head_scale_v <= 0.0:
 		return
 	var hat := outfit_manager.get_item("hat_slot")
 	if hat:
-		hat.scale = Vector3.ONE * (0.85 / head_scale_v)
+		hat.scale = Vector3.ONE * (0.5 * user_hat_scale_mult / head_scale_v)
 
 ## chest 的子骨（身体放大时补偿还原，避免手臂跟着变大）
 const _CHEST_CHILD_BONES: Array[String] = [
@@ -726,12 +739,11 @@ func _reset_body_scale() -> void:
 		return
 	_reset_bone_scale(_body_bone_idx)
 	if _is_human_model:
-		# human 放大頭部涉及多根骨，全部復位（骨骼.004/.005/.005_end_end_end_end）
-		var head_bones := ["骨骼.004", "骨骼.005", "骨骼.005_end_end_end_end"]
-		for bname in head_bones:
-			var idx := _model_skeleton.find_bone(bname)
-			if idx != -1:
-				_model_skeleton.set_bone_pose_scale(idx, Vector3.ONE)
+		# human 放大頭部涉及頭鏈骨（名字以「骨骼.005」開頭），全部復位
+		for i in _model_skeleton.get_bone_count():
+			var nm := String(_model_skeleton.get_bone_name(i))
+			if nm.begins_with("骨骼.005"):
+				_model_skeleton.set_bone_pose_scale(i, Vector3.ONE)
 	else:
 		_reset_bone_scale(_head_bone_idx)
 	# 帽子逆補償還原（避免軟倒後帽子大小殘留）

@@ -7,7 +7,8 @@
       "slot": "hat_slot",
       "model": "res://assets/models/garments/mushroom/mushroom.fbx",
       "texture": "res://assets/models/garments/mushroom/mushroom_basemap.png",
-      "model_scale": 1.0,
+      "model_scale": 0.75,
+      "mount_offset": [0.01, -0.35, 0],
       "score_bonus": 0.08,
       "effects": [
         {
@@ -56,14 +57,16 @@
       "display_name": "🎈 充气球衣",
       "icon": "inflate_shirt",
       "slot": "shirt_slot",
-      "model": "",
+      "model": "res://assets/models/garments/balloon/balloon.fbx",
+      "texture": "res://assets/models/garments/balloon/balloon_basemap.png",
       "model_scale": 1.0,
+      "mount_offset": [0.0, -0.5, 0.0],
       "score_bonus": 0.10,
       "effects": [
         {
           "kind": "garment_body_scale",
           "target": "self",
-          "params": { "scale": 1.5, "width": 1.5 }
+          "params": { "scale": 2.2, "width": 2.2 }
         }
       ]
     }
