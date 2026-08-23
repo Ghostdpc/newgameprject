@@ -1,0 +1,179 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/loading_screen.gd" id="1_ls"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/lobby/bg.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/menu/title.png" id="3_logo"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/load_bar_track.png" id="4_trk"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/load_bar_fill.png" id="5_fill"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_cross.png" id="6_hx"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_circle.png" id="7_hc"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_triangle.png" id="8_ht"]
+[ext_resource type="FontFile" path="res://assets/fonts/Kaph-Regular.otf" id="9_font"]
+
+[node name="LoadingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ls")
+
+[node name="BG" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="ScrollLayer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Logo" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 110.0
+offset_right = 1510.0
+offset_bottom = 704.0
+mouse_filter = 2
+texture = ExtResource("3_logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BarArea" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LoadingLabel" type="Label" parent="BarArea"]
+layout_mode = 0
+offset_left = 1060.0
+offset_top = 712.0
+offset_right = 1500.0
+offset_bottom = 760.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "加载中..."
+horizontal_alignment = 2
+
+[node name="LoadBar" type="TextureProgressBar" parent="BarArea"]
+layout_mode = 0
+offset_left = 420.0
+offset_top = 774.0
+offset_right = 1500.0
+offset_bottom = 846.0
+mouse_filter = 2
+value = 0.0
+nine_patch_stretch = true
+stretch_margin_left = 30
+stretch_margin_top = 36
+stretch_margin_right = 30
+stretch_margin_bottom = 36
+texture_under = ExtResource("4_trk")
+texture_progress = ExtResource("5_fill")
+
+[node name="PercentLabel" type="Label" parent="BarArea"]
+layout_mode = 0
+offset_left = 420.0
+offset_top = 774.0
+offset_right = 760.0
+offset_bottom = 846.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.11, 0.07, 0.2, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("9_font")
+theme_override_font_sizes/font_size = 40
+text = "0%"
+vertical_alignment = 1
+
+[node name="HintsRow" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -124.0
+offset_bottom = -56.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 64
+alignment = 1
+
+[node name="HintJump" type="HBoxContainer" parent="HintsRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="HintsRow/HintJump"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_hx")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="HintsRow/HintJump"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "跳跃"
+
+[node name="HintPickup" type="HBoxContainer" parent="HintsRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="HintsRow/HintPickup"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("7_hc")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="HintsRow/HintPickup"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "拾取\\使用 道具"
+
+[node name="HintDive" type="HBoxContainer" parent="HintsRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="HintsRow/HintDive"]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("8_ht")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="HintsRow/HintDive"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "飞扑"
