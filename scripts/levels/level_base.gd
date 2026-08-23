@@ -50,6 +50,10 @@ func _ready() -> void:
 	# 子类挂载（特殊玩法）
 	_setup_level()
 
+	# 预热炸弹爆炸特效：关卡就绪即离屏编译粒子着色器 + 缓存炸弹模型，
+	# 避免对局中首次投弹时临时加载卡顿。
+	BombInstance.warmup(self)
+
 	# 进入对局（流程由 GameManager/匹配同事控制，关卡只在场景加载后准备好）
 	_on_level_ready()
 
