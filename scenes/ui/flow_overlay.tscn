@@ -1,14 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://2gql23ln4k08"]
 
-[ext_resource type="Script" path="res://scripts/ui/flow_overlay.gd" id="1_flow"]
-[ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2_theme"]
+[ext_resource type="Script" uid="uid://daxclnf114f62" path="res://scripts/ui/flow_overlay.gd" id="1_flow"]
+[ext_resource type="Theme" uid="uid://by40wu0dwxghk" path="res://resources/ui/demo_theme.tres" id="2_theme"]
 
-[node name="FlowOverlay" type="CanvasLayer"]
-layer = 20
+[node name="FlowOverlay" type="CanvasLayer" unique_id=63451618]
 process_mode = 3
+layer = 20
 script = ExtResource("1_flow")
 
-[node name="ThemeScreen" type="Control" parent="."]
+[node name="ThemeScreen" type="Control" parent="." unique_id=812709570]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -16,7 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_theme")
 
-[node name="ThemeDim" type="ColorRect" parent="ThemeScreen"]
+[node name="ThemeDim" type="ColorRect" parent="ThemeScreen" unique_id=720044064]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,7 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.02, 0.03, 0.07, 0.82)
 
-[node name="Center" type="CenterContainer" parent="ThemeScreen"]
+[node name="Center" type="CenterContainer" parent="ThemeScreen" unique_id=34694688]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,49 +34,53 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="ThemeScreen/Center"]
+[node name="VBox" type="VBoxContainer" parent="ThemeScreen/Center" unique_id=773731345]
 custom_minimum_size = Vector2(760, 0)
 layout_mode = 2
 theme_override_constants/separation = 18
 alignment = 1
 
-[node name="ThemeCaption" type="Label" parent="ThemeScreen/Center/VBox"]
+[node name="ThemeCaption" type="Label" parent="ThemeScreen/Center/VBox" unique_id=1889046989]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.85, 1, 1)
 theme_override_font_sizes/font_size = 30
 text = "—— 本局主题 ——"
 horizontal_alignment = 1
 
-[node name="ThemeNameLabel" type="Label" parent="ThemeScreen/Center/VBox"]
+[node name="ThemeNameLabel" type="Label" parent="ThemeScreen/Center/VBox" unique_id=1588666343]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.92, 0.55, 1)
 theme_override_font_sizes/font_size = 86
-text = "主题"
+text = "开始抢镜"
 horizontal_alignment = 1
 
-[node name="ThemeBonusLabel" type="Label" parent="ThemeScreen/Center/VBox"]
+[node name="ThemeBonusLabel" type="Label" parent="ThemeScreen/Center/VBox" unique_id=1097216876]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.75, 0.82, 0.92, 1)
 theme_override_font_sizes/font_size = 26
 text = "加分倾向"
 horizontal_alignment = 1
 
-[node name="CountdownLabel" type="Label" parent="ThemeScreen/Center/VBox"]
+[node name="CountdownLabel" type="Label" parent="ThemeScreen/Center/VBox" unique_id=979561180]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.97, 1, 1)
 theme_override_font_sizes/font_size = 120
 text = "3"
 horizontal_alignment = 1
 
-[node name="WaitHint" type="Label" parent="ThemeScreen/Center/VBox"]
+[node name="WaitHint" type="Label" parent="ThemeScreen/Center/VBox" unique_id=588435719]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.55, 0.62, 0.74, 1)
 theme_override_font_sizes/font_size = 19
 text = "保持待命 · 倒数结束后直接开局（不创建专属区域）"
 horizontal_alignment = 1
 
-[node name="PauseScreen" type="Control" parent="."]
+[node name="PauseScreen" type="Control" parent="." unique_id=1864631599]
 visible = false
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -83,7 +88,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_theme")
 
-[node name="PauseDim" type="ColorRect" parent="PauseScreen"]
+[node name="PauseDim" type="ColorRect" parent="PauseScreen" unique_id=1395918435]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -92,7 +97,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0.02, 0.66)
 
-[node name="Center" type="CenterContainer" parent="PauseScreen"]
+[node name="Center" type="CenterContainer" parent="PauseScreen" unique_id=214237885]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -100,42 +105,44 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="PauseScreen/Center"]
+[node name="VBox" type="VBoxContainer" parent="PauseScreen/Center" unique_id=1340273927]
 custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 theme_override_constants/separation = 22
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="PauseScreen/Center/VBox"]
+[node name="TitleLabel" type="Label" parent="PauseScreen/Center/VBox" unique_id=462754013]
 layout_mode = 2
 theme_override_font_sizes/font_size = 60
 text = "暂停"
 horizontal_alignment = 1
 
-[node name="SubLabel" type="Label" parent="PauseScreen/Center/VBox"]
+[node name="SubLabel" type="Label" parent="PauseScreen/Center/VBox" unique_id=1038660958]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.65, 0.72, 0.84, 1)
 theme_override_font_sizes/font_size = 20
 text = "倒计时已冻结 · 全员动作停止"
 horizontal_alignment = 1
 
-[node name="ButtonRow" type="VBoxContainer" parent="PauseScreen/Center/VBox"]
+[node name="ButtonRow" type="VBoxContainer" parent="PauseScreen/Center/VBox" unique_id=188972778]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="ContinueButton" type="Button" parent="PauseScreen/Center/VBox/ButtonRow"]
+[node name="ContinueButton" type="Button" parent="PauseScreen/Center/VBox/ButtonRow" unique_id=149674363]
 custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
-text = "继续对局"
+text = "继续抢镜"
 
-[node name="LobbyButton" type="Button" parent="PauseScreen/Center/VBox/ButtonRow"]
+[node name="LobbyButton" type="Button" parent="PauseScreen/Center/VBox/ButtonRow" unique_id=1789031024]
 custom_minimum_size = Vector2(420, 60)
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
-text = "返回房间（房主）"
+text = "返回房间"
 
-[node name="KeyHint" type="Label" parent="PauseScreen/Center/VBox"]
+[node name="KeyHint" type="Label" parent="PauseScreen/Center/VBox" unique_id=595861915]
+visible = false
 layout_mode = 2
 theme_override_colors/font_color = Color(0.5, 0.56, 0.66, 1)
 theme_override_font_sizes/font_size = 17

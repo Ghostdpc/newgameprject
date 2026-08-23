@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://10pw2ri4o2qh"]
 
 [ext_resource type="Script" uid="uid://b5ulsgt3u11it" path="res://scripts/ui/scoring_screen.gd" id="1_scoring"]
-[ext_resource type="Texture2D" uid="uid://bkqaf30wn0af" path="res://assets/textures/ui/film_frame.png" id="2_film"]
-[ext_resource type="Texture2D" uid="uid://blxw6g4l8kkhy" path="res://assets/textures/ui/card/card_hex.png" id="3_hex"]
-[ext_resource type="Texture2D" uid="uid://dm165aarbb4ky" path="res://assets/textures/ui/card/icon_restart.png" id="4_restart"]
-[ext_resource type="Texture2D" uid="uid://crttqnnlso4ay" path="res://assets/textures/ui/card/icon_exit.png" id="5_exit"]
+[ext_resource type="Texture2D" uid="uid://ckxdbp4bingfa" path="res://assets/textures/ui/film_frame.png" id="2_film"]
+[ext_resource type="Texture2D" uid="uid://bvhe162gw8v2r" path="res://assets/textures/ui/card/card_hex.png" id="3_hex"]
+[ext_resource type="Texture2D" uid="uid://droml2b4yiyqj" path="res://assets/textures/ui/card/icon_restart.png" id="4_restart"]
+[ext_resource type="Texture2D" uid="uid://rrpeya2i2ltm" path="res://assets/textures/ui/card/icon_exit.png" id="5_exit"]
 [ext_resource type="FontFile" uid="uid://oj7ndrgx0uv2" path="res://assets/fonts/Kaph-Regular.otf" id="6_kaph"]
 
 [node name="ScoringScreen" type="CanvasLayer" unique_id=1192127958]
@@ -35,10 +35,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -540.0
-offset_top = -360.0
-offset_right = 540.0
-offset_bottom = 360.0
+offset_left = -640.0
+offset_top = -440.0
+offset_right = 640.0
+offset_bottom = 413.0
 grow_horizontal = 2
 grow_vertical = 2
 rotation = -0.0872665
@@ -47,10 +47,10 @@ mouse_filter = 2
 
 [node name="Photo" type="TextureRect" parent="Root/Film" unique_id=1803371857]
 layout_mode = 0
-offset_left = 66.68
-offset_top = 116.72
-offset_right = 1002.32
-offset_bottom = 572.48
+offset_left = 89.680725
+offset_top = 148.94897
+offset_right = 1189.6807
+offset_bottom = 698.949
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
