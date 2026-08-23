@@ -43,6 +43,9 @@ const HUMAN_ANIM_JUMP: String = "jump"
 ## 拾取長按時長（秒，策划要求 0.8）
 const PICKUP_HOLD_TIME: float = 0.8
 
+## 拾取到可使用之間的間隔（秒）：撿起後需等待才能用，避免同鍵誤觸立即使用
+const PICKUP_USE_GAP: float = 0.3
+
 ## 抓取距離 / 拋出速度 / 被抓起物體跟隨位置（探索性功能，可刪）
 const GRAB_RANGE: float = 2.5
 const GRAB_LIFT: float = 1.6
@@ -115,6 +118,8 @@ var _body_collision: CollisionShape3D
 var _body_mask_saved: int = -1
 
 var _pickup_hold_time: float = 0.0
+## 撿起後剩餘的使用冷卻（秒），>0 時 O 鍵不觸發使用
+var _use_gap_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
 var _head_icon: PlayerHeadIcon
 
@@ -195,6 +200,7 @@ func stand_up() -> void:
 ## 拾取道具（覆盖式：新道具直接替换当前持有；ON_PICKUP 触发器立即使用）
 func pickup_item(item_id: String) -> void:
 	held_item_id = item_id
+	_use_gap_time = PICKUP_USE_GAP
 	item_picked_up.emit(item_id)
 	EventBus.item_picked_up.emit(player_index, item_id)
 	_show_head_icon(item_id)
@@ -244,10 +250,13 @@ func _process(delta: float) -> void:
 	state_machine.update(delta)
 	_update_animation()
 	_apply_body_scale()
+	if _use_gap_time > 0.0:
+		_use_gap_time -= delta
 	if player_input.is_use_item_just_pressed():
 		if not held_item_id.is_empty():
-			# 身上有道具：立即使用
-			use_held_item()
+			# 身上有道具：撿起後需過間隔才能使用
+			if _use_gap_time <= 0.0:
+				use_held_item()
 		else:
 			# 身上無道具：嘗試拾取附近道具
 			_try_pickup()
