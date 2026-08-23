@@ -32,13 +32,33 @@ func _ready() -> void:
 	_start_load()
 
 # ---------------------------------------------------------------- 后台线程真实加载
+## 需后台预加载的额外资源路径（关卡内的 room tscn，含大 GLB）
+var _extra_paths: Array[String] = []
+
 func _start_load() -> void:
 	var path := GameManager.pending_level_path
+	_preload_room_scenes(path)
 	var err := ResourceLoader.load_threaded_request(path)
 	if err != OK:
 		GameManager.enter_pending_level()
 		return
 	_load_status = ResourceLoader.THREAD_LOAD_IN_PROGRESS
+
+## 预加载关卡 tscn 引用的大 room 场景（RoomSource 挂在 Room 节点上的 scene_path）。
+## 关卡 tscn 本身很小（几 KB），同步 load 扫一遍 state 只拿 room 路径；
+## 拿到后连同其内部大 GLB 一起后台线程预载（load_threaded 递归加载依赖）。
+func _preload_room_scenes(level_path: String) -> void:
+	var packed := load(level_path) as PackedScene
+	if packed == null:
+		return
+	var state := packed.get_state()
+	for i in state.get_node_count():
+		for p in state.get_node_property_count(i):
+			if state.get_node_property_name(i, p) == &"scene_path":
+				var room := state.get_node_property_value(i, p) as String
+				if not room.is_empty():
+					_extra_paths.append(room)
+					ResourceLoader.load_threaded_request(room)
 
 # ---------------------------------------------------------------- 差分滚动背景（同大厅）
 func _build_scroll_rows() -> void:
@@ -74,19 +94,28 @@ func _process(delta: float) -> void:
 	_elapsed += delta
 	var t := clampf(_elapsed / MIN_DURATION, 0.0, 1.0)
 
-	# 轮询后台加载进度
+	# 轮询后台加载进度（关卡 tscn + room 场景取最小值）
 	if _load_status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		var progress: Array[float] = []
 		_load_status = ResourceLoader.load_threaded_get_status(
 			GameManager.pending_level_path, progress)
 		if not progress.is_empty():
 			_load_progress = progress[0]
+		# 额外资源（room tscn）加载中 → 进度暂不爬满
+		for p in _extra_paths:
+			if ResourceLoader.load_threaded_get_status(p) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+				_load_progress = minf(_load_progress, 0.9)
+				break
 
 	# 显示进度 = 真实进度与时间进度取小值，保底 2 秒平滑爬满
 	_bar.value = minf(_load_progress, t) * 100.0
 	_refresh_pct()
 
 	var loaded := _load_status == ResourceLoader.THREAD_LOAD_LOADED
+	for p in _extra_paths:
+		if ResourceLoader.load_threaded_get_status(p) != ResourceLoader.THREAD_LOAD_LOADED:
+			loaded = false
+			break
 	if loaded and t >= 1.0:
 		_finish()
 
