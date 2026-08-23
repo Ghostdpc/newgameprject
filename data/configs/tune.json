@@ -1,9 +1,9 @@
 {
 	"body_scale": 1.0,
-	"dive_force": 9.0,
+	"dive_force": 4.5,
 	"ground_brake": 30.0,
 	"head_scale": 1.0,
-	"hit_force": 12.34,
+	"hit_force": 6.17,
 	"hit_upward": 4.5,
 	"move_speed": 3.0,
 	"ragdoll_angular_damp": 0.15,

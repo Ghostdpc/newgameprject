@@ -601,6 +601,10 @@ func _setup_model() -> void:
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)
+	# 軟倒起身後骨骼姿態大變：重設彈簧狀態對齊站姿，避免 head 彈簧殘留舊態
+	# 與服装头骨縮放(1.8)疊加，導致蘑菇帽軟倒後懸空漂走。
+	if ragdoll_rig and spring_rig:
+		ragdoll_rig.stood_up.connect(func(): spring_rig.reinit())
 	# 身材缩放：记录 head/chest 骨骼索引（服装效果放大部位用）
 	_model_skeleton = _find_skeleton(model)
 	if _model_skeleton:
