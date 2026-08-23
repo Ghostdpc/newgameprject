@@ -2,6 +2,8 @@ class_name FlyState
 extends BaseState
 
 const FLY_FALL_GRAVITY: float = 30.0
+## 觸地後的水平阻尼（秒^-1）：落地滑行時快速衰減水平速度，讓擊飛落地後更快停住
+const GROUND_DAMP: float = 12.0
 
 ## 飛行結束條件：飛超 2.5s 直接倒地；或連續觸地 0.5s 倒地
 const MAX_FLY_TIME: float = 2.5
@@ -32,6 +34,9 @@ func physics_update(delta: float) -> void:
 	# 落地用較大重力，快速下落
 	if controller.is_on_floor():
 		_ground_time += delta
+		# 落地滑行：水平速度快速衰減，減少被擊飛後的滑行距離
+		controller.velocity.x = move_toward(controller.velocity.x, 0.0, GROUND_DAMP * delta)
+		controller.velocity.z = move_toward(controller.velocity.z, 0.0, GROUND_DAMP * delta)
 	else:
 		_ground_time = 0.0
 		controller.velocity.y -= FLY_FALL_GRAVITY * delta
