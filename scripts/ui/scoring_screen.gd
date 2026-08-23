@@ -125,6 +125,7 @@ func show_results(results: Dictionary) -> void:
 func _begin_sequence() -> void:
 	await _run_scoring()
 	_finish_champion()
+	_save_screen_png()
 
 func _run_scoring() -> void:
 	_sequence_running = true
@@ -187,6 +188,25 @@ var _run_total: Dictionary = {}
 func _wait(seconds: float) -> void:
 	var actual := 0.05 if _skip_requested else seconds
 	await get_tree().create_timer(actual).timeout
+
+## 结算分数结束后，把整个游戏画面截图保存到本地（user://screenshots/）
+func _save_screen_png() -> void:
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	if img == null or img.is_empty():
+		return
+	var dir := "user://screenshots"
+	var d := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
+	if d != OK and d != ERR_ALREADY_EXISTS:
+		push_warning("ScoringScreen: 创建 %s 失败（err=%d）" % [dir, d])
+		return
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	var path := "%s/screen_%s.png" % [dir, stamp]
+	var err := img.save_png(path)
+	if err == OK:
+		print("ScoringScreen: 结算画面截图已保存 %s" % ProjectSettings.globalize_path(path))
+	else:
+		push_warning("ScoringScreen: 结算画面截图保存失败（err=%d）" % err)
 
 # ---------------------------------------------------------------- 冠军
 func _finish_champion() -> void:

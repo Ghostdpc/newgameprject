@@ -52,7 +52,7 @@ const PART_PATTERNS: Dictionary = {
 var base_color: Color = Color.WHITE:
 	set(value):
 		base_color = value
-		_apply_all()
+		_dirty = true
 
 var _meshes: Array[MeshInstance3D] = []
 var _toon_materials: Dictionary = {} # "mesh_instance_id:surface" -> ShaderMaterial
@@ -73,27 +73,36 @@ func set_face_texture(mesh: MeshInstance3D, tex: Texture2D, surf: int = -1) -> v
 			for si in mesh.mesh.get_surface_count():
 				mesh.set_surface_override_material(si, null)
 			face_textures.erase(mesh.get_instance_id())
-	else:
-		face_textures[mesh.get_instance_id()] = { "tex": tex, "surf": surf }
-	_apply_all()
+		else:
+			face_textures[mesh.get_instance_id()] = { "tex": tex, "surf": surf }
+	_dirty = true
 
 func face_texture_info(mesh: MeshInstance3D) -> Dictionary:
 	return face_textures.get(mesh.get_instance_id(), {})
 
 func clear_face_textures() -> void:
 	face_textures.clear()
-	_apply_all()
+	_dirty = true
 
 var _paints: Dictionary = {}   # instance_id -> {color, amount, tween}
 var _grays: Dictionary = {}    # instance_id -> {amount, tween}
+
+## 髒標記：僅在顏色/貼圖實際變化時才重建材質，避免每幀無意義 set_* 開銷
+var _dirty := false
 
 func _ready() -> void:
 	if not character_root:
 		character_root = get_parent() as Node3D
 	_collect_meshes()
+	_dirty = true
 
 func _process(_delta: float) -> void:
-	_apply_all()
+	# 有繪畫/灰化 tween 在跑時，amount 每幀都在變，需要持續刷新
+	if _paints.size() > 0 or _grays.size() > 0:
+		_dirty = true
+	if _dirty:
+		_dirty = false
+		_apply_all()
 
 ## 被塗上顏色，隨時間褪去。parts 空 = 全身
 func paint(color: Color, duration: float = 5.0, parts: Array[String] = []) -> void:
@@ -106,8 +115,10 @@ func paint(color: Color, duration: float = 5.0, parts: Array[String] = []) -> vo
 		entry["amount"] = 1.0
 		var tw := create_tween()
 		tw.tween_method(func(v: float): entry["amount"] = v, 1.0, 0.0, duration)
+		tw.tween_callback(func() -> void: _paints.erase(id); _dirty = true)
 		entry["tween"] = tw
 		_paints[id] = entry
+	_dirty = true
 	effect_started.emit("paint")
 
 ## 石化/眩暈灰化，隨時間恢復。parts 空 = 全身
@@ -120,8 +131,10 @@ func apply_gray(duration: float = 3.0, parts: Array[String] = []) -> void:
 		entry["amount"] = 1.0
 		var tw := create_tween()
 		tw.tween_method(func(v: float): entry["amount"] = v, 1.0, 0.0, duration)
+		tw.tween_callback(func() -> void: _grays.erase(id); _dirty = true)
 		entry["tween"] = tw
 		_grays[id] = entry
+	_dirty = true
 	effect_started.emit("gray")
 
 ## 灰頭土臉：在角色身上投影一層臟污貼花，duration 秒後淡出並移除。
@@ -158,11 +171,11 @@ func clear_effects(parts: Array[String] = []) -> void:
 		if _paints.has(id):
 			if _paints[id].has("tween") and _paints[id]["tween"]:
 				(_paints[id]["tween"] as Tween).kill()
-			_paints[id]["amount"] = 0.0
+			_paints.erase(id)
 		if _grays.has(id):
 			if _grays[id].has("tween") and _grays[id]["tween"]:
 				(_grays[id]["tween"] as Tween).kill()
-			_grays[id]["amount"] = 0.0
+			_grays.erase(id)
 	_apply_all()
 
 func clear_all() -> void:
