@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://c1hknq3ob75mt"]
 
-[ext_resource type="Script" uid="uid://b2xqj662dp55y" path="res://scripts/levels/glb_stage_level.gd" id="1"]
-[ext_resource type="Script" uid="uid://dmtsr5hwrm3wf" path="res://scripts/camera/camera_controller.gd" id="2"]
-[ext_resource type="Script" uid="uid://5wsik8geadre" path="res://scripts/systems/settlement_system.gd" id="4"]
+[ext_resource type="Script" uid="uid://bqgsbc3j4gjmb" path="res://scripts/levels/glb_stage_level.gd" id="1"]
+[ext_resource type="Script" uid="uid://owl5ee1dfidi" path="res://scripts/camera/camera_controller.gd" id="2"]
+[ext_resource type="Script" uid="uid://bfc66pxi6y066" path="res://scripts/systems/settlement_system.gd" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/flow_overlay.tscn" id="5_flow"]
 [ext_resource type="Script" uid="uid://bshrgo2iebyrc" path="res://scripts/debug/debug_visualizer.gd" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/camera/photo_camera_rig.tscn" id="8"]
+[ext_resource type="PackedScene" uid="uid://4lljd7ononot" path="res://scenes/camera/photo_camera_rig.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/ui/battle_hud.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://10pw2ri4o2qh" path="res://scenes/ui/scoring_screen.tscn" id="10"]
-[ext_resource type="Script" uid="uid://dhyye68jjpeoa" path="res://scripts/levels/room_source.gd" id="12_rsource"]
-[ext_resource type="Script" uid="uid://dsnimu8uyitlp" path="res://scripts/levels/camera_zone.gd" id="13_zone"]
+[ext_resource type="PackedScene" path="res://scenes/ui/scoring_screen.tscn" id="10"]
+[ext_resource type="Script" uid="uid://b06aofpa5pntx" path="res://scripts/levels/room_source.gd" id="12_rsource"]
+[ext_resource type="Script" uid="uid://bpey08io7riwe" path="res://scripts/levels/camera_zone.gd" id="13_zone"]
 
 [node name="RoomStageBattle" type="Node3D" unique_id=587974176]
 script = ExtResource("1")
@@ -73,7 +73,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.28, 0.51, -2.62)
 script = ExtResource("13_zone")
 
 [node name="MainCamera" type="Camera3D" parent="CameraZones/Zone2" unique_id=1827670186]
-transform = Transform3D(-1, 6.3098284e-08, -6.050908e-08, -8.633445e-09, 0.61748236, 0.78658485, 8.699544e-08, 0.78658485, -0.61748236, 0.97, 4.830517, -10.282757)
+transform = Transform3D(-1, 6.3098305e-08, -6.05091e-08, 1.890058e-08, 0.8318165, 0.55505085, 8.535522e-08, 0.55505085, -0.8318165, 0.97, 3.3765366, -10.660978)
 fov = 60.0
 
 [node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone2" unique_id=138192199]
@@ -114,8 +114,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -2.42)
 script = ExtResource("13_zone")
 
 [node name="MainCamera" type="Camera3D" parent="CameraZones/Zone3" unique_id=184421923]
-transform = Transform3D(0.0021082498, -0.8460451, 0.5331075, 0.0004308155, 0.5331094, 0.8460464, -0.9999978, -0.001554006, 0.0014884169, 4.5520477, 4.830517, -3.0812483)
-fov = 60.0
+transform = Transform3D(0.0021513533, -0.7363874, 0.67655677, 4.4677734e-05, 0.6765585, 0.7363889, -0.99999774, -0.0015540058, 0.0014884165, 3.5594177, 3.6691957, -3.6021638)
+fov = 104.2
 
 [node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone3" unique_id=383943907]
 
@@ -155,8 +155,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.12, 0.51, -2.42)
 script = ExtResource("13_zone")
 
 [node name="MainCamera" type="Camera3D" parent="CameraZones/Zone4" unique_id=1533553032]
-transform = Transform3D(-0.0036861969, 0.6222706, -0.7827936, -0.0005018339, 0.7827977, 0.6222762, 0.9999931, 0.002686665, -0.00257327, -2.570717, 4.830517, -3.2955952)
-fov = 60.0
+transform = Transform3D(-0.0037185312, 0.7425673, -0.6697612, 0.000111402886, 0.6697661, 0.7425721, 0.9999931, 0.0026866645, -0.0025732704, -2.6140044, 4.140755, -4.0475707)
+fov = 73.1
 
 [node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone4" unique_id=63732150]
 
@@ -193,9 +193,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, 0.51, 1.78)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 0.51, -3.02)
 
 [node name="MainCamera" type="Camera3D" parent="." unique_id=1940083208]
-transform = Transform3D(1.0000005, 0, 0, 0, 0.69170207, 0.72218275, 0, -0.722183, 0.6917019, 0.97, 4.830517, 2.1085906)
+transform = Transform3D(1, 0, 0, 0, 0.7234883, 0.69033664, 0, -0.69033664, 0.7234883, 1.0570982, 2.568439, 2.5881352)
 current = true
-fov = 60.0
+fov = 90.4
 
 [node name="CameraController" type="Node" parent="MainCamera" unique_id=1734740635]
 script = ExtResource("2")

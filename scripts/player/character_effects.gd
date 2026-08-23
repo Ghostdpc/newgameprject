@@ -23,7 +23,7 @@ static func _get_stencil_writer() -> ShaderMaterial:
 		_stencil_writer_material = m
 	return _stencil_writer_material
 
-## 臟污貼花（灰頭土臉）：程序噪聲紋理，全場靜態緩存複用
+## 臟污貼花（灰頭土臉）：手繪煙熏紋理，全場靜態緩存複用
 static var _dirt_texture: Texture2D
 
 ## 部位名 -> MeshInstance3D 名字子串匹配（Mannequin 命名）
@@ -115,7 +115,7 @@ func apply_gray(duration: float = 3.0, parts: Array[String] = []) -> void:
 	effect_started.emit("gray")
 
 ## 灰頭土臉：在角色身上投影一層臟污貼花，duration 秒後淡出並移除。
-## 用程序生成的噪聲紋理（無需美術資源），Decal 自頂向下投影覆蓋角色。
+## Decal 自頂向下投影覆蓋角色，使用手繪煙熏貼花紋理。
 func apply_dirt_decal(duration: float = 6.0) -> void:
 	if not character_root:
 		return
@@ -134,24 +134,10 @@ func apply_dirt_decal(duration: float = 6.0) -> void:
 	tw.tween_callback(decal.queue_free)
 	effect_started.emit("dirt")
 
-## 程序生成臟污噪聲紋理（cellular 斑塊 + alpha 漸變），靜態緩存一次
+## 手繪煙熏臟污紋理，靜態緩存一次
 static func _get_dirt_texture() -> Texture2D:
-	if _dirt_texture:
-		return _dirt_texture
-	var noise := FastNoiseLite.new()
-	noise.noise_type = FastNoiseLite.TYPE_CELLULAR
-	noise.frequency = 0.08
-	noise.cellular_return_type = FastNoiseLite.RETURN_DISTANCE2
-	var ramp := Gradient.new()
-	ramp.set_color(0, Color(0.2, 0.19, 0.17, 0.0))
-	ramp.set_color(1, Color(0.2, 0.19, 0.17, 0.9))
-	ramp.add_point(0.5, Color(0.25, 0.23, 0.2, 0.5))
-	var nt := NoiseTexture2D.new()
-	nt.width = 256
-	nt.height = 256
-	nt.noise = noise
-	nt.color_ramp = ramp
-	_dirt_texture = nt
+	if _dirt_texture == null:
+		_dirt_texture = preload("res://assets/textures/fx/dirt_soot.png")
 	return _dirt_texture
 
 ## 清除指定部位效果（空 = 全身）

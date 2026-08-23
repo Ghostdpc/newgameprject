@@ -28,7 +28,7 @@ func test_cache_returns_same_instance() -> void:
 
 func test_get_value_returns_correct_value() -> void:
 	var val: Variant = _loader.get_value("game_flow", "battle_duration", 0.0)
-	assert_eq(val, 45.0, "battle_duration 應為 45.0")
+	assert_eq(val, 30.0, "battle_duration 應為 30.0")
 
 func test_get_value_missing_key_returns_default() -> void:
 	var val: Variant = _loader.get_value("game_flow", "__no_such_key__", 99.0)
@@ -39,7 +39,7 @@ func test_get_value_missing_key_returns_default() -> void:
 func test_game_config_loads_battle_duration_from_json() -> void:
 	var cfg := GameConfig.new()
 	cfg.load()
-	assert_eq(cfg.battle_duration, 45.0, "battle_duration 應從 JSON 讀為 45.0")
+	assert_eq(cfg.battle_duration, 30.0, "battle_duration 應從 JSON 讀為 30.0")
 
 func test_game_config_skipped_stages_are_zero() -> void:
 	var cfg := GameConfig.new()

@@ -1,5 +1,5 @@
-## 职责：对局 HUD（S4）—— 顶部中央倒计时 + 倍率徽标 + 红框脉冲、
-##       屏幕中央取景框（RT + 贴花）、+/-秒飞字、快门白闪。
+## 职责：对局 HUD（S4）—— 屏幕中央取景框（camera_frame 贴图）+ 中央倒计时数字
+##       （数值越小字号越大）+ 倍率徽标 + 决胜红框脉冲、+/-秒飞字、快门白闪。
 ## 四角玩家面板由 PlayerHUD/PlayerPanel 负责（交互文档 §5 核心 HUD）。
 
 class_name HUD
@@ -14,23 +14,23 @@ const COLOR_SLOW     := Color(0.42, 0.86, 1.0)   # 慢放青蓝
 const COLOR_ADD      := Color(0.45, 0.95, 0.5)
 const COLOR_SUB      := Color(1.0, 0.35, 0.3)
 const DECISIVE_SECONDS := 3.0
+# 倒计时数字：数值越小，字号越大（越小越大）
+const TIMER_MIN_SIZE := 72
+const TIMER_MAX_SIZE := 260
 
-@onready var _timer_label: Label = get_node_or_null("CameraViewfinder/TimerRow/TimerPanel/TimerLabel")
-@onready var _timer_panel: PanelContainer = get_node_or_null("CameraViewfinder/TimerRow/TimerPanel")
-@onready var _pulse_panel: Panel = get_node_or_null("CameraViewfinder/TimerRow/TimerPanel/PulsePanel")
-@onready var _rate_badge: PanelContainer = get_node_or_null("CameraViewfinder/TimerRow/RateBadge")
-@onready var _rate_label: Label = get_node_or_null("CameraViewfinder/TimerRow/RateBadge/RateLabel")
+@onready var _timer_label: Label = get_node_or_null("CameraViewfinder/TimerLabel")
+@onready var _frame: TextureRect = get_node_or_null("CameraViewfinder/Frame")
+@onready var _rate_badge: PanelContainer = get_node_or_null("CameraViewfinder/RateBadge")
+@onready var _rate_label: Label = get_node_or_null("CameraViewfinder/RateBadge/RateLabel")
 @onready var _stage_label: Label = get_node_or_null("TopBar/StageLabel")
-@onready var _photo_rect: TextureRect = get_node_or_null("CameraViewfinder/MiniPhoto")
-@onready var _reticle: FocusReticle = get_node_or_null("CameraViewfinder/Reticle") as FocusReticle
 @onready var _float_layer: Control = get_node_or_null("FloatLayer")
 @onready var _viewfinder: Control = get_node_or_null("CameraViewfinder")
 @onready var _top_bar: Control = get_node_or_null("TopBar")
+@onready var _film_border: Control = get_node_or_null("FilmBorder")
 
 var _last_seconds: float = -1.0
 var _active_rate_type: int = -1
 var _pulse_tween: Tween = null
-var _reticle_tween: Tween = null
 
 func _ready() -> void:
 	EventBus.stage_changed.connect(_on_stage_changed)
@@ -38,33 +38,16 @@ func _ready() -> void:
 	EventBus.time_effect_applied.connect(_on_time_effect)
 	if _rate_badge:
 		_rate_badge.hide()
-	if _pulse_panel:
-		_pulse_panel.modulate.a = 0.0
-	_bind_photo_panel()
-
-# ---------------------------------------------------------------- 取景框
-func _bind_photo_panel() -> void:
-	if not _photo_rect:
-		return
-	var rig: Node = null
-	var rigs := get_tree().get_nodes_in_group("photo_camera_rig")
-	if not rigs.is_empty():
-		rig = rigs[0]
-		if rig.has_method("get_render_viewport"):
-			var viewport: Viewport = rig.get_render_viewport()
-			if viewport:
-				_photo_rect.texture = viewport.get_texture()
-			return
-	# 兜底：旧结构 PhotoViewport
-	var vp := get_parent().get_node_or_null("PhotoViewport") as SubViewport
-	if vp:
-		_photo_rect.texture = vp.get_texture()
 
 # ---------------------------------------------------------------- 倒计时
 func _on_timer_updated(seconds: float) -> void:
 	_last_seconds = seconds
 	if _timer_label:
-		_timer_label.text = "%d" % ceili(seconds)
+		var n := maxi(1, ceili(seconds))
+		_timer_label.text = "%d" % n
+		var fs := int(round(TIMER_MIN_SIZE + float(TIMER_MAX_SIZE - TIMER_MIN_SIZE) / float(n)))
+		_timer_label.add_theme_font_size_override("font_size", fs)
+		_timer_label.add_theme_constant_override("outline_size", int(round(fs * 0.09)))
 	_refresh_timer_look()
 
 func _refresh_timer_look() -> void:
@@ -81,8 +64,6 @@ func _refresh_timer_look() -> void:
 	elif decisive:
 		look = COLOR_DECISIVE
 	_timer_label.add_theme_color_override("font_color", look)
-	if _reticle:
-		_reticle.set_line_color(Color(look.r, look.g, look.b, 0.92))
 	# 红框脉冲（仅决胜时刻）
 	if decisive:
 		_start_pulse()
@@ -90,26 +71,17 @@ func _refresh_timer_look() -> void:
 		_stop_pulse()
 
 func _start_pulse() -> void:
-	if _pulse_panel and not (_pulse_tween and _pulse_tween.is_running()):
+	if _frame and not (_pulse_tween and _pulse_tween.is_running()):
 		_pulse_tween = create_tween().set_loops()
-		_pulse_tween.tween_property(_pulse_panel, "modulate:a", 1.0, 0.25)
-		_pulse_tween.tween_property(_pulse_panel, "modulate:a", 0.25, 0.25)
-	if _reticle and not (_reticle_tween and _reticle_tween.is_running()):
-		_reticle_tween = create_tween().set_loops()
-		_reticle_tween.tween_property(_reticle, "modulate:a", 1.0, 0.25)
-		_reticle_tween.tween_property(_reticle, "modulate:a", 0.45, 0.25)
+		_pulse_tween.tween_property(_frame, "modulate:a", 1.0, 0.25)
+		_pulse_tween.tween_property(_frame, "modulate:a", 0.4, 0.25)
 
 func _stop_pulse() -> void:
 	if _pulse_tween:
 		_pulse_tween.kill()
 		_pulse_tween = null
-	if _reticle_tween:
-		_reticle_tween.kill()
-		_reticle_tween = null
-	if _pulse_panel:
-		_pulse_panel.modulate.a = 0.0
-	if _reticle:
-		_reticle.modulate.a = 1.0
+	if _frame:
+		_frame.modulate.a = 1.0
 
 # ---------------------------------------------------------------- 时间道具
 func _on_time_effect(effect_type: int, value: float) -> void:
@@ -145,7 +117,7 @@ func _hide_rate_badge() -> void:
 		_rate_badge.hide()
 
 func _spawn_float_text(text: String, color: Color) -> void:
-	if not _float_layer or not _timer_panel:
+	if not _float_layer or not _timer_label:
 		return
 	var label := Label.new()
 	label.text = text
@@ -155,7 +127,7 @@ func _spawn_float_text(text: String, color: Color) -> void:
 	label.add_theme_constant_override("outline_size", 6)
 	_float_layer.add_child(label)
 	label.reset_size()
-	var timer_rect := _timer_panel.get_global_rect()
+	var timer_rect := _timer_label.get_global_rect()
 	label.global_position = Vector2(
 		timer_rect.get_center().x - label.size.x * 0.5,
 		timer_rect.position.y + timer_rect.size.y + 6.0)
@@ -166,13 +138,13 @@ func _spawn_float_text(text: String, color: Color) -> void:
 	tw.chain().tween_callback(label.queue_free)
 
 func _shake_timer() -> void:
-	if not _timer_panel:
+	if not _timer_label:
 		return
-	var base := _timer_panel.position
+	var base := _timer_label.position
 	var tw := create_tween()
 	for i in 4:
-		tw.tween_property(_timer_panel, "position:x", base.x + (6.0 if i % 2 == 0 else -6.0), 0.04)
-	tw.tween_property(_timer_panel, "position:x", base.x, 0.04)
+		tw.tween_property(_timer_label, "position:x", base.x + (6.0 if i % 2 == 0 else -6.0), 0.04)
+	tw.tween_property(_timer_label, "position:x", base.x, 0.04)
 
 # ---------------------------------------------------------------- 阶段
 func _on_stage_changed(stage: int) -> void:
@@ -200,9 +172,13 @@ func enter_scoring_mode() -> void:
 		_top_bar.hide()
 	if _viewfinder:
 		_viewfinder.hide()
+	if _film_border:
+		_film_border.hide()
 
 func exit_scoring_mode() -> void:
 	if _top_bar:
 		_top_bar.show()
 	if _viewfinder:
 		_viewfinder.show()
+	if _film_border:
+		_film_border.show()
