@@ -13,7 +13,7 @@ REM    2) fallback default below
 if not defined GODOT_BIN set "GODOT_BIN=D:\godot\Godot_v4.7.2-stable_win64\Godot_v4.7.2-stable_win64_console.exe"
 set "GODOT_EXE=%GODOT_BIN%"
 set "PRESET=Windows Desktop"
-set "OUTPUT_NAME=MyGame.exe"
+set "OUTPUT_BASENAME=MyGame"
 
 REM  Export templates (auto-installed if missing)
 set "TEMPLATE_VERSION=4.7.2.stable"
@@ -26,9 +26,15 @@ set "PROJECT_ROOT=%CD%"
 popd
 set "OUTPUT_DIR=%PROJECT_ROOT%\package"
 
+REM ---- Timestamped version name (locale-independent) ----
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set "TS=%%i"
+set "VERSION_NAME=%OUTPUT_BASENAME%_%TS%"
+set "BUILD_DIR=%OUTPUT_DIR%\%VERSION_NAME%"
+set "OUTPUT_PATH=%BUILD_DIR%\%VERSION_NAME%.exe"
+
 echo [package_tool] Project : %PROJECT_ROOT%
 echo [package_tool] Engine  : %GODOT_EXE%
-echo [package_tool] Output  : %OUTPUT_DIR%\%OUTPUT_NAME%
+echo [package_tool] Output  : %OUTPUT_PATH%
 
 if not exist "%GODOT_EXE%" (
   echo [ERROR] Godot engine not found: %GODOT_EXE%
@@ -50,10 +56,10 @@ if errorlevel 1 (
 )
 
 REM ---- Ensure output dir ----
-if not exist "%OUTPUT_DIR%" mkdir "%OUTPUT_DIR%"
+if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 
 echo [package_tool] Exporting "%PRESET%" ...
-"%GODOT_EXE%" --headless --path "%PROJECT_ROOT%" --export-release "%PRESET%" "%OUTPUT_DIR%\%OUTPUT_NAME%"
+"%GODOT_EXE%" --headless --path "%PROJECT_ROOT%" --export-release "%PRESET%" "%OUTPUT_PATH%"
 set "ERR=%ERRORLEVEL%"
 
 if not "%ERR%"=="0" (
@@ -65,5 +71,5 @@ if not "%ERR%"=="0" (
 )
 
 echo.
-echo [package_tool] Done -^> %OUTPUT_DIR%\%OUTPUT_NAME%
+echo [package_tool] Done -^> %OUTPUT_PATH%
 endlocal
