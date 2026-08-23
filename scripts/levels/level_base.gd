@@ -99,7 +99,11 @@ func get_player_count() -> int:
 
 ## 参与玩家的槽位索引（0-3）。默认按在场玩家数量取 0..count-1。
 func get_player_slots() -> Array[int]:
-	return range(get_player_count())
+	var slots: Array[int] = []
+	var n := get_player_count()
+	for i in n:
+		slots.append(i)
+	return slots
 
 ## 出生点列表，子类覆写提供
 func get_spawn_points() -> Array[Vector3]:
