@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/scoring_screen.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://scenes/ui/flow_overlay.tscn" id="5_flow"]
 [ext_resource type="Script" path="res://scripts/levels/room_source.gd" id="12_rsource"]
+[ext_resource type="Script" path="res://scripts/levels/camera_zone.gd" id="13_zone"]
 
 [node name="GlbStageLevel" type="Node3D"]
 script = ExtResource("1")
@@ -21,9 +22,18 @@ scene_path = ""
 
 [node name="Actors" type="Node3D" parent="."]
 
-[node name="SpawnPoints" type="Node3D" parent="."]
+[node name="CameraZones" type="Node3D" parent="."]
 
-[node name="ItemHotspots" type="Node3D" parent="."]
+[node name="Zone1" type="Node3D" parent="CameraZones"]
+script = ExtResource("13_zone")
+
+[node name="MainCamera" type="Camera3D" parent="CameraZones/Zone1"]
+position = Vector3(0, 14, 13)
+fov = 45.0
+
+[node name="SpawnPoints" type="Node3D" parent="CameraZones/Zone1"]
+
+[node name="ItemHotspots" type="Node3D" parent="CameraZones/Zone1"]
 
 [node name="MainCamera" type="Camera3D" parent="."]
 position = Vector3(0, 14, 13)
