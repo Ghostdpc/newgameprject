@@ -1,73 +1,46 @@
 ## 职责：四角玩家面板管理器
-## 生成 4 个 PlayerPanel 到四角，响应服装/道具信号刷新
-## P1 左上 / P2 右上 / P3 左下 / P4 右下
+## 四个 PlayerPanel 已预置在 battle_hud.tscn（P1 左上 / P2 右上 / P3 左下 / P4 右下），
+## 本脚本只负责：按玩家数量显示/隐藏槽位、响应服装/道具信号刷新数据。
+## 卡片位置与内部元素请在 battle_hud.tscn 中直接拖动调整。
 
 class_name PlayerHUD
 extends Control
-
-const PANEL_SCENE: PackedScene = preload("res://scenes/ui/player_panel.tscn")
 
 ## 玩家数量（2-4，由关卡/流程注入，默认 4）
 var player_count: int = 4
 ## 玩家槽位索引（0-3），默认按数量取 0..count-1（大厅加入空位场景下非连续）
 var player_slots: Array[int] = []
 
-var _panels: Array[PlayerPanel] = []
-## 槽位 -> 面板（空槽保持 null，索引与玩家位置一致）
+## 槽位 -> 面板（预置节点，索引与玩家位置一致）
 var _slot_panels: Array[PlayerPanel] = [null, null, null, null]
+
+@onready var _panel_p1: PlayerPanel = $PanelP1
+@onready var _panel_p2: PlayerPanel = $PanelP2
+@onready var _panel_p3: PlayerPanel = $PanelP3
+@onready var _panel_p4: PlayerPanel = $PanelP4
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_slot_panels = [_panel_p1, _panel_p2, _panel_p3, _panel_p4]
 	_connect_signals()
 
 func setup(count: int, slots: Array[int] = []) -> void:
 	player_count = clampi(count, 2, 4)
 	player_slots = slots if not slots.is_empty() else range(player_count)
-	_clear_panels()
-	_build_panels()
+	_apply_slots()
 
-func _clear_panels() -> void:
-	for p in _panels:
-		p.queue_free()
-	_panels.clear()
-	_slot_panels = [null, null, null, null]
-
-func _build_panels() -> void:
-	for slot in player_slots:
-		var panel: PlayerPanel = PANEL_SCENE.instantiate() as PlayerPanel
-		add_child(panel)
-		panel.setup(slot, PlayerConfig.get_color(slot))
-		_position_panel(panel, slot)
-		_panels.append(panel)
-		_slot_panels[slot] = panel
-
-## 根节点矩形精确等于卡片尺寸，四角留 margin
-func _position_panel(panel: Control, index: int) -> void:
-	var margin := 24.0
-	var w: float = panel.custom_minimum_size.x
-	var h: float = panel.custom_minimum_size.y
-	match index:
-		0:  # 左上
-			panel.anchor_left = 0.0; panel.anchor_top = 0.0
-			panel.anchor_right = 0.0; panel.anchor_bottom = 0.0
-			panel.offset_left = margin; panel.offset_top = margin
-			panel.offset_right = margin + w; panel.offset_bottom = margin + h
-		1:  # 右上
-			panel.anchor_left = 1.0; panel.anchor_top = 0.0
-			panel.anchor_right = 1.0; panel.anchor_bottom = 0.0
-			panel.offset_left = -margin - w; panel.offset_top = margin
-			panel.offset_right = -margin; panel.offset_bottom = margin + h
-		2:  # 左下
-			panel.anchor_left = 0.0; panel.anchor_top = 1.0
-			panel.anchor_right = 0.0; panel.anchor_bottom = 1.0
-			panel.offset_left = margin; panel.offset_top = -margin - h
-			panel.offset_right = margin + w; panel.offset_bottom = -margin
-		3:  # 右下
-			panel.anchor_left = 1.0; panel.anchor_top = 1.0
-			panel.anchor_right = 1.0; panel.anchor_bottom = 1.0
-			panel.offset_left = -margin - w; panel.offset_top = -margin - h
-			panel.offset_right = -margin; panel.offset_bottom = -margin
+## 只按槽位 show/hide，不再实例化/释放
+func _apply_slots() -> void:
+	for slot in 4:
+		var panel := _slot_panels[slot]
+		if panel == null:
+			continue
+		if slot in player_slots:
+			panel.setup(slot, PlayerConfig.get_color(slot))
+			panel.show()
+		else:
+			panel.hide()
 
 func _connect_signals() -> void:
 	EventBus.item_picked_up.connect(_on_item_picked_up)
@@ -103,15 +76,18 @@ func get_panel(player_index: int) -> PlayerPanel:
 	return _get_panel(player_index)
 
 func reset_scoreboards() -> void:
-	for p in _panels:
-		p.reset_scoring()
+	for p in _slot_panels:
+		if p != null:
+			p.reset_scoring()
 
 ## 进入结算：隐藏全部战斗道具槽
 func enter_scoring_style() -> void:
-	for p in _panels:
-		p.enter_scoring_style()
+	for p in _slot_panels:
+		if p != null:
+			p.enter_scoring_style()
 
 ## 退出结算：恢复道具槽
 func exit_scoring_style() -> void:
-	for p in _panels:
-		p.exit_scoring_style()
+	for p in _slot_panels:
+		if p != null:
+			p.exit_scoring_style()

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b8nnw9n3ap1m2"]
+[gd_scene format=3 uid="uid://b8nnxan3ap1m2"]
 
 [ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1"]
 [ext_resource type="PackedScene" path="res://assets/models/human/newnewhuman.fbx" id="2"]
