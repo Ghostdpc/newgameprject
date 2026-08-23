@@ -242,7 +242,9 @@ func _setup_cameras() -> void:
 		_photo_rig = rigs[0] as PhotoCameraRig
 
 ## 地面高亮拍照取景区域（半透明黄光）。自解析 main_camera / camera_viewfinder group。
+## 已禁用：返回，不再生成高亮。
 func _setup_capture_highlight() -> void:
+	return
 	if get_node_or_null("CaptureZoneHighlight"):
 		return
 	var hl := CaptureZoneHighlight.new()

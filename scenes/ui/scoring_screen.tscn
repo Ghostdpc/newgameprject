@@ -4,8 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://ckxdbp4bingfa" path="res://assets/textures/ui/film_frame.png" id="2_film"]
 [ext_resource type="Texture2D" uid="uid://bvhe162gw8v2r" path="res://assets/textures/ui/card/card_hex.png" id="3_hex"]
 [ext_resource type="Texture2D" uid="uid://droml2b4yiyqj" path="res://assets/textures/ui/card/icon_restart.png" id="4_restart"]
+[ext_resource type="Texture2D" uid="uid://dd2pql55ek6cf" path="res://assets/textures/ui/lobby/btn_cross.png" id="5_27h4e"]
 [ext_resource type="Texture2D" uid="uid://rrpeya2i2ltm" path="res://assets/textures/ui/card/icon_exit.png" id="5_exit"]
-[ext_resource type="FontFile" uid="uid://oj7ndrgx0uv2" path="res://assets/fonts/Kaph-Regular.otf" id="6_kaph"]
+[ext_resource type="Texture2D" uid="uid://cjmhuvf8ly03w" path="res://assets/textures/ui/lobby/btn_circle.png" id="7_27h4e"]
 
 [node name="ScoringScreen" type="CanvasLayer" unique_id=1192127958]
 layer = 15
@@ -107,19 +108,16 @@ texture = ExtResource("4_restart")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Key" type="Label" parent="Root/BtnRow/BtnRestart" unique_id=580665723]
+[node name="Icon2" type="TextureRect" parent="Root/BtnRow/BtnRestart" unique_id=1018293370]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 104.0
-offset_right = 80.0
-offset_bottom = 140.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
-theme_override_constants/outline_size = 10
-theme_override_fonts/font = ExtResource("6_kaph")
-theme_override_font_sizes/font_size = 34
-text = "A"
-horizontal_alignment = 1
+offset_left = 29.0
+offset_top = 93.0
+offset_right = 89.0
+offset_bottom = 153.0
+mouse_filter = 2
+texture = ExtResource("5_27h4e")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="BtnLobby" type="Control" parent="Root/BtnRow" unique_id=1515751471]
 custom_minimum_size = Vector2(120, 140)
@@ -146,16 +144,13 @@ texture = ExtResource("5_exit")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Key" type="Label" parent="Root/BtnRow/BtnLobby" unique_id=126887476]
+[node name="Icon2" type="TextureRect" parent="Root/BtnRow/BtnLobby" unique_id=673925478]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 104.0
-offset_right = 80.0
-offset_bottom = 140.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
-theme_override_constants/outline_size = 10
-theme_override_fonts/font = ExtResource("6_kaph")
-theme_override_font_sizes/font_size = 34
-text = "X"
-horizontal_alignment = 1
+offset_left = 29.0
+offset_top = 93.0
+offset_right = 89.0
+offset_bottom = 153.0
+mouse_filter = 2
+texture = ExtResource("7_27h4e")
+expand_mode = 1
+stretch_mode = 5

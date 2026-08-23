@@ -10,9 +10,11 @@
 [ext_resource type="FontFile" uid="uid://oj7ndrgx0uv2" path="res://assets/fonts/Kaph-Regular.otf" id="8_kaph"]
 
 [node name="PlayerPanel" type="Control" unique_id=724305908]
-custom_minimum_size = Vector2(330, 410)
+custom_minimum_size = Vector2(330, 380)
 layout_mode = 3
 anchors_preset = 0
+offset_right = 330.0
+offset_bottom = 380.0
 mouse_filter = 2
 script = ExtResource("1_panel")
 
@@ -62,10 +64,10 @@ stretch_mode = 5
 
 [node name="Hex" type="TextureRect" parent="." unique_id=295460549]
 layout_mode = 0
-offset_left = 26.0
-offset_top = 305.0
-offset_right = 96.0
-offset_bottom = 385.0
+offset_left = 30.0
+offset_top = 278.0
+offset_right = 100.0
+offset_bottom = 358.0
 mouse_filter = 2
 texture = ExtResource("5_hex")
 expand_mode = 1
@@ -74,21 +76,20 @@ stretch_mode = 5
 [node name="ItemIcon" type="TextureRect" parent="." unique_id=691928754]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 0
-offset_left = 38.0
-offset_top = 322.0
-offset_right = 84.0
-offset_bottom = 368.0
+offset_left = 42.0
+offset_top = 295.0
+offset_right = 88.0
+offset_bottom = 341.0
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
 [node name="Crown" type="TextureRect" parent="." unique_id=1614455934]
-visible = false
 layout_mode = 0
-offset_left = 219.0
-offset_top = 3.0000076
-offset_right = 371.0
-offset_bottom = 123.00001
+offset_left = 205.0
+offset_top = -3.000008
+offset_right = 357.0
+offset_bottom = 116.99999
 rotation = 0.6614798
 mouse_filter = 2
 texture = ExtResource("7_8ofw2")
