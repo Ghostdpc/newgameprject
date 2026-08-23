@@ -11,7 +11,7 @@ extends CanvasLayer
 
 const SCROLL_TEX: Texture2D = preload("res://assets/textures/ui/lobby/scroll_band.png")
 const SCROLL_SPEED := 42.0
-const MIN_DURATION := 2.0
+const MIN_DURATION := 3.0
 const HOLD_AFTER_FULL := 0.2
 
 @onready var _scroll_layer: Control = $Screen/ScrollLayer

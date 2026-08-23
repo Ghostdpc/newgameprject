@@ -6,6 +6,11 @@
 [ext_resource type="Texture2D" uid="uid://dts10n7id6f6r" path="res://assets/textures/ui/film_border.png" id="4_nj5vo"]
 [ext_resource type="Script" uid="uid://bhyisl7ogvv6e" path="res://scripts/ui/off_screen_indicator.gd" id="5_off"]
 [ext_resource type="Texture2D" uid="uid://co8bod8x3iuox" path="res://assets/textures/ui/camera_frame.png" id="6_frame"]
+[ext_resource type="Script" uid="uid://dod5bsccwtknt" path="res://scripts/ui/player_panel.gd" id="7_panel"]
+[ext_resource type="Texture2D" uid="uid://052l7f620px7" path="res://assets/textures/ui/card/card_bubble.png" id="8_bubble"]
+[ext_resource type="Texture2D" uid="uid://diigmyyqbekkv" path="res://assets/textures/ui/card/card_body.png" id="9_body"]
+[ext_resource type="Texture2D" uid="uid://bwaj3peg7vhbd" path="res://assets/textures/ui/card/card_eyes.png" id="10_eyes"]
+[ext_resource type="Texture2D" uid="uid://bvhe162gw8v2r" path="res://assets/textures/ui/card/card_hex.png" id="11_hex"]
 
 [sub_resource type="StyleBoxFlat" id="badge_style"]
 content_margin_left = 10.0
@@ -142,7 +147,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TextureRect2" type="TextureRect" parent="MainLayer/FilmBorder" unique_id=2124226087]
+[node name="BorderBottom" type="TextureRect" parent="MainLayer/FilmBorder" unique_id=2124226087]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -153,7 +158,7 @@ grow_horizontal = 2
 grow_vertical = 0
 texture = ExtResource("4_nj5vo")
 
-[node name="TextureRect" type="TextureRect" parent="MainLayer/FilmBorder" unique_id=1213366689]
+[node name="BorderTop" type="TextureRect" parent="MainLayer/FilmBorder" unique_id=1213366689]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -175,6 +180,429 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("2_phud")
+
+[node name="PanelP1" type="Control" parent="PlayerLayer/PlayerHUD" unique_id=246801357]
+visible = false
+custom_minimum_size = Vector2(330, 380)
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 354.0
+offset_bottom = 404.0
+mouse_filter = 2
+script = ExtResource("7_panel")
+
+[node name="Bubble" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=860952114]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 153.0
+offset_right = 258.0
+offset_bottom = 353.0
+mouse_filter = 2
+texture = ExtResource("8_bubble")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Body" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=763773928]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 82.0
+offset_right = 295.0
+offset_bottom = 312.0
+mouse_filter = 2
+texture = ExtResource("9_body")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Eyes" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=277684023]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 174.0
+offset_right = 197.0
+offset_bottom = 209.0
+mouse_filter = 2
+texture = ExtResource("10_eyes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=1940125220]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 107.00001
+offset_right = 94.0
+offset_bottom = 175.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Hex" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=295460549]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 278.0
+offset_right = 100.0
+offset_bottom = 358.0
+mouse_filter = 2
+texture = ExtResource("11_hex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemIcon" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=691928754]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 42.0
+offset_top = 295.0
+offset_right = 88.0
+offset_bottom = 341.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Crown" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=1614455934]
+layout_mode = 0
+offset_left = 205.0
+offset_top = -3.000008
+offset_right = 357.0
+offset_bottom = 116.99999
+rotation = 0.6614798
+mouse_filter = 2
+expand_mode = 2
+
+[node name="TotalLabel" type="Label" parent="PlayerLayer/PlayerHUD/PanelP1" unique_id=114355344]
+visible = false
+layout_mode = 0
+offset_left = 96.0
+offset_top = 323.0
+offset_right = 266.0
+offset_bottom = 407.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_t6qmb")
+theme_override_font_sizes/font_size = 68
+text = "0"
+horizontal_alignment = 1
+
+[node name="PanelP2" type="Control" parent="PlayerLayer/PlayerHUD" unique_id=246801358]
+visible = false
+custom_minimum_size = Vector2(330, 380)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -354.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 404.0
+grow_horizontal = 0
+mouse_filter = 2
+script = ExtResource("7_panel")
+
+[node name="Bubble" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=860952115]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 153.0
+offset_right = 258.0
+offset_bottom = 353.0
+mouse_filter = 2
+texture = ExtResource("8_bubble")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+
+[node name="Body" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=763773929]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 82.0
+offset_right = 295.0
+offset_bottom = 312.0
+mouse_filter = 2
+texture = ExtResource("9_body")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Eyes" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=277684024]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 174.0
+offset_right = 197.0
+offset_bottom = 209.0
+mouse_filter = 2
+texture = ExtResource("10_eyes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=1940125221]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 107.00001
+offset_right = 94.0
+offset_bottom = 175.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Hex" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=295460550]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 278.0
+offset_right = 100.0
+offset_bottom = 358.0
+mouse_filter = 2
+texture = ExtResource("11_hex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemIcon" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=691928755]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 42.0
+offset_top = 295.0
+offset_right = 88.0
+offset_bottom = 341.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Crown" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=1614455935]
+layout_mode = 0
+offset_left = 205.0
+offset_top = -3.000008
+offset_right = 357.0
+offset_bottom = 116.99999
+rotation = 0.6614798
+mouse_filter = 2
+expand_mode = 2
+
+[node name="TotalLabel" type="Label" parent="PlayerLayer/PlayerHUD/PanelP2" unique_id=114355345]
+visible = false
+layout_mode = 0
+offset_left = 96.0
+offset_top = 323.0
+offset_right = 266.0
+offset_bottom = 407.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_t6qmb")
+theme_override_font_sizes/font_size = 68
+text = "0"
+horizontal_alignment = 1
+
+[node name="PanelP3" type="Control" parent="PlayerLayer/PlayerHUD" unique_id=246801359]
+visible = false
+custom_minimum_size = Vector2(330, 380)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -404.0
+offset_right = 354.0
+offset_bottom = -24.0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("7_panel")
+
+[node name="Bubble" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=860952116]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 153.0
+offset_right = 258.0
+offset_bottom = 353.0
+mouse_filter = 2
+texture = ExtResource("8_bubble")
+expand_mode = 1
+stretch_mode = 5
+flip_v = true
+
+[node name="Body" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=763773930]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 82.0
+offset_right = 295.0
+offset_bottom = 312.0
+mouse_filter = 2
+texture = ExtResource("9_body")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Eyes" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=277684025]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 174.0
+offset_right = 197.0
+offset_bottom = 209.0
+mouse_filter = 2
+texture = ExtResource("10_eyes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=1940125222]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 107.00001
+offset_right = 94.0
+offset_bottom = 175.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Hex" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=295460551]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 278.0
+offset_right = 100.0
+offset_bottom = 358.0
+mouse_filter = 2
+texture = ExtResource("11_hex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemIcon" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=691928756]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 42.0
+offset_top = 295.0
+offset_right = 88.0
+offset_bottom = 341.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Crown" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=1614455936]
+layout_mode = 0
+offset_left = 205.0
+offset_top = -3.000008
+offset_right = 357.0
+offset_bottom = 116.99999
+rotation = 0.6614798
+mouse_filter = 2
+expand_mode = 2
+
+[node name="TotalLabel" type="Label" parent="PlayerLayer/PlayerHUD/PanelP3" unique_id=114355346]
+visible = false
+layout_mode = 0
+offset_left = 96.0
+offset_top = 323.0
+offset_right = 266.0
+offset_bottom = 407.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_t6qmb")
+theme_override_font_sizes/font_size = 68
+text = "0"
+horizontal_alignment = 1
+
+[node name="PanelP4" type="Control" parent="PlayerLayer/PlayerHUD" unique_id=246801360]
+visible = false
+custom_minimum_size = Vector2(330, 380)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -354.0
+offset_top = -404.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("7_panel")
+
+[node name="Bubble" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=860952117]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 153.0
+offset_right = 258.0
+offset_bottom = 353.0
+mouse_filter = 2
+texture = ExtResource("8_bubble")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true
+flip_v = true
+
+[node name="Body" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=763773931]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 82.0
+offset_right = 295.0
+offset_bottom = 312.0
+mouse_filter = 2
+texture = ExtResource("9_body")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Eyes" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=277684026]
+layout_mode = 0
+offset_left = 110.0
+offset_top = 174.0
+offset_right = 197.0
+offset_bottom = 209.0
+mouse_filter = 2
+texture = ExtResource("10_eyes")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=1940125223]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 107.00001
+offset_right = 94.0
+offset_bottom = 175.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Hex" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=295460552]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 278.0
+offset_right = 100.0
+offset_bottom = 358.0
+mouse_filter = 2
+texture = ExtResource("11_hex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemIcon" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=691928757]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 42.0
+offset_top = 295.0
+offset_right = 88.0
+offset_bottom = 341.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Crown" type="TextureRect" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=1614455937]
+layout_mode = 0
+offset_left = 205.0
+offset_top = -3.000008
+offset_right = 357.0
+offset_bottom = 116.99999
+rotation = 0.6614798
+mouse_filter = 2
+expand_mode = 2
+
+[node name="TotalLabel" type="Label" parent="PlayerLayer/PlayerHUD/PanelP4" unique_id=114355347]
+visible = false
+layout_mode = 0
+offset_left = 96.0
+offset_top = 323.0
+offset_right = 266.0
+offset_bottom = 407.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.03, 1)
+theme_override_constants/outline_size = 14
+theme_override_fonts/font = ExtResource("3_t6qmb")
+theme_override_font_sizes/font_size = 68
+text = "0"
+horizontal_alignment = 1
 
 [node name="FlashLayer" type="CanvasLayer" parent="." unique_id=921771403]
 layer = 200

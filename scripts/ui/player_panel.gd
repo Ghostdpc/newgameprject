@@ -1,8 +1,8 @@
 ## 职责：单个玩家卡片（四角之一）
 ## 组成：泡泡外框(染色) + 小人身体(染色) + 眼睛 + P#字标(染色) + 六边形道具槽
 ## 附加：皇冠（冠军）、总分大字 + +xx 弹字（结算刷分）。
-## 零件布局在 player_panel.tscn 中可视化摆放（策划可拖动），
-## 本脚本只负责：染色、左右/上下翻转、镜像定位、动画、数据逻辑。
+## 零件布局在 battle_hud.tscn 中独立预置（四个卡片各角可分别拖动细调），
+## 本脚本只负责：染色、换贴图、动画、数据逻辑；不翻转、不对齐、不覆盖坐标。
 
 class_name PlayerPanel
 extends Control
@@ -11,9 +11,6 @@ const TINT_SHADER := preload("res://resources/ui/card_tint.gdshader")
 const FONT_SCORE := preload("res://assets/fonts/Kaph-Regular.otf")
 const FONT_SCORE_ITALIC := preload("res://assets/fonts/Kaph-Italic.otf")
 const COLOR_OUTLINE := Color(0.02, 0.02, 0.03, 1)
-
-# ---- 卡片尺寸基准（用于镜像定位计算）----
-const LABEL_H := 68.0
 
 var player_index: int = 0
 var player_color: Color = Color.WHITE
@@ -37,34 +34,13 @@ func setup(index: int, color: Color) -> void:
 	_setup_label_texture()
 	_crown.texture = ItemIcons.load_icon("crown")
 	_crown.hide()
-	_apply_orientation()
 
 func _is_right() -> bool:
 	return player_index % 2 == 1
 
-func _is_bottom() -> bool:
-	return player_index >= 2
-
-## P# 字标：每玩家一张图（card_p1~p4），按图宽高比重算宽度
+## P# 字标：每玩家一张图（card_p1~p4），尺寸/位置由编辑器手摆，这里只换贴图
 func _setup_label_texture() -> void:
 	_label.texture = ItemIcons.load_icon("card_p%d" % (player_index + 1))
-	var lw := LABEL_H * _label.texture.get_size().x / _label.texture.get_size().y
-	_label.size = Vector2(lw, LABEL_H)
-
-## 泡泡翻转 + 字标/六边形/总分镜像（右/下角卡尾巴朝屏幕中心）
-func _apply_orientation() -> void:
-	_bubble.flip_h = _is_right()
-	_bubble.flip_v = _is_bottom()
-
-	if _is_right():
-		_label.position.x = size.x - _label.size.x + 4.0
-		_hex.position.x = size.x - _hex.size.x + 12.0
-		# 总分大字镜像到右侧、右对齐
-		_total_label.position.x = size.x - _total_label.size.x - _total_label.position.x
-		_total_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_item_icon.position = _hex.position + Vector2(
-		_hex.size.x * 0.5 - _item_icon.size.x * 0.5,
-		_hex.size.y * 0.5 - _item_icon.size.y * 0.5)
 
 func _apply_tint(rect: TextureRect) -> void:
 	var m := ShaderMaterial.new()
