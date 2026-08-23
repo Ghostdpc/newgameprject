@@ -586,9 +586,7 @@ func _setup_model() -> void:
 		spring_rig.skeleton = skel2
 		spring_rig.animation_player = _animation_player
 		spring_rig.is_human = _is_human_model
-		# human：剔除 head，避免 spring 軟糯導致頭骨持續偏移（帽子/掛飾隨之漂移）。四肢仍軟糯。
-		if _is_human_model:
-			spring_rig.bones = spring_rig.bones.filter(func(b): return String(b) != "head")
+		# 保留 head 進 spring（磕頭 kowtow 效果需 head spring）；帽子隨磕頭左右晃屬合理演出
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)

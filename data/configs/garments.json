@@ -49,6 +49,11 @@
           "kind": "player_speed",
           "target": "self",
           "params": { "multiplier": 0.6 }
+        },
+        {
+          "kind": "garment_spring_wobble",
+          "target": "self",
+          "params": { "preset": "kowtow" }
         }
       ]
     },
