@@ -61,14 +61,14 @@
 [ext_resource type="Texture2D" uid="uid://dythub0ss1xic" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_FORT_Doors_Cartoon_AG_FE.png" id="58_rahpg"]
 [ext_resource type="Texture2D" uid="uid://daoh50sl5yjxh" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Neo_Carpet_01_S_183.png" id="59_0b7jr"]
 [ext_resource type="Texture2D" uid="uid://cfks4vxfo77cx" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Poster_01_D.png" id="59_cb7k8"]
-[ext_resource type="Material" path="res://resources/materials/room_wood_floor.tres" id="59_kfilt"]
+[ext_resource type="Material" uid="uid://dy8u68an5pirh" path="res://resources/materials/room_wood_floor.tres" id="59_kfilt"]
 [ext_resource type="Texture2D" uid="uid://bcgho0xncgcmt" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Neo_Carpet_01_N.png" id="60_gc6jf"]
 [ext_resource type="Texture2D" uid="uid://b5vkjy1dvj5c1" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_StW_Quest_Prop_Red_Carpet_Pickup_D.png" id="60_i8ohb"]
 [ext_resource type="Texture2D" uid="uid://cqr80hjr6npaa" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Shelters_Telescope01_D.png" id="61_rlffm"]
 [ext_resource type="Texture2D" uid="uid://diq2bsk73m60q" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_AG_FE_DoorTrim_D.png" id="62_kkwdf"]
 [ext_resource type="Texture2D" uid="uid://hqkxao4d2f6h" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_T_Trophy_Celebration_D.png" id="63_3x3rt"]
 [ext_resource type="Texture2D" uid="uid://dmtsxxq00ovdk" path="res://assets/models/furnitures/Fortnite_Skye_Room_meshes_only_WildWest_BedRoll_1_D.png" id="64_pjk34"]
-[ext_resource type="Environment" path="res://resources/environments/room_stage_lighting.tres" id="99_post_process"]
+[ext_resource type="Environment" uid="uid://c54impd54ampk" path="res://resources/environments/room_stage_lighting.tres" id="99_post_process"]
 [ext_resource type="Material" uid="uid://cys3207nm65pj" path="res://resources/materials/room_cartoon_outline_post_process.tres" id="100_outline_post"]
 [ext_resource type="Texture2D" uid="uid://f44nom60ldst" path="res://assets/textures/fx/stage_disco_gobo.svg" id="102_disco_gobo"]
 
@@ -1784,245 +1784,6 @@ shader_parameter/wood_seam_color = Color(0.075, 0.018, 0.006, 1)
 shader_parameter/wood_plank_width = 0.38
 shader_parameter/wood_plank_length = 1.28
 shader_parameter/wood_seam_width = 0.018
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hte53"]
-resource_name = "MI_PrincessCastle_GlowingStar"
-cull_mode = 2
-albedo_texture = ExtResource("31_1kh0e")
-metallic = 1.0
-metallic_texture = ExtResource("14_u2s5n")
-metallic_texture_channel = 2
-roughness_texture = ExtResource("14_u2s5n")
-roughness_texture_channel = 1
-emission_enabled = true
-emission = Color(0.92339134, 0.92339134, 0.92339134, 1)
-normal_enabled = true
-normal_texture = ExtResource("15_ked4c")
-metadata/_gltf_primary_texture_coord = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_r044q"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_nugdu"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_007"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_r044q")
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_58vel"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_pq84j"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_006"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_58vel")
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_x2cgg"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_2x0k1"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_005"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_x2cgg")
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_6cl0x"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_4ai2w"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_003"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_6cl0x")
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_u66a4"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_x0jlu"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_002"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_u66a4")
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_xash1"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_j5c7n"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_001"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_xash1")
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_ock6d"]
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"format": 34896613377,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 20,
-"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_l2qb8"]
-resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md"
-_surfaces = [{
-"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
-"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
-"format": 34896613399,
-"index_count": 108,
-"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
-"material": SubResource("StandardMaterial3D_hte53"),
-"name": "MI_PrincessCastle_GlowingStar",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 60,
-"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_ock6d")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_185uh"]
 render_priority = 0
@@ -4039,47 +3800,6 @@ shader_parameter/wood_plank_width = 0.38
 shader_parameter/wood_plank_length = 1.28
 shader_parameter/wood_seam_width = 0.018
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3fd3o"]
-resource_name = "MI_Fort_Floors_BayFloorsAndTrim"
-cull_mode = 2
-albedo_texture = ExtResource("58_rahpg")
-metallic = 1.0
-metadata/_gltf_primary_texture_coord = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_bl444"]
-_surfaces = [{
-"aabb": AABB(-257, -18.442139, -6.7712097, 514, 36.884552, 28.818176),
-"format": 34896613377,
-"index_count": 162,
-"index_data": PackedByteArray("AAABAA8AAQAAAAUABQAEAAEAEAABAAQAEAAPAAEABAAFABEAEAAEAAMAEQADAAQABgAFAAAAEQAFAAYADwASAAAADAAAABIAAAAMAAYABwASAA8AEgAOAAwADgASAAcAEwAGAAwAEwAMAA4AEwAJAAYABgAJABEADwACAAcAEAACAA8ABwAUAA4AEwAOABQAFQAHAAIAFAAHABUAAgAIABUAEAAIAAIAFQANABQAEwAUAA0ACwAVAAgADQAVAAsAEAAWAAgACAAWAAsAEwANABcACwAXAA0AEwAXAAoACgAXAAsAEAAYABYACwAWABgAEAAZABgAEAADABkAGAAaAAsACwAaAAoAGgAYABkAGQADABEAGQAbABoAEQAbABkAHAAKABoAGgAbABwAHAAbABEAEwAKABwAEQAJABwAEwAcAAkA"),
-"lods": [58.95072, PackedByteArray("AAABAAIAAwACAAEAAwABAAQABQAEAAEABAAFAAMAAQAAAAUABgAFAAAAAwAFAAYAAgAHAAAAAwAIAAIAAgAIAAcABgAJAAMAAwAJAAoACgAJAAYACwAIAAMAAwAKAAsACwAHAAgAAAAMAAYACgAGAAwADAAAAAcACgANAAsADQAHAAsACgAMAA4ACgAOAA0ABwAOAAwABwANAA4A")],
-"name": "MI_Fort_Floors_BayFloorsAndTrim",
-"primitive": 3,
-"uv_scale": Vector4(0, 0, 0, 0),
-"vertex_count": 29,
-"vertex_data": PackedByteArray("/38AAAAAAAB/AAAAAAAAAH8AAAAGyQAAfwA6//Q2AAB/AEjTAAAAAP9/SNMAAAAAf/9I0wAAAAD/fwAABskAAH8AaSD//wAAf/86//Q2AAB//zr/BskAAP9/3+f//wAAf/8AAAAAAAB//2kg//8AAH//swAxggAAfwCyADGCAAAAABSKmIgAAP9/Ov/0NgAA/3+yADGCAAD//xSKmIgAAH//AAAGyQAA/39pIP//AAB/AN/n//8AAH//3+f//wAAfwA6/wbJAAB/AP7/MYIAAP9/Ov8GyQAA/3///zGCAAB/////MYIAAA==")
-}]
-blend_shape_mode = 0
-
-[sub_resource type="ArrayMesh" id="ArrayMesh_0h52j"]
-resource_name = "Fortnite_Skye_Room_meshes_only_SM_Fort_Trim_Generic_BayTrim02_md_005"
-_surfaces = [{
-"aabb": AABB(-257, -18.442139, -6.7712097, 514, 36.884552, 28.818176),
-"attribute_data": PackedByteArray("j/9Mp////7+P//O9////v7//Vb7///+/v/9Mp////7+P//O9////v///Vb7///+/z/9Vvv///79P/vy9////v1D5Vaf///+/ofdVvv///7+h91W+////v6H3Vb7///+/0Pnzvf///7/Q+VWn////v7H3Vb7///+/0Pnzvf///7+x91W+////vwD5scb///+/APk+jv///7/f/j6O////v9/+scb/f///3/7///9///8A+f///3///wD5scb/f///v/9Mp/9///9P/vy9/3//////Vb7/f///UPlVp/9///+x91W+/3///5D6Lpz/f///MPu8mf9///8f/ryZ/3///5D6ZZr/f///H/5Qm/9///+v/dec/3///5D6ZZr/f///H/4unP9///8f/ryZ/3///6/915z/f///MPu8mf9//////1W+////v///TKf///+/X/5Mp////79Q+fy9////v6H3Vb7///+/kfdep////78h91W+////vyH3Xqf///+/IfdVvv///7+R916n////v4H3Xqf///+///9Mp/9///+//1W+/3///1/+TKf/f///UPn8vf9///+R916n/3///y/8Zpv/f///kPpQm/9///8f/i6c/3///+D615z/f///L/xmm/9///8f/lCb/3///+D615z/f///kPpQm/9///+Q+i6c/3///w=="),
-"format": 34896613431,
-"index_count": 162,
-"index_data": PackedByteArray("AAABACgAKAApAAAABAAAACkAKQAFAAQAAwApACgAKAACAAMAKgADAAYABgAHACoACAAqAAcABwArAAgACAArACwALAAtAAgALQAsAC4ALgAvAC0ALQAvADAAMAAKAC0AMQAvAC4AMAAvADEALgAJADEAMQALADAAMgAOAAwADAANADIAMgANAA8ADwAQADIAEQASABMAEwAUABEAFAAVABYAFgAXABQAGgAzABgAGAA0ABoANAAYADUANQAZADQAGQA1ABsAGwA2ABkAHAA2ABsAGwA3ABwAOAAeAB8AOAAgAB4AOAAfACEAOAA5ACAAOAAhADoAOAAdADkAOAA6ACIAOAA7AB0AOAAiADsAPAA9ACUAPAAkAD0APAAlACcAPAAmACQAPAAnACMAPAA+ACYAPAAjAD8APABAAD4APAA/AEAA"),
-"lods": [58.95072, PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAQABgAHAAMACAADAAcACAAHAAkACQAKAAgACQALAAoADAANAA4ADgANAA8ADwAQAA4AEQASABMAEwAUABEAFAAVABYAFgAXABQAGAAZABoAGQAYABsAHAAZABsAHQAeAB8AHQAgAB4AHQAfACEAHQAhACIAIwAkACUAIwAmACQAIwAlACcA")],
-"material": SubResource("StandardMaterial3D_3fd3o"),
-"name": "MI_Fort_Floors_BayFloorsAndTrim",
-"primitive": 3,
-"uv_scale": Vector4(2.0019531, 1.8017578, 5, 2),
-"vertex_count": 65,
-"vertex_data": PackedByteArray("/38AAAAAkul/AAAAAACGGn8AAAAGyVDO/38AAAbJUM5//wAAAABL7n//swAxgkvcfwAAAAbJpcF/AGkg//9NuP9/3+f//37EfwA6//Q2kyB//zr/BsloMH//Ov/0NmvffwBI0wAANAj/f0jTAACe9H8AOv/0NpsXf/9I0wAAlfJ//zr/9DYU2P9/SNMAAOL0fwBI0wAA4vR/AAAAAACS6f9/AAAAAJLpf/8AAAAAkul//0jTAADi9P9/SNMAAOL0/38AAAbJrjF//2kg///lM3//swAxgpkq/3/f5///xD5//zr/BslPPX//Ov8GybzTf/9I0wAA39V//wAAAAC01n//Ov/0NpPUf/+zADGCoNZ//2kg///k1H8AOv/0NuEofwAAAAbJFCx/AAAAAADAKn8AaSD//0osfwBI0wAA2Sh/ALIAMYJl1f9/sgAxgmXV/39pIP//RMJ/AN/n///bzX8AOv8GydzW/386/wbJXtB/AP7/MYJS1f9///8xglLVf////zGCrCr/fzr/9DaTIP9/Ov/0NnXe/3+yADGCmSp//wAABsmlKv9/aSD///09f//f5///7Ef/fzr/BsnzMf//FIqYiCDVf////zGC29N//wAABskP1n//3+f//6HTAAAUipiIqCp/ALIAMYLvK38A3+f//wcrfwD+/zGCKCl/ADr/BsnAKfk0BcvfKyG+IVohWiFaIVoiPZPWkC7+3JRLP2CoZnFs55XdltzPIjDWptam3M8iMEK5Zyv6xtA7hcdJIrLS00lI2cM/tMVKOrTFSjr5NAXL+TQFy/k0Bcu0xUo6tMVKOiFaIVqYb75qSlVKVYKXhZaotvKf9qtLVu2rzVRAqphUO6yDVUypu1RBqYtVRFZxq0RU06kkVLGqMFWaqTBViKtKVUpVSlVKVZNrgWvBkcKXNKC6qRSmK6eoqqiqqKqoqqiqqKrczyIw5NDXMUpVSlVGYI1XdWuHa6ecaZViqCqmtKpsVUqsC1Yxqe1U56pxVn1VpKrvUw6q1laAquxWXasHVzCr")
-}]
-blend_shape_mode = 0
-shadow_mesh = SubResource("ArrayMesh_bl444")
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_13a3n"]
 render_priority = 0
 shader = ExtResource("4_piasg")
@@ -4691,6 +4411,286 @@ shader_parameter/wood_seam_color = Color(0.075, 0.018, 0.006, 1)
 shader_parameter/wood_plank_width = 0.38
 shader_parameter/wood_plank_length = 1.28
 shader_parameter/wood_seam_width = 0.018
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hte53"]
+resource_name = "MI_PrincessCastle_GlowingStar"
+cull_mode = 2
+albedo_texture = ExtResource("31_1kh0e")
+metallic = 1.0
+metallic_texture = ExtResource("14_u2s5n")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("14_u2s5n")
+roughness_texture_channel = 1
+emission_enabled = true
+emission = Color(0.92339134, 0.92339134, 0.92339134, 1)
+normal_enabled = true
+normal_texture = ExtResource("15_ked4c")
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_r044q"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_nugdu"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_007"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_r044q")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_58vel"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_pq84j"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_006"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_58vel")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_x2cgg"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2x0k1"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_005"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_x2cgg")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_6cl0x"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_4ai2w"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_003"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_6cl0x")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_u66a4"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_x0jlu"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_002"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_u66a4")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_xash1"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_j5c7n"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md_001"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_xash1")
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ock6d"]
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"format": 34896613377,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAgADAAAAAwACAAEAAQAAAAQABQAAAAMABAAAAAUAAQAEAAYABwAGAAQAAQAGAAgABgAHAAgACQAHAAQACQAIAAcABQAKAAQABAAKAAkAAQAIAAsAAwABAAsAAwAMAAUABQAMAAoAAwANAAwADQAOAAwADgANAAMACgAMAA4ADgADAAsACgAOAA8AEAAPAA4AEAAOAAsADwAQAAsADwARAAoACwARAA8ACgARAAkAEQASAAkAEQALABIACQASAAgAEwASAAsAEwAIABIACAATAAsA"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 20,
+"vertex_data": PackedByteArray("HSO4st7yAAABlQAANtIAAKMWAAD//wAA2D8AAJCYAAAQlmnDNsUAAJhDStYBmgAAGukAAO36AAA364assfMAAPi6AACSnwAAGb+9yCeeAADuX7XmImIAAK+pAACCWwAANhT//+xaAAAAAAAAGFMAAGtZAABWWAAATnAD//IPAAD3bAAAAAAAACCmkNsQYQAASPxv1mJlAAD//wAAiF8AAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_l2qb8"]
+resource_name = "Fortnite_Skye_Room_meshes_only_S_PrincessCastle_GlowingStar_md"
+_surfaces = [{
+"aabb": AABB(-47.150467, -0.028814554, -56.298637, 91.15683, 22.794832, 101.73663),
+"attribute_data": PackedByteArray("3+r/g1+W72Ef9+9hn5H/g9+5Ty5fh+0LX7jtC7+ATy5fs//7v7c/2R/o//t/8D/Zn60/03+uH7b/7j/T3/Mftv+/r1cfwq81v/WvV9/3rzUPUD/Vf1B/sP+Qf7A/mD/VtQ0fmA9IH5j7EZ+2r0Wfth9UH/ofVD/dv5Ef+h+OP92f5Z+vn5ufr9/lf4zfjn+M/8DSBH/w0gS/wp8rX/qfKw92L2pvcD+lb0aPeT933zn/tX9HhykvXHADX5X/TLckH3/dBV8JzQuLEr/aaQY/xjcgv9BPMz/UVzHfvmcjP+8XB7/69zQ/6E83X/5PTV/i"),
+"format": 34896613399,
+"index_count": 108,
+"index_data": PackedByteArray("AAABAAIAAQAAAAMABAAFAAYABAAHAAUACAAJAAoACwAKAAkADAANAA4ADwAOAA0AEAARABIAEwASABEAFAAVABYAFgAXABQAGAAZABoAGwAaABkAHAAdAB4AHwAeAB0AIAAhACIAIwAiACEAJAAlACYAJwAmACUAKAApACoAKwAoACoALAAoACsALQArACoAKgAuAC0ALwArAC0ALwAwACsALQAxAC8AMgAzADQAMgA0ADUANAA2ADUANwAyADUANwA4ADIAOQA3ADUAOQA6ADcAOwA5ADUA"),
+"material": SubResource("StandardMaterial3D_hte53"),
+"name": "MI_PrincessCastle_GlowingStar",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 60,
+"vertex_data": PackedByteArray("HSO4st7yEf4BlQAANtLv/KMWAAD//3f+EJZpwzbFg/zYPwAAkJiGpjYU///sWoelmENK1gGaE6gAAAAAGFNypO5fteYiYtr5a1kAAFZY7PpOcAP/8g+8+/dsAAAAAK78Gb+9yCeedP74ugAAkp/O/Tfrhqyx84P8GukAAO362PsgppDbEGFB+6+pAACCWyP7SPxv1mJlCvv//wAAiF/r+q+pAACCW83VIKaQ2xBhxtVOcAP/8g/b1fdsAAAAAOfV//8AAIhfcf/4ugAAkp+i/0j8b9ZiZdv/Gb+9yCeeIv8364assfO7+xrpAADt+jX8EJZpwzbF4fwBlQAANtJb/ZhDStYBmnX7HSO4st7yFvvYPwAAkJhX+6MWAAD///P67l+15iJiaPs2FP//7FqY/GtZAABWWD38AAAAABhTV/0gppDbEGES1Ej8b9ZiZX/UGb+9yCeeMNTuX7XmImJ+005wA//yD5zTEJZpwzbFHtQ364assfMs1JhDStYBmrbTNhT//+xaWdIdI7iy3vIU1AGVAAA20kzWGukAAO36P9b4ugAAkp9N1q+pAACCW0jW//8AAIhfUtbYPwAAkJhF1qMWAAD//1vWa1kAAFZYNNYAAAAAGFM01vdsAAAAAEnWapNCiuOTm4tBk8OJEpQXjJuFwe36ioDqgX187gSR8eYj/oJEuv2PRGf9mUQG/aZEogSotDgEf7RmAyy0+QIAtML7R38u/Jp/hfzef438M4CmiFsAZHUqAeaIEgIWiUsDiwFR2oml6n3JAWDadaWffRT4Ghq69kgZ6fQlGK/zWRfk/oe2Rf1FScb/P0oa/MtIrHEwBE52gwHsdFICLoc6AMbUMyht1X8o4NREKKfUziez1OgnJNU5KMfUPyhO1fYnItT9JgbWPih9VsBUbVbIVH5WwFR4VsNUg1a9VHRWxVSOVrhUYVbOVGBWz1R5VsJU")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_ock6d")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3fd3o"]
+resource_name = "MI_Fort_Floors_BayFloorsAndTrim"
+cull_mode = 2
+albedo_texture = ExtResource("58_rahpg")
+metallic = 1.0
+metadata/_gltf_primary_texture_coord = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_bl444"]
+_surfaces = [{
+"aabb": AABB(-257, -18.442139, -6.7712097, 514, 36.884552, 28.818176),
+"format": 34896613377,
+"index_count": 162,
+"index_data": PackedByteArray("AAABAA8AAQAAAAUABQAEAAEAEAABAAQAEAAPAAEABAAFABEAEAAEAAMAEQADAAQABgAFAAAAEQAFAAYADwASAAAADAAAABIAAAAMAAYABwASAA8AEgAOAAwADgASAAcAEwAGAAwAEwAMAA4AEwAJAAYABgAJABEADwACAAcAEAACAA8ABwAUAA4AEwAOABQAFQAHAAIAFAAHABUAAgAIABUAEAAIAAIAFQANABQAEwAUAA0ACwAVAAgADQAVAAsAEAAWAAgACAAWAAsAEwANABcACwAXAA0AEwAXAAoACgAXAAsAEAAYABYACwAWABgAEAAZABgAEAADABkAGAAaAAsACwAaAAoAGgAYABkAGQADABEAGQAbABoAEQAbABkAHAAKABoAGgAbABwAHAAbABEAEwAKABwAEQAJABwAEwAcAAkA"),
+"lods": [58.95072, PackedByteArray("AAABAAIAAwACAAEAAwABAAQABQAEAAEABAAFAAMAAQAAAAUABgAFAAAAAwAFAAYAAgAHAAAAAwAIAAIAAgAIAAcABgAJAAMAAwAJAAoACgAJAAYACwAIAAMAAwAKAAsACwAHAAgAAAAMAAYACgAGAAwADAAAAAcACgANAAsADQAHAAsACgAMAA4ACgAOAA0ABwAOAAwABwANAA4A")],
+"name": "MI_Fort_Floors_BayFloorsAndTrim",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 29,
+"vertex_data": PackedByteArray("/38AAAAAAAB/AAAAAAAAAH8AAAAGyQAAfwA6//Q2AAB/AEjTAAAAAP9/SNMAAAAAf/9I0wAAAAD/fwAABskAAH8AaSD//wAAf/86//Q2AAB//zr/BskAAP9/3+f//wAAf/8AAAAAAAB//2kg//8AAH//swAxggAAfwCyADGCAAAAABSKmIgAAP9/Ov/0NgAA/3+yADGCAAD//xSKmIgAAH//AAAGyQAA/39pIP//AAB/AN/n//8AAH//3+f//wAAfwA6/wbJAAB/AP7/MYIAAP9/Ov8GyQAA/3///zGCAAB/////MYIAAA==")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_0h52j"]
+resource_name = "Fortnite_Skye_Room_meshes_only_SM_Fort_Trim_Generic_BayTrim02_md_005"
+_surfaces = [{
+"aabb": AABB(-257, -18.442139, -6.7712097, 514, 36.884552, 28.818176),
+"attribute_data": PackedByteArray("j/9Mp////7+P//O9////v7//Vb7///+/v/9Mp////7+P//O9////v///Vb7///+/z/9Vvv///79P/vy9////v1D5Vaf///+/ofdVvv///7+h91W+////v6H3Vb7///+/0Pnzvf///7/Q+VWn////v7H3Vb7///+/0Pnzvf///7+x91W+////vwD5scb///+/APk+jv///7/f/j6O////v9/+scb/f///3/7///9///8A+f///3///wD5scb/f///v/9Mp/9///9P/vy9/3//////Vb7/f///UPlVp/9///+x91W+/3///5D6Lpz/f///MPu8mf9///8f/ryZ/3///5D6ZZr/f///H/5Qm/9///+v/dec/3///5D6ZZr/f///H/4unP9///8f/ryZ/3///6/915z/f///MPu8mf9//////1W+////v///TKf///+/X/5Mp////79Q+fy9////v6H3Vb7///+/kfdep////78h91W+////vyH3Xqf///+/IfdVvv///7+R916n////v4H3Xqf///+///9Mp/9///+//1W+/3///1/+TKf/f///UPn8vf9///+R916n/3///y/8Zpv/f///kPpQm/9///8f/i6c/3///+D615z/f///L/xmm/9///8f/lCb/3///+D615z/f///kPpQm/9///+Q+i6c/3///w=="),
+"format": 34896613431,
+"index_count": 162,
+"index_data": PackedByteArray("AAABACgAKAApAAAABAAAACkAKQAFAAQAAwApACgAKAACAAMAKgADAAYABgAHACoACAAqAAcABwArAAgACAArACwALAAtAAgALQAsAC4ALgAvAC0ALQAvADAAMAAKAC0AMQAvAC4AMAAvADEALgAJADEAMQALADAAMgAOAAwADAANADIAMgANAA8ADwAQADIAEQASABMAEwAUABEAFAAVABYAFgAXABQAGgAzABgAGAA0ABoANAAYADUANQAZADQAGQA1ABsAGwA2ABkAHAA2ABsAGwA3ABwAOAAeAB8AOAAgAB4AOAAfACEAOAA5ACAAOAAhADoAOAAdADkAOAA6ACIAOAA7AB0AOAAiADsAPAA9ACUAPAAkAD0APAAlACcAPAAmACQAPAAnACMAPAA+ACYAPAAjAD8APABAAD4APAA/AEAA"),
+"lods": [58.95072, PackedByteArray("AAABAAIAAgADAAAABAAAAAMAAwAFAAQABgAHAAMACAADAAcACAAHAAkACQAKAAgACQALAAoADAANAA4ADgANAA8ADwAQAA4AEQASABMAEwAUABEAFAAVABYAFgAXABQAGAAZABoAGQAYABsAHAAZABsAHQAeAB8AHQAgAB4AHQAfACEAHQAhACIAIwAkACUAIwAmACQAIwAlACcA")],
+"material": SubResource("StandardMaterial3D_3fd3o"),
+"name": "MI_Fort_Floors_BayFloorsAndTrim",
+"primitive": 3,
+"uv_scale": Vector4(2.0019531, 1.8017578, 5, 2),
+"vertex_count": 65,
+"vertex_data": PackedByteArray("/38AAAAAkul/AAAAAACGGn8AAAAGyVDO/38AAAbJUM5//wAAAABL7n//swAxgkvcfwAAAAbJpcF/AGkg//9NuP9/3+f//37EfwA6//Q2kyB//zr/BsloMH//Ov/0NmvffwBI0wAANAj/f0jTAACe9H8AOv/0NpsXf/9I0wAAlfJ//zr/9DYU2P9/SNMAAOL0fwBI0wAA4vR/AAAAAACS6f9/AAAAAJLpf/8AAAAAkul//0jTAADi9P9/SNMAAOL0/38AAAbJrjF//2kg///lM3//swAxgpkq/3/f5///xD5//zr/BslPPX//Ov8GybzTf/9I0wAA39V//wAAAAC01n//Ov/0NpPUf/+zADGCoNZ//2kg///k1H8AOv/0NuEofwAAAAbJFCx/AAAAAADAKn8AaSD//0osfwBI0wAA2Sh/ALIAMYJl1f9/sgAxgmXV/39pIP//RMJ/AN/n///bzX8AOv8GydzW/386/wbJXtB/AP7/MYJS1f9///8xglLVf////zGCrCr/fzr/9DaTIP9/Ov/0NnXe/3+yADGCmSp//wAABsmlKv9/aSD///09f//f5///7Ef/fzr/BsnzMf//FIqYiCDVf////zGC29N//wAABskP1n//3+f//6HTAAAUipiIqCp/ALIAMYLvK38A3+f//wcrfwD+/zGCKCl/ADr/BsnAKfk0BcvfKyG+IVohWiFaIVoiPZPWkC7+3JRLP2CoZnFs55XdltzPIjDWptam3M8iMEK5Zyv6xtA7hcdJIrLS00lI2cM/tMVKOrTFSjr5NAXL+TQFy/k0Bcu0xUo6tMVKOiFaIVqYb75qSlVKVYKXhZaotvKf9qtLVu2rzVRAqphUO6yDVUypu1RBqYtVRFZxq0RU06kkVLGqMFWaqTBViKtKVUpVSlVKVZNrgWvBkcKXNKC6qRSmK6eoqqiqqKqoqqiqqKrczyIw5NDXMUpVSlVGYI1XdWuHa6ecaZViqCqmtKpsVUqsC1Yxqe1U56pxVn1VpKrvUw6q1laAquxWXasHVzCr")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_bl444")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fih0n"]
 resource_name = "M_Neo_ResidentialConcrete_01"
@@ -5440,6 +5440,7 @@ layer = 10
 visible = false
 
 [node name="PostProcess" type="ColorRect" parent="CartoonOutline" unique_id=184592749]
+visible = false
 material = ExtResource("100_outline_post")
 anchors_preset = 15
 anchor_right = 1.0
@@ -5835,15 +5836,15 @@ surface_material_override/0 = SubResource("ShaderMaterial_s0ce3")
 surface_material_override/0 = SubResource("ShaderMaterial_x7vwj")
 
 [node name="S_AG_FE_Basket_mo" parent="FortniteSkyeRoom" index="28" unique_id=796106]
-transform = Transform3D(-0.00026464192, 0, -0.0053155073, 0, 0.0053220894, 0, 0.0053155073, 0, -0.00026464192, 3.8516073, 0, -7.155546)
+transform = Transform3D(-0.00026464192, 0, -0.0053155073, 0, 0.0053220894, 0, 0.0053155073, 0, -0.00026464192, 1.242379, 0, -5.950734)
 surface_material_override/0 = SubResource("ShaderMaterial_v3pdg")
 
 [node name="S_AG_FE_Footrest_mo" parent="FortniteSkyeRoom" index="29" unique_id=1265314865]
-transform = Transform3D(0.009573592, 0, 0, 0, 0.009573592, 0, 0, 0, 0.009573592, -1.8748984, 0.003506701, 0.76255465)
+transform = Transform3D(0.009573592, 0, 0, 0, 0.009573592, 0, 0, 0, 0.009573592, 0.40657735, 0.003506701, -1.8297777)
 surface_material_override/0 = SubResource("ShaderMaterial_7ihd2")
 
 [node name="S_Agency_Faction_LootCrate_01_mo" parent="FortniteSkyeRoom" index="30" unique_id=485717872]
-transform = Transform3D(0.0062465975, 0, -8.382061e-05, 0, 0.0063897246, 0, 7.654962e-05, 0, 0.006839922, -0.46126786, 0.018252503, 2.070797)
+transform = Transform3D(0.0062465975, 0, -8.382061e-05, 0, 0.0063897246, 0, 7.654962e-05, 0, 0.006839922, 0.31990755, 0.018252742, -7.6625075)
 surface_material_override/0 = SubResource("ShaderMaterial_3u4xa")
 
 [node name="S_Agency_Midas_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="31" unique_id=2089163132]
@@ -5905,7 +5906,7 @@ transform = Transform3D(0.009897562, 0, -0.0035440552, 0, 0.010512952, 0, 0.0035
 surface_material_override/0 = SubResource("ShaderMaterial_kfx22")
 
 [node name="S_PrincessCastle_Armchair_mo" parent="FortniteSkyeRoom" index="46" unique_id=648456745]
-transform = Transform3D(-0.005050825, 0, -0.0087298695, 0, 0.010085703, 0, 0.0087298695, 0, -0.005050825, -1.8545595, 0, -9.623293)
+transform = Transform3D(-0.005050825, 0, -0.0087298695, 0, 0.010085703, 0, 0.0087298695, 0, -0.005050825, -0.44553578, 2.3841858e-07, -4.6804595)
 surface_material_override/0 = SubResource("ShaderMaterial_nhfro")
 
 [node name="S_PrincessCastle_GlowingStar_mo" parent="FortniteSkyeRoom" index="47" unique_id=199189776]
@@ -5928,6 +5929,353 @@ surface_material_override/0 = SubResource("ShaderMaterial_7rfm8")
 
 [node name="S_PrincessCastle_GlowingStar_mo_006" parent="FortniteSkyeRoom" index="53" unique_id=2085479364]
 surface_material_override/0 = SubResource("ShaderMaterial_5lenj")
+
+[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="54" unique_id=2133015449]
+surface_material_override/0 = SubResource("ShaderMaterial_185uh")
+
+[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="55" unique_id=1497133276]
+surface_material_override/0 = SubResource("ShaderMaterial_rx4l6")
+
+[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="56" unique_id=2000421635]
+surface_material_override/0 = SubResource("ShaderMaterial_gehcy")
+
+[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="57" unique_id=1236988561]
+surface_material_override/0 = SubResource("ShaderMaterial_21y62")
+
+[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="58" unique_id=1996915869]
+surface_material_override/0 = SubResource("ShaderMaterial_nm4ic")
+
+[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="59" unique_id=252941617]
+surface_material_override/0 = SubResource("ShaderMaterial_wmktg")
+
+[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="60" unique_id=683460187]
+surface_material_override/0 = SubResource("ShaderMaterial_ugice")
+
+[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="61" unique_id=1882770985]
+surface_material_override/0 = SubResource("ShaderMaterial_55rxc")
+
+[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="62" unique_id=459088707]
+surface_material_override/0 = SubResource("ShaderMaterial_xybmg")
+
+[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="63" unique_id=759449571]
+surface_material_override/0 = SubResource("ShaderMaterial_ens8c")
+
+[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="64" unique_id=1663103800]
+surface_material_override/0 = SubResource("ShaderMaterial_is0yu")
+
+[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="65" unique_id=730165410]
+surface_material_override/0 = SubResource("ShaderMaterial_ivjpe")
+
+[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="66" unique_id=205960112]
+surface_material_override/0 = SubResource("ShaderMaterial_xrjg6")
+
+[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="67" unique_id=1540530639]
+surface_material_override/0 = SubResource("ShaderMaterial_ttsc5")
+
+[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="68" unique_id=430881031]
+surface_material_override/0 = SubResource("ShaderMaterial_ar3ht")
+
+[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="69" unique_id=428127189]
+surface_material_override/0 = SubResource("ShaderMaterial_c4kl5")
+
+[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="70" unique_id=1143410543]
+surface_material_override/0 = SubResource("ShaderMaterial_cmcy1")
+
+[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="71" unique_id=578751338]
+surface_material_override/0 = SubResource("ShaderMaterial_7gk7s")
+
+[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="72" unique_id=1080847264]
+surface_material_override/0 = SubResource("ShaderMaterial_u86rm")
+
+[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="73" unique_id=2141006479]
+surface_material_override/0 = SubResource("ShaderMaterial_nofs2")
+
+[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="74" unique_id=183115704]
+surface_material_override/0 = SubResource("ShaderMaterial_i6enq")
+
+[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="75" unique_id=1833686938]
+surface_material_override/0 = SubResource("ShaderMaterial_gl1nt")
+
+[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="76" unique_id=1506921979]
+surface_material_override/0 = SubResource("ShaderMaterial_g840d")
+
+[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="77" unique_id=420251805]
+transform = Transform3D(0.011516285, -6.178845e-05, -0.0005020947, 0, 0.011441086, -0.001407956, 0.00050588214, 0.0014065995, 0.011430062, -1.3424525, -1.8670661, 2.421415)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_fawp4")
+
+[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="78" unique_id=471013850]
+transform = Transform3D(-0.0057783267, -0.0001373021, -0.0066383844, -0.00020225269, 0.009741849, 1.16530955e-05, 0.0066364617, 0.00017734423, -0.0057796445, 1.410891, 0.016014108, -4.1636376)
+surface_material_override/0 = SubResource("ShaderMaterial_sax22")
+
+[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="79" unique_id=1065501491]
+surface_material_override/0 = SubResource("ShaderMaterial_jojyi")
+
+[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="80" unique_id=1843320377]
+transform = Transform3D(-0.011000003, 0, -9.616509e-10, 0, 0.011000003, 0, 9.616509e-10, 0, -0.011000003, 2.6586459, -4.536277e-07, -7.8214345)
+surface_material_override/0 = SubResource("ShaderMaterial_hq1is")
+
+[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="81" unique_id=1905024325]
+transform = Transform3D(0, 0, 0.008910157, 0, 0.010213098, 0, -0.010213098, 0, 0, -1.9205475, 0.022831641, -7.416227)
+surface_material_override/0 = SubResource("ShaderMaterial_0hrqj")
+
+[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="82" unique_id=425787923]
+transform = Transform3D(-0.007807952, 0, -0.006371916, 0, 0.010077967, 0, 0.006371916, 0, -0.007807952, 2.1959367, -2.2365048, 2.373663)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_kwyu7")
+
+[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="83" unique_id=87936500]
+transform = Transform3D(0.003609025, 7.814602e-05, 0.009409265, -8.740132e-05, 0.010077463, -5.0171846e-05, -0.009409184, -6.3634914e-05, 0.003609522, -2.2093813, -1.6242995, -2.815227)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_aislp")
+
+[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=467940294]
+transform = Transform3D(-1.3113024e-09, 0, 0.011000002, 0, 0.011000002, 0, -0.011000002, 0, -1.3113024e-09, 2.2654402, -4.536277e-07, -3.1328015)
+surface_material_override/0 = SubResource("ShaderMaterial_m5epf")
+
+[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=828185784]
+transform = Transform3D(0.011000003, 0, -1.3347463e-06, 0, 0.011000003, 0, 1.3347463e-06, 0, 0.011000003, 0.67663616, 0.01905337, -10.442815)
+surface_material_override/0 = SubResource("ShaderMaterial_yw301")
+
+[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=1467195051]
+transform = Transform3D(0, 0, 0.010308666, 0, 0.010308666, 0, -0.010308666, 0, 0, -2.424532, -2.5548508, 1.1599712)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_gptj3")
+
+[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=394854625]
+transform = Transform3D(0.008793885, 0, -0.005193741, 0, 0.0102130985, 0, 0.005193741, 0, 0.008793885, -1.0702758, -2.7218544, -7.3923087)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_5f22q")
+
+[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=2084663966]
+transform = Transform3D(0, 0, 0.010213095, 0, 0.010213095, 0, -0.010213095, 0, 0, -2.001022, -1.5836537, -1.9354403)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_5ek41")
+
+[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=801591375]
+transform = Transform3D(-0.0073266015, 0, 0.007115351, 0, 0.0102130985, 0, -0.007115351, 0, -0.0073266015, -1.8909613, -2.01684, 2.0354111)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_qroup")
+
+[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="90" unique_id=174543654]
+transform = Transform3D(-0.0046567908, 0, 0.00656148, 0, 0.011713316, 0, -0.0043743206, 0, -0.0069851875, 3.2928574, -3.1974974, -6.79265)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_odj0c")
+
+[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=288811796]
+transform = Transform3D(0.009992801, 0, 0.0009680865, 0, 0.010039582, 0, -0.0009680865, 0, 0.009992801, 2.2192428, -0.32402793, -10.5173)
+surface_material_override/0 = SubResource("ShaderMaterial_582gr")
+
+[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=11900622]
+transform = Transform3D(-0.013388757, 0, 0.0026787426, 0, 0.0136541, 0, -0.0026787426, 0, -0.013388757, 2.8113425, 0.00832636, -1.436842)
+surface_material_override/0 = SubResource("ShaderMaterial_7oyxb")
+
+[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="93" unique_id=2124566486]
+transform = Transform3D(0.00077371555, 0, -0.0103940675, 0, 0.010422822, 0, 0.0103940675, 0, 0.00077371555, -0.12775724, 0.02389756, -8.289856)
+surface_material_override/0 = SubResource("ShaderMaterial_22avr")
+
+[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="94" unique_id=1963856845]
+transform = Transform3D(-0.010513758, 0, 0.001478355, 0, 0.009941802, 0, -0.001580983, 0, -0.009831267, 2.6812901, 0, -5.1590395)
+surface_material_override/0 = SubResource("ShaderMaterial_soiuc")
+
+[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="95" unique_id=1258940202]
+transform = Transform3D(0.010039405, 0, -0.0025451903, 0, 0.01035701, 0, 0.0025451903, 0, 0.010039405, 1.3732524, 2.2681385e-07, -0.15249693)
+surface_material_override/0 = SubResource("ShaderMaterial_pspjo")
+
+[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=1621326823]
+surface_material_override/0 = SubResource("ShaderMaterial_vlw70")
+
+[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=1395959550]
+surface_material_override/0 = SubResource("ShaderMaterial_2ew4d")
+
+[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=660064796]
+transform = Transform3D(-0.010996787, 0, -0.00026586326, 0, 0.011000002, 0, 0.00026586326, 0, -0.010996787, 3.8734539, 0.011671415, -3.568455)
+surface_material_override/0 = SubResource("ShaderMaterial_5y8ex")
+
+[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="99" unique_id=687657619]
+transform = Transform3D(-0.010656118, 0, -0.0027289458, 0, 0.011000002, 0, 0.0027289458, 0, -0.010656118, 3.6122355, 0.028214112, -3.574685)
+surface_material_override/0 = SubResource("ShaderMaterial_2am1x")
+
+[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=123852574]
+transform = Transform3D(-0.0006573568, 0, -0.018577047, 0, 0.01858868, 0, 0.018577047, 0, -0.0006573568, 4.480911, 1.8867614, -9.460729)
+surface_material_override/0 = SubResource("ShaderMaterial_42mkq")
+
+[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="101" unique_id=68045822]
+transform = Transform3D(0.00013106829, 0, -0.010999221, 0, 0.011000003, 0, 0.010999221, 0, 0.00013106829, 4.4376554, 1.5092351, -3.3882039)
+surface_material_override/0 = SubResource("ShaderMaterial_xcw55")
+
+[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="102" unique_id=1474017174]
+surface_material_override/0 = SubResource("ShaderMaterial_bxswn")
+
+[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=799520645]
+transform = Transform3D(-0.011, 0, -9.616505e-10, 0, 0.011, 0, 9.616505e-10, 0, -0.011, 2.5594416, -3.840562, 1.8807162)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_6xvft")
+
+[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="104" unique_id=2105284247]
+transform = Transform3D(-0.0026820304, 0, 0.008390233, 0, 0.008808476, 0, -0.008390233, 0, -0.0026820304, 1.3015784, -2.4856825, 0.32966837)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_orwwl")
+
+[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=1886023423]
+transform = Transform3D(-0.010852922, 0, -0.001792814, 0, 0.011000003, 0, 0.001792814, 0, -0.010852922, 1.4825145, 0.006942302, 0.076604605)
+surface_material_override/0 = SubResource("ShaderMaterial_auh4i")
+
+[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=1368742946]
+surface_material_override/0 = SubResource("ShaderMaterial_y33wc")
+
+[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="107" unique_id=336238287]
+transform = Transform3D(-0.0067162467, 0, 0.0087116035, 0, 0.011, 0, -0.0087116035, 0, -0.0067162467, 0.22229694, -2.0832202, -2.0716407)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_sy87j")
+
+[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=1716716006]
+surface_material_override/0 = SubResource("ShaderMaterial_ux3tq")
+
+[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="109" unique_id=1190035519]
+surface_material_override/0 = SubResource("ShaderMaterial_qbcaj")
+
+[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="110" unique_id=603592948]
+surface_material_override/0 = SubResource("ShaderMaterial_1gjpj")
+
+[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="111" unique_id=1894302987]
+surface_material_override/0 = SubResource("ShaderMaterial_wyeh6")
+
+[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="112" unique_id=1313046640]
+surface_material_override/0 = SubResource("ShaderMaterial_12ebo")
+
+[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="113" unique_id=2077768330]
+surface_material_override/0 = SubResource("ShaderMaterial_phrvf")
+
+[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="114" unique_id=785451219]
+surface_material_override/0 = SubResource("ShaderMaterial_y1a53")
+
+[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="115" unique_id=1803278051]
+transform = Transform3D(0.0084101185, 0, 0.004871939, 0, 0.009719355, 0, -0.004871939, 0, 0.0084101185, 2.8999043, -0.31643987, -0.15019818)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_r6psu")
+
+[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=1101788329]
+transform = Transform3D(0.0069891475, 0, -0.0067540873, 0, 0.009719355, 0, 0.0067540873, 0, 0.0069891475, 3.8983762, -0.18681876, 0.542075)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_atyw5")
+
+[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="117" unique_id=938400987]
+transform = Transform3D(0.0020253044, 1.3239789e-09, 0.0046927975, -1.3239789e-09, -0.0051111844, 2.0134177e-09, 0.0046927975, -2.0134174e-09, -0.0020253044, 1.5377825, -0.20536575, 0.20906776)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_dicji")
+
+[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="118" unique_id=2096481895]
+transform = Transform3D(0.0025394259, 0, 0.00443571, 0, 0.0051111844, 0, -0.00443571, 0, 0.0025394259, 1.3078284, -0.9810764, -9.094613)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_uisyg")
+
+[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="119" unique_id=1046492350]
+transform = Transform3D(0.0050637913, -2.786988e-10, -0.0006944218, 2.786987e-10, -0.0051111844, 4.0836174e-09, -0.0006944218, -4.0836174e-09, -0.0050637913, -1.6891483, -0.60063386, -2.8694913)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_prkiw")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="120" unique_id=947907287]
+surface_material_override/0 = ExtResource("59_kfilt")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="121" unique_id=1331077283]
+surface_material_override/0 = ExtResource("59_kfilt")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="122" unique_id=1983126715]
+surface_material_override/0 = ExtResource("59_kfilt")
+
+[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="123" unique_id=171090644]
+surface_material_override/0 = ExtResource("59_kfilt")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="124" unique_id=1661447156]
+surface_material_override/0 = SubResource("ShaderMaterial_gg7y1")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=245699956]
+surface_material_override/0 = SubResource("ShaderMaterial_cxqr8")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=590295962]
+surface_material_override/0 = SubResource("ShaderMaterial_b1yjs")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="127" unique_id=1486094212]
+surface_material_override/0 = SubResource("ShaderMaterial_7305h")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="128" unique_id=1405152315]
+transform = Transform3D(0, -0.007119386, -6.484999e-10, -0.007245579, 4.949708e-10, -0.0063405386, 0.010556245, 3.3973727e-10, -0.0043520094, 1.1199331, 6.365731, 1.0817926)
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_h5ue4")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="129" unique_id=1417629123]
+surface_material_override/0 = SubResource("ShaderMaterial_kg5tv")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="130" unique_id=2013292504]
+surface_material_override/0 = SubResource("ShaderMaterial_13a3n")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="131" unique_id=910161718]
+surface_material_override/0 = SubResource("ShaderMaterial_5tnse")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="132" unique_id=2018802853]
+surface_material_override/0 = SubResource("ShaderMaterial_m17n0")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="133" unique_id=1103602756]
+surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
+
+[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="134" unique_id=1123264317]
+surface_material_override/0 = SubResource("ShaderMaterial_otry8")
+
+[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="135" unique_id=1090456561]
+surface_material_override/0 = SubResource("ShaderMaterial_b7doi")
+
+[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="136" unique_id=1322445728]
+surface_material_override/0 = SubResource("ShaderMaterial_lgine")
+
+[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="137" unique_id=2029395879]
+surface_material_override/0 = SubResource("ShaderMaterial_ios2g")
+
+[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="138" unique_id=1300160157]
+transform = Transform3D(0.0005650145, 1.067629e-05, -0.0032646758, -7.766326e-05, 0.0033123128, -2.6090277e-06, 0.003263769, 7.6970144e-05, 0.0005651092, -2.0238373, 0.0003314318, 2.3298473)
+surface_material_override/0 = SubResource("ShaderMaterial_l653v")
+
+[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="139" unique_id=1456711703]
+surface_material_override/0 = SubResource("ShaderMaterial_ta8wd")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="140" unique_id=1098181700]
+surface_material_override/0 = SubResource("ShaderMaterial_t8fyj")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="141" unique_id=1304674566]
+surface_material_override/0 = SubResource("ShaderMaterial_f1mpw")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="142" unique_id=1868605709]
+surface_material_override/0 = SubResource("ShaderMaterial_im8uk")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="143" unique_id=425507410]
+surface_material_override/0 = SubResource("ShaderMaterial_qmdsr")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="144" unique_id=895980978]
+surface_material_override/0 = SubResource("ShaderMaterial_xmg8t")
+
+[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="145" unique_id=1121444358]
+surface_material_override/0 = SubResource("ShaderMaterial_wf7ne")
+
+[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="146" unique_id=66705242]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_mxchm")
+
+[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="147" unique_id=1292896571]
+surface_material_override/0 = SubResource("ShaderMaterial_afqqx")
+
+[node name="Trophy_mo" parent="FortniteSkyeRoom" index="148" unique_id=50910274]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_yjwit")
+
+[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="149" unique_id=735982332]
+visible = false
+surface_material_override/0 = SubResource("ShaderMaterial_amv34")
+
+[node name="Wire03_mo" parent="FortniteSkyeRoom" index="150" unique_id=384708436]
+surface_material_override/0 = SubResource("ShaderMaterial_u8eqe")
+
+[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="151" unique_id=1799892715]
+surface_material_override/0 = SubResource("ShaderMaterial_ys57c")
 
 [node name="S_PrincessCastle_GlowingStar_mo_053" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=112370532]
 transform = Transform3D(-3.145192e-10, 0.0013191891, 3.8983105e-11, -0.00032701393, -4.0199833e-11, -0.0012780149, -0.0012780147, -3.1436598e-10, 0.00032701396, -2.5319157, 1.1112094, -7.124614)
@@ -5964,357 +6312,10 @@ transform = Transform3D(-2.6697686e-10, 0.002239564, 4.3722505e-11, -0.000293416
 mesh = SubResource("ArrayMesh_l2qb8")
 surface_material_override/0 = SubResource("ShaderMaterial_hrqfm")
 
-[node name="S_PrincessCastle_GlowingStar_mo_007" parent="FortniteSkyeRoom" index="61" unique_id=2133015449]
-surface_material_override/0 = SubResource("ShaderMaterial_185uh")
-
-[node name="S_PrincessCastle_GlowingStar_mo_008" parent="FortniteSkyeRoom" index="62" unique_id=1497133276]
-surface_material_override/0 = SubResource("ShaderMaterial_rx4l6")
-
-[node name="S_PrincessCastle_GlowingStar_mo_009" parent="FortniteSkyeRoom" index="63" unique_id=2000421635]
-surface_material_override/0 = SubResource("ShaderMaterial_gehcy")
-
-[node name="S_PrincessCastle_GlowingStar_mo_010" parent="FortniteSkyeRoom" index="64" unique_id=1236988561]
-surface_material_override/0 = SubResource("ShaderMaterial_21y62")
-
-[node name="S_PrincessCastle_GlowingStar_mo_011" parent="FortniteSkyeRoom" index="65" unique_id=1996915869]
-surface_material_override/0 = SubResource("ShaderMaterial_nm4ic")
-
-[node name="S_PrincessCastle_GlowingStar_mo_012" parent="FortniteSkyeRoom" index="66" unique_id=252941617]
-surface_material_override/0 = SubResource("ShaderMaterial_wmktg")
-
-[node name="S_PrincessCastle_GlowingStar_mo_013" parent="FortniteSkyeRoom" index="67" unique_id=683460187]
-surface_material_override/0 = SubResource("ShaderMaterial_ugice")
-
-[node name="S_PrincessCastle_GlowingStar_mo_014" parent="FortniteSkyeRoom" index="68" unique_id=1882770985]
-surface_material_override/0 = SubResource("ShaderMaterial_55rxc")
-
-[node name="S_PrincessCastle_GlowingStar_mo_015" parent="FortniteSkyeRoom" index="69" unique_id=459088707]
-surface_material_override/0 = SubResource("ShaderMaterial_xybmg")
-
-[node name="S_PrincessCastle_GlowingStar_mo_016" parent="FortniteSkyeRoom" index="70" unique_id=759449571]
-surface_material_override/0 = SubResource("ShaderMaterial_ens8c")
-
-[node name="S_PrincessCastle_GlowingStar_mo_017" parent="FortniteSkyeRoom" index="71" unique_id=1663103800]
-surface_material_override/0 = SubResource("ShaderMaterial_is0yu")
-
-[node name="S_PrincessCastle_GlowingStar_mo_018" parent="FortniteSkyeRoom" index="72" unique_id=730165410]
-surface_material_override/0 = SubResource("ShaderMaterial_ivjpe")
-
-[node name="S_PrincessCastle_GlowingStar_mo_019" parent="FortniteSkyeRoom" index="73" unique_id=205960112]
-surface_material_override/0 = SubResource("ShaderMaterial_xrjg6")
-
-[node name="S_PrincessCastle_GlowingStar_mo_020" parent="FortniteSkyeRoom" index="74" unique_id=1540530639]
-surface_material_override/0 = SubResource("ShaderMaterial_ttsc5")
-
-[node name="S_PrincessCastle_GlowingStar_mo_021" parent="FortniteSkyeRoom" index="75" unique_id=430881031]
-surface_material_override/0 = SubResource("ShaderMaterial_ar3ht")
-
-[node name="S_PrincessCastle_GlowingStar_mo_022" parent="FortniteSkyeRoom" index="76" unique_id=428127189]
-surface_material_override/0 = SubResource("ShaderMaterial_c4kl5")
-
-[node name="S_PrincessCastle_GlowingStar_mo_023" parent="FortniteSkyeRoom" index="77" unique_id=1143410543]
-surface_material_override/0 = SubResource("ShaderMaterial_cmcy1")
-
-[node name="S_PrincessCastle_GlowingStar_mo_024" parent="FortniteSkyeRoom" index="78" unique_id=578751338]
-surface_material_override/0 = SubResource("ShaderMaterial_7gk7s")
-
-[node name="S_PrincessCastle_GlowingStar_mo_025" parent="FortniteSkyeRoom" index="79" unique_id=1080847264]
-surface_material_override/0 = SubResource("ShaderMaterial_u86rm")
-
-[node name="S_PrincessCastle_GlowingStar_mo_026" parent="FortniteSkyeRoom" index="80" unique_id=2141006479]
-surface_material_override/0 = SubResource("ShaderMaterial_nofs2")
-
-[node name="S_PrincessCastle_GlowingStar_mo_027" parent="FortniteSkyeRoom" index="81" unique_id=183115704]
-surface_material_override/0 = SubResource("ShaderMaterial_i6enq")
-
-[node name="S_PrincessCastle_GlowingStar_mo_028" parent="FortniteSkyeRoom" index="82" unique_id=1833686938]
-surface_material_override/0 = SubResource("ShaderMaterial_gl1nt")
-
-[node name="S_PrincessCastle_GlowingStar_mo_029" parent="FortniteSkyeRoom" index="83" unique_id=1506921979]
-surface_material_override/0 = SubResource("ShaderMaterial_g840d")
-
-[node name="S_Shark_Base_Backpack_01_mo" parent="FortniteSkyeRoom" index="84" unique_id=420251805]
-transform = Transform3D(0.011516285, -6.178845e-05, -0.0005020947, 0, 0.011441086, -0.001407956, 0.00050588214, 0.0014065995, 0.011430062, -1.3424525, -1.8670661, 2.421415)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_fawp4")
-
-[node name="S_Shark_Base_BeanBag_01_mo" parent="FortniteSkyeRoom" index="85" unique_id=471013850]
-transform = Transform3D(-0.0057783267, -0.0001373021, -0.0066383844, -0.00020225269, 0.009741849, 1.16530955e-05, 0.0066364617, 0.00017734423, -0.0057796445, 0.38088435, 0.016014108, -0.6133693)
-surface_material_override/0 = SubResource("ShaderMaterial_sax22")
-
-[node name="S_Shark_Base_BeanBag_01_mo_001" parent="FortniteSkyeRoom" index="86" unique_id=1065501491]
-surface_material_override/0 = SubResource("ShaderMaterial_jojyi")
-
-[node name="S_Shark_Base_Bed_Single_01_mo" parent="FortniteSkyeRoom" index="87" unique_id=1843320377]
-transform = Transform3D(-0.011000003, 0, -9.616509e-10, 0, 0.011000003, 0, 9.616509e-10, 0, -0.011000003, 2.6586459, -4.536277e-07, -7.8214345)
-surface_material_override/0 = SubResource("ShaderMaterial_hq1is")
-
-[node name="S_Shark_Base_Desk_01_mo" parent="FortniteSkyeRoom" index="88" unique_id=1905024325]
-transform = Transform3D(0, 0, 0.008910157, 0, 0.010213098, 0, -0.010213098, 0, 0, -1.9205475, 0.022831641, -7.416227)
-surface_material_override/0 = SubResource("ShaderMaterial_0hrqj")
-
-[node name="S_Shark_Base_DeskLamp_01_mo" parent="FortniteSkyeRoom" index="89" unique_id=425787923]
-transform = Transform3D(-0.007807952, 0, -0.006371916, 0, 0.010077967, 0, 0.006371916, 0, -0.007807952, 2.1959367, -2.2365048, 2.373663)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_kwyu7")
-
-[node name="S_Shark_Base_DeskLamp_01_mo_001" parent="FortniteSkyeRoom" index="90" unique_id=87936500]
-transform = Transform3D(0.003609025, 7.814602e-05, 0.009409265, -8.740132e-05, 0.010077463, -5.0171846e-05, -0.009409184, -6.3634914e-05, 0.003609522, -2.2093813, -1.6242995, -2.815227)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_aislp")
-
-[node name="S_Shark_Base_DisplayCase_Crystal_01_mo" parent="FortniteSkyeRoom" index="91" unique_id=467940294]
-transform = Transform3D(-1.3113024e-09, 0, 0.011000002, 0, 0.011000002, 0, -0.011000002, 0, -1.3113024e-09, -0.74898607, -4.536277e-07, -9.894549)
-surface_material_override/0 = SubResource("ShaderMaterial_m5epf")
-
-[node name="S_Shark_Base_Dresser_01_mo" parent="FortniteSkyeRoom" index="92" unique_id=828185784]
-transform = Transform3D(0.011000003, 0, -1.3347463e-06, 0, 0.011000003, 0, 1.3347463e-06, 0, 0.011000003, 0.67663616, 0.01905337, -10.442815)
-surface_material_override/0 = SubResource("ShaderMaterial_yw301")
-
-[node name="S_Shark_Base_Dresser_01_mo_001" parent="FortniteSkyeRoom" index="93" unique_id=1467195051]
-transform = Transform3D(0, 0, 0.010308666, 0, 0.010308666, 0, -0.010308666, 0, 0, -2.424532, -2.5548508, 1.1599712)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_gptj3")
-
-[node name="S_Shark_Base_GamingChair_01_mo" parent="FortniteSkyeRoom" index="94" unique_id=394854625]
-transform = Transform3D(0.008793885, 0, -0.005193741, 0, 0.0102130985, 0, 0.005193741, 0, 0.008793885, -1.0702758, -2.7218544, -7.3923087)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_5f22q")
-
-[node name="S_Shark_Base_GamingComputer_01_mo" parent="FortniteSkyeRoom" index="95" unique_id=2084663966]
-transform = Transform3D(0, 0, 0.010213095, 0, 0.010213095, 0, -0.010213095, 0, 0, -2.001022, -1.5836537, -1.9354403)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_5ek41")
-
-[node name="S_Shark_Base_GamingConsole_01_mo" parent="FortniteSkyeRoom" index="96" unique_id=801591375]
-transform = Transform3D(-0.0073266015, 0, 0.007115351, 0, 0.0102130985, 0, -0.007115351, 0, -0.0073266015, -1.8909613, -2.01684, 2.0354111)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_qroup")
-
-[node name="S_Shark_Base_GamingTable_01_mo" parent="FortniteSkyeRoom" index="97" unique_id=174543654]
-transform = Transform3D(-0.0046567908, 0, 0.00656148, 0, 0.011713316, 0, -0.0043743206, 0, -0.0069851875, 3.2928574, -3.1974974, -6.79265)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_odj0c")
-
-[node name="S_Shark_Base_NightStand_01_mo" parent="FortniteSkyeRoom" index="98" unique_id=288811796]
-transform = Transform3D(0.009992801, 0, 0.0009680865, 0, 0.010039582, 0, -0.0009680865, 0, 0.009992801, 2.2192428, -0.32402793, -10.5173)
-surface_material_override/0 = SubResource("ShaderMaterial_582gr")
-
-[node name="S_Shark_Base_Plush_01_mo" parent="FortniteSkyeRoom" index="99" unique_id=11900622]
-transform = Transform3D(-0.013388757, 0, 0.0026787426, 0, 0.0136541, 0, -0.0026787426, 0, -0.013388757, 2.260562, 0.00832636, 0.6626482)
-surface_material_override/0 = SubResource("ShaderMaterial_7oyxb")
-
-[node name="S_Shark_Base_Rug_01_mo" parent="FortniteSkyeRoom" index="100" unique_id=2124566486]
-transform = Transform3D(0.00077371555, 0, -0.0103940675, 0, 0.010422822, 0, 0.0103940675, 0, 0.00077371555, -0.12775724, 0.02389756, -8.289856)
-surface_material_override/0 = SubResource("ShaderMaterial_22avr")
-
-[node name="S_Shark_Base_Rug_01_mo_001" parent="FortniteSkyeRoom" index="101" unique_id=1963856845]
-transform = Transform3D(-0.010513758, 0, 0.001478355, 0, 0.009941802, 0, -0.001580983, 0, -0.009831267, 2.6812901, 0, -5.1590395)
-surface_material_override/0 = SubResource("ShaderMaterial_soiuc")
-
-[node name="S_Shark_Base_Rug_01_mo_002" parent="FortniteSkyeRoom" index="102" unique_id=1258940202]
-transform = Transform3D(0.010039405, 0, -0.0025451903, 0, 0.01035701, 0, 0.0025451903, 0, 0.010039405, 1.3732524, 2.2681385e-07, -0.15249693)
-surface_material_override/0 = SubResource("ShaderMaterial_pspjo")
-
-[node name="S_Shark_Base_Shelf_Open_01_mo" parent="FortniteSkyeRoom" index="103" unique_id=1621326823]
-surface_material_override/0 = SubResource("ShaderMaterial_vlw70")
-
-[node name="S_Shark_Base_Shelf_Tall_01_mo" parent="FortniteSkyeRoom" index="104" unique_id=1395959550]
-surface_material_override/0 = SubResource("ShaderMaterial_2ew4d")
-
-[node name="S_Shark_Base_Slippers_01_mo" parent="FortniteSkyeRoom" index="105" unique_id=660064796]
-transform = Transform3D(-0.010996787, 0, -0.00026586326, 0, 0.011000002, 0, 0.00026586326, 0, -0.010996787, 3.8734539, 0.011671415, -3.568455)
-surface_material_override/0 = SubResource("ShaderMaterial_5y8ex")
-
-[node name="S_Shark_Base_Slippers_01_mo_001" parent="FortniteSkyeRoom" index="106" unique_id=687657619]
-transform = Transform3D(-0.010656118, 0, -0.0027289458, 0, 0.011000002, 0, 0.0027289458, 0, -0.010656118, 3.6122355, 0.028214112, -3.574685)
-surface_material_override/0 = SubResource("ShaderMaterial_2am1x")
-
-[node name="S_Shark_Base_Sword_Plaque_01_mo" parent="FortniteSkyeRoom" index="107" unique_id=123852574]
-transform = Transform3D(-0.0006573568, 0, -0.018577047, 0, 0.01858868, 0, 0.018577047, 0, -0.0006573568, 4.480911, 1.8867614, -9.460729)
-surface_material_override/0 = SubResource("ShaderMaterial_42mkq")
-
-[node name="S_Shark_Base_WeaponBoard_01_mo" parent="FortniteSkyeRoom" index="108" unique_id=68045822]
-transform = Transform3D(0.00013106829, 0, -0.010999221, 0, 0.011000003, 0, 0.010999221, 0, 0.00013106829, 4.4376554, 1.5092351, -3.3882039)
-surface_material_override/0 = SubResource("ShaderMaterial_xcw55")
-
-[node name="S_SharkIsland_BasePhotos_01_mo" parent="FortniteSkyeRoom" index="109" unique_id=1474017174]
-surface_material_override/0 = SubResource("ShaderMaterial_bxswn")
-
-[node name="S_SharkIsland_BookStack_01_mo" parent="FortniteSkyeRoom" index="110" unique_id=799520645]
-transform = Transform3D(-0.011, 0, -9.616505e-10, 0, 0.011, 0, 9.616505e-10, 0, -0.011, 2.5594416, -3.840562, 1.8807162)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_6xvft")
-
-[node name="S_SharkIsland_BookStack_02_mo" parent="FortniteSkyeRoom" index="111" unique_id=2105284247]
-transform = Transform3D(-0.0026820304, 0, 0.008390233, 0, 0.008808476, 0, -0.008390233, 0, -0.0026820304, 1.3015784, -2.4856825, 0.32966837)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_orwwl")
-
-[node name="S_SharkIsland_Games_01_mo" parent="FortniteSkyeRoom" index="112" unique_id=1886023423]
-transform = Transform3D(-0.010852922, 0, -0.001792814, 0, 0.011000003, 0, 0.001792814, 0, -0.010852922, 1.83048, 0.006942302, 1.1937311)
-surface_material_override/0 = SubResource("ShaderMaterial_auh4i")
-
-[node name="S_SharkIsland_Games_01_mo_001" parent="FortniteSkyeRoom" index="113" unique_id=1368742946]
-surface_material_override/0 = SubResource("ShaderMaterial_y33wc")
-
-[node name="S_SharkIsland_Games_02_mo" parent="FortniteSkyeRoom" index="114" unique_id=336238287]
-transform = Transform3D(-0.0067162467, 0, 0.0087116035, 0, 0.011, 0, -0.0087116035, 0, -0.0067162467, 0.22229694, -2.0832202, -2.0716407)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_sy87j")
-
-[node name="S_SharkIsland_RoundLight_01_mo" parent="FortniteSkyeRoom" index="115" unique_id=1716716006]
-surface_material_override/0 = SubResource("ShaderMaterial_ux3tq")
-
-[node name="S_SharkIsland_RoundLight_01_mo_001" parent="FortniteSkyeRoom" index="116" unique_id=1190035519]
-surface_material_override/0 = SubResource("ShaderMaterial_qbcaj")
-
-[node name="S_SharkIsland_RoundLight_01_mo_002" parent="FortniteSkyeRoom" index="117" unique_id=603592948]
-surface_material_override/0 = SubResource("ShaderMaterial_1gjpj")
-
-[node name="S_SharkIsland_RoundLight_01_mo_003" parent="FortniteSkyeRoom" index="118" unique_id=1894302987]
-surface_material_override/0 = SubResource("ShaderMaterial_wyeh6")
-
-[node name="S_SharkIsland_RoundLight_01_mo_004" parent="FortniteSkyeRoom" index="119" unique_id=1313046640]
-surface_material_override/0 = SubResource("ShaderMaterial_12ebo")
-
-[node name="S_Wires_03_mo" parent="FortniteSkyeRoom" index="120" unique_id=2077768330]
-surface_material_override/0 = SubResource("ShaderMaterial_phrvf")
-
-[node name="SM_Adventure_Sword_mo" parent="FortniteSkyeRoom" index="121" unique_id=785451219]
-surface_material_override/0 = SubResource("ShaderMaterial_y1a53")
-
-[node name="SM_BookPile_03_Book_09_mo" parent="FortniteSkyeRoom" index="122" unique_id=1803278051]
-transform = Transform3D(0.0084101185, 0, 0.004871939, 0, 0.009719355, 0, -0.004871939, 0, 0.0084101185, 2.8999043, -0.31643987, -0.15019818)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_r6psu")
-
-[node name="SM_BookPile_03_Book_09_mo_001" parent="FortniteSkyeRoom" index="123" unique_id=1101788329]
-transform = Transform3D(0.0069891475, 0, -0.0067540873, 0, 0.009719355, 0, 0.0067540873, 0, 0.0069891475, 3.8983762, -0.18681876, 0.542075)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_atyw5")
-
-[node name="SM_BookPile_04_mo" parent="FortniteSkyeRoom" index="124" unique_id=938400987]
-transform = Transform3D(0.0020253044, 1.3239789e-09, 0.0046927975, -1.3239789e-09, -0.0051111844, 2.0134177e-09, 0.0046927975, -2.0134174e-09, -0.0020253044, 1.5377825, -0.20536575, 0.20906776)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_dicji")
-
-[node name="SM_BookPile_04_mo_001" parent="FortniteSkyeRoom" index="125" unique_id=2096481895]
-transform = Transform3D(0.0025394259, 0, 0.00443571, 0, 0.0051111844, 0, -0.00443571, 0, 0.0025394259, 1.3078284, -0.9810764, -9.094613)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_uisyg")
-
-[node name="SM_BookPile_04_mo_002" parent="FortniteSkyeRoom" index="126" unique_id=1046492350]
-transform = Transform3D(0.0050637913, -2.786988e-10, -0.0006944218, 2.786987e-10, -0.0051111844, 4.0836174e-09, -0.0006944218, -4.0836174e-09, -0.0050637913, -1.6891483, -0.60063386, -2.8694913)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_prkiw")
-
-[node name="SM_Fort_Floors_Generic_TileBasic_mo" parent="FortniteSkyeRoom" index="127" unique_id=947907287]
-surface_material_override/0 = ExtResource("59_kfilt")
-
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_001" parent="FortniteSkyeRoom" index="128" unique_id=1331077283]
-surface_material_override/0 = ExtResource("59_kfilt")
-
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_002" parent="FortniteSkyeRoom" index="129" unique_id=1983126715]
-surface_material_override/0 = ExtResource("59_kfilt")
-
-[node name="SM_Fort_Floors_Generic_TileBasic_mo_003" parent="FortniteSkyeRoom" index="130" unique_id=171090644]
-surface_material_override/0 = ExtResource("59_kfilt")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo" parent="FortniteSkyeRoom" index="131" unique_id=1661447156]
-surface_material_override/0 = SubResource("ShaderMaterial_gg7y1")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_001" parent="FortniteSkyeRoom" index="132" unique_id=245699956]
-surface_material_override/0 = SubResource("ShaderMaterial_cxqr8")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_002" parent="FortniteSkyeRoom" index="133" unique_id=590295962]
-surface_material_override/0 = SubResource("ShaderMaterial_b1yjs")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_003" parent="FortniteSkyeRoom" index="134" unique_id=1486094212]
-surface_material_override/0 = SubResource("ShaderMaterial_7305h")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_004" parent="FortniteSkyeRoom" index="135" unique_id=1405152315]
-transform = Transform3D(0, -0.007119386, -6.484999e-10, -0.007245579, 4.949708e-10, -0.0063405386, 0.010556245, 3.3973727e-10, -0.0043520094, 1.1199331, 6.365731, 1.0817926)
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_h5ue4")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_005" parent="FortniteSkyeRoom" index="136" unique_id=1417629123]
-surface_material_override/0 = SubResource("ShaderMaterial_kg5tv")
-
 [node name="SM_Fort_Trim_Generic_BayTrim02_mo_015" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=1391783889]
 transform = Transform3D(0, 0, 0.007119386, 0, 0.007119386, 0, -0.00878026, 0, 0, -2.6022434, 0.008072639, -8.436313)
 mesh = SubResource("ArrayMesh_0h52j")
 surface_material_override/0 = SubResource("ShaderMaterial_kg5tv")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_006" parent="FortniteSkyeRoom" index="138" unique_id=2013292504]
-surface_material_override/0 = SubResource("ShaderMaterial_13a3n")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_007" parent="FortniteSkyeRoom" index="139" unique_id=910161718]
-surface_material_override/0 = SubResource("ShaderMaterial_5tnse")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_008" parent="FortniteSkyeRoom" index="140" unique_id=2018802853]
-surface_material_override/0 = SubResource("ShaderMaterial_m17n0")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_009" parent="FortniteSkyeRoom" index="141" unique_id=1103602756]
-surface_material_override/0 = SubResource("ShaderMaterial_rtc1q")
-
-[node name="SM_Fort_Trim_Generic_BayTrim02_mo_010" parent="FortniteSkyeRoom" index="142" unique_id=1123264317]
-surface_material_override/0 = SubResource("ShaderMaterial_otry8")
-
-[node name="SM_Int_Boardgame_Dice_AG_FE_mo" parent="FortniteSkyeRoom" index="143" unique_id=1090456561]
-surface_material_override/0 = SubResource("ShaderMaterial_b7doi")
-
-[node name="SM_Int_Boardgame_PlayerPiece_AG_FE_mo" parent="FortniteSkyeRoom" index="144" unique_id=1322445728]
-surface_material_override/0 = SubResource("ShaderMaterial_lgine")
-
-[node name="SM_Poster_01_mo" parent="FortniteSkyeRoom" index="145" unique_id=2029395879]
-surface_material_override/0 = SubResource("ShaderMaterial_ios2g")
-
-[node name="SM_Red_Carpet_Pickup_mo" parent="FortniteSkyeRoom" index="146" unique_id=1300160157]
-transform = Transform3D(0.0005650145, 1.067629e-05, -0.0032646758, -7.766326e-05, 0.0033123128, -2.6090277e-06, 0.003263769, 7.6970144e-05, 0.0005651092, -2.0238373, 0.0003314318, 2.3298473)
-surface_material_override/0 = SubResource("ShaderMaterial_l653v")
-
-[node name="SM_Telescope_AdventureGirl_FE_mo" parent="FortniteSkyeRoom" index="147" unique_id=1456711703]
-surface_material_override/0 = SubResource("ShaderMaterial_ta8wd")
-
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo" parent="FortniteSkyeRoom" index="148" unique_id=1098181700]
-surface_material_override/0 = SubResource("ShaderMaterial_t8fyj")
-
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_001" parent="FortniteSkyeRoom" index="149" unique_id=1304674566]
-surface_material_override/0 = SubResource("ShaderMaterial_f1mpw")
-
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_002" parent="FortniteSkyeRoom" index="150" unique_id=1868605709]
-surface_material_override/0 = SubResource("ShaderMaterial_im8uk")
-
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_003" parent="FortniteSkyeRoom" index="151" unique_id=425507410]
-surface_material_override/0 = SubResource("ShaderMaterial_qmdsr")
-
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_004" parent="FortniteSkyeRoom" index="152" unique_id=895980978]
-surface_material_override/0 = SubResource("ShaderMaterial_xmg8t")
-
-[node name="SM_TRV_HAF_WoodenHouse_Trim_mo_005" parent="FortniteSkyeRoom" index="153" unique_id=1121444358]
-surface_material_override/0 = SubResource("ShaderMaterial_wf7ne")
-
-[node name="SM_Yacht_SkyLight_Top_B_mo" parent="FortniteSkyeRoom" index="154" unique_id=66705242]
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_mxchm")
-
-[node name="SM_Yacht_SkyLight_Top_B_mo_001" parent="FortniteSkyeRoom" index="155" unique_id=1292896571]
-surface_material_override/0 = SubResource("ShaderMaterial_afqqx")
-
-[node name="Trophy_mo" parent="FortniteSkyeRoom" index="156" unique_id=50910274]
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_yjwit")
-
-[node name="WildWest_BedRoll_1_mo" parent="FortniteSkyeRoom" index="157" unique_id=735982332]
-visible = false
-surface_material_override/0 = SubResource("ShaderMaterial_amv34")
-
-[node name="Wire03_mo" parent="FortniteSkyeRoom" index="158" unique_id=384708436]
-surface_material_override/0 = SubResource("ShaderMaterial_u8eqe")
-
-[node name="Wire03_mo_001" parent="FortniteSkyeRoom" index="159" unique_id=1799892715]
-surface_material_override/0 = SubResource("ShaderMaterial_ys57c")
 
 [node name="Neo_Residential_Wall_01_mo_011" type="MeshInstance3D" parent="FortniteSkyeRoom" unique_id=2116859784]
 transform = Transform3D(0, 0, -0.007119386, 0, 0.007119386, 0, 0.008779783, 0, 0, 4.628585, 0.008072639, 0.5599475)
