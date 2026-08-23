@@ -224,36 +224,19 @@ static func _smoke_particles(world_pos: Vector3, scene: Node) -> void:
 	_set_particle_mesh_static(smoke, Color(0.45, 0.42, 0.4))
 	smoke.finished.connect(smoke.queue_free)
 
+## 給 GPUParticles3D 設 3D 球體粒子（SphereMesh），立體體積感。
 static func _set_particle_mesh_static(particles: GPUParticles3D, tint: Color = Color.WHITE) -> void:
-	particles.draw_pass_1 = _particle_sphere()
-	var mat := _particle_sphere_mat(tint)
-	var sp := particles.draw_pass_1 as SphereMesh
-	sp.material = mat
-
-## 緩存粒子球體 mesh（避免每次爆炸重建）
-static var _cached_sphere: SphereMesh = null
-static func _particle_sphere() -> SphereMesh:
-	if _cached_sphere == null:
-		var sphere := SphereMesh.new()
-		sphere.radius = 0.09
-		sphere.height = 0.18
-		sphere.radial_segments = 8
-		sphere.rings = 4
-		_cached_sphere = sphere
-	return _cached_sphere
-
-## 緩存粒子材質（按色）
-static var _cached_mats: Dictionary = {}
-static func _particle_sphere_mat(tint: Color) -> StandardMaterial3D:
-	var key := Color(tint.r, tint.g, tint.b, 1.0)
-	if _cached_mats.has(key):
-		return _cached_mats[key]
+	var sphere := SphereMesh.new()
+	sphere.radius = 0.09
+	sphere.height = 0.18
+	sphere.radial_segments = 8
+	sphere.rings = 4
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.no_depth_test = false
 	mat.albedo_color = tint
-	_cached_mats[key] = mat
-	return mat
+	sphere.material = mat
+	particles.draw_pass_1 = sphere
 
 static func _expand_ball(world_pos: Vector3, scene: Node, radius: float) -> void:
 	var flash := MeshInstance3D.new()
