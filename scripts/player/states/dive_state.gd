@@ -29,7 +29,7 @@ func enter() -> void:
 	# 預備階段先立定：刹停當前移動速度（立定跳遠）
 	var move_dir := controller.player_input.get_move_direction()
 	if move_dir.length_squared() > 0.0:
-		_dive_direction = Vector3(move_dir.x, 0.0, move_dir.y).normalized()
+		_dive_direction = controller.to_world_dir(move_dir)
 	else:
 		_dive_direction = controller.global_basis.z
 	# 立即刹停水平速度，讓角色原地立定
