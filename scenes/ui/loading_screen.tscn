@@ -10,7 +10,11 @@
 [ext_resource type="Texture2D" path="res://assets/textures/ui/load_hint_triangle.png" id="8_ht"]
 [ext_resource type="FontFile" path="res://assets/fonts/Kaph-Regular.otf" id="9_font"]
 
-[node name="LoadingScreen" type="Control"]
+[node name="LoadingScreen" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_ls")
+
+[node name="Screen" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,9 +22,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_ls")
 
-[node name="BG" type="TextureRect" parent="."]
+[node name="BG" type="TextureRect" parent="Screen"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +35,7 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="ScrollLayer" type="Control" parent="."]
+[node name="ScrollLayer" type="Control" parent="Screen"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,7 +44,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Logo" type="TextureRect" parent="."]
+[node name="Logo" type="TextureRect" parent="Screen"]
 layout_mode = 0
 offset_left = 410.0
 offset_top = 110.0
@@ -52,7 +55,7 @@ texture = ExtResource("3_logo")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="BarArea" type="Control" parent="."]
+[node name="BarArea" type="Control" parent="Screen"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -61,7 +64,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="LoadingLabel" type="Label" parent="BarArea"]
+[node name="LoadingLabel" type="Label" parent="Screen/BarArea"]
 layout_mode = 0
 offset_left = 1060.0
 offset_top = 712.0
@@ -73,7 +76,7 @@ theme_override_font_sizes/font_size = 30
 text = "加载中..."
 horizontal_alignment = 2
 
-[node name="LoadBar" type="TextureProgressBar" parent="BarArea"]
+[node name="LoadBar" type="TextureProgressBar" parent="Screen/BarArea"]
 layout_mode = 0
 offset_left = 420.0
 offset_top = 774.0
@@ -89,7 +92,7 @@ stretch_margin_bottom = 36
 texture_under = ExtResource("4_trk")
 texture_progress = ExtResource("5_fill")
 
-[node name="PercentLabel" type="Label" parent="BarArea"]
+[node name="PercentLabel" type="Label" parent="Screen/BarArea"]
 layout_mode = 0
 offset_left = 420.0
 offset_top = 774.0
@@ -104,7 +107,7 @@ theme_override_font_sizes/font_size = 40
 text = "0%"
 vertical_alignment = 1
 
-[node name="HintsRow" type="HBoxContainer" parent="."]
+[node name="HintsRow" type="HBoxContainer" parent="Screen"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -118,12 +121,12 @@ mouse_filter = 2
 theme_override_constants/separation = 64
 alignment = 1
 
-[node name="HintJump" type="HBoxContainer" parent="HintsRow"]
+[node name="HintJump" type="HBoxContainer" parent="Screen/HintsRow"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="HintsRow/HintJump"]
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintJump"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
@@ -131,19 +134,19 @@ texture = ExtResource("6_hx")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="Label" parent="HintsRow/HintJump"]
+[node name="Text" type="Label" parent="Screen/HintsRow/HintJump"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "跳跃"
 
-[node name="HintPickup" type="HBoxContainer" parent="HintsRow"]
+[node name="HintPickup" type="HBoxContainer" parent="Screen/HintsRow"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="HintsRow/HintPickup"]
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintPickup"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
@@ -151,19 +154,19 @@ texture = ExtResource("7_hc")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="Label" parent="HintsRow/HintPickup"]
+[node name="Text" type="Label" parent="Screen/HintsRow/HintPickup"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "拾取\\使用 道具"
 
-[node name="HintDive" type="HBoxContainer" parent="HintsRow"]
+[node name="HintDive" type="HBoxContainer" parent="Screen/HintsRow"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="Icon" type="TextureRect" parent="HintsRow/HintDive"]
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintDive"]
 custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
@@ -171,7 +174,7 @@ texture = ExtResource("8_ht")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="Label" parent="HintsRow/HintDive"]
+[node name="Text" type="Label" parent="Screen/HintsRow/HintDive"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)

@@ -35,12 +35,12 @@ var lobby_player_count: int = 4
 ## 加载完成后要进入的关卡场景（goto_level 先展示加载界面）
 var pending_level_path: String = "res://scenes/levels/room_stage_battle.tscn"
 
-## 进入关卡：先展示假加载界面，加载完成后由加载界面调 enter_pending_level 跳关
+## 进入关卡：先展示加载界面，加载界面后台真实预加载关卡，完成后跳关
 func goto_level(path: String) -> void:
 	pending_level_path = path
 	get_tree().change_scene_to_file("res://scenes/ui/loading_screen.tscn")
 
-## 加载界面完成时调用
+## 加载界面完成时调用（真实加载失败时兜底）
 func enter_pending_level() -> void:
 	get_tree().change_scene_to_file(pending_level_path)
 ## 每个玩家绑定的输入设备（按槽位 0-3，与 player_index 对齐）：
