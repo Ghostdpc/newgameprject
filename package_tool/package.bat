@@ -13,7 +13,7 @@ REM    2) fallback default below
 if not defined GODOT_BIN set "GODOT_BIN=D:\godot\Godot_v4.7.2-stable_win64\Godot_v4.7.2-stable_win64_console.exe"
 set "GODOT_EXE=%GODOT_BIN%"
 set "PRESET=Windows Desktop"
-set "OUTPUT_BASENAME=MyGame"
+set "OUTPUT_BASENAME=my_game"
 
 REM  Export templates (auto-installed if missing)
 set "TEMPLATE_VERSION=4.7.2.stable"
@@ -26,9 +26,9 @@ set "PROJECT_ROOT=%CD%"
 popd
 set "OUTPUT_DIR=%PROJECT_ROOT%\package"
 
-REM ---- Timestamped version name (locale-independent) ----
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmmss"') do set "TS=%%i"
-set "VERSION_NAME=%OUTPUT_BASENAME%_%TS%"
+REM ---- Timestamped version name: <base>_v<MMdd>_<HH> (locale-independent) ----
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format MMdd_HH"') do set "TS=%%i"
+set "VERSION_NAME=%OUTPUT_BASENAME%_v%TS%"
 set "BUILD_DIR=%OUTPUT_DIR%\%VERSION_NAME%"
 set "OUTPUT_PATH=%BUILD_DIR%\%VERSION_NAME%.exe"
 
