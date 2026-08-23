@@ -53,7 +53,7 @@ func is_jump_just_pressed() -> bool:
 func is_dive_just_pressed() -> bool:
 	if _keyboard_enabled() and Input.is_action_just_pressed("dive_p%d" % (player_index + 1)):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_X)
+	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_Y)
 
 func is_pickup_just_pressed() -> bool:
 	if _keyboard_enabled() and Input.is_action_just_pressed("pickup_p%d" % (player_index + 1)):
@@ -69,7 +69,7 @@ func is_pickup_held() -> bool:
 func is_use_item_just_pressed() -> bool:
 	if _keyboard_enabled() and Input.is_action_just_pressed("use_item_p%d" % (player_index + 1)):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_Y)
+	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_B)
 
 ## R 鍵抓取場景物理物件（P1=R / P2=T）。探索性功能，可刪
 func is_grab_pressed() -> bool:

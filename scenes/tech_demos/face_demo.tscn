@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dd02hk008y6o3" path="res://scripts/player/face_demo_controller.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://m6wkaui35yss" path="res://scenes/player/player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/player/player_newnewhuman.tscn" id="3"]
 
 [sub_resource type="BoxMesh" id="3"]
 size = Vector3(30, 0.5, 30)
@@ -33,7 +34,7 @@ mesh = SubResource("3")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=275427585]
 shape = SubResource("4")
 
-[node name="PlayerP1" parent="." unique_id=436427743 instance=ExtResource("2")]
+[node name="PlayerP1" parent="." unique_id=436427743 instance=ExtResource("3")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -1.5, 1, 0)
 
 [node name="PlayerP2" parent="." unique_id=2045894969 instance=ExtResource("2")]
@@ -60,3 +61,19 @@ offset_right = 1100.0
 offset_bottom = 200.0
 theme_override_font_sizes/font_size = 18
 autowrap_mode = 2
+
+[node name="FaceEdit" type="LineEdit" parent="UILayer"]
+offset_left = 20.0
+offset_top = 205.0
+offset_right = 420.0
+offset_bottom = 235.0
+placeholder_text = "输入 pos/x,y,z 或 rot/x,y,z 或 scale/f (回车应用)"
+caret_blink = true
+
+[node name="EditMode" type="Label" parent="UILayer"]
+offset_left = 20.0
+offset_top = 240.0
+offset_right = 700.0
+offset_bottom = 270.0
+theme_override_font_sizes/font_size = 16
+text = "pos=(...)"

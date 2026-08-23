@@ -6,6 +6,7 @@ extends ItemEffect
 
 ## 保存修改过的 mesh 列表，用于 revert
 var _modified_meshes: Array[MeshInstance3D] = []
+var _halo_fx: Node = null
 
 func apply(ctx: ItemContext) -> void:
 	if ctx.source_player == null:
@@ -13,6 +14,17 @@ func apply(ctx: ItemContext) -> void:
 	_modified_meshes.clear()
 	var strength: float = float(params.get("strength", 0.6))
 	var root: Node3D = ctx.source_player
+	# 光環（halo）：用專用的彩虹流光+脈衝+粒子光暈效果，替代全身統一發光
+	if ctx.item_id == "halo" and root.outfit_manager:
+		var hat: Node3D = root.outfit_manager.get_item("hat_slot")
+		if hat:
+			var fx := Node.new()
+			fx.set_script(load("res://scripts/items/effects/halo_dynamic_fx.gd"))
+			hat.add_child(fx)
+			fx.call("setup", hat)
+			fx.call("setup_aura", ctx.source_player)
+			_halo_fx = fx
+			return
 	for child in root.find_children("*", "MeshInstance3D", true, false):
 		var mi := child as MeshInstance3D
 		if mi == null or mi.mesh == null:
@@ -30,6 +42,9 @@ func apply(ctx: ItemContext) -> void:
 		_modified_meshes.append(mi)
 
 func revert(ctx: ItemContext) -> void:
+	if _halo_fx and is_instance_valid(_halo_fx):
+		_halo_fx.queue_free()
+		_halo_fx = null
 	for mi in _modified_meshes:
 		if is_instance_valid(mi):
 			mi.material_override = null
