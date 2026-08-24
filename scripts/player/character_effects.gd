@@ -73,8 +73,8 @@ func set_face_texture(mesh: MeshInstance3D, tex: Texture2D, surf: int = -1) -> v
 			for si in mesh.mesh.get_surface_count():
 				mesh.set_surface_override_material(si, null)
 			face_textures.erase(mesh.get_instance_id())
-		else:
-			face_textures[mesh.get_instance_id()] = { "tex": tex, "surf": surf }
+	else:
+		face_textures[mesh.get_instance_id()] = { "tex": tex, "surf": surf }
 	_dirty = true
 
 func face_texture_info(mesh: MeshInstance3D) -> Dictionary:

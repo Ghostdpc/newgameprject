@@ -23,6 +23,9 @@ var _color_saturation := 0.9
 
 func _ready() -> void:
     call_deferred("_apply_cartoon_materials")
+    if not Engine.is_editor_hint():
+        var world_env := get_node_or_null("WorldEnvironment") as WorldEnvironment
+        RenderCompat.apply_environment(world_env)
 
 func _refresh_cartoon_materials() -> void:
     if is_inside_tree():

@@ -19,6 +19,15 @@ func register_main_camera(controller: Node) -> void:
 func register_photo_camera(controller: Node) -> void:
 	_photo_controller = controller
 
+## 注销（场景退出时调用，避免持有已 free 的旧场景引用）
+func unregister_main_camera(controller: Node) -> void:
+	if _main_controller == controller:
+		_main_controller = null
+
+func unregister_photo_camera(controller: Node) -> void:
+	if _photo_controller == controller:
+		_photo_controller = null
+
 func push_behavior(target: String, behavior: Object, duration: float = 0.0) -> void:
 	var controller := _get_controller(target)
 	if controller:
@@ -30,9 +39,13 @@ func pop_behavior(target: String, behavior: Object) -> void:
 		controller.pop_behavior(behavior)
 
 func get_main_controller() -> Node:
+	if not is_instance_valid(_main_controller):
+		_main_controller = null
 	return _main_controller
 
 func get_photo_controller() -> Node:
+	if not is_instance_valid(_photo_controller):
+		_photo_controller = null
 	return _photo_controller
 
 func _get_controller(target: String) -> Node:

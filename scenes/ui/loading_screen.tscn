@@ -46,11 +46,14 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Logo" type="TextureRect" parent="Screen" unique_id=548421797]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_left = 410.0
 offset_top = 110.0
-offset_right = 1510.0
+offset_right = -410.0
 offset_bottom = 704.0
+grow_horizontal = 2
 mouse_filter = 2
 texture = ExtResource("3_logo")
 expand_mode = 1
@@ -66,22 +69,28 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="LoadingLabel" type="Label" parent="Screen/BarArea" unique_id=442492160]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_left = 1060.0
 offset_top = 712.0
-offset_right = 1500.0
+offset_right = -420.0
 offset_bottom = 760.0
+grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "加载中..."
 horizontal_alignment = 2
 
 [node name="LoadBar" type="TextureProgressBar" parent="Screen/BarArea" unique_id=1703149296]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_left = 420.0
 offset_top = 774.0
-offset_right = 1500.0
+offset_right = -420.0
 offset_bottom = 846.0
+grow_horizontal = 2
 mouse_filter = 2
 value = 10.0
 nine_patch_stretch = true
@@ -93,11 +102,14 @@ texture_under = ExtResource("4_trk")
 texture_progress = ExtResource("5_fill")
 
 [node name="PercentLabel" type="Label" parent="Screen/BarArea" unique_id=1046383430]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_left = 440.0
 offset_top = 774.0
-offset_right = 780.0
+offset_right = -1140.0
 offset_bottom = 846.0
+grow_horizontal = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.11, 0.07, 0.2, 1)
 theme_override_constants/outline_size = 8

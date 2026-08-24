@@ -139,8 +139,8 @@ func _ready() -> void:
 	# 身材缩放要排在动画(priority 0)与弹簧骨骼(100)之后，避免骨骼 scale 被动画覆盖
 	process_priority = 100
 	_setup_state_machine()
-	_setup_model()
 	_setup_outfit()
+	_setup_model()
 	_head_icon = get_node_or_null("PlayerHeadIcon") as PlayerHeadIcon
 	apply_player_color(player_color)
 	add_to_group("players")

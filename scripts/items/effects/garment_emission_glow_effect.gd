@@ -37,7 +37,7 @@ func apply(ctx: ItemContext) -> void:
 			mat = StandardMaterial3D.new()
 		mat.emission_enabled = true
 		mat.emission = mat.albedo_color if mat.albedo_color != Color.BLACK else Color.WHITE
-		mat.emission_energy_multiplier = strength
+		mat.emission_energy_multiplier = RenderCompat.emission_energy(strength)
 		mi.material_override = mat
 		_modified_meshes.append(mi)
 

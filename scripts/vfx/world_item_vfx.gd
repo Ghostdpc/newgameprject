@@ -53,7 +53,7 @@ func _build_feet_rings() -> void:
 		_rings.append(ring)
 	var light := OmniLight3D.new()
 	light.light_color = tint
-	light.light_energy = 2.1
+	light.light_energy = RenderCompat.emission_energy(2.1)
 	light.omni_range = 3.4
 	light.position = Vector3(0, 0.55, 0)
 	add_child(light)
@@ -111,5 +111,5 @@ func _glow_material(color: Color) -> StandardMaterial3D:
 	material.albedo_color = color
 	material.emission_enabled = true
 	material.emission = Color(color.r, color.g, color.b, 1.0)
-	material.emission_energy_multiplier = 3.0
+	material.emission_energy_multiplier = RenderCompat.emission_energy(3.0)
 	return material

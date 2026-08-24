@@ -47,6 +47,10 @@ enabled=PackedStringArray("res://addons/gut/plugin.cfg")
 
 import/blender/enabled=false
 
+[gui]
+
+theme/custom_font="res://assets/fonts/SourceHanSansSC-Regular.otf"
+
 [input]
 
 move_up_p1={

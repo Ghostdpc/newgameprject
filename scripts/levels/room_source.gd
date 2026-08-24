@@ -46,5 +46,9 @@ func _reload() -> void:
 	if packed == null:
 		packed = load(scene_path) as PackedScene
 	if packed:
+		# 重复加载（scene_path 变更或二次 _reload）前先清理旧实例，避免泄漏
+		if _loaded:
+			_loaded.queue_free()
+			_loaded = null
 		_loaded = packed.instantiate() as Node3D
 		add_child(_loaded)

@@ -99,7 +99,7 @@ func _process(delta: float) -> void:
 			continue
 		mat.emission_enabled = true
 		mat.emission = col
-		mat.emission_energy_multiplier = 2.0 + pulse * 3.0
+		mat.emission_energy_multiplier = RenderCompat.emission_energy(2.0 + pulse * 3.0)
 	# 光環粒子顏色跟隨彩虹（新發射粒子生效；不 restart 以保持粒子自然循環）
 	var pm := _particles.process_material as ParticleProcessMaterial
 	if pm and is_instance_valid(_particles):

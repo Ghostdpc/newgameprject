@@ -2,8 +2,8 @@
 setlocal enabledelayedexpansion
 
 REM ============================================================
-REM  package_tool - one-click Godot Windows Desktop export
-REM  Output: <project_root>\package\MyGame.exe  (git-ignored)
+REM  package_tool - one-click Godot Web export
+REM  Output: <project_root>\package\web\index.html  (git-ignored)
 REM ============================================================
 
 REM ---- Config ----
@@ -12,7 +12,7 @@ REM    1) environment variable GODOT_BIN   (recommended, per-machine)
 REM    2) fallback default below
 if not defined GODOT_BIN set "GODOT_BIN=D:\Godot_v4.7.2\Godot_v4.7.2-stable_win64_console.exe"
 set "GODOT_EXE=%GODOT_BIN%"
-set "PRESET=Windows Desktop"
+set "PRESET=Web"
 set "OUTPUT_BASENAME=my_game"
 
 REM  Export templates (auto-installed if missing)
@@ -30,7 +30,7 @@ REM ---- Timestamped version name: <base>_v<MMdd>_<HH> (locale-independent) ----
 for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format MMdd_HH"') do set "TS=%%i"
 set "VERSION_NAME=%OUTPUT_BASENAME%_v%TS%"
 set "BUILD_DIR=%OUTPUT_DIR%\%VERSION_NAME%"
-set "OUTPUT_PATH=%BUILD_DIR%\%VERSION_NAME%.exe"
+set "OUTPUT_PATH=%BUILD_DIR%\index.html"
 
 echo [package_tool] Project : %PROJECT_ROOT%
 echo [package_tool] Engine  : %GODOT_EXE%
@@ -72,4 +72,5 @@ if not "%ERR%"=="0" (
 
 echo.
 echo [package_tool] Done -^> %OUTPUT_PATH%
+echo                Serve it with:  python -m http.server --directory "%BUILD_DIR%"
 endlocal
