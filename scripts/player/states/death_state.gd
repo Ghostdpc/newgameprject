@@ -1,5 +1,5 @@
-## 職責：死亡階段（出界初死）——清道具、隱藏模型、停物理
-## 立即過渡到 RespawnWaiting 讀秒
+## 职责：死亡阶段（出界初死）——清道具、隐藏模型、停物理
+## 立即过渡到 RespawnWaiting 读秒
 
 class_name DeathState
 extends BaseState

@@ -1,4 +1,4 @@
-## 職責：JSON 配置文件加載器，統一入口 + 快取
+## 职责：JSON 配置文件加载器，统一入口 + 快取
 
 extends Node
 
@@ -7,7 +7,7 @@ const RESERVED_KEYS: Array[String] = ["_comment"]
 
 var _cache: Dictionary = {}
 
-## 讀取配置，返回 Dictionary。文件不存在或解析失敗回傳 {}
+## 读取配置，返回 Dictionary。文件不存在或解析失败回传 {}
 func load_config(config_name: String) -> Dictionary:
 	if _cache.has(config_name):
 		return _cache[config_name]
@@ -36,17 +36,17 @@ func load_config(config_name: String) -> Dictionary:
 	_cache[config_name] = cfg
 	return cfg
 
-## 清快取重讀（開發熱重載用）
+## 清快取重读（开发热重载用）
 func reload(config_name: String) -> Dictionary:
 	_cache.erase(config_name)
 	return load_config(config_name)
 
-## 便捷查詢，缺失時回傳 default_value
+## 便捷查询，缺失时回传 default_value
 func get_value(config_name: String, key: String, default_value: Variant = null) -> Variant:
 	var cfg := load_config(config_name)
 	return cfg.get(key, default_value)
 
-## 檢查某配置文件是否存在（未加載時只做文件存在判斷，不解析）
+## 检查某配置文件是否存在（未加载时只做文件存在判断，不解析）
 func has_config(config_name: String) -> bool:
 	if _cache.has(config_name):
 		return true

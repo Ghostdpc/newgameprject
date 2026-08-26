@@ -14,7 +14,7 @@ func apply(ctx: ItemContext) -> void:
 	_modified_meshes.clear()
 	var strength: float = float(params.get("strength", 0.6))
 	var root: Node3D = ctx.source_player
-	# 光環（halo）：用專用的彩虹流光+脈衝+粒子光暈效果，替代全身統一發光
+	# 光环（halo）：用专用的彩虹流光+脉冲+粒子光晕效果，替代全身统一发光
 	if ctx.item_id == "halo" and root.outfit_manager:
 		var hat: Node3D = root.outfit_manager.get_item("hat_slot")
 		if hat:
@@ -43,8 +43,8 @@ func apply(ctx: ItemContext) -> void:
 
 func revert(ctx: ItemContext) -> void:
 	if _halo_fx and is_instance_valid(_halo_fx):
-		# 先停 _process，避免 queue_free 後同一幀殘留幀再驅動已釋放的粒子/材質
-		# 順帶清掉掛在玩家身上的 aura 粒子（setup_aura add_child 到玩家根，不會隨服裝 free）
+		# 先停 _process，避免 queue_free 后同一帧残留帧再驱动已释放的粒子/材质
+		# 顺带清掉挂在玩家身上的 aura 粒子（setup_aura add_child 到玩家根，不会随服装 free）
 		if _halo_fx.get("_aura") != null:
 			var aura = _halo_fx.get("_aura")
 			if aura is Node and is_instance_valid(aura):

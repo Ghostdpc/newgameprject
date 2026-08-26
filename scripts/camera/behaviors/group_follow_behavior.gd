@@ -1,4 +1,4 @@
-## 職責：群組跟隨行為，自動縮放覆蓋所有玩家
+## 职责：群组跟随行为，自动缩放覆盖所有玩家
 
 class_name GroupFollowBehavior
 extends CameraBehavior

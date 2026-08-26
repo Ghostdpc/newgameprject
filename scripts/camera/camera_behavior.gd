@@ -1,4 +1,4 @@
-## 職責：相機行為基類
+## 职责：相机行为基类
 
 class_name CameraBehavior
 extends RefCounted

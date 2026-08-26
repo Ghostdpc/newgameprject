@@ -1,4 +1,4 @@
-## 職責：測量 ragdoll 倒地/站起時 骨架節點 相對 body 的偏移
+## 职责：测量 ragdoll 倒地/站起时 骨架节点 相对 body 的偏移
 
 extends GutTest
 
@@ -22,7 +22,7 @@ func test_skeleton_relative_offset_during_ragdoll() -> void:
 	var skeleton: Skeleton3D = _find_skeleton(player.get_node("Model"))
 	var skeleton_local_start: Vector3 = skeleton.position
 	print("skeleton local start = ", skeleton_local_start)
-	# 進入 Stunned 倒地
+	# 进入 Stunned 倒地
 	player.state_machine.transition_to("Stunned")
 	await wait_physics_frames(30)
 	var skeleton_local_down: Vector3 = skeleton.position

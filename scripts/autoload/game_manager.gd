@@ -1,20 +1,20 @@
-## 職責：遊戲整體流程控制，按 GameConfig 驅動各階段順序推進
-# 注意：autoload 腳本不使用 class_name，因為 autoload 名稱本身即全局引用
-# HUD / ResultsOverlay 使用 GameManager.GameStage 時，GameManager 指 autoload 單例，可正常訪問枚舉
+## 职责：游戏整体流程控制，按 GameConfig 驱动各阶段顺序推进
+# 注意：autoload 脚本不使用 class_name，因为 autoload 名称本身即全局引用
+# HUD / ResultsOverlay 使用 GameManager.GameStage 时，GameManager 指 autoload 单例，可正常访问枚举
 
 extends Node
 
 enum GameStage {
 	MAIN_MENU,       # S0 标题
 	LOBBY,           # S1+S2 玩家加入与人数确认
-	THEME_ANNOUNCE,  # S3 主題公布（3 秒）
+	THEME_ANNOUNCE,  # S3 主题公布（3 秒）
 	GRAB_CLOTHES,    # （V1.3 流程已取消，duration=0 自动跳过）
-	BATTLE,          # S4 倒計時混戰（搶鏡頭）
+	BATTLE,          # S4 倒计时混战（抢镜头）
 	SCORE_SHUTTER,   # S5 快门（由关卡演出，流程不驻留）
-	SCORING,         # S6+S7 系統評分 → 冠军结算
+	SCORING,         # S6+S7 系统评分 → 冠军结算
 }
 
-## 階段推進順序（不含 MAIN_MENU，由 start_game 觸發）
+## 阶段推进顺序（不含 MAIN_MENU，由 start_game 触发）
 const STAGE_ORDER: Array = [
 	GameStage.THEME_ANNOUNCE,
 	GameStage.GRAB_CLOTHES,
@@ -24,7 +24,7 @@ const STAGE_ORDER: Array = [
 
 var current_stage: GameStage = GameStage.MAIN_MENU
 var stage_time_remaining: float = 0.0
-## 倒計時速率乘數（1.0 = 正常；由 timer_scale_effect 臨時修改）
+## 倒计时速率乘数（1.0 = 正常；由 timer_scale_effect 临时修改）
 var time_scale: float = 1.0
 var config: GameConfig
 
@@ -102,7 +102,7 @@ func _ready() -> void:
 	config.load()
 	KeybindSettings.load_bindings()
 
-## 從主界面進入遊戲，重置流程
+## 从主界面进入游戏，重置流程
 func start_game() -> void:
 	if _is_net_client():
 		return
@@ -110,7 +110,7 @@ func start_game() -> void:
 	time_rate = 1.0
 	_advance_stage()
 
-## 結算階段由玩家手動確認結束（用於 scoring_duration = 0 的情況）
+## 结算阶段由玩家手动确认结束（用于 scoring_duration = 0 的情况）
 func finish_scoring() -> void:
 	_timer_active = false
 	_advance_stage()
@@ -155,7 +155,7 @@ func _transition_to(stage: GameStage) -> void:
 		_timer_active = false
 		return
 
-	# 其他階段 duration = 0：跳過
+	# 其他阶段 duration = 0：跳过
 	if duration <= 0.0:
 		call_deferred("_advance_stage")
 		return

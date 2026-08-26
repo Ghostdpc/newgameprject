@@ -1,13 +1,13 @@
-## 職責：玩家主控制器，整合輸入/狀態機/物理移動/動畫
+## 职责：玩家主控制器，整合输入/状态机/物理移动/动画
 
 class_name PlayerController
 extends CharacterBody3D
 
 const GRAVITY: float = 20.0
 const ACCELERATION: float = 15.0
-## 轉向速率（rad/s；大=轉得快，小=平滑慢轉）
+## 转向速率（rad/s；大=转得快，小=平滑慢转）
 const TURN_RATE: float = 12.0
-## 拾取有效距離（米）
+## 拾取有效距离（米）
 const PICKUP_RANGE: float = 1.5
 
 const ANIM_IDLE: String = "Idle_A"
@@ -18,52 +18,52 @@ const ANIM_DIVE: String = "Jump_Full_Short"
 const IDLE_SOURCE: String = "res://assets/models/mannequin/animations/Rig_Medium_General.glb"
 const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
 
-## human 動畫 FPS（模型導入 30fps）
+## human 动画 FPS（模型导入 30fps）
 const HUMAN_ANIM_FPS: float = 30.0
-## human「主動畫」內部的子段（帧號）——所有動作統一塞在同一個動畫裡，按帧號拆：
-## 美術後續加動作時，直接在這個表裡加一行即可，程式自動拆出可點播的子動畫。
-## {子動畫名: [起始幀, 結束幀]}
+## human「主动画」内部的子段（帧号）——所有动作统一塞在同一个动画里，按帧号拆：
+## 美术后续加动作时，直接在这个表里加一行即可，程式自动拆出可点播的子动画。
+## {子动画名: [起始帧, 结束帧]}
 const HUMAN_ANIM_SLOTS: Dictionary = {
-	"Human_Idle":  [0, 30],    # 待機
-	"Human_Move":  [40, 60],   # 移動
-	"Human_Dive":  [70, 105],  # 飛撲
-	# 之後美術把更多動作塞進主動畫時，在此加一行即可（如 "Human_Jump": [106,119]）
+	"Human_Idle":  [0, 30],    # 待机
+	"Human_Move":  [40, 60],   # 移动
+	"Human_Dive":  [70, 105],  # 飞扑
+	# 之后美术把更多动作塞进主动画时，在此加一行即可（如 "Human_Jump": [106,119]）
 }
 
-## 主動畫的後綴識別（美術可能命名 Idle/Walk/… 各種，取「存在」的那個）
+## 主动画的后缀识别（美术可能命名 Idle/Walk/… 各种，取「存在」的那个）
 const HUMAN_MASTER_SUFFIXES: Array[String] = ["Idle", "Walk", "Main", "Master"]
 
-## human.fbx 原始高度約 4.456（實測），縮放到 1.0m 的精確係數
+## human.fbx 原始高度约 4.456（实测），缩放到 1.0m 的精确系数
 const HUMAN_MODEL_SCALE: float = 1.0 / 4.456
-## human 動畫名帶「骨架|」前綴，用後綴匹配（Idle/Walk/jump）
+## human 动画名带「骨架|」前缀，用后缀匹配（Idle/Walk/jump）
 const HUMAN_ANIM_IDLE: String = "Idle"
 const HUMAN_ANIM_MOVE: String = "Walk"
 const HUMAN_ANIM_JUMP: String = "jump"
 
-## 拾取長按時長（秒，策划要求 0.8）
+## 拾取长按时长（秒，策划要求 0.8）
 const PICKUP_HOLD_TIME: float = 0.8
 
-## 拾取到可使用之間的間隔（秒）：撿起後需等待才能用，避免同鍵誤觸立即使用
+## 拾取到可使用之间的间隔（秒）：捡起后需等待才能用，避免同键误触立即使用
 const PICKUP_USE_GAP: float = 0.3
 
-## 抓取距離 / 拋出速度 / 被抓起物體跟隨位置（探索性功能，可刪）
+## 抓取距离 / 抛出速度 / 被抓起物体跟随位置（探索性功能，可删）
 const GRAB_RANGE: float = 2.5
 const GRAB_LIFT: float = 1.6
 const THROW_SPEED: float = 5.0
-## 抓取吸向手的速度（大=更快抓到；小=緩慢飛來）
+## 抓取吸向手的速度（大=更快抓到；小=缓慢飞来）
 const GRAB_LERP: float = 8.0
 
 @export var jump_force: float = 8.16
-## 二段跳高度（相對 jump_force 的比例；0 = 關閉二段跳）
+## 二段跳高度（相对 jump_force 的比例；0 = 关闭二段跳）
 @export var double_jump_ratio: float = 0.9
 
-## 本空中週期是否可用二段跳（JumpState 管理）
+## 本空中周期是否可用二段跳（JumpState 管理）
 var double_jump_available: bool = false
 @export var player_index: int = 0
 ## 远端 puppet（client 侧渲染的玩家）：不跑本地物理/状态机，只插值 host 快照
 @export var is_puppet: bool = false
 @export var player_color: Color = Color.WHITE
-## human 模型本體 Y 軸朝向補償（deg）。若走路側身，在 player.tscn 調整讓模型正面朝移動方向。
+## human 模型本体 Y 轴朝向补偿（deg）。若走路侧身，在 player.tscn 调整让模型正面朝移动方向。
 @export var human_model_yaw_deg: float = -90.0
 
 signal item_picked_up(item_id: String)
@@ -79,12 +79,12 @@ var character_effects: CharacterEffects
 var spring_rig: SpringBoneRig
 var face: PlayerFaceController
 
-## 進入對局：隨機一個表情（每輪開始調用）
+## 进入对局：随机一个表情（每轮开始调用）
 func enter_match_random_face() -> void:
 	if face and face.count() > 0:
 		face.show_expression(randi() % face.count())
 
-## 動作觸發時輪換到下一表情
+## 动作触发时轮换到下一表情
 func cycle_face() -> void:
 	if not face or face.count() <= 0:
 		return
@@ -102,7 +102,7 @@ func cycle_face() -> void:
 var held_item_id: String = ""
 ## 被炸等负面效果累计的积分惩罚，快门结算时从总分扣除（clamp 到 0）
 var score_penalty: int = 0
-## 移速乘數（1.0 = 正常；由 player_speed_effect 臨時修改）
+## 移速乘数（1.0 = 正常；由 player_speed_effect 临时修改）
 var speed_multiplier: float = 1.0
 ## 身材缩放（服装效果）：head_scale 放大头部 / body_scale 放大身躯 / body_width 加宽
 var head_scale: float = 1.0
@@ -113,7 +113,7 @@ var equipped_garments: Dictionary = {}
 
 var _animation_player: AnimationPlayer
 var _current_anim: String = ""
-## 凍結（表情調試用）：暫停動畫更新與狀態機，角色定住
+## 冻结（表情调试用）：暂停动画更新与状态机，角色定住
 var frozen: bool = false
 var _is_human_model: bool = false
 var _suicide_was_pressed: bool = false
@@ -129,12 +129,12 @@ var _body_collision: CollisionShape3D
 var _body_mask_saved: int = -1
 
 var _pickup_hold_time: float = 0.0
-## 撿起後剩餘的使用冷卻（秒），>0 時 O 鍵不觸發使用
+## 捡起后剩余的使用冷却（秒），>0 时 O 键不触发使用
 var _use_gap_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
 var _head_icon: PlayerHeadIcon
 
-## 是否處於死亡/復活流程（非正常對戰狀態）
+## 是否处于死亡/复活流程（非正常对战状态）
 func is_dead() -> bool:
 	if state_machine == null:
 		return false
@@ -175,15 +175,15 @@ func _create_input_provider() -> PlayerInput:
 			return remote
 	return PlayerInput.new(player_index)
 
-## 開關布娃娃（被擊倒時進入物理倒地）
+## 开关布娃娃（被击倒时进入物理倒地）
 func set_ragdoll(enabled: bool) -> void:
 	if ragdoll_rig:
 		ragdoll_rig.set_ragdoll_enabled(enabled)
-	# 布娃娃時關閉彈簧骨骼，避免與物理姿態搶寫骨架
+	# 布娃娃时关闭弹簧骨骼，避免与物理姿态抢写骨架
 	if spring_rig:
 		spring_rig.set_active(not enabled)
-	# 物理骨 layer=4 啟用碰撞後會擋住/推開玩家碰撞體（玩家 mask 含 4）。
-	# ragdoll 期間把玩家 mask 移除物理骨層，讓碰撞體不被癱軟的骨骼擠開/擋路。
+	# 物理骨 layer=4 启用碰撞后会挡住/推开玩家碰撞体（玩家 mask 含 4）。
+	# ragdoll 期间把玩家 mask 移除物理骨层，让碰撞体不被瘫软的骨骼挤开/挡路。
 	if enabled:
 		_body_mask_saved = collision_mask
 		collision_mask = _body_mask_saved & ~4
@@ -192,23 +192,23 @@ func set_ragdoll(enabled: bool) -> void:
 			collision_mask = _body_mask_saved
 			_body_mask_saved = -1
 
-## 擊飛：body 位移（模型跟 body，姿態由 ragdoll 提供）
+## 击飞：body 位移（模型跟 body，姿态由 ragdoll 提供）
 func knockback(direction: Vector3) -> void:
 	velocity = direction
 
-## 癱軟時 body 跟隨物理骨落點（貼地），站起前也用它對齊避免漂移
+## 瘫软时 body 跟随物理骨落点（贴地），站起前也用它对齐避免漂移
 func sync_body_to_ragdoll() -> void:
 	if not ragdoll_rig:
 		return
 	var hips_pos := ragdoll_rig.get_hips_position()
 	if hips_pos == Vector3.ZERO:
 		return
-	# 對齊 hips 水平位置；Y 限制在地面之上（≥0），避免碰撞體穿到地面下
+	# 对齐 hips 水平位置；Y 限制在地面之上（≥0），避免碰撞体穿到地面下
 	var body_y := maxf(hips_pos.y, 0.0)
 	global_position = Vector3(hips_pos.x, body_y, hips_pos.z)
 	velocity.y = 0.0
 
-## 出界死亡：進入死亡狀態（清道具、藏體、停物理）
+## 出界死亡：进入死亡状态（清道具、藏体、停物理）
 func die() -> void:
 	SoundMgr.play("die")
 	if state_machine.current_state_name == "Death":
@@ -216,13 +216,13 @@ func die() -> void:
 	death_started.emit(self)
 	state_machine.transition_to("Death")
 
-## 配置重生（由 LevelBase 設定復活點與讀秒時長）
+## 配置重生（由 LevelBase 设定复活点与读秒时长）
 func configure_respawn(spawn_pos: Vector3, wait_duration: float) -> void:
 	var waiting := state_machine.get_state("RespawnWaiting") as RespawnWaitingState
 	if waiting:
 		waiting.configure(spawn_pos, wait_duration)
 
-## 倒地後站起，由調用方確保已關閉 ragdoll
+## 倒地后站起，由调用方确保已关闭 ragdoll
 func stand_up() -> void:
 	if ragdoll_rig:
 		ragdoll_rig.reset()
@@ -289,11 +289,11 @@ func _process(delta: float) -> void:
 		_use_gap_time -= delta
 	if player_input.is_use_item_just_pressed():
 		if not held_item_id.is_empty():
-			# 身上有道具：撿起後需過間隔才能使用
+			# 身上有道具：捡起后需过间隔才能使用
 			if _use_gap_time <= 0.0:
 				use_held_item()
 		else:
-			# 身上無道具：嘗試拾取附近道具
+			# 身上无道具：尝试拾取附近道具
 			_try_pickup()
 	# 长按拾取兜底：联机按下沿（edge）依赖上行推导，双开/卡顿下行上行频率低，
 	# 快速按键覆盖帧少、edge 易丢；held(level) 对丢帧免疫，按住 0.8s 兜底拾取
@@ -319,7 +319,7 @@ func _update_pickup_hold(delta: float) -> void:
 	else:
 		_pickup_hold_time = 0.0
 
-## 拾取長按時如果正在移動則中斷（策划：移動會打斷拾取）
+## 拾取长按时如果正在移动则中断（策划：移动会打断拾取）
 func _pickup_movement_blocked() -> bool:
 	# 阈值 0.04（约 0.2 速）：联机 _move 为网络值可能有残留/噪声，
 	# 键盘 WASD(1.0) 正常打断，微小残留不误打断
@@ -357,12 +357,12 @@ func _pickup_nearest() -> Dictionary:
 		if d_sq < 0.0001:
 			d_sq = 0.0001
 		var dist := sqrt(d_sq)
-		# 直立於道具正上方（水平距離極小）時，水平朝向無意義 → 直接允許拾取
+		# 直立于道具正上方（水平距离极小）时，水平朝向无意义 → 直接允许拾取
 		if dist > PICKUP_RANGE:
 			continue
 		var score: float
 		if dist <= 0.3:
-			# 貼身/正上方：不受朝向限制
+			# 贴身/正上方：不受朝向限制
 			score = 1.0 - dist / PICKUP_RANGE * 0.25
 		else:
 			var facing := to.normalized().dot(fwd)
@@ -387,7 +387,7 @@ func _physics_process(delta: float) -> void:
 	if is_puppet:
 		_puppet_physics(delta)
 		return
-	# 死亡/復活狀態也需物理幀推進（Death→Waiting→Fall），故不整體跳過
+	# 死亡/复活状态也需物理帧推进（Death→Waiting→Fall），故不整体跳过
 	_apply_gravity(delta)
 	if is_dead():
 		state_machine.physics_update(delta)
@@ -431,17 +431,17 @@ func _puppet_update_animation(state_name: String) -> void:
 		_animation_player.play(anim)
 		_current_anim = anim
 
-## 自殺快捷鍵（測試用）：P1=O / P2=P，按下立即觸發完整死亡+重生流程
+## 自杀快捷键（测试用）：P1=O / P2=P，按下立即触发完整死亡+重生流程
 func _handle_suicide() -> void:
 	var pressed := player_input.is_suicide_just_pressed()
 	if pressed and not _suicide_was_pressed:
-		# 把玩家移到出界下方，讓 LevelBase._physics_process 接管重生流程
+		# 把玩家移到出界下方，让 LevelBase._physics_process 接管重生流程
 		global_position.y = -100.0
 	_suicide_was_pressed = pressed
 
-## 玩家移動時推動接觸到的場景物理物（解決 move_and_slide 卡住不推）
+## 玩家移动时推动接触到的场景物理物（解决 move_and_slide 卡住不推）
 func _push_contacted_props() -> void:
-	# 用輸入方向而非 velocity（頂住箱子時 velocity 會被歸零，輸入方向仍有效）
+	# 用输入方向而非 velocity（顶住箱子时 velocity 会被归零，输入方向仍有效）
 	var input_dir := player_input.get_move_direction()
 	if input_dir.length_squared() < 0.01:
 		return
@@ -451,10 +451,10 @@ func _push_contacted_props() -> void:
 		if collider is PhysicalProp:
 			(collider as PhysicalProp).push(push_dir)
 
-## 抓取更新：R 鍵按住 → 抓起/跟隨面前物理物；鬆開 → 拋出
+## 抓取更新：R 键按住 → 抓起/跟随面前物理物；松开 → 抛出
 func _update_grab(delta: float) -> void:
 	if _grabbed_prop != null:
-		# 抓取點隨物品尺寸：前置距離=深度一半+間隙，抬升=高度/2（避免大件卡身位）
+		# 抓取点随物品尺寸：前置距离=深度一半+间隙，抬升=高度/2（避免大件卡身位）
 		var size := _prop_half_extents(_grabbed_prop)
 		var depth := size.z  # 沿前向的半深
 		var height := size.y # 半高
@@ -465,7 +465,7 @@ func _update_grab(delta: float) -> void:
 		else:
 			_grabbed_prop.global_position = target
 		if not player_input.is_grab_pressed():
-			# 鬆開：跑動中 = 帶著玩家速度拋出；靜止 = 原地放下（只留很小前向）
+			# 松开：跑动中 = 带著玩家速度抛出；静止 = 原地放下（只留很小前向）
 			var carry := Vector3(velocity.x, 0.0, velocity.z)
 			var throw_dir := global_basis.z.normalized()
 			var speed := carry.length()
@@ -485,7 +485,7 @@ func _update_grab(delta: float) -> void:
 			_grabbed_prop.grab()
 			SoundMgr.play("grab", true)
 
-## 物品碰撞半尺寸（xyz），用於調整抓取點位置避免大件卡身位。無碰撞/未知時返回原固定檔位。
+## 物品碰撞半尺寸（xyz），用于调整抓取点位置避免大件卡身位。无碰撞/未知时返回原固定档位。
 func _prop_half_extents(prop: PhysicalProp) -> Vector3:
 	for cs in prop.find_children("*", "CollisionShape3D", true, false):
 		var shape: Shape3D = (cs as CollisionShape3D).shape
@@ -501,7 +501,7 @@ func _prop_half_extents(prop: PhysicalProp) -> Vector3:
 			return mi.get_aabb().size * 0.5
 	return Vector3(1.1, 0.8, 1.1)
 
-## 找最近的可抓取場景物件（group "physical_prop"，距離內）
+## 找最近的可抓取场景物件（group "physical_prop"，距离内）
 func _find_nearest_prop() -> PhysicalProp:
 	var props := get_tree().get_nodes_in_group("physical_prop")
 	var nearest: PhysicalProp = null
@@ -518,7 +518,7 @@ func _find_nearest_prop() -> PhysicalProp:
 		return nearest
 	return null
 
-## 飛撲狀態碰撞檢測：撞到玩家→擊飛對方倒地；撞到場景物理物→擊飛物品 + 自己倒地
+## 飞扑状态碰撞检测：撞到玩家→击飞对方倒地；撞到场景物理物→击飞物品 + 自己倒地
 func _check_dive_hit() -> void:
 	if state_machine.current_state_name != "Dive":
 		return
@@ -529,12 +529,12 @@ func _check_dive_hit() -> void:
 			dive.hit_target(collider as PlayerController)
 		elif collider is PhysicalProp:
 			dive.knock_prop(collider as PhysicalProp)
-			# 撞到物品自己也立刻停下並進入倒地（與被撞同等）
+			# 撞到物品自己也立刻停下并进入倒地（与被撞同等）
 			SoundMgr.play("hit")
 			_knocked_down_by_prop(dive)
 			return
 
-## 撞到物品後自己倒地：立即停下 + 進入 Stunned（布娃娃癱軟）
+## 撞到物品后自己倒地：立即停下 + 进入 Stunned（布娃娃瘫软）
 func _knocked_down_by_prop(dive: DiveState) -> void:
 	velocity = Vector3.ZERO
 	state_machine.transition_to("Stunned")
@@ -575,7 +575,7 @@ func _get_main_camera() -> Camera3D:
 			return cam
 	return get_viewport().get_camera_3d()
 
-## 平滑轉身：模型正面朝 +Z，用 yaw 角度插值（避免 slerp 在 180° 退化導致瞬移）
+## 平滑转身：模型正面朝 +Z，用 yaw 角度插值（避免 slerp 在 180° 退化导致瞬移）
 func _turn_toward(direction: Vector3) -> void:
 	var move_dir := direction
 	move_dir.y = 0.0
@@ -592,10 +592,10 @@ func _apply_gravity(delta: float) -> void:
 	if is_dead():
 		return
 	if not is_on_floor():
-		# Fly 階段由 FlyState 自行管理重力（可自定義下墜）
+		# Fly 阶段由 FlyState 自行管理重力（可自定义下坠）
 		if state_machine.current_state_name == "Fly":
 			return
-		# 被擊飛期間用更大重力，讓上升/下降都更快
+		# 被击飞期间用更大重力，让上升/下降都更快
 		var g := GRAVITY
 		if state_machine.current_state_name == "Stunned":
 			g = TuneConfig.stun_gravity
@@ -640,26 +640,26 @@ func _setup_state_machine() -> void:
 
 	state_machine.start("Idle")
 
-## 定位模型骨架與動畫播放器
+## 定位模型骨架与动画播放器
 func _setup_model() -> void:
 	var model := get_node_or_null("Model")
 	if not model:
 		return
 	_animation_player = _find_animation_player(model)
-	# human 模型檢測：動畫名以「骨架|」開頭（KayKit 為 Idle_A 等），縮小 10 倍 + 轉前向
+	# human 模型检测：动画名以「骨架|」开头（KayKit 为 Idle_A 等），缩小 10 倍 + 转前向
 	_is_human_model = _is_human_skel(model)
 	if _is_human_model:
-		# human 骨骼 pose 由動畫直接驅動。做正確縮放 + Y 軸朝向補償（前向對齊 +Z）。
+		# human 骨骼 pose 由动画直接驱动。做正确缩放 + Y 轴朝向补偿（前向对齐 +Z）。
 		model.scale = Vector3.ONE * HUMAN_MODEL_SCALE
 		model.rotation.y = deg_to_rad(human_model_yaw_deg)
-		# 模型自帶 OmniLight 隨玩家移動造成泛白/發光，移除之
+		# 模型自带 OmniLight 随玩家移动造成泛白/发光，移除之
 		_remove_embedded_lights(model)
-		# 原模型材質為純白 unshaded（泛白主因），改為受光照的標準材質 + 玩家色
+		# 原模型材质为纯白 unshaded（泛白主因），改为受光照的标准材质 + 玩家色
 		_apply_human_material(model)
-		# human 自帶動畫，不 merge KayKit Idle（骨骼名不匹配會報警）
+		# human 自带动画，不 merge KayKit Idle（骨骼名不匹配会报警）
 		_set_human_animation_looping()
-		# 組合主動畫（Idle/Idle_001 含待機+移動+飛撲多段）必須按帧拆出待機段，
-		# 即使有獨立 Walk/jump 也要拆（待機只用組合裡的待機段）
+		# 组合主动画（Idle/Idle_001 含待机+移动+飞扑多段）必须按帧拆出待机段，
+		# 即使有独立 Walk/jump 也要拆（待机只用组合里的待机段）
 		_split_human_idle()
 	else:
 		_merge_idle_animation()
@@ -678,7 +678,7 @@ func _setup_model() -> void:
 			if not face.apply_head_texture():
 				face.use_head_texture = false
 		return
-	# 初始化布娃娃（綁定模型骨架）
+	# 初始化布娃娃（绑定模型骨架）
 	ragdoll_rig = get_node_or_null("RagdollRig") as RagdollRig
 	if ragdoll_rig:
 		var skeleton := _find_skeleton(model)
@@ -686,7 +686,7 @@ func _setup_model() -> void:
 			ragdoll_rig.is_human = _is_human_model
 			ragdoll_rig.body_root = self
 			ragdoll_rig.setup(skeleton, _animation_player)
-	# Spring Bone 彈簧骨骼：常態軟糯效果（掛本角色，高 priority 在動畫後寫回）
+	# Spring Bone 弹簧骨骼：常态软糯效果（挂本角色，高 priority 在动画后写回）
 	spring_rig = SpringBoneRig.new()
 	spring_rig.name = "SpringBoneRig"
 	add_child(spring_rig)
@@ -695,12 +695,12 @@ func _setup_model() -> void:
 		spring_rig.skeleton = skel2
 		spring_rig.animation_player = _animation_player
 		spring_rig.is_human = _is_human_model
-		# 保留 head 進 spring（磕頭 kowtow 效果需 head spring）；帽子隨磕頭左右晃屬合理演出
+		# 保留 head 进 spring（磕头 kowtow 效果需 head spring）；帽子随磕头左右晃属合理演出
 		spring_rig.apply_preset("normal")
 		spring_rig.setup(skel2, _animation_player)
 		spring_rig.set_active(true)
-	# 軟倒起身後骨骼姿態大變：重設彈簧狀態對齊站姿，避免 head 彈簧殘留舊態
-	# 與服装头骨縮放(1.8)疊加，導致蘑菇帽軟倒後懸空漂走。
+	# 软倒起身后骨骼姿态大变：重设弹簧状态对齐站姿，避免 head 弹簧残留旧态
+	# 与服装头骨缩放(1.8)叠加，导致蘑菇帽软倒后悬空漂走。
 	if ragdoll_rig and spring_rig:
 		ragdoll_rig.stood_up.connect(func(): spring_rig.reinit())
 	# 身材缩放：记录 head/chest 骨骼索引（服装效果放大部位用）
@@ -715,7 +715,7 @@ func _setup_model() -> void:
 	face = get_node_or_null("Face") as PlayerFaceController
 	if face:
 		face.setup(_model_skeleton)
-		# 若有模型帶獨立臉片（newnewhuman），自動改貼臉到臉片材質；無則保持平面貼紙
+		# 若有模型带独立脸片（newnewhuman），自动改贴脸到脸片材质；无则保持平面贴纸
 		face.use_head_texture = true
 		var face_ok := face.apply_head_texture()
 		if not face_ok:
@@ -730,7 +730,7 @@ func _find_skeleton(n: Node) -> Skeleton3D:
 			return r
 	return null
 
-## 判定是否 human 模型（骨架含 Blender 默認骨名「骨骼.」）
+## 判定是否 human 模型（骨架含 Blender 默认骨名「骨骼.」）
 func _is_human_skel(model: Node3D) -> bool:
 	var skel := _find_skeleton(model) as Skeleton3D
 	if skel:
@@ -739,12 +739,12 @@ func _is_human_skel(model: Node3D) -> bool:
 				return true
 	return false
 
-## 移除模型自帶的光源節點（human.fbx 帶一個 OmniLight，會造成泛白/發光）
+## 移除模型自带的光源节点（human.fbx 带一个 OmniLight，会造成泛白/发光）
 func _remove_embedded_lights(model: Node3D) -> void:
 	for l in model.find_children("*", "Light3D", true, false):
 		l.queue_free()
 
-## 覆蓋 human 模型的純白 unshaded 材質：改為受光照、帶玩家色，消除整片泛白
+## 覆盖 human 模型的纯白 unshaded 材质：改为受光照、带玩家色，消除整片泛白
 func _apply_human_material(model: Node3D) -> void:
 	for mi in model.find_children("*", "MeshInstance3D", true, false):
 		var m := mi as MeshInstance3D
@@ -757,7 +757,7 @@ func _apply_human_material(model: Node3D) -> void:
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 		m.material_override = mat
 
-## 從 General.glb 合併 Idle 動畫（MovementBasic 無待機動畫）
+## 从 General.glb 合并 Idle 动画（MovementBasic 无待机动画）
 func _merge_idle_animation() -> void:
 	if not _animation_player or _animation_player.has_animation(ANIM_IDLE):
 		return
@@ -781,20 +781,20 @@ func _apply_body_scale() -> void:
 	if not _model_skeleton:
 		return
 	if _ragdoll_in_use():
-		# 布娃娃/軟倒：重置身材縮放，物理接管骨骼姿態（避免殘留縮放錯亂）
+		# 布娃娃/软倒：重置身材缩放，物理接管骨骼姿态（避免残留缩放错乱）
 		_reset_body_scale()
 		return
 	if _body_bone_idx != -1:
 		_model_skeleton.set_bone_pose_scale(_body_bone_idx, Vector3.ONE * body_scale)
 	if _head_bone_idx != -1:
 		if _is_human_model:
-			# human：实测「骨骼.004」放大時頭會變大（body_scale 驗證），故 head_scale 也用它放大頭。
-			# 身体放大用根骨「骨骼.001」（4157頂點=身體主體）。
+			# human：实测「骨骼.004」放大时头会变大（body_scale 验证），故 head_scale 也用它放大头。
+			# 身体放大用根骨「骨骼.001」（4157顶点=身体主体）。
 			var head_scale_v := head_scale / maxf(body_scale, 0.01)
 			var body_scale_v := maxf(body_scale, 0.01)
 			for i in _model_skeleton.get_bone_count():
 				var nm := String(_model_skeleton.get_bone_name(i))
-				# 不縮放「骨骼.005_end_end_end_end」（帽子掛點骨），避免掛點被 scale 拉走/帽子亂
+				# 不缩放「骨骼.005_end_end_end_end」（帽子挂点骨），避免挂点被 scale 拉走/帽子乱
 				if nm == "骨骼.004" or nm == "骨骼.005":
 					_model_skeleton.set_bone_pose_scale(i, Vector3.ONE * head_scale_v)
 				elif nm == "骨骼.001":
@@ -806,8 +806,8 @@ func _apply_body_scale() -> void:
 	_apply_child_compensate(_CHEST_CHILD_BONES, body_scale)
 	_apply_collision_scale()
 
-## 帽子掛在頭骨會隨頭放大而放大；設逆縮放保持帽子視覺尺寸不爆大。
-## user_hat_scale_mult 供外部（garment_demo）手動微調帽子大小。
+## 帽子挂在头骨会随头放大而放大；设逆缩放保持帽子视觉尺寸不爆大。
+## user_hat_scale_mult 供外部（garment_demo）手动微调帽子大小。
 var user_hat_scale_mult: float = 1.0
 
 func _compensate_hat_scale(head_scale_v: float) -> void:
@@ -837,7 +837,7 @@ func _apply_child_compensate(bone_names: Array[String], parent_scale: float) -> 
 func _apply_collision_scale() -> void:
 	if _model_node:
 		if _is_human_model:
-			# human 整體縮放基為 HUMAN_MODEL_SCALE，加寬只放大 X
+			# human 整体缩放基为 HUMAN_MODEL_SCALE，加宽只放大 X
 			_model_node.scale.x = HUMAN_MODEL_SCALE * body_width
 		else:
 			_model_node.scale.x = body_width
@@ -882,31 +882,31 @@ func _reset_bone_scale(bone_idx: int) -> void:
 	if _model_skeleton and bone_idx != -1:
 		_model_skeleton.set_bone_pose_scale(bone_idx, Vector3.ONE)
 
-## 重置身材缩放涉及的骨到 scale=1（布娃娃/軟倒時，避免殘留放大縮小錯亂）
+## 重置身材缩放涉及的骨到 scale=1（布娃娃/软倒时，避免残留放大缩小错乱）
 func _reset_body_scale() -> void:
 	if not _model_skeleton:
 		return
 	_reset_bone_scale(_body_bone_idx)
 	if _is_human_model:
-		# human 放大頭部涉及頭鏈骨（名字以「骨骼.005」開頭），全部復位
+		# human 放大头部涉及头链骨（名字以「骨骼.005」开头），全部复位
 		for i in _model_skeleton.get_bone_count():
 			var nm := String(_model_skeleton.get_bone_name(i))
 			if nm.begins_with("骨骼.005"):
 				_model_skeleton.set_bone_pose_scale(i, Vector3.ONE)
 	else:
 		_reset_bone_scale(_head_bone_idx)
-	# 帽子逆補償還原（避免軟倒後帽子大小殘留）
+	# 帽子逆补偿还原（避免软倒后帽子大小残留）
 	if outfit_manager:
 		var hat := outfit_manager.get_item("hat_slot")
 		if hat:
 			hat.scale = Vector3.ONE
 
-## 設定單個動畫循環
+## 设定单个动画循环
 func _set_animation_looping(anim_name: String) -> void:
 	if _animation_player and _animation_player.has_animation(anim_name):
 		_animation_player.get_animation(anim_name).loop_mode = Animation.LOOP_LINEAR
 
-## human 動畫按後綴名稱設為循環（Idle/Walk 循環，jump 不循環）
+## human 动画按后缀名称设为循环（Idle/Walk 循环，jump 不循环）
 func _set_human_animation_looping() -> void:
 	if not _animation_player:
 		return
@@ -917,22 +917,22 @@ func _set_human_animation_looping() -> void:
 		elif an.ends_with("jump"):
 			anim.loop_mode = Animation.LOOP_NONE
 
-## 把 human 主動畫（所有動作塞在一起的那個）按帧號拆成多個獨立子動畫。
-## 源主動畫內部不同帧段是不同動作，直接播整段會「站立錯亂」。
+## 把 human 主动画（所有动作塞在一起的那个）按帧号拆成多个独立子动画。
+## 源主动画内部不同帧段是不同动作，直接播整段会「站立错乱」。
 func _split_human_idle() -> void:
 	if not _animation_player:
 		return
 	var src_name := ""
 	for an in _animation_player.get_animation_list():
 		if an.begins_with("Human_"):
-			continue   # 略過拆分產生的子動畫，避免用它們當源遞歸拆分
-		# 組合主動畫：匹配 Idle / Idle_001 / Idle_002 等（Blender 導出可能加 _數字 尾綴）
+			continue   # 略过拆分产生的子动画，避免用它们当源递归拆分
+		# 组合主动画：匹配 Idle / Idle_001 / Idle_002 等（Blender 导出可能加 _数字 尾缀）
 		var lower := an.to_lower()
 		if _is_combo_anim(lower):
 			src_name = an
 			break
 	if src_name == "":
-		# 找不到主動畫：退而取第一個非拆分的動畫當源
+		# 找不到主动画：退而取第一个非拆分的动画当源
 		var list := _animation_player.get_animation_list()
 		for an in list:
 			if not an.begins_with("Human_"):
@@ -949,8 +949,8 @@ func _split_human_idle() -> void:
 		var t1 := f1 / HUMAN_ANIM_FPS
 		_slice_animation(src, t0, t1, slot_name)
 
-## 判斷是否為「組合主動畫」（含待機/移動/飛撲多段的單一動畫）。
-## newnewhuman 導出為 Idle_001；舊 human 為 Idle。特徵：名含 Idle 且時長較長（>2s）。
+## 判断是否为「组合主动画」（含待机/移动/飞扑多段的单一动画）。
+## newnewhuman 导出为 Idle_001；旧 human 为 Idle。特征：名含 Idle 且时长较长（>2s）。
 func _is_combo_anim(lower_name: String) -> bool:
 	if not lower_name.contains("idle"):
 		return false
@@ -961,8 +961,8 @@ func _is_combo_anim(lower_name: String) -> bool:
 			return _animation_player.get_animation(an).length > 2.0
 	return true
 
-## 從 source 動畫切割 [t0, t1] 時間窗口生成新動畫並加入動畫庫。
-## 針對每條軌收集窗口内的關鍵幀，時間平移到 0 起。
+## 从 source 动画切割 [t0, t1] 时间窗口生成新动画并加入动画库。
+## 针对每条轨收集窗口内的关键帧，时间平移到 0 起。
 func _slice_animation(src: Animation, t0: float, t1: float, new_name: String) -> void:
 	if not _animation_player or not _animation_player.has_animation_library(""):
 		return
@@ -987,7 +987,7 @@ func _slice_animation(src: Animation, t0: float, t1: float, new_name: String) ->
 	dst.loop_mode = Animation.LOOP_LINEAR
 	lib.add_animation(new_name, dst)
 
-## 依當前狀態切換動畫
+## 依当前状态切换动画
 func _update_animation() -> void:
 	if not _animation_player:
 		return
@@ -1007,7 +1007,7 @@ func _update_animation() -> void:
 
 func _anim_for_state(state_name: String) -> String:
 	if _is_human_model:
-		# human 動畫：Move/Dive 可優先匹配獨立動畫；Idle 固定用拆分出的待機段（組合Idle含3段不可整播）
+		# human 动画：Move/Dive 可优先匹配独立动画；Idle 固定用拆分出的待机段（组合Idle含3段不可整播）
 		match state_name:
 			"Move":
 				return _human_anim_or_slot("Walk", "Human_Move")
@@ -1026,12 +1026,12 @@ func _anim_for_state(state_name: String) -> String:
 		"Dive":
 			return ANIM_DIVE
 		"Fly":
-			# 被擊飛姿態（暫用飛撲動畫，後續可加專用被擊動畫 / 翻滾）
+			# 被击飞姿态（暂用飞扑动画，后续可加专用被击动画 / 翻滚）
 			return ANIM_DIVE
 		_:
 			return ANIM_IDLE
 
-## human 動畫名後綴匹配：找以指定後綴結尾的動畫名；找不到退回第一個
+## human 动画名后缀匹配：找以指定后缀结尾的动画名；找不到退回第一个
 func _match_human_anim(suffix: String) -> String:
 	if not _animation_player:
 		return ANIM_IDLE
@@ -1041,25 +1041,25 @@ func _match_human_anim(suffix: String) -> String:
 	var list := _animation_player.get_animation_list()
 	return list[0] if list.size() > 0 else ANIM_IDLE
 
-## 精確動畫名匹配（用於拆分出的子動畫 Human_*）；找不到退回原主動畫的後綴匹配
+## 精确动画名匹配（用于拆分出的子动画 Human_*）；找不到退回原主动画的后缀匹配
 func _match_slot_anim(name: String) -> String:
 	if _animation_player and _animation_player.has_animation(name):
 		return name
-	# 拆不出：退回後綴匹配（如原 jump/Walk/Idle 動畫）
+	# 拆不出：退回后缀匹配（如原 jump/Walk/Idle 动画）
 	var suffix := name.replace("Human_", "")
 	var s := _match_human_anim(suffix)
 	if s == ANIM_IDLE:
 		s = _match_human_anim(HUMAN_ANIM_IDLE)
 	return s
 
-## 嘗試用後綴直接匹配獨立動畫；無效則退回帧拆分槽動畫
+## 尝试用后缀直接匹配独立动画；无效则退回帧拆分槽动画
 func _human_anim_or_slot(suffix: String, slot: String) -> String:
 	var matched := _match_human_anim(suffix)
 	if _is_valid_anim_name(matched):
 		return matched
 	return _match_slot_anim(slot)
 
-## 檢查動畫庫是否存在以指定後綴結尾的動畫
+## 检查动画库是否存在以指定后缀结尾的动画
 func _has_anim_suffix(suffix: String) -> bool:
 	if not _animation_player:
 		return false
@@ -1068,7 +1068,7 @@ func _has_anim_suffix(suffix: String) -> bool:
 			return true
 	return false
 
-## 檢查動畫名是否真正存在於動畫庫（避免 _match_human_anim 找不到時回退到任意首個動畫）
+## 检查动画名是否真正存在于动画库（避免 _match_human_anim 找不到时回退到任意首个动画）
 func _is_valid_anim_name(name: String) -> bool:
 	if name.is_empty() or name == ANIM_IDLE:
 		return false
@@ -1083,12 +1083,12 @@ func _find_animation_player(n: Node) -> AnimationPlayer:
 			return r
 	return null
 
-## 定位換裝系統與角色效果組件
+## 定位换装系统与角色效果组件
 func _setup_outfit() -> void:
 	outfit_manager = get_node_or_null("OutfitManager") as OutfitManager
 	character_effects = get_node_or_null("CharacterEffects") as CharacterEffects
 
-## 設定玩家顏色（走 OutfitManager + CharacterEffects 統一處理）
+## 设定玩家颜色（走 OutfitManager + CharacterEffects 统一处理）
 func apply_player_color(color: Color) -> void:
 	player_color = color
 	if outfit_manager:

@@ -1,6 +1,6 @@
-## 職責：角色視覺狀態效果——繪畫著色（paint）與灰化（stun gray）。
-## 支持按部位施加（受擊處局部變色），部位以 MeshInstance3D 名字匹配。
-## 效果疊加在角色 mesh 上，恢復時還原原始材質。
+## 职责：角色视觉状态效果——绘画著色（paint）与灰化（stun gray）。
+## 支持按部位施加（受击处局部变色），部位以 MeshInstance3D 名字匹配。
+## 效果叠加在角色 mesh 上，恢复时还原原始材质。
 
 class_name CharacterEffects
 extends Node
@@ -33,7 +33,7 @@ static func _get_toon_outline_material() -> ShaderMaterial:
 		_toon_outline_material = material
 	return _toon_outline_material
 
-## 臟污貼花（灰頭土臉）：手繪煙熏紋理，全場靜態緩存複用
+## 脏污贴花（灰头土脸）：手绘烟熏纹理，全场静态缓存复用
 static var _dirt_texture: Texture2D
 
 ## 部位名 -> MeshInstance3D 名字子串匹配（Mannequin 命名）
@@ -48,7 +48,7 @@ const PART_PATTERNS: Dictionary = {
 
 @export var character_root: Node3D
 
-## 角色基礎色（玩家色），paint/gray 在此之上疊加
+## 角色基础色（玩家色），paint/gray 在此之上叠加
 var base_color: Color = Color.WHITE:
 	set(value):
 		base_color = value
@@ -57,18 +57,18 @@ var base_color: Color = Color.WHITE:
 var _meshes: Array[MeshInstance3D] = []
 var _toon_materials: Dictionary = {} # "mesh_instance_id:surface" -> ShaderMaterial
 
-## 表情貼圖覆蓋：mesh instance_id -> { tex, surf }（表情只貼到指定 surface，不動其它）
+## 表情贴图覆盖：mesh instance_id -> { tex, surf }（表情只贴到指定 surface，不动其它）
 var face_textures: Dictionary = {}   # instance_id -> {tex, surf}
-## 臉片 UV 縮放（表情剛好一張鋪滿臉片，避免平鋪/錯位）；由 face 控制器設置
+## 脸片 UV 缩放（表情刚好一张铺满脸片，避免平铺/错位）；由 face 控制器设置
 var mesh_uv_scale: Vector3 = Vector3.ONE
-## 臉片 UV 偏移（表情居中）
+## 脸片 UV 偏移（表情居中）
 var mesh_uv_offset: Vector3 = Vector3.ZERO
 
 func set_face_texture(mesh: MeshInstance3D, tex: Texture2D, surf: int = -1) -> void:
 	if not is_instance_valid(mesh):
 		return
 	if tex == null:
-		# 清除表情：還原所有 surface override（恢復由 _apply_all else 分支用整 mesh tint）
+		# 清除表情：还原所有 surface override（恢复由 _apply_all else 分支用整 mesh tint）
 		if face_textures.has(mesh.get_instance_id()):
 			for si in mesh.mesh.get_surface_count():
 				mesh.set_surface_override_material(si, null)
@@ -87,7 +87,7 @@ func clear_face_textures() -> void:
 var _paints: Dictionary = {}   # instance_id -> {color, amount, tween}
 var _grays: Dictionary = {}    # instance_id -> {amount, tween}
 
-## 髒標記：僅在顏色/貼圖實際變化時才重建材質，避免每幀無意義 set_* 開銷
+## 脏标记：仅在颜色/贴图实际变化时才重建材质，避免每帧无意义 set_* 开销
 var _dirty := false
 
 func _ready() -> void:
@@ -97,14 +97,14 @@ func _ready() -> void:
 	_dirty = true
 
 func _process(_delta: float) -> void:
-	# 有繪畫/灰化 tween 在跑時，amount 每幀都在變，需要持續刷新
+	# 有绘画/灰化 tween 在跑时，amount 每帧都在变，需要持续刷新
 	if _paints.size() > 0 or _grays.size() > 0:
 		_dirty = true
 	if _dirty:
 		_dirty = false
 		_apply_all()
 
-## 被塗上顏色，隨時間褪去。parts 空 = 全身
+## 被涂上颜色，随时间褪去。parts 空 = 全身
 func paint(color: Color, duration: float = 5.0, parts: Array[String] = []) -> void:
 	for mesh in _filter(parts):
 		var id := mesh.get_instance_id()
@@ -121,7 +121,7 @@ func paint(color: Color, duration: float = 5.0, parts: Array[String] = []) -> vo
 	_dirty = true
 	effect_started.emit("paint")
 
-## 石化/眩暈灰化，隨時間恢復。parts 空 = 全身
+## 石化/眩晕灰化，随时间恢复。parts 空 = 全身
 func apply_gray(duration: float = 3.0, parts: Array[String] = []) -> void:
 	for mesh in _filter(parts):
 		var id := mesh.get_instance_id()
@@ -137,8 +137,8 @@ func apply_gray(duration: float = 3.0, parts: Array[String] = []) -> void:
 	_dirty = true
 	effect_started.emit("gray")
 
-## 灰頭土臉：在角色身上投影一層臟污貼花，duration 秒後淡出並移除。
-## Decal 自頂向下投影覆蓋角色，使用手繪煙熏貼花紋理。
+## 灰头土脸：在角色身上投影一层脏污贴花，duration 秒后淡出并移除。
+## Decal 自顶向下投影覆盖角色，使用手绘烟熏贴花纹理。
 func apply_dirt_decal(duration: float = 6.0) -> void:
 	if not character_root:
 		return
@@ -157,7 +157,7 @@ func apply_dirt_decal(duration: float = 6.0) -> void:
 	tw.tween_callback(decal.queue_free)
 	effect_started.emit("dirt")
 
-## 手繪煙熏臟污紋理，靜態緩存一次
+## 手绘烟熏脏污纹理，静态缓存一次
 static func _get_dirt_texture() -> Texture2D:
 	if _dirt_texture == null:
 		_dirt_texture = preload("res://assets/textures/fx/dirt_soot.png")
@@ -238,7 +238,7 @@ func _apply_all() -> void:
 			col = col.lerp(paint_col, paint_amt)
 		if gray_amt > 0.0:
 			col = col.lerp(GRAY_COLOR, gray_amt)
-		# 表情貼圖：對每個 surface 單獨設 override，臉片用表情、其它用玩家色
+		# 表情贴图：对每个 surface 单独设 override，脸片用表情、其它用玩家色
 		for surface in mesh.mesh.get_surface_count():
 			var texture: Texture2D = null
 			if face_textures.has(id):

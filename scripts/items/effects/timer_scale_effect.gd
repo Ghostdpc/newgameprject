@@ -1,9 +1,9 @@
-## 職責：timer_scale 效果 —— 將倒計時速率乘以 scale，持續 seconds 秒後還原
+## 职责：timer_scale 效果 —— 将倒计时速率乘以 scale，持续 seconds 秒后还原
 
 class_name TimerScaleEffect
 extends ItemEffect
 
-## 覆寫 from_data：用 params.seconds 作為持續時長
+## 覆写 from_data：用 params.seconds 作为持续时长
 func from_data(data: Dictionary) -> void:
 	super.from_data(data)
 	var p: Dictionary = data.get("params", {}) as Dictionary

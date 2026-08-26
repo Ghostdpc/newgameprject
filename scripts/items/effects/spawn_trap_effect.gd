@@ -1,11 +1,11 @@
-## 職責：spawn_trap 效果 —— 在使用者腳下生成放置物（陷阱）
-## params.spawn_y（可選）：固定生成高度，不設則使用放置者當前 y 坐標
+## 职责：spawn_trap 效果 —— 在使用者脚下生成放置物（陷阱）
+## params.spawn_y（可选）：固定生成高度，不设则使用放置者当前 y 坐标
 
 class_name SpawnTrapEffect
 extends ItemEffect
 
 func apply(ctx: ItemContext) -> void:
-	# WORLD target 時 source_player 為 null，從 extra["invoker"] 取原始使用者
+	# WORLD target 时 source_player 为 null，从 extra["invoker"] 取原始使用者
 	var placer: PlayerController = ctx.source_player
 	if placer == null:
 		placer = ctx.extra.get("invoker") as PlayerController
@@ -21,7 +21,7 @@ func apply(ctx: ItemContext) -> void:
 		push_warning("SpawnTrapEffect: unknown trap_id '%s'" % trap_id)
 		return
 	var instance := TrapInstance.new()
-	# setup 先於 add_child，確保 collision_layer/mask 在進入物理世界前設置好
+	# setup 先于 add_child，确保 collision_layer/mask 在进入物理世界前设置好
 	instance.setup(trap_def, placer)
 	instance.spawn_id = NetManager.next_entity_id()
 	placer.get_tree().current_scene.add_child(instance)

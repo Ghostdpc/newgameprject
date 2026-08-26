@@ -1,7 +1,7 @@
-## 職責：封裝單個玩家的輸入查詢（鍵盤 P1/P2、手把 P1-P4，最多 4 個手把）
-## 設備綁定由 GameManager.player_devices 提供（與 player_index 對齊）：
-##   -2 = 未綁定（自動：P1/P2 鍵盤，P3/P4 手把）
-##   -1 = 鍵盤（僅 P1/P2 有效）
+## 职责：封装单个玩家的输入查询（键盘 P1/P2、手把 P1-P4，最多 4 个手把）
+## 设备绑定由 GameManager.player_devices 提供（与 player_index 对齐）：
+##   -2 = 未绑定（自动：P1/P2 键盘，P3/P4 手把）
+##   -1 = 键盘（仅 P1/P2 有效）
 ##   >=0 = 手把 device id
 
 class_name PlayerInput
@@ -41,14 +41,14 @@ func _kb_action(base: String) -> String:
 func _kb_suffix() -> String:
 	return "_p%d" % (_keybind_index() + 1)
 
-## 槽位綁定設備（缺省 -2 未綁定）
+## 槽位绑定设备（缺省 -2 未绑定）
 func _assigned_device() -> int:
 	if player_index >= 0 and player_index < GameManager.player_devices.size():
 		return GameManager.player_devices[player_index]
 	return -2
 
-## 是否啟用鍵盤。明確綁定鍵盤(-1)即在任何席位都可用（聯機 client 的鍵盤角色落在高號席位也可用）；
-## 未綁定(-2)時僅 P1/P2(席位 0/1) 自動鍵盤。
+## 是否启用键盘。明确绑定键盘(-1)即在任何席位都可用（联机 client 的键盘角色落在高号席位也可用）；
+## 未绑定(-2)时仅 P1/P2(席位 0/1) 自动键盘。
 func _keyboard_enabled() -> bool:
 	var d := _assigned_device()
 	if d == -1:
@@ -57,11 +57,11 @@ func _keyboard_enabled() -> bool:
 		return player_index <= 1
 	return false
 
-## 是否啟用手把（明確手把或未綁定回退；明確鍵盤則關閉）
+## 是否启用手把（明确手把或未绑定回退；明确键盘则关闭）
 func _gamepad_enabled() -> bool:
 	return _assigned_device() != -1
 
-## 有效手把 device id（未綁定時按槽位順序 P1→0 … P4→3）
+## 有效手把 device id（未绑定时按槽位顺序 P1→0 … P4→3）
 func _device() -> int:
 	var d := _assigned_device()
 	if d >= 0:
@@ -92,7 +92,7 @@ func is_pickup_just_pressed() -> bool:
 		return true
 	return _gamepad_enabled() and Input.is_action_just_pressed("joy_pickup")
 
-## 拾取按鍵是否持續按住（長按拾取用）
+## 拾取按键是否持续按住（长按拾取用）
 func is_pickup_held() -> bool:
 	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("pickup")):
 		return true
@@ -103,19 +103,19 @@ func is_use_item_just_pressed() -> bool:
 		return true
 	return _gamepad_enabled() and Input.is_action_just_pressed("joy_use")
 
-## 抓取場景物理物件：鍵盤 grab_p1/p2、手把 joy_grab。探索性功能，可刪
+## 抓取场景物理物件：键盘 grab_p1/p2、手把 joy_grab。探索性功能，可删
 func is_grab_pressed() -> bool:
 	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("grab")):
 		return true
 	return _gamepad_enabled() and Input.is_action_pressed("joy_grab")
 
-## 自殺（測試用）：鍵盤 suicide_p1/p2、手把 joy_suicide
+## 自杀（测试用）：键盘 suicide_p1/p2、手把 joy_suicide
 func is_suicide_just_pressed() -> bool:
 	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("suicide")):
 		return true
 	return _gamepad_enabled() and Input.is_action_just_pressed("joy_suicide")
 
-## 輸入 level 快照（供聯機上行：移動向量 + 按鍵按住位掩碼）
+## 输入 level 快照（供联机上行：移动向量 + 按键按住位掩码）
 func get_input_level() -> Dictionary:
 	var buttons := 0
 	if _is_jump_held(): buttons |= BIT_JUMP

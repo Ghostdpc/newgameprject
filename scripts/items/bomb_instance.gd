@@ -1,6 +1,6 @@
-## 職責：炸彈實例 —— 繼承 PhysicalProp 拋出物理體，引信秒數後範圍爆炸。
-## 爆炸對半徑內所有玩家施加：灰頭土臉貼花 + 積分懲罰（累加到 PlayerController.score_penalty）。
-## 與 trap 系統無關：AOE 用球形距離檢測，非踩踏觸發。
+## 职责：炸弹实例 —— 继承 PhysicalProp 抛出物理体，引信秒数后范围爆炸。
+## 爆炸对半径内所有玩家施加：灰头土脸贴花 + 积分惩罚（累加到 PlayerController.score_penalty）。
+## 与 trap 系统无关：AOE 用球形距离检测，非踩踏触发。
 
 class_name BombInstance
 extends PhysicalProp
@@ -9,13 +9,13 @@ var _fuse: float = 1.2
 var _radius: float = 3.0
 var _gray_duration: float = 6.0
 var _score_penalty: int = 15
-## 爆炸擊飛力度倍率（相對飛撲 hit_force/hit_upward），可調
+## 爆炸击飞力度倍率（相对飞扑 hit_force/hit_upward），可调
 var _blast_force_mult: float = 1.4
 var _blast_up_mult: float = 1.3
 var _thrower: PlayerController
 var _exploded: bool = false
 
-## 由 ThrowBombEffect 調用：配置參數並拋出
+## 由 ThrowBombEffect 调用：配置参数并抛出
 func setup_bomb(p: Dictionary, thrower: PlayerController) -> void:
 	_fuse          = float(p.get("fuse", 1.2))
 	_radius        = float(p.get("radius", 3.0))
@@ -28,7 +28,7 @@ func setup_bomb(p: Dictionary, thrower: PlayerController) -> void:
 
 func _ready() -> void:
 	super._ready()
-	# 引信計時後引爆
+	# 引信计时后引爆
 	var timer := get_tree().create_timer(_fuse)
 	timer.timeout.connect(_explode)
 
@@ -48,21 +48,21 @@ func _explode() -> void:
 		if player.character_effects:
 			player.character_effects.apply_dirt_decal(_gray_duration)
 		player.score_penalty += _score_penalty
-		# 爆炸物理擊飛（類似被飛撲）：按離爆心距離衰減力度，水平向外炸飛 + 上拋
+		# 爆炸物理击飞（类似被飞扑）：按离爆心距离衰减力度，水平向外炸飞 + 上抛
 		_knockback_player(player, d)
 	queue_free()
 
-## 被炸飛：進入 Fly 飛行狀態並拋出（復用飛撲對目標的擊飛機制）
+## 被炸飞：进入 Fly 飞行状态并抛出（复用飞扑对目标的击飞机制）
 func _knockback_player(player: PlayerController, dist: float) -> void:
 	if player == null or player.state_machine == null:
 		return
-	# 爆炸方向（水平），從爆心指向玩家；靠爆心越近力度越大
+	# 爆炸方向（水平），从爆心指向玩家；靠爆心越近力度越大
 	var to_player := player.global_position - global_position
 	to_player.y = 0.0
 	var dir := to_player.normalized()
 	if dir.length_squared() < 0.0001:
 		dir = Vector3(0.1, 0.0, 0.1).normalized()
-	# 半徑內衰減：中心 1.0 → 邊緣 0.4
+	# 半径内衰减：中心 1.0 → 边缘 0.4
 	var falloff := clampf(1.0 - dist / maxf(_radius, 0.01), 0.4, 1.0)
 	var blast := TuneConfig.hit_force * _blast_force_mult * falloff
 	var up := TuneConfig.hit_upward * _blast_up_mult * falloff
@@ -75,8 +75,8 @@ func _knockback_player(player: PlayerController, dist: float) -> void:
 ## 用离屏 SubViewport 渲染一次爆炸/撞击特效触发着色器编译，主画面不可见；
 ## 着色器缓存是 RenderingServer 全局的，主世界随后复用，投弹时不再卡顿。
 ## 预热：提前缓存炸弹模型，避免首次投弹时读盘卡顿。
-## 注：原離屏 SubViewport 渲染 GPUParticles 預編譯著色器在打包 release 版會崩潰，已移除；
-##     首次投彈的粒子著色器編譯卡頓可接受（或後續用更安全方式預熱）。
+## 注：原离屏 SubViewport 渲染 GPUParticles 预编译著色器在打包 release 版会崩溃，已移除；
+##     首次投弹的粒子著色器编译卡顿可接受（或后续用更安全方式预热）。
 static func warmup(scene: Node) -> void:
 	if scene == null:
 		return
@@ -88,15 +88,15 @@ static func warmup(scene: Node) -> void:
 			if vis:
 				vis.free()
 
-## 爆炸視覺：GPUParticles3D 火光+煙（代碼生成，無需美術資源）+ 橙色膨脹球占位
+## 爆炸视觉：GPUParticles3D 火光+烟（代码生成，无需美术资源）+ 橙色膨胀球占位
 func _spawn_flash() -> void:
 	var scene := get_tree().current_scene
 	if scene == null:
 		return
 	BombInstance.spawn_explosion_fx(global_position, scene, _radius)
 
-## 靜態爆炸特效（供炸彈自身與撞擊撞人/撞牆/撞道具復用）：在 world_pos 生成火光+煙+衝擊球
-## 撞擊用 is_hit=true：更小、更短、白黃爆閃無煙，與炸彈橙紅爆炸區分
+## 静态爆炸特效（供炸弹自身与撞击撞人/撞墙/撞道具复用）：在 world_pos 生成火光+烟+冲击球
+## 撞击用 is_hit=true：更小、更短、白黄爆闪无烟，与炸弹橙红爆炸区分
 static func spawn_explosion_fx(world_pos: Vector3, parent: Node, radius: float = 3.0, is_hit: bool = false) -> void:
 	if parent == null:
 		return
@@ -107,7 +107,7 @@ static func spawn_explosion_fx(world_pos: Vector3, parent: Node, radius: float =
 		_smoke_particles(world_pos, parent)
 		_expand_ball(world_pos, parent, radius)
 
-## 撞擊爆閃：短促白黃火光 + 小衝擊球，無煙（與炸彈爆炸區分）
+## 撞击爆闪：短促白黄火光 + 小冲击球，无烟（与炸弹爆炸区分）
 static func _hit_flash(world_pos: Vector3, scene: Node, radius: float) -> void:
 	var fire := GPUParticles3D.new()
 	fire.name = "HitFlash"
@@ -135,7 +135,7 @@ static func _hit_flash(world_pos: Vector3, scene: Node, radius: float) -> void:
 	fire.visibility_aabb = AABB(Vector3(-2, -2, -2), Vector3(4, 4, 4))
 	_set_particle_mesh_static(fire, Color(1.0, 0.9, 0.5))
 	fire.finished.connect(fire.queue_free)
-	# 小衝擊球：白黃短閃
+	# 小冲击球：白黄短闪
 	var flash := MeshInstance3D.new()
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.2
@@ -211,7 +211,7 @@ static func _smoke_particles(world_pos: Vector3, scene: Node) -> void:
 	_set_particle_mesh_static(smoke, Color(0.45, 0.42, 0.4))
 	smoke.finished.connect(smoke.queue_free)
 
-## 給 GPUParticles3D 設 3D 球體粒子（SphereMesh），立體體積感。
+## 给 GPUParticles3D 设 3D 球体粒子（SphereMesh），立体体积感。
 static func _set_particle_mesh_static(particles: GPUParticles3D, tint: Color = Color.WHITE) -> void:
 	var sphere := SphereMesh.new()
 	sphere.radius = 0.09
@@ -244,8 +244,8 @@ static func _expand_ball(world_pos: Vector3, scene: Node, radius: float) -> void
 	tw.parallel().tween_property(mat, "albedo_color:a", 0.0, 0.25)
 	tw.tween_callback(flash.queue_free)
 
-## 火光粒子：短壽命高速向外爆開，重力回落，疊加碰撞地面爆散
-## （實現在上方 static _fire_particles，供炸彈與撞擊復用）
+## 火光粒子：短寿命高速向外爆开，重力回落，叠加碰撞地面爆散
+## （实现在上方 static _fire_particles，供炸弹与撞击复用）
 
 func _make_curve_tex(points: Array) -> CurveTexture:
 	var c := Curve.new()

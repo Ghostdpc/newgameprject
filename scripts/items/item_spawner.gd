@@ -1,5 +1,5 @@
-## 職責：道具箱生成管理（監聽 battle_started/ended，維持 max_active 上限）
-## 落點由 DropPlacement 統一分配（與服裝共用熱點，避免撞點）
+## 职责：道具箱生成管理（监听 battle_started/ended，维持 max_active 上限）
+## 落点由 DropPlacement 统一分配（与服装共用热点，避免撞点）
 
 extends Node
 
@@ -56,7 +56,7 @@ func _process(delta: float) -> void:
 		for i in range(_refresh_batch):
 			_try_spawn()
 
-## 開局一次性填滿到 max_active * initial_multiplier
+## 开局一次性填满到 max_active * initial_multiplier
 func _fill_initial() -> void:
 	for i in range(int(_max_active * _initial_multiplier)):
 		_try_spawn()

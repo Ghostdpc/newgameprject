@@ -59,7 +59,7 @@ offset_top = 20.0
 offset_right = 700.0
 offset_bottom = 60.0
 theme_override_font_sizes/font_size = 20
-text = "P1(WASD): 1頭大 2變寬 3慢 4快 5磕頭 || P2(方向鍵/F1-F5同效果) || R/0重置 || 撞擊測碰撞體"
+text = "P1(WASD): 1头大 2变宽 3慢 4快 5磕头 || P2(方向键/F1-F5同效果) || R/0重置 || 撞击测碰撞体"
 
 [node name="Feedback" type="Label" parent="UILayer"]
 offset_left = 20.0

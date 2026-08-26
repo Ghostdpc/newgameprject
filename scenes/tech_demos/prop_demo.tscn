@@ -66,5 +66,5 @@ billboard = 1
 
 [node name="DebugVisualizer" type="Node3D" parent="."]
 script = ExtResource("4")
-text = "WASD移動  空格跳  撞箱子 F飛撲  按住R抓起/鬆開拋出"
+text = "WASD移动  空格跳  撞箱子 F飞扑  按住R抓起/松开抛出"
 font_size = 40

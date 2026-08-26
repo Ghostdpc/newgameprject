@@ -1,7 +1,7 @@
-## 職責：道具系統入口（autoload）
-## - 啟動時注冊所有 EffectKind 到 ItemEffectRegistry
+## 职责：道具系统入口（autoload）
+## - 启动时注册所有 EffectKind 到 ItemEffectRegistry
 ## - 提供 use_item() 唯一使用接口
-## - _process 跑有時長效果的回退計時
+## - _process 跑有时长效果的回退计时
 
 extends Node
 
@@ -13,7 +13,7 @@ func _ready() -> void:
 	_item_config = ItemConfig.new()
 	_item_config.load()
 
-## 注冊所有 EffectKind → Script（新增效果時在此添加一行）
+## 注册所有 EffectKind → Script（新增效果时在此添加一行）
 func _register_effects() -> void:
 	ItemEffectRegistry.register(
 		ItemTypes.EffectKind.TIMER_ADD,
@@ -69,7 +69,7 @@ func _register_effects() -> void:
 	)
 
 ## 玩家使用道具的唯一入口
-## source_player: 使用者（null = 系統觸發），item_id 對應 items.json
+## source_player: 使用者（null = 系统触发），item_id 对应 items.json
 func use_item(source_player: PlayerController, item_id: String, extra: Dictionary = {}) -> void:
 	var def := _item_config.get_item(item_id)
 	if def == null:
@@ -85,7 +85,7 @@ func use_item(source_player: PlayerController, item_id: String, extra: Dictionar
 			ctx.source_player = target_player
 			ctx.item_id       = item_id
 			ctx.extra         = extra.duplicate()
-			ctx.extra["invoker"] = source_player  # 始終保留原始使用者引用
+			ctx.extra["invoker"] = source_player  # 始终保留原始使用者引用
 			effect.apply(ctx)
 			if effect.duration > 0.0:
 				_active_effects.append({
@@ -114,7 +114,7 @@ func _find_player(player_index: int) -> PlayerController:
 			return p
 	return null
 
-## 在使用者位置實例化並播放一次性特效，播完自動銷毀
+## 在使用者位置实例化并播放一次性特效，播完自动销毁
 func _spawn_use_vfx(def: ItemDef, source_player: PlayerController) -> void:
 	if def.use_vfx.is_empty():
 		return
@@ -174,7 +174,7 @@ func _process(delta: float) -> void:
 			_active_effects.remove_at(i)
 		i -= 1
 
-## 解析單個效果的目標玩家列表（WORLD 效果返回 [null] 觸發一次）
+## 解析单个效果的目标玩家列表（WORLD 效果返回 [null] 触发一次）
 func _resolve_targets(target: ItemTypes.Target, source: PlayerController) -> Array:
 	if target == ItemTypes.Target.WORLD:
 		return [null]

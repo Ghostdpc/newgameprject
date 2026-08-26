@@ -1,4 +1,4 @@
-## 職責：各遊戲階段時長配置，從 JSON 讀取，缺失時使用 _defaults() 默認值
+## 职责：各游戏阶段时长配置，从 JSON 读取，缺失时使用 _defaults() 默认值
 
 class_name GameConfig
 extends ConfigTable

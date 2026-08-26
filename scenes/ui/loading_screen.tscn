@@ -189,6 +189,25 @@ theme_override_colors/font_color = Color(1, 1, 1, 0.95)
 theme_override_font_sizes/font_size = 30
 text = "飞扑"
 
+[node name="HintGrab" type="HBoxContainer" parent="Screen/HintsRow" unique_id=2003258136]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="Icon" type="TextureRect" parent="Screen/HintsRow/HintGrab" unique_id=339499933]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10_pqjuo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="Screen/HintsRow/HintGrab" unique_id=220926944]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_font_sizes/font_size = 30
+text = "抓取场景物"
+
 [node name="HintSuicide" type="HBoxContainer" parent="Screen/HintsRow" unique_id=1221349376]
 layout_mode = 2
 mouse_filter = 2

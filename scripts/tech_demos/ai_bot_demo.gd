@@ -1,9 +1,9 @@
-## 職責：時間流速測試 AI 機器人 —— 左右來回移動 + 週期性飛撲
-## 復用 SpringBoneRig 軟糯裝配（同 active_ragdoll_demo），由 AI 狀態機驅動移動。
-## 目的：暫停 / 子弹時間下觀察 AI 動作（走路軟糯、飛撲空中停格）被時間流速影響。
+## 职责：时间流速测试 AI 机器人 —— 左右来回移动 + 周期性飞扑
+## 复用 SpringBoneRig 软糯装配（同 active_ragdoll_demo），由 AI 状态机驱动移动。
+## 目的：暂停 / 子弹时间下观察 AI 动作（走路软糯、飞扑空中停格）被时间流速影响。
 ##
-## AI 狀態：WALK(左右來回) → DIVE(向前飛撲拋起) → RECOVER(落地站起) → WALK...
-## 方向：飛撲朝當前移動方向衝刺。
+## AI 状态：WALK(左右来回) → DIVE(向前飞扑抛起) → RECOVER(落地站起) → WALK...
+## 方向：飞扑朝当前移动方向冲刺。
 
 class_name AiBotDemo
 extends CharacterBody3D
@@ -47,7 +47,7 @@ func _ready() -> void:
 	_render_skel = _find_skeleton(_render_model)
 	_driver_anim = _find_animation_player(_driver_model)
 	if not _driver_skel or not _render_skel or not _driver_anim:
-		push_error("AiBotDemo: 模型缺骨架或動畫")
+		push_error("AiBotDemo: 模型缺骨架或动画")
 		return
 	var render_anim := _find_animation_player(_render_model)
 	if render_anim:

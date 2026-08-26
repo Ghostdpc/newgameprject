@@ -10,9 +10,9 @@ var slot: String = ""
 var model: String = ""
 var texture: String = ""
 var model_scale: float = 1.0
-## 挂点偏移（米，相对骨槽局部）：服装专属的位置微调，覆蓋 OutfitManager 槽位預設偏移
+## 挂点偏移（米，相对骨槽局部）：服装专属的位置微调，覆盖 OutfitManager 槽位预设偏移
 var mount_offset: Vector3 = Vector3.ZERO
-## 占位 tint 色（模型為純白 unshaded 時套用，便于查看；空 = 不套）
+## 占位 tint 色（模型为纯白 unshaded 时套用，便于查看；空 = 不套）
 var tint: Color = Color(1, 1, 1, 1)
 ## 快门帧该件对 outfit 分的贡献上限（0~1）
 var score_bonus: float = 0.0

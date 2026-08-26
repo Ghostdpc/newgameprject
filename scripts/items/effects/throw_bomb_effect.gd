@@ -1,12 +1,12 @@
-## 職責：throw_bomb 效果 —— 從使用者手前拋出 BombInstance（拋物線），交由炸彈自身引爆。
+## 职责：throw_bomb 效果 —— 从使用者手前抛出 BombInstance（抛物线），交由炸弹自身引爆。
 ## params: throw_speed / fuse / radius / gray_duration / score_penalty
-## 炸彈模型複用道具 def 的 model/texture（占位球體回退見 BombInstance）
+## 炸弹模型复用道具 def 的 model/texture（占位球体回退见 BombInstance）
 
 class_name ThrowBombEffect
 extends ItemEffect
 
 func apply(ctx: ItemContext) -> void:
-	# WORLD target 時 source_player 為 null，從 extra["invoker"] 取原始使用者
+	# WORLD target 时 source_player 为 null，从 extra["invoker"] 取原始使用者
 	var thrower: PlayerController = ctx.source_player
 	if thrower == null:
 		thrower = ctx.extra.get("invoker") as PlayerController
@@ -17,7 +17,7 @@ func apply(ctx: ItemContext) -> void:
 	var bomb := BombInstance.new()
 	bomb.setup_bomb(params, thrower)
 
-	# 複用道具定義的模型作為炸彈外觀
+	# 复用道具定义的模型作为炸弹外观
 	var def := ItemSystem._item_config.get_item(ctx.item_id)
 	var visual: Node3D = null
 	if def and not def.model.is_empty():

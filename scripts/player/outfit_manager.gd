@@ -1,5 +1,5 @@
-## 職責：角色換裝管理。在骨架骨槽（BoneAttachment3D）上掛載/卸載裝備物。
-## 無骨架時退化成普通 Node3D 槽位，仍可換裝（如占位膠囊）。
+## 职责：角色换装管理。在骨架骨槽（BoneAttachment3D）上挂载/卸载装备物。
+## 无骨架时退化成普通 Node3D 槽位，仍可换装（如占位胶囊）。
 
 class_name OutfitManager
 extends Node
@@ -9,16 +9,16 @@ const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
 signal item_equipped(slot_name: String, item: Node3D)
 signal item_unequipped(slot_name: String)
 
-## 槽位名 -> 目標骨骼（KayKit Mannequin 命名，缺骨時自動退化成普通槽位；
-## Human 骨架經 HumanBoneMap 解析到無語義編號骨）
+## 槽位名 -> 目标骨骼（KayKit Mannequin 命名，缺骨时自动退化成普通槽位；
+## Human 骨架经 HumanBoneMap 解析到无语义编号骨）
 const SLOT_BONES: Dictionary = {
 	"hat_slot": "head",
 	"shirt_slot": "chest",
 	"accessory_slot": "upperarm.r",
 }
 
-## 槽位掛點偏移（米）：human 骨架骨槽位置可能偏高，用偏移把裝備物拉回正確觀感位置。
-## 例如 halo 掛 head 骨（human 是頭頂最尖端）會浮太高，下移到底座/頭上。
+## 槽位挂点偏移（米）：human 骨架骨槽位置可能偏高，用偏移把装备物拉回正确观感位置。
+## 例如 halo 挂 head 骨（human 是头顶最尖端）会浮太高，下移到底座/头上。
 const SLOT_OFFSET: Dictionary = {
 	"hat_slot": Vector3(0.0, -0.3, 0.0),
 	"shirt_slot": Vector3(0.0, 0.45, 0.0),
@@ -59,7 +59,7 @@ func _find_skeleton_by_type(n: Node) -> Skeleton3D:
 			return r
 	return null
 
-## 偵測骨架是否為 Human（含「骨骼」無語義骨名），決定是否用映射
+## 侦测骨架是否为 Human（含「骨骼」无语义骨名），决定是否用映射
 func _detect_human() -> void:
 	_is_human = false
 	if not skeleton:
@@ -89,14 +89,14 @@ func _create_slot(slot_name: String) -> void:
 		add_child(slot)
 	_slots[slot_name] = slot
 
-## 裝備物品到指定槽位（同槽位先卸載舊物）
+## 装备物品到指定槽位（同槽位先卸载旧物）
 func equip(slot_name: String, item_scene: PackedScene, item_id: String = "") -> Node3D:
 	unequip(slot_name)
 	var item := item_scene.instantiate()
 	item.name = "Item"
 	return _mount(slot_name, item, item_id)
 
-## 直接掛載已構建的 Node3D（如 PropModelBuilder 套貼圖後的節點），避免作為 scene 再實例化
+## 直接挂载已构建的 Node3D（如 PropModelBuilder 套贴图后的节点），避免作为 scene 再实例化
 func equip_garment_node(slot_name: String, node: Node3D, item_id: String = "") -> Node3D:
 	unequip(slot_name)
 	node.name = "Item"
@@ -104,11 +104,11 @@ func equip_garment_node(slot_name: String, node: Node3D, item_id: String = "") -
 
 func _mount(slot_name: String, item: Node3D, item_id: String) -> Node3D:
 	if not _slots.has(slot_name):
-		push_error("OutfitManager: 無此槽位 '%s'" % slot_name)
+		push_error("OutfitManager: 无此槽位 '%s'" % slot_name)
 		item.free()
 		return null
 	_slots[slot_name].add_child(item)
-	# 套用槽位掛點偏移（halo 掛 human head 骨會浮高，下移）
+	# 套用槽位挂点偏移（halo 挂 human head 骨会浮高，下移）
 	if SLOT_OFFSET.has(slot_name) and _is_human:
 		item.position = SLOT_OFFSET[slot_name]
 	_items[slot_name] = item
@@ -151,9 +151,9 @@ func _recolor(item: Node3D) -> void:
 		var mesh := child as MeshInstance3D
 		var src: Material = mesh.get_active_material(0)
 		if src:
-			# 有自帶材質（halo 金色等）：保留原色，不被玩家色覆蓋成純白
+			# 有自带材质（halo 金色等）：保留原色，不被玩家色覆盖成纯白
 			continue
-		# 無材質（占位件）：新建玩家色材質
+		# 无材质（占位件）：新建玩家色材质
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = player_color
 		mesh.material_override = mat

@@ -1,11 +1,11 @@
-## 職責：玩家頭頂道具圖標（拾取後出現，約 2 秒出現→保持→消失）
-## - Sprite3D billboard 面向相機，layer 4 = UI 標識，不進拍照 RT
-## - 動畫：淡入+彈跳 → 保持 → 淡出+上浮
+## 职责：玩家头顶道具图标（拾取后出现，约 2 秒出现→保持→消失）
+## - Sprite3D billboard 面向相机，layer 4 = UI 标识，不进拍照 RT
+## - 动画：淡入+弹跳 → 保持 → 淡出+上浮
 
 class_name PlayerHeadIcon
 extends Sprite3D
 
-## 出現、消失全過程總時長（秒）
+## 出现、消失全过程总时长（秒）
 const DURATION: float = 2.0
 const FADE_IN: float = 0.15
 const FADE_OUT: float = 0.3
@@ -22,7 +22,7 @@ func _ready() -> void:
 	modulate.a = 0.0
 	visible = false
 
-## 顯示道具圖標，重複拾取時中斷上一段動畫重新播放
+## 显示道具图标，重复拾取时中断上一段动画重新播放
 func show_item(icon: Texture2D) -> void:
 	if _tween:
 		_tween.kill()
@@ -33,7 +33,7 @@ func show_item(icon: Texture2D) -> void:
 	position.y = _base_y
 
 	_tween = create_tween()
-	# 淡入 + 彈跳
+	# 淡入 + 弹跳
 	_tween.tween_property(self, "modulate:a", 1.0, FADE_IN)
 	_tween.parallel().tween_property(self, "scale", Vector3.ONE, FADE_IN)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

@@ -1,22 +1,22 @@
-## 職責：主世界快門前 3 秒逐步减速慢放（正式版）
-## 在 BATTLE 階段倒數至 trigger_seconds 时，啟動逐步减速流程，將 Engine.time_scale 降到 min_scale。
-## 若期間道具加時使剩餘時間回升（> trigger_seconds + hysteresis），恢復 time_scale=1，
-## 直到再次進入 trigger 區間才重新减速。
+## 职责：主世界快门前 3 秒逐步减速慢放（正式版）
+## 在 BATTLE 阶段倒数至 trigger_seconds 时，启动逐步减速流程，将 Engine.time_scale 降到 min_scale。
+## 若期间道具加时使剩余时间回升（> trigger_seconds + hysteresis），恢复 time_scale=1，
+## 直到再次进入 trigger 区间才重新减速。
 ##
-## process_mode = ALWAYS：time_scale 縮小時仍能用牆鐘正常推進計時與監控。
-## 慢放不是暫停：保留一個極小流速 min_scale（可選 stop_at_zero 完全停格）。
-## 不引用任何 autoload（規避編譯期依賴），剩餘秒由 Level 每幀注入。
+## process_mode = ALWAYS：time_scale 缩小时仍能用墙钟正常推进计时与监控。
+## 慢放不是暂停：保留一个极小流速 min_scale（可选 stop_at_zero 完全停格）。
+## 不引用任何 autoload（规避编译期依赖），剩余秒由 Level 每帧注入。
 
 class_name ShutterSlowmoController
 extends Node
 
-@export var trigger_seconds: float = 2.0   ## 剩餘秒 ≤ 此值啟動减速
-@export var decel_time: float = 3.0        ## 减速時長（秒，1→min_scale）
-@export var decel_curve: float = 0.3       ## <1 先快後慢
-@export var min_scale: float = 0.3         ## 最低時間流速：倒計時隨此速率收尾（過低會卡死流程）
-@export var stop_at_zero: bool = false     ## true=frozen 完全停格（會卡倒計時，僅調試用）
-@export var hysteresis: float = 1.0        ## 加時回升超過此值才取消减速（防抖）
-@export var cancellable_by_timer: bool = true  ## 加時時是否允許取消减速恢復
+@export var trigger_seconds: float = 2.0   ## 剩余秒 ≤ 此值启动减速
+@export var decel_time: float = 3.0        ## 减速时长（秒，1→min_scale）
+@export var decel_curve: float = 0.3       ## <1 先快后慢
+@export var min_scale: float = 0.3         ## 最低时间流速：倒计时随此速率收尾（过低会卡死流程）
+@export var stop_at_zero: bool = false     ## true=frozen 完全停格（会卡倒计时，仅调试用）
+@export var hysteresis: float = 1.0        ## 加时回升超过此值才取消减速（防抖）
+@export var cancellable_by_timer: bool = true  ## 加时时是否允许取消减速恢复
 
 var _active: bool = false
 var _phase_elapsed: float = 0.0
@@ -34,7 +34,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if not _active:
 		return
-	# 道具加時把剩餘時間頂回觸發線：恢復 time_scale，退出流程
+	# 道具加时把剩余时间顶回触发线：恢复 time_scale，退出流程
 	if cancellable_by_timer and _last_remaining > trigger_seconds + hysteresis:
 		cancel()
 		return
@@ -57,7 +57,7 @@ func _enable() -> void:
 	Engine.time_scale = 1.0
 	set_process(true)
 
-## 取消减速，恢復正常時間流（加時回升 / 戰爭結束 / 關卡離開時）
+## 取消减速，恢复正常时间流（加时回升 / 战争结束 / 关卡离开时）
 func cancel() -> void:
 	if not _active:
 		return
@@ -68,7 +68,7 @@ func cancel() -> void:
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
 
-## 供 Level 在 BATTLE 內每幀注入剩餘秒；倒數至閾值即啟動减速
+## 供 Level 在 BATTLE 内每帧注入剩余秒；倒数至阈值即启动减速
 func update_trigger(seconds_remaining: float) -> void:
 	_last_remaining = seconds_remaining
 	if not _active and seconds_remaining <= trigger_seconds:

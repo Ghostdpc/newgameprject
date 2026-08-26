@@ -1,4 +1,4 @@
-## 職責：相機控制器，管理行為堆疊並執行棧頂行為
+## 职责：相机控制器，管理行为堆叠并执行栈顶行为
 
 class_name CameraController
 extends Node

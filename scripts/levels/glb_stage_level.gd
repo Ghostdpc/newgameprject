@@ -19,7 +19,7 @@ const SHUTTER_SLOWMO_MS := 550
 @onready var _hud: HUD = get_node_or_null("HUD/MainLayer") as HUD
 
 var _slowmo_end_msec: int = 0
-## 拍照前 3 秒逐步减速慢放控制器（battle 倒數至 threshold 時啟動；道具加時回升則取消復原）
+## 拍照前 3 秒逐步减速慢放控制器（battle 倒数至 threshold 时启动；道具加时回升则取消复原）
 var _shutter_slowmo: ShutterSlowmoController
 
 # ------------------------------------------------------------------
@@ -105,7 +105,7 @@ func _setup_level() -> void:
 	_ensure_room()
 	_generate_collisions()
 	_add_item_hotspots()
-	# 拍照前 3 秒逐步减速慢放（快門張力）：道具加時回升時自動取消復原
+	# 拍照前 3 秒逐步减速慢放（快门张力）：道具加时回升时自动取消复原
 	_shutter_slowmo = ShutterSlowmoController.new()
 	_shutter_slowmo.name = "ShutterSlowmo"
 	add_child(_shutter_slowmo)
@@ -239,11 +239,11 @@ func _convert_to_prop(mi: MeshInstance3D) -> void:
 	prop.set_meta(SKIP_ROOM_COLLISION_META, true)
 	prop.prop_mass = 2.0
 	prop.freeze = true
-	# RigidBody 不可帶非單位縮放：房間 room_scale 使摆件世界 scale≈0.03，
-	# RigidBody 帶此縮放會令物理碰撞體在 unfreeze(鬆手)/受力(飛撲)時錯誤膨脹→頂飛玩家。
-	# 對策：prop 只取正交部分(scale=1，物理穩定)，縮放烘焙進 mesh 子節點與碰撞 shape，視覺不變。
+	# RigidBody 不可带非单位缩放：房间 room_scale 使摆件世界 scale≈0.03，
+	# RigidBody 带此缩放会令物理碰撞体在 unfreeze(松手)/受力(飞扑)时错误膨胀→顶飞玩家。
+	# 对策：prop 只取正交部分(scale=1，物理稳定)，缩放烘焙进 mesh 子节点与碰撞 shape，视觉不变。
 	var ortho := saved_global.orthonormalized()
-	mi.transform = ortho.affine_inverse() * saved_global   # mesh 相對 prop：純縮放
+	mi.transform = ortho.affine_inverse() * saved_global   # mesh 相对 prop：纯缩放
 	prop.add_child(mi)
 	prop.transform = saved_parent.global_transform.affine_inverse() * ortho
 	saved_parent.add_child(prop)
@@ -292,7 +292,7 @@ func _on_level_ready() -> void:
 	GameManager.start_game()
 
 func _on_level_battle_ended() -> void:
-	# 拍照觸發：取消减速慢放，回到正常再進 0.5x 定格快門
+	# 拍照触发：取消减速慢放，回到正常再进 0.5x 定格快门
 	if _shutter_slowmo and _shutter_slowmo.active:
 		_shutter_slowmo.cancel()
 	Engine.time_scale = 0.5
@@ -305,7 +305,7 @@ func _process(delta: float) -> void:
 	# 联机 client：慢放由 host 权威，client 收广播（不本地驱动）
 	if NetManager.is_online and not NetManager.is_host:
 		return
-	# 倒數至拍照前 3 秒 → 逐步减速慢放（道具加時回升時 controller 內部會取消復原）
+	# 倒数至拍照前 3 秒 → 逐步减速慢放（道具加时回升时 controller 内部会取消复原）
 	if _shutter_slowmo and GameManager.current_stage == GameManager.GameStage.BATTLE:
 		_shutter_slowmo.update_trigger(GameManager.stage_time_remaining)
 	if _slowmo_end_msec > 0 and Time.get_ticks_msec() >= _slowmo_end_msec:

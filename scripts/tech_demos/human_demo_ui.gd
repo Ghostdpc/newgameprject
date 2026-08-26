@@ -1,5 +1,5 @@
-## 職責：Human 測試場景 UI 驅動 —— 提供換裝/表情/布娃娃/離地測試快捷鍵
-## 掛在 HumanDemo 根。操作 $Player（player.tscn 的 PlayerController 實例）。
+## 职责：Human 测试场景 UI 驱动 —— 提供换装/表情/布娃娃/离地测试快捷键
+## 挂在 HumanDemo 根。操作 $Player（player.tscn 的 PlayerController 实例）。
 
 extends Node
 
@@ -17,7 +17,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	var k := (event as InputEventKey).keycode
 	var player := get_node_or_null("Player")
 	match k:
-		# 換裝
+		# 换装
 		KEY_1: _equip(player, "hat_slot", HAT_SCENE)
 		KEY_2: _unequip(player, "hat_slot")
 		KEY_3: _equip(player, "shirt_slot", SHIRT_SCENE)
@@ -30,7 +30,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_R: _face(player, -1, true)
 		# 布娃娃
 		KEY_B: _ragdoll(player)
-		# 磕頭：N = 彈簧軟糯磕頭(preset)  M = ragdoll頭骨衝量磕頭
+		# 磕头：N = 弹簧软糯磕头(preset)  M = ragdoll头骨冲量磕头
 		KEY_N: _spring_kowtow(player)
 		KEY_M: _ragdoll_kowtow(player)
 
@@ -41,18 +41,18 @@ func _spring_kowtow(player: Node) -> void:
 	if spring:
 		_spring_kowtow_on = not _spring_kowtow_on
 		spring.call("apply_preset", "kowtow" if _spring_kowtow_on else "normal")
-		_hint_append(" 彈簧磕頭 %s" % ("開(kowtow)" if _spring_kowtow_on else "關(normal)"))
+		_hint_append(" 弹簧磕头 %s" % ("开(kowtow)" if _spring_kowtow_on else "关(normal)"))
 	else:
-		_hint_append(" 無 spring_rig")
+		_hint_append(" 无 spring_rig")
 
 func _ragdoll_kowtow(player: Node) -> void:
 	if not player:
 		return
 	if player.has_method("play_kowtow_ragdoll"):
 		player.call("play_kowtow_ragdoll", 6.0, 1.2)
-		_hint_append(" ragdoll磕頭")
+		_hint_append(" ragdoll磕头")
 	else:
-		_hint_append(" 無 play_kowtow_ragdoll")
+		_hint_append(" 无 play_kowtow_ragdoll")
 
 func _equip(player: Node, slot: String, scene: PackedScene) -> void:
 	if not player:
@@ -70,7 +70,7 @@ func _unequip(player: Node, slot: String) -> void:
 		om.unequip(slot)
 		_hint_append(" 已卸下: " + slot)
 
-## 表情切換。dir>0 下一個，<0 上一個；clear=true 清除
+## 表情切换。dir>0 下一个，<0 上一个；clear=true 清除
 func _face(player: Node, dir: int, clear: bool = false) -> void:
 	if not player:
 		return
@@ -101,22 +101,22 @@ func _ragdoll(player: Node) -> void:
 	var rr = player.get("ragdoll_rig")
 	if rr:
 		if rr.is_ragdoll_enabled():
-			# 先同步 body 再關閉（避免起身瞬移）
+			# 先同步 body 再关闭（避免起身瞬移）
 			if player.has_method("set_ragdoll"):
 				player.call("set_ragdoll", false)
 			else:
 				rr.reset()
-			_hint_append(" 布娃娃關")
+			_hint_append(" 布娃娃关")
 		else:
 			if player.has_method("set_ragdoll"):
 				player.call("set_ragdoll", true)
 			else:
 				rr.set_ragdoll_enabled(true)
-			_hint_append(" 布娃娃開")
+			_hint_append(" 布娃娃开")
 
 func _hint_append(t: String) -> void:
 	if _hint:
-		_hint.text = "Human (WASD移動/空格跳/F飛撲 E拾取)  [1帽3衣5背包]  [Q/E表情 R清除]  [B布娃娃]  [N彈簧磕頭 M磕頭]\n> " + t
+		_hint.text = "Human (WASD移动/空格跳/F飞扑 E拾取)  [1帽3衣5背包]  [Q/E表情 R清除]  [B布娃娃]  [N弹簧磕头 M磕头]\n> " + t
 	else:
 		_hint = $UILayer/Hint
 		if _hint:

@@ -1,4 +1,4 @@
-## 職責：固定拍攝行為，相機保持定點朝向目標
+## 职责：固定拍摄行为，相机保持定点朝向目标
 
 class_name FixedShotBehavior
 extends CameraBehavior

@@ -17,7 +17,7 @@ const AUTOSTART_DELAY := 1.1
 
 var _joined: Array[bool] = [false, false, false, false]
 var _ready_flags: Array[bool] = [false, false, false, false]
-## 槽位綁定設備：-2 空位 / -1 鍵盤 / >=0 手柄 device id
+## 槽位绑定设备：-2 空位 / -1 键盘 / >=0 手柄 device id
 var _slot_devices: Array[int] = [-2, -2, -2, -2]
 var _cards: Array[LobbyCard] = []
 ## client：申请加入时暂存的待绑定设备（host 分配到席位后写入对应槽位）

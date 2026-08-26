@@ -1,7 +1,7 @@
-## 職責：炸彈道具測試 Demo
-## P1（藍）朝前投擲炸彈 → 抛物線飛行 → 引信引爆 → 範圍內玩家灰頭土臉 + 積分懲罰。
-## P2（橙）站在落點附近驗證被炸效果。
-## P1: WASD 移動轉向瞄準；F 投炸彈  |  R 重置 P1  |  C 清除臟污並歸零懲罰
+## 职责：炸弹道具测试 Demo
+## P1（蓝）朝前投掷炸弹 → 抛物线飞行 → 引信引爆 → 范围内玩家灰头土脸 + 积分惩罚。
+## P2（橙）站在落点附近验证被炸效果。
+## P1: WASD 移动转向瞄准；F 投炸弹  |  R 重置 P1  |  C 清除脏污并归零惩罚
 class_name BombDemoController
 extends Node3D
 
@@ -24,7 +24,7 @@ func _unhandled_input(event: InputEvent) -> void:
 					player.character_effects.clear_all()
 				if player2.character_effects:
 					player2.character_effects.clear_all()
-				_hint("清除臟污 + 歸零懲罰")
+				_hint("清除脏污 + 归零惩罚")
 
 func _throw_bomb() -> void:
 	if ItemSystem == null:

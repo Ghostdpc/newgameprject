@@ -33,7 +33,7 @@ func _on_battle_started() -> void:
 func _on_photo_captured() -> void:
 	_clear_visuals_only()
 
-## 給服裝模型套用 tint 色（覆蓋純白 unshaded 材質，占位可視化）
+## 给服装模型套用 tint 色（覆盖纯白 unshaded 材质，占位可视化）
 func _tint_model(item: Node3D, color: Color) -> void:
 	for mi in item.find_children("*", "MeshInstance3D", true, false):
 		var mesh := mi as MeshInstance3D
@@ -71,17 +71,17 @@ func equip_garment(player: PlayerController, garment_id: String) -> void:
 			if scene:
 				var item: Node3D = null
 				if not def.texture.is_empty():
-					# 有貼圖：用 PropModelBuilder 套貼圖後掛載
+					# 有贴图：用 PropModelBuilder 套贴图后挂载
 					var built := PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale)
 					if built:
 						item = player.outfit_manager.equip_garment_node(def.slot, built, garment_id)
 				if item == null:
-					# 無貼圖或 build 失敗：直接掛 scene
+					# 无贴图或 build 失败：直接挂 scene
 					item = player.outfit_manager.equip(def.slot, scene, garment_id)
-				# 占位 tint：僅在「無貼圖且配置了非白 tint」時套用（純白 unshaded 白模上色）
+				# 占位 tint：仅在「无贴图且配置了非白 tint」时套用（纯白 unshaded 白模上色）
 				if item and def.texture.is_empty() and def.tint != Color.WHITE:
 					_tint_model(item, def.tint)
-				# 服裝專屬挂點偏移（覆蓋槽位預設偏移；用於同槽不同裝需要不同位置）
+				# 服装专属挂点偏移（覆盖槽位预设偏移；用于同槽不同装需要不同位置）
 				if item and def.mount_offset != Vector3.ZERO:
 					item.position = def.mount_offset
 

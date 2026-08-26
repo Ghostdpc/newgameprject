@@ -1,21 +1,21 @@
-## 職責：放置物定義（只讀值對象），由 ItemConfig 構建
+## 职责：放置物定义（只读值对象），由 ItemConfig 构建
 
 class_name TrapDef
 extends RefCounted
 
 var id: String = ""
 var display_name: String = ""
-## 3D 模型資源路徑（res://，空 = 無模型用占位方塊）
+## 3D 模型资源路径（res://，空 = 无模型用占位方块）
 var model: String = ""
-## 貼圖資源路徑（res://，空 = 用模型自帶材質）
+## 贴图资源路径（res://，空 = 用模型自带材质）
 var texture: String = ""
-## 模型統一縮放
+## 模型统一缩放
 var model_scale: float = 1.0
 var lifetime: float = 0.0
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_STEP
-## 放置物被觸發時播放的特效場景路徑（res://，空 = 不播放）
+## 放置物被触发时播放的特效场景路径（res://，空 = 不播放）
 var use_vfx: String = ""
-## 特效播放位置模式（放置物固定為 world，在觸發點播放）
+## 特效播放位置模式（放置物固定为 world，在触发点播放）
 var use_vfx_mode: ItemDef.VfxMode = ItemDef.VfxMode.WORLD
 var effects: Array[ItemEffect] = []
 

@@ -1,4 +1,4 @@
-## 職責：結算覆蓋層，展示系統評分並提供返回主界面與退出選項
+## 职责：结算覆盖层，展示系统评分并提供返回主界面与退出选项
 
 class_name ResultsOverlay
 extends CanvasLayer
@@ -21,8 +21,8 @@ func _on_stage_changed(stage: int) -> void:
 		_panel.hide()
 
 func _show_results() -> void:
-	# TODO: 接入實際 ScoreSystem 結果
-	_scores_label.text = "系統評分中...\n（詳細結果待實現）"
+	# TODO: 接入实际 ScoreSystem 结果
+	_scores_label.text = "系统评分中...\n（详细结果待实现）"
 	_panel.show()
 
 func _on_menu_pressed() -> void:

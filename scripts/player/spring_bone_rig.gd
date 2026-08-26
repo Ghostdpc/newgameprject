@@ -1,18 +1,18 @@
-## 職責：Spring Bone 彈簧骨骼組件 —— 把「軟糯 / 海綿 / 磕頭」式動畫過濾效果
-## 疊加到任意角色的骨骼上，可隨時啟用/停用，與主流程解耦。
+## 职责：Spring Bone 弹簧骨骼组件 —— 把「软糯 / 海绵 / 磕头」式动画过滤效果
+## 叠加到任意角色的骨骼上，可随时启用/停用，与主流程解耦。
 ##
 ## 用法：
-##   1. 實例化此節點，掛到角色下（需含 Skeleton3D + AnimationPlayer）
-##   2. setup(skeleton) 綁定骨架
-##   3. 設定各骨彈簧參數（k 剛度 / d 阻尼 / w 激勵強度）——預設為「頭大幅擺動」狀態
-##   4. set_active(true) 開啟：每幀讀動畫目標 → 彈簧滯後 → 寫回骨架
-##      set_active(false) 關閉：骨架回到純動畫
+##   1. 实例化此节点，挂到角色下（需含 Skeleton3D + AnimationPlayer）
+##   2. setup(skeleton) 绑定骨架
+##   3. 设定各骨弹簧参数（k 刚度 / d 阻尼 / w 激励强度）——预设为「头大幅摆动」状态
+##   4. set_active(true) 开启：每帧读动画目标 → 弹簧滞后 → 写回骨架
+##      set_active(false) 关闭：骨架回到纯动画
 ##
-## 本組件是純數學二次動畫（無 RigidBody，無物理引擎），永不坍塌、無離散震盪。
-## 也可不依賴 AnimationPlayer：demo 只做優雅降級（找不到動畫播放器就只跟骨骼 rest）。
+## 本组件是纯数学二次动画（无 RigidBody，无物理引擎），永不坍塌、无离散震荡。
+## 也可不依赖 AnimationPlayer：demo 只做优雅降级（找不到动画播放器就只跟骨骼 rest）。
 ##
-## 記錄參數（當前「頭擺動很厲害」的軟糯手感）：
-##   部位        k(剛度)  d(阻尼)  w(激勵)
+## 记录参数（当前「头摆动很厉害」的软糯手感）：
+##   部位        k(刚度)  d(阻尼)  w(激励)
 ##   hips        350      18       0.0
 ##   spine       220      13       0.6
 ##   chest       150      9        1.2
@@ -21,7 +21,7 @@
 ##   lowerarm    110      8        0.4
 ##   upperleg    180      12       0.3
 ##   lowerleg    120      8.5      0.4
-##   激勵：root 加速度 lean (pitch/roll) + 步頻正弦僅給 head/chest/spine
+##   激励：root 加速度 lean (pitch/roll) + 步频正弦仅给 head/chest/spine
 ##   低通：exp(-1.2 * delta)
 
 class_name SpringBoneRig
@@ -29,22 +29,22 @@ extends Node3D
 
 const HumanBoneMap = preload("res://scripts/player/human_bone_map.gd")
 
-## 參與彈簧的骨骼（KayKit Mannequin 命名）。可自訂全組。
+## 参与弹簧的骨骼（KayKit Mannequin 命名）。可自订全组。
 @export var bones: Array[String] = [
 	"hips", "spine", "chest", "head",
 	"upperarm.l", "lowerarm.l", "upperarm.r", "lowerarm.r",
 	"upperleg.l", "lowerleg.l", "upperleg.r", "lowerleg.r",
 ]
 
-## Human 骨架（骨骼.00x 無語義骨）時經映射解析；由外部在 setup 前設置
+## Human 骨架（骨骼.00x 无语义骨）时经映射解析；由外部在 setup 前设置
 var is_human: bool = false
 
-## ─── 命名預設 ─────────────────────────────────────────────────────────────
-## 每個預設可被 apply_preset("名字") 套用，把 spring_k/d/wobble_force/pulse 等
-## 一次性填好。預設只存數據，不改動 active 狀態。
+## ─── 命名预设 ─────────────────────────────────────────────────────────────
+## 每个预设可被 apply_preset("名字") 套用，把 spring_k/d/wobble_force/pulse 等
+## 一次性填好。预设只存数据，不改动 active 状态。
 const PRESETS: Dictionary = {
-	## 特殊效果：頭大幅軟糯（當時調出來「看起來像磕頭」的參數）
-	## 記錄於 2026-08-22，demo active_ragdoll_demo 按 2 的狀態
+	## 特殊效果：头大幅软糯（当时调出来「看起来像磕头」的参数）
+	## 记录于 2026-08-22，demo active_ragdoll_demo 按 2 的状态
 	"kowtow": {
 		"k": {
 			"hips": 350.0, "spine": 220.0, "chest": 150.0, "head": 70.0,
@@ -72,7 +72,7 @@ const PRESETS: Dictionary = {
 		"extra_damp": 1.2,
 		"speed_ref": 2.2,
 	},
-	## 常态預設：全身適度軟糯（head.k=15, pulse=0.1 調定於 2026-08-22）
+	## 常态预设：全身适度软糯（head.k=15, pulse=0.1 调定于 2026-08-22）
 	"normal": {
 		"k": {
 			"hips": 350.0, "spine": 280.0, "chest": 200.0, "head": 15.0,
@@ -102,7 +102,7 @@ const PRESETS: Dictionary = {
 		"breath_amp": 0.3,
 		"breath_freq": 1.1,
 	},
-	## 果凍：比常态更軟更甩（作對比用，非正式）
+	## 果冻：比常态更软更甩（作对比用，非正式）
 	"jello": {
 		"k": {
 			"hips": 260.0, "spine": 200.0, "chest": 140.0, "head": 10.0,
@@ -132,7 +132,7 @@ const PRESETS: Dictionary = {
 	},
 }
 
-## 每根骨的彈簧剛度（大 = 硬，貼動畫；小 = 軟，甩動）
+## 每根骨的弹簧刚度（大 = 硬，贴动画；小 = 软，甩动）
 @export var spring_k: Dictionary = {
 	"hips": 350.0, "spine": 220.0, "chest": 150.0, "head": 70.0,
 	"upperarm.l": 160.0, "lowerarm.l": 110.0,
@@ -148,7 +148,7 @@ const PRESETS: Dictionary = {
 	"upperleg.l": 12.0, "lowerleg.l": 8.5,
 	"upperleg.r": 12.0, "lowerleg.r": 8.5,
 }
-## 激勵強度（加速度 lean + 步頻；頭/胸最強→顯眼軟糯，四肢靠層級傳遞）
+## 激励强度（加速度 lean + 步频；头/胸最强→显眼软糯，四肢靠层级传递）
 @export var wobble_force: Dictionary = {
 	"hips": 0.0, "spine": 0.6, "chest": 1.2, "head": 1.6,
 	"upperarm.l": 0.3, "lowerarm.l": 0.4,
@@ -156,28 +156,28 @@ const PRESETS: Dictionary = {
 	"upperleg.l": 0.3, "lowerleg.l": 0.4,
 	"upperleg.r": 0.3, "lowerleg.r": 0.4,
 }
-## 步頻正弦只疊加到這些頭/上軀幹骨（有靜止基線才看得出軟糯）
+## 步频正弦只叠加到这些头/上躯干骨（有静止基线才看得出软糯）
 @export var pulse_bones: Array[String] = ["head", "chest", "spine"]
-## 步頻正弦幅度；0 = 關閉步頻（只靠加速度 lean）
+## 步频正弦幅度；0 = 关闭步频（只靠加速度 lean）
 @export var pulse_amp: float = 0.8
-## 步頻基準速度（滿速=4步/秒）；按使用角色 MOVE_SPEED 設
+## 步频基准速度（满速=4步/秒）；按使用角色 MOVE_SPEED 设
 @export var speed_ref: float = 2.2
-## 呼吸/持續微晃幅度（永遠生效，含靜止）；0 = 關閉。頭最明顯→像猛獸派對站著也搖頭晃腦
+## 呼吸/持续微晃幅度（永远生效，含静止）；0 = 关闭。头最明显→像猛兽派对站著也摇头晃脑
 @export var breath_amp: float = 0.0
-## 呼吸微晃頻率（Hz，慢一點像自然搖擺）
+## 呼吸微晃频率（Hz，慢一点像自然摇摆）
 @export var breath_freq: float = 1.1
 
-## 全身激勵放大（外部可調，用於加強/減弱整個軟糯）
+## 全身激励放大（外部可调，用于加强/减弱整个软糯）
 @export var wobble_scale: float = 1.0
-## 額外阻尼（指數低通，大 = 更穩 / 過衝少，小 = 甩動多）
+## 额外阻尼（指数低通，大 = 更稳 / 过冲少，小 = 甩动多）
 @export var extra_damp: float = 1.2
 
 var skeleton: Skeleton3D
-## 目標骨架（讀動畫/rest 作彈簧目標）；缺省 = skeleton
+## 目标骨架（读动画/rest 作弹簧目标）；缺省 = skeleton
 var target_skeleton: Skeleton3D
-## 外部提供的水平速度（用於步頻正弦相位）；無 = 0
+## 外部提供的水平速度（用于步频正弦相位）；无 = 0
 var velocity_hints: Vector2 = Vector2.ZERO
-## 外部提供的根節點速度（加速度 lean 用）；不設 = 0
+## 外部提供的根节点速度（加速度 lean 用）；不设 = 0
 var root_velocity: Vector3 = Vector3.ZERO
 var animation_player: AnimationPlayer
 var _active: bool = false
@@ -202,7 +202,7 @@ var _time: float = 0.0
 func _ready() -> void:
 	set_process(false)
 	set_physics_process(false)
-	process_priority = 100   # 在 AnimationPlayer(priority 0) 之後處理，確保寫回不被動畫覆蓋
+	process_priority = 100   # 在 AnimationPlayer(priority 0) 之后处理，确保写回不被动画覆盖
 	_ensure_skeleton()
 
 func _ensure_skeleton() -> void:
@@ -219,7 +219,7 @@ func _process(delta: float) -> void:
 		return
 	_tick_springs(delta)
 
-## 綁定骨架；anim 可選（提供步頻相位），無則只跟骨骼 rest 作目標
+## 绑定骨架；anim 可选（提供步频相位），无则只跟骨骼 rest 作目标
 func setup(skel: Skeleton3D, anim: AnimationPlayer = null) -> void:
 	skeleton = skel
 	animation_player = anim
@@ -228,16 +228,16 @@ func setup(skel: Skeleton3D, anim: AnimationPlayer = null) -> void:
 	set_process(true)
 	set_physics_process(false)
 
-## 整體開啟/關閉
+## 整体开启/关闭
 func set_active(on: bool) -> void:
 	active = on
 
-## 重新初始化彈簧狀態（對齊當前骨骼 pose）。布娃娃軟倒/起身後骨骼姿態大變，
-## 若不重設，_spring_rot 殘留軟倒前基於舊姿態的角度，會與服装头骨縮放疊加導致帽子漂走。
+## 重新初始化弹簧状态（对齐当前骨骼 pose）。布娃娃软倒/起身后骨骼姿态大变，
+## 若不重设，_spring_rot 残留软倒前基于旧姿态的角度，会与服装头骨缩放叠加导致帽子漂走。
 func reinit() -> void:
 	_init_spring()
 
-## 套用命名預設（見 PRESETS）。返回是否成功。
+## 套用命名预设（见 PRESETS）。返回是否成功。
 func apply_preset(preset_name: String) -> bool:
 	var p: Dictionary = PRESETS.get(preset_name, {})
 	if p.is_empty():
@@ -256,12 +256,12 @@ func apply_preset(preset_name: String) -> bool:
 	speed_ref = float(p.get("speed_ref", speed_ref))
 	breath_amp = float(p.get("breath_amp", breath_amp))
 	breath_freq = float(p.get("breath_freq", breath_freq))
-	# 切換參數後重取樣，避免彈簧用舊參數跳變
+	# 切换参数后重取样，避免弹簧用旧参数跳变
 	if _ready_flag:
 		_init_spring()
 	return true
 
-## 採樣：從骨架當前實際姿態初始化彈簧，避免開啟剎那跳變
+## 采样：从骨架当前实际姿态初始化弹簧，避免开启刹那跳变
 func _init_spring() -> void:
 	_spring_rot.clear()
 	_spring_vel.clear()
@@ -276,13 +276,13 @@ func _init_spring() -> void:
 	_prev_velocity = Vector3.ZERO
 	_ready_flag = true
 
-## 依骨名找骨架索引（Human 經映射解析）
+## 依骨名找骨架索引（Human 经映射解析）
 func _fb(bone_name: String) -> int:
 	if not skeleton:
 		return -1
 	return skeleton.find_bone(HumanBoneMap.resolve(bone_name, is_human))
 
-## 目標骨骼旋轉：優先動畫 pose，其次 rest（讀自 target_skeleton，缺省 = skeleton）
+## 目标骨骼旋转：优先动画 pose，其次 rest（读自 target_skeleton，缺省 = skeleton）
 func _target_rotation(bone_name: String) -> Quaternion:
 	var src := target_skeleton if target_skeleton else skeleton
 	var idx := _fb_in(src, bone_name)
@@ -295,19 +295,19 @@ func _target_rotation(bone_name: String) -> Quaternion:
 		q = src.get_bone_global_rest(idx).basis.get_rotation_quaternion()
 	return q
 
-## 在指定骨架依骨名找索引（Human 經映射解析）
+## 在指定骨架依骨名找索引（Human 经映射解析）
 func _fb_in(src: Skeleton3D, bone_name: String) -> int:
 	if not src:
 		return -1
 	return src.find_bone(HumanBoneMap.resolve(bone_name, is_human))
 
-## 彈簧骨骼主迴圈
+## 弹簧骨骼主回圈
 func _tick_springs(delta: float) -> void:
 	# 弹簧积分固定步长：显式欧拉在低帧率（双开/卡顿，delta 大）下会越过稳定性边界
 	# （h*ω<2，ω=√k），导致弹簧自激振荡发散、骨骼乱颤。clamp 到 1/60 与 60fps 行为等价。
 	var step := minf(delta, 1.0 / 60.0)
 	_time += delta
-	# 加速度 lean（用外部 root_velocity 差分，與原 demo 行為一致）
+	# 加速度 lean（用外部 root_velocity 差分，与原 demo 行为一致）
 	var acc := (root_velocity - _prev_velocity) / maxf(delta, 0.0001)
 	_prev_velocity = root_velocity
 	var inv_basis := global_basis.inverse()
@@ -315,7 +315,7 @@ func _tick_springs(delta: float) -> void:
 	var lean_pitch := clampf(-acc_local.z * 0.02, -0.12, 0.12)
 	var lean_roll := clampf(acc_local.x * 0.02, -0.12, 0.12)
 
-	# 步頻正弦（與原 demo：h_speed>0.3 才觸發，步頻隨速度線性）
+	# 步频正弦（与原 demo：h_speed>0.3 才触发，步频随速度线性）
 	var step_swing: float = 0.0
 	if pulse_amp > 0.0 and animation_player and animation_player.is_playing():
 		var h_speed := velocity_hints.length()
@@ -323,8 +323,8 @@ func _tick_springs(delta: float) -> void:
 			var step_freq: float = h_speed / speed_ref * 4.0
 			step_swing = sin(animation_player.current_animation_position * step_freq) * pulse_amp
 
-	# 呼吸/持續微晃（含靜止）；低速慢正弦，頭甩最明顯
-	# 立體：pitch(前後) 為主，roll(左右) 次之且錯相，微 yaw(扭轉)
+	# 呼吸/持续微晃（含静止）；低速慢正弦，头甩最明显
+	# 立体：pitch(前后) 为主，roll(左右) 次之且错相，微 yaw(扭转)
 	var breath_pitch: float = 0.0
 	var breath_roll: float = 0.0
 	var breath_yaw: float = 0.0
@@ -341,7 +341,7 @@ func _tick_springs(delta: float) -> void:
 		var damp: float = spring_d.get(bone_name, 12.0)
 		var wf: float = wobble_force.get(bone_name, 0.5)
 		var target := _target_rotation(bone_name)
-		# 三軸激勵：pitch=前後點頭 / roll=左右搖擺 / yaw=扭轉
+		# 三轴激励：pitch=前后点头 / roll=左右摇摆 / yaw=扭转
 		var pulse_extra := step_swing if pulse_bones.has(bone_name) else 0.0
 		var excite_pitch := (lean_pitch + pulse_extra) * wf + breath_pitch * wf
 		var excite_roll := lean_roll * wf * 0.5 + breath_roll * wf
@@ -349,20 +349,20 @@ func _tick_springs(delta: float) -> void:
 		excite_pitch *= wobble_scale
 		excite_roll *= wobble_scale
 		excite_yaw *= wobble_scale
-		# excite_q 用骨骼局部軸施加激勵。預設(mannequin) head 局部軸與世界對齊：
-		#   pitch點頭=繞worldX(左右) → 用 localX(RIGHT)；roll左右搖=繞worldZ(前後) → localZ；
-		#   yaw轉體=繞worldY(竖直) → localY(UP)。
-		# human 骨架因額外 Y 旋轉/軸轉換，head 局部軸相對世界旋轉了：
+		# excite_q 用骨骼局部轴施加激励。预设(mannequin) head 局部轴与世界对齐：
+		#   pitch点头=绕worldX(左右) → 用 localX(RIGHT)；roll左右摇=绕worldZ(前后) → localZ；
+		#   yaw转体=绕worldY(竖直) → localY(UP)。
+		# human 骨架因额外 Y 旋转/轴转换，head 局部轴相对世界旋转了：
 		#   localX→world+Z、localY→world+Y、localZ→world-X。
-		#   故要對齊世界語義需：pitch→繞 localZ(-X)、roll→繞 localX(+Z)、yaw→繞 localY(+Y)。
-		#   即human下互換 pitch/roll 軸。
+		#   故要对齐世界语义需：pitch→绕 localZ(-X)、roll→绕 localX(+Z)、yaw→绕 localY(+Y)。
+		#   即human下互换 pitch/roll 轴。
 		var pitch_axis := Vector3.RIGHT
 		var roll_axis := Vector3(0, 0, 1)
 		var yaw_axis := Vector3.UP
 		if is_human:
-			pitch_axis = Vector3(0, 0, -1)   # 世界-X → 點頭
-			roll_axis = Vector3.RIGHT         # 世界+Z → 左右搖
-			yaw_axis = Vector3.UP             # 世界+Y → 轉體
+			pitch_axis = Vector3(0, 0, -1)   # 世界-X → 点头
+			roll_axis = Vector3.RIGHT         # 世界+Z → 左右摇
+			yaw_axis = Vector3.UP             # 世界+Y → 转体
 		var excite_q := (Quaternion(pitch_axis, excite_pitch)
 			* Quaternion(roll_axis, excite_roll)
 			* Quaternion(yaw_axis, excite_yaw))
@@ -386,7 +386,7 @@ func _tick_springs(delta: float) -> void:
 		skeleton.set_bone_pose_rotation(idx, cur)
 	skeleton.force_update_all_bone_transforms()
 
-## 停用時：清空到純動畫，不殘留彈簧姿態（避免角色永久彎著）
+## 停用时：清空到纯动画，不残留弹簧姿态（避免角色永久弯著）
 func _reset_to_animation() -> void:
 	_spring_rot.clear()
 	_spring_vel.clear()

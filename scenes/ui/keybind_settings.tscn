@@ -69,6 +69,6 @@ theme_override_constants/separation = 8
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.78, 0.9, 1)
 theme_override_font_sizes/font_size = 20
-text = "點擊按鈕後按下新鍵；Backspace 清除綁定；Esc 返回標題"
+text = "点击按钮后按下新键；Backspace 清除绑定；Esc 返回标题"
 horizontal_alignment = 1
 autowrap_mode = 2

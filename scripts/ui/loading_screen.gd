@@ -10,6 +10,7 @@ class_name LoadingScreen
 extends CanvasLayer
 
 const SCROLL_TEX: Texture2D = preload("res://assets/textures/ui/lobby/scroll_band.png")
+const JoypadGlyph = preload("res://scripts/ui/joypad_glyph.gd")
 const SCROLL_SPEED := 42.0
 const MIN_DURATION := 3.0
 const HOLD_AFTER_FULL := 0.2
@@ -29,6 +30,7 @@ func _ready() -> void:
 	_build_scroll_rows()
 	_bar.value = 0.0
 	_refresh_pct()
+	_refresh_hints()
 	_start_load()
 
 # ---------------------------------------------------------------- 后台线程真实加载
@@ -139,6 +141,31 @@ func _finish() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	queue_free()
+
+# ---------------------------------------------------------------- 手柄按键提示（跟随真实绑定）
+func _refresh_hints() -> void:
+	_apply_hint($Screen/HintsRow/HintJump, "joy_jump", "跳跃")
+	_apply_hint($Screen/HintsRow/HintPickup, "joy_pickup", "拾取\\使用 道具")
+	_apply_hint($Screen/HintsRow/HintDive, "joy_dive", "飞扑")
+	_apply_hint($Screen/HintsRow/HintGrab, "joy_grab", "抓取场景物")
+	_apply_hint($Screen/HintsRow/HintSuicide, "joy_suicide", "自杀")
+
+## 该 action 有手柄绑定 → 面键显示图标；肩键/扳机等无图标回退文字；无绑定仅显示操作名
+func _apply_hint(row: Node, action: String, label: String) -> void:
+	var icon := row.get_node("Icon") as TextureRect
+	var text := row.get_node("Text") as Label
+	var ev := JoypadGlyph.find_joypad_event(action)
+	icon.visible = false
+	if ev == null:
+		text.text = label
+		return
+	var tex := JoypadGlyph.icon_for_event(ev)
+	if tex != null:
+		icon.texture = tex
+		icon.visible = true
+		text.text = label
+	else:
+		text.text = "%s · %s" % [label, JoypadGlyph.text_for_event(ev)]
 
 # ---------------------------------------------------------------- 百分比跟随填充条右端
 func _refresh_pct() -> void:

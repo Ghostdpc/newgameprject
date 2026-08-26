@@ -1,4 +1,4 @@
-## 驗證：玩家可推動場景物理物件（PhysicalProp）
+## 验证：玩家可推动场景物理物件（PhysicalProp）
 extends GutTest
 
 func test_player_pushes_physical_prop() -> void:
@@ -30,11 +30,11 @@ func test_player_pushes_physical_prop() -> void:
 	var cs_count := crate.find_children("*", "CollisionShape3D", true, false).size()
 	print("crate start=", crate_start, " layer=", crate.collision_layer, " mask=", crate.collision_mask, " cs=", cs_count)
 	print("player layer=", player.collision_layer, " mask=", player.collision_mask)
-	# 玩家持續按下（S 鍵，+Z 方向）移動撞箱子推動
+	# 玩家持续按下（S 键，+Z 方向）移动撞箱子推动
 	Input.action_press("move_down_p1")
 	for i in 90:
 		await wait_physics_frames(1)
 	Input.action_release("move_down_p1")
 	var crate_end: Vector3 = crate.global_position
 	print("player pos=", player.global_position, " crate end=", crate_end, " moved=", (crate_end - crate_start))
-	assert_gt(crate_end.z - crate_start.z, 0.5, "玩家推動箱子產生位移")
+	assert_gt(crate_end.z - crate_start.z, 0.5, "玩家推动箱子产生位移")

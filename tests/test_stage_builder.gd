@@ -1,4 +1,4 @@
-## 驗證：StageBuilder 小件是否生成為可動物（PhysicalProp）
+## 验证：StageBuilder 小件是否生成为可动物（PhysicalProp）
 extends GutTest
 
 func test_stage_builder_dynamic_props() -> void:
@@ -9,7 +9,7 @@ func test_stage_builder_dynamic_props() -> void:
 	var props := _count_prop(root)
 	var statics := _count_static(root)
 	print("DynamicProp count=", props, " StaticBody count=", statics)
-	assert_gt(props, 0, "舞台應有可動物件")
+	assert_gt(props, 0, "舞台应有可动物件")
 
 func _count_prop(n: Node) -> int:
 	var c := 0

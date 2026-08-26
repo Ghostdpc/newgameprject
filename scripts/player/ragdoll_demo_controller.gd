@@ -1,4 +1,4 @@
-## 職責：布娃娃技術驗證 Demo，測試模型骨架物理 / 動畫↔物理切換
+## 职责：布娃娃技术验证 Demo，测试模型骨架物理 / 动画↔物理切换
 
 class_name RagdollDemoController
 extends Node3D
@@ -44,7 +44,7 @@ func _toggle_ragdoll() -> void:
 func _shoot() -> void:
 	_rig.set_ragdoll_enabled(true)
 	_rig.apply_impulse(Vector3(0.0, IMPULSE_FORCE, -1.0))
-	_update_hint("衝擊施加！")
+	_update_hint("冲击施加！")
 
 func _update_hint(text: String) -> void:
 	if _hint:

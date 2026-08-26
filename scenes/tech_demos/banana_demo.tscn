@@ -59,7 +59,7 @@ offset_top = 20.0
 offset_right = 800.0
 offset_bottom = 60.0
 theme_override_font_sizes/font_size = 20
-text = "P1踩地上香蕉皮滑倒測試 | P1 WASD跑向中間 || P2(3,-3)站滑行路徑驗證撞人 | R重置 P1 / T重放香蕉"
+text = "P1踩地上香蕉皮滑倒测试 | P1 WASD跑向中间 || P2(3,-3)站滑行路径验证撞人 | R重置 P1 / T重放香蕉"
 
 [node name="Feedback" type="Label" parent="UILayer" unique_id=1811704652]
 offset_left = 20.0

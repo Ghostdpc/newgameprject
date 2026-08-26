@@ -1,14 +1,14 @@
-## 職責：道具效果類型注冊表，EffectKind → ItemEffect 子類腳本
+## 职责：道具效果类型注册表，EffectKind → ItemEffect 子类脚本
 
 class_name ItemEffectRegistry
 
 static var _map: Dictionary = {}
 
-## 注冊效果類型（啟動時由 ItemSystem 完成）
+## 注册效果类型（启动时由 ItemSystem 完成）
 static func register(kind: ItemTypes.EffectKind, script: Script) -> void:
 	_map[kind] = script
 
-## 按 kind 實例化效果對象，返回 null 表示未注冊
+## 按 kind 实例化效果对象，返回 null 表示未注册
 static func create(kind: ItemTypes.EffectKind, data: Dictionary) -> ItemEffect:
 	if not _map.has(kind):
 		push_warning("ItemEffectRegistry: unregistered kind %d" % kind)

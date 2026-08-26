@@ -32,11 +32,11 @@ func _init() -> void:
 				pad += "  "
 			var gp := skel.get_bone_global_pose(idx)
 			print(pad, "bone[", idx, "] '", skel.get_bone_name(idx), "' origin=", gp.origin)
-	# 動畫
+	# 动画
 	for ap in inst.find_children("*", "AnimationPlayer", true, false):
 		var a := ap as AnimationPlayer
 		print("animations: ", a.get_animation_list())
-	# 節點結構
+	# 节点结构
 	for n in inst.get_children():
 		print("node: ", n.name, " type=", n.get_class())
 	quit()

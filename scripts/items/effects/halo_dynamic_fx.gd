@@ -1,8 +1,8 @@
-## 職責：光環炫酷光效 —— 彩虹流光 + 脈衝閃爍 + 粒子光暈
-## 掛在光環（halo）裝備物節點上，_process 每幀驅動：
-##  - 材質 emission 顏色 Hue 循環（彩虹流）
-##  - emission 強度正弦脈衝（呼吸閃爍）
-##  - 粒子光暈（GPUParticles3D 光塵繞環）
+## 职责：光环炫酷光效 —— 彩虹流光 + 脉冲闪烁 + 粒子光晕
+## 挂在光环（halo）装备物节点上，_process 每帧驱动：
+##  - 材质 emission 颜色 Hue 循环（彩虹流）
+##  - emission 强度正弦脉冲（呼吸闪烁）
+##  - 粒子光晕（GPUParticles3D 光尘绕环）
 class_name HaloDynamicFx
 extends Node
 
@@ -12,7 +12,7 @@ var _aura: GPUParticles3D
 var _time: float = 0.0
 
 func setup(host: Node3D) -> void:
-	# 收集光環模型內的 mesh，保留原材質（金色 tint），只動態控制 emission
+	# 收集光环模型内的 mesh，保留原材质（金色 tint），只动态控制 emission
 	for c in host.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
 		if mi == null or mi.mesh == null:
@@ -27,7 +27,7 @@ func setup(host: Node3D) -> void:
 			mi.material_override = mat
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_PIXEL
 		_meshes.append(mi)
-	# 粒子光暈
+	# 粒子光晕
 	_particles = GPUParticles3D.new()
 	_particles.name = "HaloFxParticles"
 	host.add_child(_particles)
@@ -56,7 +56,7 @@ func setup(host: Node3D) -> void:
 	quad.size = Vector2(0.16, 0.16)
 	_particles.draw_pass_1 = quad
 
-## 在角色根節點建立環繞身體的光塵粒子（角色周圍的炫彩粒子效果）
+## 在角色根节点建立环绕身体的光尘粒子（角色周围的炫彩粒子效果）
 func setup_aura(player: Node3D) -> void:
 	_aura = GPUParticles3D.new()
 	_aura.name = "HaloBodyAura"
@@ -88,8 +88,8 @@ func _process(delta: float) -> void:
 	if not is_inside_tree():
 		return
 	_time += delta
-	var hue := fmod(_time * 0.18, 1.0)         # 彩虹流：hue 循環
-	var pulse := 0.5 + 0.5 * sin(_time * 3.0)  # 脈衝：0~1 正弦
+	var hue := fmod(_time * 0.18, 1.0)         # 彩虹流：hue 循环
+	var pulse := 0.5 + 0.5 * sin(_time * 3.0)  # 脉冲：0~1 正弦
 	var col := Color.from_hsv(hue, 0.75, 1.0)
 	for mi in _meshes:
 		if not is_instance_valid(mi):
@@ -100,11 +100,11 @@ func _process(delta: float) -> void:
 		mat.emission_enabled = true
 		mat.emission = col
 		mat.emission_energy_multiplier = RenderCompat.emission_energy(2.0 + pulse * 3.0)
-	# 光環粒子顏色跟隨彩虹（新發射粒子生效；不 restart 以保持粒子自然循環）
+	# 光环粒子颜色跟随彩虹（新发射粒子生效；不 restart 以保持粒子自然循环）
 	var pm := _particles.process_material as ParticleProcessMaterial
 	if pm and is_instance_valid(_particles):
 		pm.color = col
-	# 角色周圍光塵粒子也跟隨彩虹
+	# 角色周围光尘粒子也跟随彩虹
 	if _aura and is_instance_valid(_aura):
 		var apm := _aura.process_material as ParticleProcessMaterial
 		if apm:

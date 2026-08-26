@@ -65,7 +65,7 @@ func _spawn_stun(target: Node3D) -> void:
 	effect.configure(WorldItemVfx.Kind.BANANA_STUN, 1.5, target)
 	_world_parent().add_child(effect)
 
-## 撞击爆闪（撞到玩家/墙/道具）—— 在指定位置命中處生成短促白黃火光
+## 撞击爆闪（撞到玩家/墙/道具）—— 在指定位置命中处生成短促白黄火光
 func spawn_hit_shockwave(world_pos: Vector3, color: Color = Color(1.0, 0.85, 0.35, 1.0)) -> void:
 	var parent := get_tree().current_scene if get_tree().current_scene else get_tree().root
 	BombInstance.spawn_explosion_fx(world_pos, parent, 2.0, true)

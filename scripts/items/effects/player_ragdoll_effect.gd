@@ -1,4 +1,4 @@
-## 職責：player_ragdoll 效果 —— 觸發目標玩家進入布娃娃狀態
+## 职责：player_ragdoll 效果 —— 触发目标玩家进入布娃娃状态
 
 class_name PlayerRagdollEffect
 extends ItemEffect
@@ -6,11 +6,11 @@ extends ItemEffect
 func apply(ctx: ItemContext) -> void:
 	if ctx.source_player == null:
 		return
-	# duration > 0 時由 ItemSystem 計時後調用 revert；
-	# 這裡僅激活布娃娃，動畫控制權交給 RagdollRig
+	# duration > 0 时由 ItemSystem 计时后调用 revert；
+	# 这里仅激活布娃娃，动画控制权交给 RagdollRig
 	ctx.source_player.set_ragdoll(true)
 	if duration > 0.0:
-		# 讓玩家狀態機進入 Stunned（保證站起後恢復控制）
+		# 让玩家状态机进入 Stunned（保证站起后恢复控制）
 		ctx.source_player.state_machine.transition_to("Stunned")
 
 func revert(ctx: ItemContext) -> void:

@@ -1,0 +1,159 @@
+{
+	"dive_p1": [
+		{
+			"physical_keycode": 70,
+			"type": "key"
+		}
+	],
+	"dive_p2": [
+		{
+			"physical_keycode": 4194439,
+			"type": "key"
+		}
+	],
+	"grab_p1": [
+		{
+			"physical_keycode": 82,
+			"type": "key"
+		}
+	],
+	"grab_p2": [
+		{
+			"physical_keycode": 4194441,
+			"type": "key"
+		}
+	],
+	"joy_dive": [
+		{
+			"button_index": 3,
+			"type": "joy_button"
+		}
+	],
+	"joy_grab": [
+		{
+			"button_index": 2,
+			"type": "joy_button"
+		}
+	],
+	"joy_jump": [
+		{
+			"button_index": 0,
+			"type": "joy_button"
+		}
+	],
+	"joy_pickup": [
+		{
+			"button_index": 1,
+			"type": "joy_button"
+		}
+	],
+	"joy_suicide": [
+		{
+			"axis": 5,
+			"axis_value": 1.0,
+			"type": "joy_motion"
+		}
+	],
+	"joy_use": [
+		{
+			"button_index": 1,
+			"type": "joy_button"
+		}
+	],
+	"jump_p1": [
+		{
+			"physical_keycode": 32,
+			"type": "key"
+		}
+	],
+	"jump_p2": [
+		{
+			"physical_keycode": 4194438,
+			"type": "key"
+		}
+	],
+	"move_down_p1": [
+		{
+			"physical_keycode": 83,
+			"type": "key"
+		}
+	],
+	"move_down_p2": [
+		{
+			"physical_keycode": 4194322,
+			"type": "key"
+		}
+	],
+	"move_left_p1": [
+		{
+			"physical_keycode": 65,
+			"type": "key"
+		}
+	],
+	"move_left_p2": [
+		{
+			"physical_keycode": 4194319,
+			"type": "key"
+		}
+	],
+	"move_right_p1": [
+		{
+			"physical_keycode": 68,
+			"type": "key"
+		}
+	],
+	"move_right_p2": [
+		{
+			"physical_keycode": 4194321,
+			"type": "key"
+		}
+	],
+	"move_up_p1": [
+		{
+			"physical_keycode": 87,
+			"type": "key"
+		}
+	],
+	"move_up_p2": [
+		{
+			"physical_keycode": 4194320,
+			"type": "key"
+		}
+	],
+	"pickup_p1": [
+		{
+			"physical_keycode": 69,
+			"type": "key"
+		}
+	],
+	"pickup_p2": [
+		{
+			"physical_keycode": 4194440,
+			"type": "key"
+		}
+	],
+	"suicide_p1": [
+		{
+			"physical_keycode": 84,
+			"type": "key"
+		}
+	],
+	"suicide_p2": [
+		{
+			"physical_keycode": 4194442,
+			"type": "key"
+		}
+	],
+	"use_item_p1": [
+		{
+			"physical_keycode": 69,
+			"type": "key"
+		}
+	],
+	"use_item_p2": [
+		{
+			"physical_keycode": 4194441,
+			"type": "key"
+		}
+	]
+}

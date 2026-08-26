@@ -1,4 +1,4 @@
-## 職責：放置物實例，Area3D 節點，檢測踩踏後觸發效果（單次觸發）
+## 职责：放置物实例，Area3D 节点，检测踩踏后触发效果（单次触发）
 
 class_name TrapInstance
 extends Area3D
@@ -12,9 +12,9 @@ var is_visual_only: bool = false
 
 var _lifetime_timer: float = 0.0
 var _triggered: bool = false
-## 生成後延遲激活，避免放置者同幀自觸發
+## 生成后延迟激活，避免放置者同帧自触发
 var _activation_timer: float = 0.5
-## 放置者是否已離開過本區域：離開前放置者踩到不觸發（避免原地放置即自滑倒/自消失）
+## 放置者是否已离开过本区域：离开前放置者踩到不触发（避免原地放置即自滑倒/自消失）
 var _owner_armed: bool = false
 
 func setup(def: TrapDef, placer: PlayerController) -> void:
@@ -22,9 +22,9 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 	owner_player = placer
 	_lifetime_timer = def.lifetime
 
-	collision_layer = 0  # 放置物自身不占物理層
-	collision_mask  = 2  # 檢測 layer=2（玩家層）
-	monitoring = false   # 延遲激活，_activation_timer 歸零後才開啟
+	collision_layer = 0  # 放置物自身不占物理层
+	collision_mask  = 2  # 检测 layer=2（玩家层）
+	monitoring = false   # 延迟激活，_activation_timer 归零后才开启
 
 	var shape := CollisionShape3D.new()
 	var box_shape := BoxShape3D.new()
@@ -44,7 +44,7 @@ func setup(def: TrapDef, placer: PlayerController) -> void:
 		var mat := StandardMaterial3D.new()
 		mat.albedo_color = Color(0.6, 0.1, 1.0)
 		mesh_inst.material_override = mat
-		mesh_inst.position.y = 0.3  # 半高偏移，使方塊底部貼地
+		mesh_inst.position.y = 0.3  # 半高偏移，使方块底部贴地
 		visual = mesh_inst
 	add_child(visual)
 
@@ -58,7 +58,7 @@ func _process(delta: float) -> void:
 	if _activation_timer > 0.0:
 		_activation_timer -= delta
 		if _activation_timer <= 0.0:
-			monitoring = true  # 延遲後才開始偵測
+			monitoring = true  # 延迟后才开始侦测
 	if trap_def == null or trap_def.lifetime <= 0.0:
 		return
 	_lifetime_timer -= delta
@@ -71,7 +71,7 @@ func _on_body_entered(body: Node3D) -> void:
 	if not (body is PlayerController):
 		return
 	var player := body as PlayerController
-	# 放置者在離開本區域前不觸發：避免原地放置後 0.5s 激活即自踩，香蕉皮瞬間消失
+	# 放置者在离开本区域前不触发：避免原地放置后 0.5s 激活即自踩，香蕉皮瞬间消失
 	if player == owner_player and not _owner_armed:
 		return
 	_triggered = true
@@ -163,7 +163,7 @@ func _spawn_trigger_vfx(spawn_pos: Vector3) -> void:
 		vfx.autoplay = false
 	if "one_shot" in vfx:
 		vfx.one_shot = true
-	# 放置物觸發固定在世界坐標（觸發點）播放
+	# 放置物触发固定在世界坐标（触发点）播放
 	get_tree().current_scene.add_child(vfx)
 	vfx.global_position = spawn_pos
 	if vfx.has_method("play"):
@@ -176,7 +176,7 @@ func _spawn_trigger_vfx(spawn_pos: Vector3) -> void:
 	if is_instance_valid(vfx):
 		vfx.queue_free()
 
-## 放置者離開後武裝：之後再踩（含放置者自己）才會觸發
+## 放置者离开后武装：之后再踩（含放置者自己）才会触发
 func _on_body_exited(body: Node3D) -> void:
 	if body == owner_player:
 		_owner_armed = true

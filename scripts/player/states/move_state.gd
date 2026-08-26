@@ -1,4 +1,4 @@
-## 職責：移動狀態，處理水平移動
+## 职责：移动状态，处理水平移动
 
 class_name MoveState
 extends BaseState

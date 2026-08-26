@@ -1,4 +1,4 @@
-## 職責：player_speed 效果 —— 移速乘數 buff，持續 effect.duration 秒後還原
+## 职责：player_speed 效果 —— 移速乘数 buff，持续 effect.duration 秒后还原
 
 class_name PlayerSpeedEffect
 extends ItemEffect

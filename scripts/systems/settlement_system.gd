@@ -130,7 +130,7 @@ func _analyze_async(texture: ViewportTexture) -> void:
 
 	var cam := _get_photo_camera()
 	if cam == null:
-		push_warning("SettlementSystem: 找不到攝影相機，無法結算")
+		push_warning("SettlementSystem: 找不到摄影相机，无法结算")
 		_busy = false
 		return
 

@@ -62,7 +62,7 @@ offset_top = 20.0
 offset_right = 600.0
 offset_bottom = 50.0
 theme_override_font_sizes/font_size = 20
-text = "1 戴帽 / 2 卸帽 / 3 全身繪 / 4 全身灰 / 5 頭灰 / 6 臂灰 / 7 身體繪 / 0 清除"
+text = "1 戴帽 / 2 卸帽 / 3 全身绘 / 4 全身灰 / 5 头灰 / 6 臂灰 / 7 身体绘 / 0 清除"
 
 [node name="Feedback" type="Label" parent="UILayer"]
 offset_left = 20.0

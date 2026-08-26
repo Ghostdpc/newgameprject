@@ -1,4 +1,4 @@
-## 職責：狀態基類，定義狀態介面
+## 职责：状态基类，定义状态介面
 
 class_name BaseState
 extends Node

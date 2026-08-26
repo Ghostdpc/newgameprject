@@ -1,4 +1,4 @@
-## 職責：管理主相機與攝影相機的行為堆疊
+## 职责：管理主相机与摄影相机的行为堆叠
 
 extends Node
 
@@ -62,14 +62,14 @@ func _on_pop_requested(target: String, behavior: Object) -> void:
 	pop_behavior(target, behavior)
 
 
-## 收到 photo_taken(null) = 拍照請求：抓取攝影相機所在 Viewport 的貼圖回傳
-## （非 null 為已完成拍照的回傳，直接放行）
+## 收到 photo_taken(null) = 拍照请求：抓取摄影相机所在 Viewport 的贴图回传
+## （非 null 为已完成拍照的回传，直接放行）
 func _on_photo_taken(texture: ViewportTexture) -> void:
 	if texture != null:
 		return
 	var controller := _get_controller(TARGET_PHOTO)
 	if controller == null:
-		push_warning("CameraSystem: photo_taken 請求時沒有可用的攝影相機")
+		push_warning("CameraSystem: photo_taken 请求时没有可用的摄影相机")
 		return
 	# 新 rig 直接是 controller（有 get_render_viewport）；旧式 controller 也有同方法
 	if controller.has_method("get_render_viewport"):
@@ -77,4 +77,4 @@ func _on_photo_taken(texture: ViewportTexture) -> void:
 		if vp != null:
 			EventBus.photo_taken.emit(vp.get_texture())
 			return
-	push_warning("CameraSystem: 攝影相機無 render viewport")
+	push_warning("CameraSystem: 摄影相机无 render viewport")

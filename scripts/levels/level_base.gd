@@ -9,11 +9,11 @@ extends Node3D
 # ---- 玩家 ----（由关卡子类或场景节点提供，控制靠 PlayerController 内建）
 const PLAYER_SCENE: PackedScene = preload("res://scenes/player/player.tscn")
 
-# ---- 出界與重生（玩家順應，基類預設）----
-const FALL_Y: float = -5.0          ## 低於此高度視為出界死亡
-const RESPAWN_WAIT: float = 2.0     ## 死亡讀秒到重生
-const RESPAWN_HEIGHT: float = 4.0   ## 重生空中高度（落下；場景有屋頂，8m 會穿頂）
-const SPAWN_RANGE: float = 12.0     ## 隨機復活 xz 範圍
+# ---- 出界与重生（玩家顺应，基类预设）----
+const FALL_Y: float = -5.0          ## 低于此高度视为出界死亡
+const RESPAWN_WAIT: float = 2.0     ## 死亡读秒到重生
+const RESPAWN_HEIGHT: float = 4.0   ## 重生空中高度（落下；场景有屋顶，8m 会穿顶）
+const SPAWN_RANGE: float = 12.0     ## 随机复活 xz 范围
 
 # ---- 相机默认参数 ----（子类可覆写）
 @export var main_cam_pos: Vector3 = Vector3(16.0, 13.0, 15.0)
@@ -145,11 +145,11 @@ func get_spawn_points() -> Array[Vector3]:
 		Vector3(0.0, 0.5, -2.4),
 	]
 
-## 是否聯機 client 端（远端表现：不模拟、只渲染 puppet）
+## 是否联机 client 端（远端表现：不模拟、只渲染 puppet）
 func _is_client() -> bool:
 	return NetManager.is_online and not NetManager.is_host
 
-## 是否聯機 host 端（权威模拟）
+## 是否联机 host 端（权威模拟）
 func _is_net_host() -> bool:
 	return NetManager.is_online and NetManager.is_host
 
@@ -174,7 +174,7 @@ func _setup_player_hud() -> void:
 		hud.setup(get_player_count(), get_player_slots())
 
 # ---------------------------------------------------------------
-# 出界與重生
+# 出界与重生
 # ---------------------------------------------------------------
 
 func _physics_process(_delta: float) -> void:
@@ -186,18 +186,18 @@ func _physics_process(_delta: float) -> void:
 		if player and not player.is_dead() and player.global_position.y < FALL_Y:
 			_kill_and_respawn(player)
 
-## 出界死亡 → （亮複活光柱）讀秒 → 隨機點空中落下
+## 出界死亡 → （亮复活光柱）读秒 → 随机点空中落下
 func _kill_and_respawn(player: PlayerController) -> void:
 	var pos := _random_spawn_position()
 	player.configure_respawn(Vector3(pos.x, RESPAWN_HEIGHT, pos.z), RESPAWN_WAIT)
 	var marker := _create_respawn_marker(pos)
 	SoundMgr.play("respawn")
 	player.die()
-	# 讀秒結束由狀態機轉 RespawnFall，此處清理光柱
+	# 读秒结束由状态机转 RespawnFall，此处清理光柱
 	await get_tree().create_timer(RESPAWN_WAIT).timeout
 	marker.queue_free()
 
-## 場地範圍內隨機一點（按舞台 AABB 鉗制，避免復活到地圖外）
+## 场地范围内随机一点（按舞台 AABB 钳制，避免复活到地图外）
 func _random_spawn_position() -> Vector3:
 	var bounds := _get_stage_bounds()
 	if bounds.size.x <= 0.1 or bounds.size.z <= 0.1:
@@ -207,7 +207,7 @@ func _random_spawn_position() -> Vector3:
 	var z := randf_range(bounds.position.z + MARGIN, bounds.end.z - MARGIN)
 	return Vector3(x, 1.0, z)
 
-## 舞台 AABB（由 Stage 下所有 mesh 的全局包圍盒合併），失敗時回退 SPAWN_RANGE
+## 舞台 AABB（由 Stage 下所有 mesh 的全局包围盒合并），失败时回退 SPAWN_RANGE
 func _get_stage_bounds() -> AABB:
 	var root: Node = _stage_root if _stage_root else self
 	var bounds := AABB()
@@ -241,7 +241,7 @@ func _collect_mesh_instances(root: Node) -> Array[MeshInstance3D]:
 			stack.append(c)
 	return result
 
-## 讀秒期間在複活點顯示可見標記（黃色能量柱，能量自下而上湧動）
+## 读秒期间在复活点显示可见标记（黄色能量柱，能量自下而上涌动）
 func _create_respawn_marker(pos: Vector3) -> Node3D:
 	var m := MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
@@ -249,7 +249,7 @@ func _create_respawn_marker(pos: Vector3) -> Node3D:
 	cyl.bottom_radius = 0.6
 	cyl.height = RESPAWN_HEIGHT
 	m.mesh = cyl
-	# 噪波動畫能量柱：自下而上湧動 + 底部光源向上衰減 + 呼吸脈衝
+	# 噪波动画能量柱：自下而上涌动 + 底部光源向上衰减 + 呼吸脉冲
 	var shader := load("res://resources/shaders/respawn_marker.gdshader") as Shader
 	var mat := ShaderMaterial.new()
 	mat.shader = shader
@@ -257,7 +257,7 @@ func _create_respawn_marker(pos: Vector3) -> Node3D:
 	mat.set_shader_parameter("flow_speed", 1.5)
 	mat.set_shader_parameter("pulse", 0.7)
 	m.material_override = mat
-	m.layers = 4  # layer = UI 標識，不進拍照 RT
+	m.layers = 4  # layer = UI 标识，不进拍照 RT
 	m.position = Vector3(pos.x, RESPAWN_HEIGHT * 0.5, pos.z)
 	add_child(m)
 	return m

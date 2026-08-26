@@ -11,7 +11,7 @@ func _init() -> void:
 		break
 	for name in ap.get_animation_list():
 		var anim: Animation = ap.get_animation(name)
-		# 收集每條軌的關鍵幀時間,看整體時間分佈
+		# 收集每条轨的关键帧时间,看整体时间分布
 		var max_t := 0.0
 		var key_counts := {}
 		for t in anim.get_track_count():
@@ -20,7 +20,7 @@ func _init() -> void:
 			if kc > 0:
 				max_t = max(max_t, anim.track_get_key_time(t, kc - 1))
 		print("anim='%s' length=%.3f tracks=%d maxkey_t=%.3f" % [name, anim.length, anim.get_track_count(), max_t])
-		# 骨骼位置軌的關鍵幀時間分佈(找動作段邊界)
+		# 骨骼位置轨的关键帧时间分布(找动作段边界)
 		var times := {}
 		for t in anim.get_track_count():
 			var p := String(anim.track_get_path(t))
@@ -31,5 +31,5 @@ func _init() -> void:
 		if times.size() > 0:
 			var keys := times.keys()
 			keys.sort()
-			print("  pose 軌關鍵幀(幀號): ", keys)
+			print("  pose 轨关键帧(帧号): ", keys)
 	quit()

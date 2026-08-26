@@ -1,10 +1,10 @@
-## 職責：被擊倒後的倒地狀態（Down 階段），角色不可控，計時結束站起
-## FlyState 落地後進入本狀態，開啟全骨布娃娃癱軟
+## 职责：被击倒后的倒地状态（Down 阶段），角色不可控，计时结束站起
+## FlyState 落地后进入本状态，开启全骨布娃娃瘫软
 
 class_name StunnedState
 extends BaseState
 
-## 倒地時長改用 TuneConfig.stun_duration（F3 面板可調），默認 5s
+## 倒地时长改用 TuneConfig.stun_duration（F3 面板可调），默认 5s
 var _timer: float = 0.0
 
 func enter() -> void:
@@ -23,12 +23,12 @@ func physics_update(delta: float) -> void:
 	var controller := _player as PlayerController
 	if not controller:
 		return
-	# 落地後水平速度衰減（倒地滑行）
+	# 落地后水平速度衰减（倒地滑行）
 	if controller.is_on_floor():
 		var brake := TuneConfig.ground_brake * delta
 		controller.velocity.x = move_toward(controller.velocity.x, 0.0, brake)
 		controller.velocity.z = move_toward(controller.velocity.z, 0.0, brake)
-	# 癱軟期間 body 持續跟隨物理骨落點（避免 mesh 癱軟落地而 body 懸空錯位）
+	# 瘫软期间 body 持续跟随物理骨落点（避免 mesh 瘫软落地而 body 悬空错位）
 	controller.sync_body_to_ragdoll()
 	if _timer <= 0.0 and controller.is_on_floor():
 		controller.state_machine.transition_to("Idle")

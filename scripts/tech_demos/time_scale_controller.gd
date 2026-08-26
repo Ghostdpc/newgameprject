@@ -1,34 +1,34 @@
-## 職責：時間流速控制測試（暫停 / 子弹時間 / 快門慢放流程）
-## 用 Engine.time_scale 全局慢放：物理、動畫、彈簧軟糯、計時器全受影響，無需改各對象。
-## process_mode=ALWAYS → time_scale=0 暫停時仍能響應按鍵並按牆鐘恢復。
+## 职责：时间流速控制测试（暂停 / 子弹时间 / 快门慢放流程）
+## 用 Engine.time_scale 全局慢放：物理、动画、弹簧软糯、计时器全受影响，无需改各对象。
+## process_mode=ALWAYS → time_scale=0 暂停时仍能响应按键并按墙钟恢复。
 ##
-## 按鍵：
-##   P = 暫停/恢復（掛起 → 凍結整個世界；再按恢復原流速）
-##   B(按住) = 子弹時間（瞬間降到目標慢速，松手漸變恢復 1.0）
-##   O = 快門慢放流程(toggle)：按一次 → decel_time(1.5s) 逐步减速到完全停格(0)，停住；
-##       再按一次立即恢復正常
-##   M = 調整子彈時間慢速目標（0.05~0.5，顯示於 Hint）
+## 按键：
+##   P = 暂停/恢复（挂起 → 冻结整个世界；再按恢复原流速）
+##   B(按住) = 子弹时间（瞬间降到目标慢速，松手渐变恢复 1.0）
+##   O = 快门慢放流程(toggle)：按一次 → decel_time(1.5s) 逐步减速到完全停格(0)，停住；
+##       再按一次立即恢复正常
+##   M = 调整子弹时间慢速目标（0.05~0.5，显示于 Hint）
 
 class_name TimeScaleController
 extends Node
 
-const RECOVER_SPEED: float = 2.5   ## 子弹時間松手後恢復速率（每秒 time_scale 增量）
+const RECOVER_SPEED: float = 2.5   ## 子弹时间松手后恢复速率（每秒 time_scale 增量）
 
-@export var bullet_target: float = 0.08   ## B子彈時間慢速目標（0.05~0.5）
-@export var decel_time: float = 3.0       ## 减速時長（秒，1→0），即整個快門流程時長
-@export var decel_curve: float = 0.3      ## 减速曲線：<1 先快後慢，>1 先慢後快
+@export var bullet_target: float = 0.08   ## B子弹时间慢速目标（0.05~0.5）
+@export var decel_time: float = 3.0       ## 减速时长（秒，1→0），即整个快门流程时长
+@export var decel_curve: float = 0.3      ## 减速曲线：<1 先快后慢，>1 先慢后快
 var debug_label: Label
 
 enum ShutterPhase { NONE, DECEL, FROZEN }
 
 var _paused: bool = false
-var _suspend_scale: float = 1.0   ## 暫停前一個 time_scale（恢復時還原）
+var _suspend_scale: float = 1.0   ## 暂停前一个 time_scale（恢复时还原）
 var _bullet_active: bool = false
 var _recovering: bool = false
 var _recover_target: float = 1.0
 var _phase: ShutterPhase = ShutterPhase.NONE
 var _phase_elapsed: float = 0.0
-var _start_msec: int = 0       ## 快門流程開始的牆鐘毫秒（time_scale 縮小不影響計時）
+var _start_msec: int = 0       ## 快门流程开始的墙钟毫秒（time_scale 缩小不影响计时）
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -64,7 +64,7 @@ func _process(delta: float) -> void:
 		_tick_shutter(delta)
 		return
 	if _bullet_active:
-		# 按住 B 期間維持慢速
+		# 按住 B 期间维持慢速
 		if not Input.is_key_pressed(KEY_B) and not Input.is_physical_key_pressed(KEY_B):
 			_exit_bullet()
 	elif _recovering:
@@ -74,12 +74,12 @@ func _process(delta: float) -> void:
 			_recovering = false
 			_refresh_hint()
 
-## O：toggle 快門慢放流程 —— 按一次進入(1.5s减速→停格)，再按一次立即恢復正常
+## O：toggle 快门慢放流程 —— 按一次进入(1.5s减速→停格)，再按一次立即恢复正常
 func _toggle_shutter() -> void:
 	if _paused:
 		return
 	if _phase != ShutterPhase.NONE:
-		# 流程中：立即退出並恢復正常
+		# 流程中：立即退出并恢复正常
 		_phase = ShutterPhase.NONE
 		_phase_elapsed = 0.0
 		Engine.time_scale = 1.0
@@ -87,7 +87,7 @@ func _toggle_shutter() -> void:
 	else:
 		_start_shutter()
 
-## 進入快門慢放流程：decel_time 內逐步减速到停格(0)。恢復需再按 O
+## 进入快门慢放流程：decel_time 内逐步减速到停格(0)。恢复需再按 O
 func _start_shutter() -> void:
 	_bullet_active = false
 	_recovering = false
@@ -97,8 +97,8 @@ func _start_shutter() -> void:
 	_refresh_hint()
 
 func _tick_shutter(delta: float) -> void:
-	# 用牆鐘算進度：Engine.time_scale 縮小時 _process 的 delta 也變小，
-	# 若累加 delta 會導致永遠到不了停止。牆鐘不受影響。
+	# 用墙钟算进度：Engine.time_scale 缩小时 _process 的 delta 也变小，
+	# 若累加 delta 会导致永远到不了停止。墙钟不受影响。
 	_phase_elapsed = (Time.get_ticks_msec() - _start_msec) / 1000.0
 	match _phase:
 		ShutterPhase.DECEL:
@@ -144,13 +144,13 @@ func _exit_bullet() -> void:
 func _refresh_hint() -> void:
 	if not debug_label:
 		return
-	var st := "暫停" if _paused else "%.2f" % Engine.time_scale
+	var st := "暂停" if _paused else "%.2f" % Engine.time_scale
 	var phase_txt := {
 		ShutterPhase.NONE: "—",
-		ShutterPhase.DECEL: "快門·減速中",
-		ShutterPhase.FROZEN: "快門·停格",
+		ShutterPhase.DECEL: "快门·减速中",
+		ShutterPhase.FROZEN: "快门·停格",
 	}
-	var bt: String = "子彈時間" if _bullet_active else phase_txt[_phase]
-	debug_label.text = "[P]暫停 [B按住]子彈時間 [O]快門慢放 [M]目標%.2f   time_scale=%s (%s)" % [
+	var bt: String = "子弹时间" if _bullet_active else phase_txt[_phase]
+	debug_label.text = "[P]暂停 [B按住]子弹时间 [O]快门慢放 [M]目标%.2f   time_scale=%s (%s)" % [
 		bullet_target, st, bt
 	]

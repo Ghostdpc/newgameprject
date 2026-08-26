@@ -1,50 +1,50 @@
-## 職責：表情貼臉。用 Sprite3D billboard 貼在 head 骨骼前側，跟隨動畫/布娃娃。
-## - 附著點：BoneAttachment3D 掛到 Skeleton3D 的 head 骨
-## - 表情圖：res://assets/textures/faces 下所有 face_N.png，每張即單一表情
-## - 懶加載：只解碼當前顯示的表情，避免 209 張大圖全佔顯存
+## 职责：表情贴脸。用 Sprite3D billboard 贴在 head 骨骼前侧，跟随动画/布娃娃。
+## - 附著点：BoneAttachment3D 挂到 Skeleton3D 的 head 骨
+## - 表情图：res://assets/textures/faces 下所有 face_N.png，每张即单一表情
+## - 懒加载：只解码当前显示的表情，避免 209 张大图全占显存
 
 class_name PlayerFaceController
 extends Node
 
 const IMAGE_FOLDER := "res://assets/textures/faces"
-## 半球面具 mesh（貼死在 head 骨曲面，任何角度不穿幫）—— use_face_mask 開啟時替代 Sprite3D
+## 半球面具 mesh（贴死在 head 骨曲面，任何角度不穿帮）—— use_face_mask 开启时替代 Sprite3D
 const FACE_MASK_MESH := "res://assets/models/face_mask_hemisphere.mesh"
 
-## 是否用半球面具貼膚替代平面 Sprite（貼死頭部曲面）
-## 面具綁 head 骨，飛撲/軟倒時也緊貼頭骨不穿幫。默認關閉，保留原平面方案。
+## 是否用半球面具贴肤替代平面 Sprite（贴死头部曲面）
+## 面具绑 head 骨，飞扑/软倒时也紧贴头骨不穿帮。默认关闭，保留原平面方案。
 @export var use_face_mask: bool = false
 
-## 貼面距離：表情離骨心沿骨骼前向(-Z)的前方距離（世界單位）
+## 贴面距离：表情离骨心沿骨骼前向(-Z)的前方距离（世界单位）
 const FACE_DISTANCE := 0.42
-## 貼面高度：沿骨上軸(+Y)上移到臉部中央
+## 贴面高度：沿骨上轴(+Y)上移到脸部中央
 const FACE_UP := 0.50
-## Sprite 顯示高度（世界單位）
+## Sprite 显示高度（世界单位）
 const ICON_HEIGHT := 0.09
-## face layer（不在拍照 RT，避免占分）——沿用 UI 標識層
+## face layer（不在拍照 RT，避免占分）——沿用 UI 标识层
 const FACE_LAYER := 4
 
-## 貼皮模式的表情局部偏移（相對頭骨），頂層縮放/位移參數，方便外部微調
-## 調試後默認值（2026-08-23）：(-0.16, -0.62, 0.04) + 旋轉 (0, -90°, 0)
+## 贴皮模式的表情局部偏移（相对头骨），顶层缩放/位移参数，方便外部微调
+## 调试后默认值（2026-08-23）：(-0.16, -0.62, 0.04) + 旋转 (0, -90°, 0)
 @export var bone_offset: Vector3 = Vector3(-0.16, -0.62, 0.04)
-## 貼皮模式的 Sprite 局部旋轉（弧度）
+## 贴皮模式的 Sprite 局部旋转（弧度）
 @export var bone_rotation: Vector3 = Vector3(0.0, deg_to_rad(-90.0), 0.0)
-## 半球面具的局部旋轉（弧度）—— 由 tools/calc_face_geom.gd 自動算得，讓面具 +Z 對齊面部
+## 半球面具的局部旋转（弧度）—— 由 tools/calc_face_geom.gd 自动算得，让面具 +Z 对齐面部
 @export var mask_rotation: Vector3 = Vector3(deg_to_rad(40.95), deg_to_rad(132.77), 0.0)
 
-## 表情所掛的骨（預設 head；找不到時用 fallback_attach 節點）
-## 支援多候選：依序嘗試，命中第一個存在的骨（head → Human 的頭骨 → 骨骼.004 等 Blender 預設名）
+## 表情所挂的骨（预设 head；找不到时用 fallback_attach 节点）
+## 支援多候选：依序尝试，命中第一个存在的骨（head → Human 的头骨 → 骨骼.004 等 Blender 预设名）
 @export var bone_names: Array[String] = ["head", "骨骼.005_end_end_end_end", "骨骼.004"]
-## 退路：attach 到指定節點上（掛骨失敗時）。通常傳角色根節點。
+## 退路：attach 到指定节点上（挂骨失败时）。通常传角色根节点。
 @export var fallback_attach: Node3D
-## 退路偏移（相對 fallback_attach 局部坐標）
+## 退路偏移（相对 fallback_attach 局部坐标）
 @export var fallback_offset: Vector3 = Vector3(0.0, 2.2, 0.0):
 	set(value):
 		fallback_offset = value
 		if _sprite and _used_fallback:
 			_sprite.position = value
-## 退路模式是否面向相機（billboard）—— 預設 false，改為固定朝向貼臉
+## 退路模式是否面向相机（billboard）—— 预设 false，改为固定朝向贴脸
 @export var fallback_billboard: bool = false
-## 退路固定朝向：使紋理面(+Z)朝向此世界方向（billboard=false 時用）。未設定則朝 fallback_offset 反方向? 用此值。
+## 退路固定朝向：使纹理面(+Z)朝向此世界方向（billboard=false 时用）。未设定则朝 fallback_offset 反方向? 用此值。
 @export var fallback_facing: Vector3 = Vector3(1, 0, 0)
 
 signal expression_changed(id: String, total: int)
@@ -56,30 +56,30 @@ var _paths: Array[String] = []
 var _cache: Dictionary = {}
 var _current_index: int = -1
 var _used_fallback: bool = false
-## 服裝貼圖宿主（apply_garment_attach 時使用）
+## 服装贴图宿主（apply_garment_attach 时使用）
 var _garment_host: MeshInstance3D = null
-## 頭部材質宿主（apply_head_texture 時使用）
+## 头部材质宿主（apply_head_texture 时使用）
 var _head_mi: MeshInstance3D = null
 var _head_surf: int = -1
-## 臉片 UV 縮放/偏移（表情一張鋪滿用）
+## 脸片 UV 缩放/偏移（表情一张铺满用）
 var _face_uv_scale: Vector3 = Vector3.ONE
 var _face_uv_offset: Vector3 = Vector3.ZERO
-## 貼頭材前的原 material_override（還原用）
+## 贴头材前的原 material_override（还原用）
 var _head_prev_override: Material = null
 
-## 是否把表情貼紙附著到頭部服裝（玩家穿上的"臉"服裝）而非貼頭骨。開啟時優先掛服裝。
-## 驗證用：假設美術做的"臉"是帽子槽服裝，表情貼到它上面，隨服裝/頭部移動。
+## 是否把表情贴纸附著到头部服装（玩家穿上的"脸"服装）而非贴头骨。开启时优先挂服装。
+## 验证用：假设美术做的"脸"是帽子槽服装，表情贴到它上面，随服装/头部移动。
 @export var attach_to_garment: bool = false
-## 是否直接把表情貼到模型頭部材質（如 newhuman 有獨立頭部 mesh/UV 的模型）。開啟時替換頭部外表材質。
+## 是否直接把表情贴到模型头部材质（如 newhuman 有独立头部 mesh/UV 的模型）。开启时替换头部外表材质。
 @export var use_head_texture: bool = false
 
-## 直接把表情圖貼到模型頭部 mesh 的材質（利用独立头部 UV/surface）。
-## 適用 newhuman 這類頭部有獨立 UV 島/材質的模型。返回是否成功。
+## 直接把表情图贴到模型头部 mesh 的材质（利用独立头部 UV/surface）。
+## 适用 newhuman 这类头部有独立 UV 岛/材质的模型。返回是否成功。
 func apply_head_texture() -> bool:
 	if use_head_texture == false:
 		return false
 	if _paths.is_empty():
-		# 確保已掃描表情素材（打包版 pck 內 DirAccess 可能掃不到 → count 0 → 回退）
+		# 确保已扫描表情素材（打包版 pck 内 DirAccess 可能扫不到 → count 0 → 回退）
 		_index_files()
 		if _paths.is_empty():
 			return false
@@ -91,7 +91,7 @@ func apply_head_texture() -> bool:
 		root = get_parent().get_node_or_null("Model") as Node
 	if root == null:
 		return false
-	# 找頭部表面：優先「獨立小面片」（多-surface mesh 中頂點最少的），即美術加的 mesh 臉。
+	# 找头部表面：优先「独立小面片」（多-surface mesh 中顶点最少的），即美术加的 mesh 脸。
 	var head_mi: MeshInstance3D = null
 	var head_surf := -1
 	var best_verts := 9e9
@@ -110,10 +110,10 @@ func apply_head_texture() -> bool:
 				head_surf = i
 	if head_mi == null or head_surf < 0:
 		return false
-	# 打包版 DirAccess 可能掃不到 pck 內表情素材 → count()==0, 此時不貼臉回退平面, 避免越界崩潰
+	# 打包版 DirAccess 可能扫不到 pck 内表情素材 → count()==0, 此时不贴脸回退平面, 避免越界崩溃
 	if count() <= 0:
 		return false
-	# 計算臉片 UV 範圍 → 表情材質的 uv1_scale/offset（一張鋪滿，避免平鋪/半張）
+	# 计算脸片 UV 范围 → 表情材质的 uv1_scale/offset（一张铺满，避免平铺/半张）
 	_calc_face_uv_scale(head_mi, head_surf)
 	if _sprite:
 		_sprite.visible = false
@@ -124,7 +124,7 @@ func apply_head_texture() -> bool:
 	_apply_head_texture(maxi(_current_index, 0))
 	return true
 
-## 統計臉片 UV 範圍，得出讓表情一張鋪滿的 uv1_scale/offset
+## 统计脸片 UV 范围，得出让表情一张铺满的 uv1_scale/offset
 func _calc_face_uv_scale(mi: MeshInstance3D, surf: int) -> void:
 	_face_uv_scale = Vector3.ONE
 	_face_uv_offset = Vector3.ZERO
@@ -145,7 +145,7 @@ func _calc_face_uv_scale(mi: MeshInstance3D, surf: int) -> void:
 	_face_uv_scale = Vector3(1.0 / rangeu, 1.0 / rangev, 1.0)
 	_face_uv_offset = Vector3(-minu / rangeu, -minv / rangev, 0.0)
 
-## 把表情圖設為頭部 surface 材質 albedo
+## 把表情图设为头部 surface 材质 albedo
 func _apply_head_texture(index: int) -> void:
 	if _head_mi == null:
 		return
@@ -159,7 +159,7 @@ func _apply_head_texture(index: int) -> void:
 func _apply_head_material(mat: Material) -> void:
 	if _head_mi == null:
 		return
-	# 經由 CharacterEffects 應用：玩家色 + 表情紋理，避免被每幀 tint 覆蓋
+	# 经由 CharacterEffects 应用：玩家色 + 表情纹理，避免被每帧 tint 覆盖
 	var player := get_parent() as PlayerController
 	if player and player.character_effects:
 		var tex := (mat as StandardMaterial3D).albedo_texture
@@ -170,7 +170,7 @@ func _apply_head_material(mat: Material) -> void:
 		if _head_surf >= 0 and _head_surf < _head_mi.mesh.get_surface_count():
 			_head_mi.set_surface_override_material(_head_surf, mat)
 
-## 還原頭部材質（卸下頭部貼圖模式）
+## 还原头部材质（卸下头部贴图模式）
 func revert_head_texture() -> void:
 	var player := get_parent() as PlayerController
 	if player and player.character_effects and _head_mi:
@@ -182,16 +182,16 @@ func revert_head_texture() -> void:
 	_head_surf = -1
 	use_head_texture = false
 
-## 把表情圖直接貼到玩家已穿服裝的材質上（服裝即"臉"）。返回是否成功。
-## 不建 Sprite —— 表情變成服裝的 albedo 貼圖，長在 mesh 表面不穿幫。
-## 需 face 是 PlayerController 直接子節點（Player/Face）
+## 把表情图直接贴到玩家已穿服装的材质上（服装即"脸"）。返回是否成功。
+## 不建 Sprite —— 表情变成服装的 albedo 贴图，长在 mesh 表面不穿帮。
+## 需 face 是 PlayerController 直接子节点（Player/Face）
 func apply_garment_attach() -> bool:
 	if attach_to_garment == false:
 		return false
 	var player := get_parent() as PlayerController
 	if player == null or player.outfit_manager == null:
 		return false
-	# 找服裝節點下的 mesh（優先帽子槽，頭部載體）
+	# 找服装节点下的 mesh（优先帽子槽，头部载体）
 	var host: Node3D = null
 	for slot in ["hat_slot", "shirt_slot", "accessory_slot"]:
 		var item := player.outfit_manager.get_item(slot)
@@ -209,16 +209,16 @@ func apply_garment_attach() -> bool:
 	if garment_mesh == null:
 		return false
 	_garment_host = garment_mesh
-	# 隱藏舊 sprite（若存在）
+	# 隐藏旧 sprite（若存在）
 	if _sprite:
 		_sprite.visible = false
-	# 附著後自動顯示一個表情
+	# 附著后自动显示一个表情
 	if _current_index < 0 and count() > 0:
 		_current_index = 0
 	_apply_garment_texture(maxi(_current_index, 0))
 	return true
 
-## 把表情圖設為服裝材質 albedo
+## 把表情图设为服装材质 albedo
 func _apply_garment_texture(index: int) -> void:
 	if _garment_host == null:
 		return
@@ -231,15 +231,15 @@ func _apply_garment_texture(index: int) -> void:
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		_garment_host.set_surface_override_material(i, mat)
 
-## 卸下服裝貼圖模式：還原服裝材質，恢復 sprite 貼骨
+## 卸下服装贴图模式：还原服装材质，恢复 sprite 贴骨
 func detach_garment(new_skel: Skeleton3D) -> void:
-	# 還原服裝 override 材質
+	# 还原服装 override 材质
 	if _garment_host:
 		for i in _garment_host.mesh.get_surface_count():
 			_garment_host.set_surface_override_material(i, null)
 	_garment_host = null
 	attach_to_garment = false
-	# 重建 sprite 到頭骨
+	# 重建 sprite 到头骨
 	if _sprite:
 		_sprite.queue_free()
 	_sprite = null
@@ -249,12 +249,12 @@ func detach_garment(new_skel: Skeleton3D) -> void:
 	if _current_index >= 0:
 		show_expression(_current_index)
 
-## 讓外部（如 PlayerController._setup_model）注入骨架
+## 让外部（如 PlayerController._setup_model）注入骨架
 func setup(skel: Skeleton3D) -> void:
 	skeleton = skel
 	var bound_bone := _find_bone_name()
 	if bound_bone != "":
-		# 有具名頭骨：BoneAttachment 掛骨，表情隨頭轉（貼皮）
+		# 有具名头骨：BoneAttachment 挂骨，表情随头转（贴皮）
 		var att := BoneAttachment3D.new()
 		att.name = "FaceAttachment"
 		att.bone_name = bound_bone
@@ -264,7 +264,7 @@ func setup(skel: Skeleton3D) -> void:
 		_sprite.position = bone_offset
 		att.add_child(_sprite)
 	else:
-		# 無具名頭骨（Human 等）：掛到 fallback_attach 節點用固定偏移
+		# 无具名头骨（Human 等）：挂到 fallback_attach 节点用固定偏移
 		var host: Node3D = fallback_attach if fallback_attach else skeleton.get_parent()
 		if host == null:
 			host = skeleton
@@ -273,11 +273,11 @@ func setup(skel: Skeleton3D) -> void:
 		_sprite.position = fallback_offset
 		host.add_child(_sprite)
 		if not fallback_billboard:
-			# 固定朝向：讓紋理面(+Z)朝 fallback_facing 方向（貼臉平面）；入树後 global 才可靠
+			# 固定朝向：让纹理面(+Z)朝 fallback_facing 方向（贴脸平面）；入树后 global 才可靠
 			_sprite.look_at(_sprite.global_position + fallback_facing.normalized(), Vector3.UP)
 	_index_files()
 
-## 回傳第一個存在於骨架的候選骨名；全缺回傳空字串
+## 回传第一个存在于骨架的候选骨名；全缺回传空字串
 func _find_bone_name() -> String:
 	if skeleton:
 		for n in bone_names:
@@ -301,8 +301,8 @@ func _new_display(billboard: bool) -> Node3D:
 	s.visible = false
 	return s
 
-## 掃描表情資料夾：每張 png 即一個表情。
-## 打包版 PCK 內 DirAccess 無法遍歷目錄(get_files 空)，改用顯式探測 face_N.png（N=1..MAX）
+## 扫描表情资料夹：每张 png 即一个表情。
+## 打包版 PCK 内 DirAccess 无法遍历目录(get_files 空)，改用显式探测 face_N.png（N=1..MAX）
 func _index_files() -> void:
 	_paths.clear()
 	var dir := DirAccess.open(IMAGE_FOLDER)
@@ -314,13 +314,13 @@ func _index_files() -> void:
 				continue
 			if f not in _paths:
 				_paths.append(f)
-	# 打包版 DirAccess 遍歷可能為空 → 顯式探測已知序列 face_1..face_N
+	# 打包版 DirAccess 遍历可能为空 → 显式探测已知序列 face_1..face_N
 	if _paths.is_empty():
 		for i in range(1, 300):
 			var fn := "face_%d.png" % i
 			if ResourceLoader.exists(IMAGE_FOLDER + "/" + fn):
 				_paths.append(fn)
-			elif i > 2:  # 連續缺失即停止
+			elif i > 2:  # 连续缺失即停止
 				break
 	_paths.sort()
 	expression_changed.emit("", _paths.size())
@@ -328,7 +328,7 @@ func _index_files() -> void:
 func count() -> int:
 	return _paths.size()
 
-## 顯示第 index 個表情；index 超出範圍時繞回；-1 清除
+## 显示第 index 个表情；index 超出范围时绕回；-1 清除
 func show_expression(index: int) -> void:
 	SoundMgr.play("emote", true)
 	if _paths.is_empty():
@@ -341,11 +341,11 @@ func show_expression(index: int) -> void:
 	if index == -1:
 		clear()
 		return
-	# 服裝貼圖模式：直接換服裝材質，不走 sprite
+	# 服装贴图模式：直接换服装材质，不走 sprite
 	if attach_to_garment and _garment_host != null:
 		_apply_garment_texture(index)
 		return
-	# 頭部材質模式：直接換頭部 surface 材質
+	# 头部材质模式：直接换头部 surface 材质
 	if use_head_texture and _head_mi != null:
 		_apply_head_texture(index)
 		return
@@ -368,7 +368,7 @@ func show_expression(index: int) -> void:
 		sp.scale = Vector3.ONE
 	_sprite.visible = true
 
-## 懶加載單張表情圖（帶快取，原圖 2000px 縮到 512 以下省顯存）
+## 懒加载单张表情图（带快取，原图 2000px 缩到 512 以下省显存）
 const MAX_EDGE := 512
 
 func _get_texture(index: int) -> Texture2D:
@@ -396,7 +396,7 @@ func clear() -> void:
 		_sprite.visible = false
 	_current_index = -1
 
-## 調試用：挪動表情位置（fallback 模式改 fallback_offset；貼皮模式改 bone_offset，兩者皆同步 sprite）
+## 调试用：挪动表情位置（fallback 模式改 fallback_offset；贴皮模式改 bone_offset，两者皆同步 sprite）
 func nudge_offset(delta: Vector3) -> void:
 	if not _sprite:
 		return
@@ -406,7 +406,7 @@ func nudge_offset(delta: Vector3) -> void:
 		bone_offset += delta
 		_sprite.position = bone_offset
 
-## 調試用：旋轉表情朝向（fallback 固定朝向模式 / 貼皮模式皆有效）
+## 调试用：旋转表情朝向（fallback 固定朝向模式 / 贴皮模式皆有效）
 func nudge_facing(delta_deg: float) -> void:
 	if not _sprite:
 		return
@@ -414,24 +414,24 @@ func nudge_facing(delta_deg: float) -> void:
 		return
 	_sprite.rotate_y(deg_to_rad(delta_deg))
 
-## 調試用：俯仰旋轉（繞局部 X 軸）
+## 调试用：俯仰旋转（绕局部 X 轴）
 func nudge_pitch(delta_deg: float) -> void:
 	if not _sprite:
 		return
 	_sprite.rotate_x(deg_to_rad(delta_deg))
 
-## 調試用：滾動旋轉（繞局部 Z 軸）
+## 调试用：滚动旋转（绕局部 Z 轴）
 func nudge_roll(delta_deg: float) -> void:
 	if not _sprite:
 		return
 	_sprite.rotate_z(deg_to_rad(delta_deg))
 
-## 調試用：回讀當前偏移與旋轉，供外部顯示微調數值
+## 调试用：回读当前偏移与旋转，供外部显示微调数值
 func debug_info() -> String:
 	if not _sprite:
-		return "無 sprite"
+		return "无 sprite"
 	var off := fallback_offset if _used_fallback else bone_offset
 	var rot := _sprite.rotation_degrees
-	var mode := "fallback" if _used_fallback else "貼皮"
+	var mode := "fallback" if _used_fallback else "贴皮"
 	return "%s off=(%.3f, %.3f, %.3f) rot=(%.1f, %.1f, %.1f)" % [
 		mode, off.x, off.y, off.z, rot.x, rot.y, rot.z]

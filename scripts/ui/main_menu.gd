@@ -64,7 +64,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventJoypadButton:
 		get_viewport().set_input_as_handled()
 		var jb := event as InputEventJoypadButton
-		# 手柄○（PS 上映射為 JOY_BUTTON_B）→ 退出；BACK（select）→ 設置；其餘 → 開始
+		# 手柄○（PS 上映射为 JOY_BUTTON_B）→ 退出；BACK（select）→ 设置；其余 → 开始
 		if jb.button_index == JOY_BUTTON_B:
 			get_tree().quit()
 		elif jb.button_index == JOY_BUTTON_BACK:

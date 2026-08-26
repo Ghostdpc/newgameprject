@@ -1,15 +1,15 @@
-## 職責：主相機鏡頭外的玩家 → 屏幕邊緣彩色氣泡指示
-## - 氣泡顏色 = 玩家身份色（PlayerConfig）
-## - 玩家在鏡頭內或隱藏（死亡）時不顯示
+## 职责：主相机镜头外的玩家 → 屏幕边缘彩色气泡指示
+## - 气泡颜色 = 玩家身份色（PlayerConfig）
+## - 玩家在镜头内或隐藏（死亡）时不显示
 
 class_name OffScreenIndicator
 extends Control
 
-const EDGE_MARGIN := 44.0        # 氣泡離屏幕左右邊緣留白
-const TOP_BOTTOM_MARGIN := 120.0 # 氣泡離屏幕上下邊緣留白（避開 FilmBorder 上下黑邊）
-const BUBBLE_SIZE := 30.0        # 氣泡直徑
+const EDGE_MARGIN := 44.0        # 气泡离屏幕左右边缘留白
+const TOP_BOTTOM_MARGIN := 120.0 # 气泡离屏幕上下边缘留白（避开 FilmBorder 上下黑边）
+const BUBBLE_SIZE := 30.0        # 气泡直径
 
-## player_index -> 氣泡 Control
+## player_index -> 气泡 Control
 var _bubbles: Dictionary = {}
 
 func _ready() -> void:
@@ -65,7 +65,7 @@ func _update_bubble(bubble: Control, player: PlayerController, camera: Camera3D,
 	var screen_pos := camera.unproject_position(world_pos)
 	var behind := camera.is_position_behind(world_pos)
 	if behind:
-		# 相機後方的點 unproject 結果被鏡像，翻轉回正確象限
+		# 相机后方的点 unproject 结果被镜像，翻转回正确象限
 		screen_pos = vsize - screen_pos
 	var on_screen := (not behind
 		and screen_pos.x >= EDGE_MARGIN and screen_pos.x <= vsize.x - EDGE_MARGIN

@@ -1,5 +1,5 @@
-## 調試日誌：所有 print 同時寫入 user://game_log.txt，供打包版崩潰排查
-## 用法：DebugLog.log("msg")（註冊為 autoload，名稱 DebugLog）
+## 调试日志：所有 print 同时写入 user://game_log.txt，供打包版崩溃排查
+## 用法：DebugLog.log("msg")（注册为 autoload，名称 DebugLog）
 extends Node
 
 static var _enabled := true

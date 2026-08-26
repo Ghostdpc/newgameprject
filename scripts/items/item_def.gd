@@ -1,31 +1,31 @@
-## 職責：道具定義（只讀值對象），由 ItemConfig 構建
+## 职责：道具定义（只读值对象），由 ItemConfig 构建
 
 class_name ItemDef
 extends RefCounted
 
 enum VfxMode {
-	WORLD,          # 在世界坐標播放（使用者當前位置）
-	ATTACH_PLAYER,  # 作為使用者子節點跟隨移動
-	ATTACH_CAMERA,  # 掛載到相機前方（類全屏效果）
+	WORLD,          # 在世界坐标播放（使用者当前位置）
+	ATTACH_PLAYER,  # 作为使用者子节点跟随移动
+	ATTACH_CAMERA,  # 挂载到相机前方（类全屏效果）
 }
 
 var id: String = ""
 var display_name: String = ""
 var icon: String = ""
-## 3D 模型資源路徑（res://，空 = 無模型用占位方塊）
+## 3D 模型资源路径（res://，空 = 无模型用占位方块）
 var model: String = ""
-## 貼圖資源路徑（res://，空 = 用模型自帶材質）
+## 贴图资源路径（res://，空 = 用模型自带材质）
 var texture: String = ""
-## 模型統一縮放（貼合道具箱體積）
+## 模型统一缩放（贴合道具箱体积）
 var model_scale: float = 1.0
-## 使用/觸發道具時播放的特效場景路徑（res://，空 = 不播放）
+## 使用/触发道具时播放的特效场景路径（res://，空 = 不播放）
 var use_vfx: String = ""
 ## 特效播放位置模式
 var use_vfx_mode: VfxMode = VfxMode.WORLD
 var trigger: ItemTypes.Trigger = ItemTypes.Trigger.ON_USE
 var effects: Array[ItemEffect] = []
 
-## 從 JSON 記錄構建，effect 字段由 ItemEffectRegistry 實例化
+## 从 JSON 记录构建，effect 字段由 ItemEffectRegistry 实例化
 static func from_dict(d: Dictionary) -> ItemDef:
 	var def := ItemDef.new()
 	def.id           = str(d.get("id", ""))

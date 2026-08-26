@@ -1,20 +1,20 @@
-## 職責：猛獸派對式軟糯效果驗證 Demo —— Spring Bone 彈簧骨骼二次動畫
+## 职责：猛兽派对式软糯效果验证 Demo —— Spring Bone 弹簧骨骼二次动画
 ##
-## 架構（雙骨架，動畫目標不被污染）：
-##   - DriverModel（隱藏）：AnimationPlayer 播走路動畫 → 純動畫基準
-##   - RenderModel（可見）：每幀把「彈簧骨骼結果」寫入其骨架 → mesh 軟糯跟隨
-##   - 無 RigidBody / 無關節 / 無物理引擎：純數學彈簧-阻尼二次動畫
+## 架构（双骨架，动画目标不被污染）：
+##   - DriverModel（隐藏）：AnimationPlayer 播走路动画 → 纯动画基准
+##   - RenderModel（可见）：每帧把「弹簧骨骼结果」写入其骨架 → mesh 软糯跟随
+##   - 无 RigidBody / 无关节 / 无物理引擎：纯数学弹簧-阻尼二次动画
 ##
 ## 原理：
-##   每根骨一個旋轉彈簧（剛度 k / 阻尼 d），目標 = 動畫局部旋轉。
-##   動畫走動時骨骼目標改變 → 彈簧滯後 → 過衝回彈 → 軟糯甩動。
-##   胯/胸高剛度（主體穩），頭/四肢低剛度（軟糯）。
-##   根節點加速度注入擺動激勵 → 走/停有慣性甩動。
-##   永不坍塌、無 60Hz 離散震盪（純連續積分）。
+##   每根骨一个旋转弹簧（刚度 k / 阻尼 d），目标 = 动画局部旋转。
+##   动画走动时骨骼目标改变 → 弹簧滞后 → 过冲回弹 → 软糯甩动。
+##   胯/胸高刚度（主体稳），头/四肢低刚度（软糯）。
+##   根节点加速度注入摆动激励 → 走/停有惯性甩动。
+##   永不坍塌、无 60Hz 离散震荡（纯连续积分）。
 ##
-## 按鍵：WASD 移動/轉向 Space 跳
-##   1 = 純動畫  2 = 軟糯  3 = 大軟糯
-##   F2 = 骨骼可視化（青=動畫基準，橙=渲染骨架）
+## 按键：WASD 移动/转向 Space 跳
+##   1 = 纯动画  2 = 软糯  3 = 大软糯
+##   F2 = 骨骼可视化（青=动画基准，橙=渲染骨架）
 ##   R = 重置
 
 class_name ActiveRagdollDemo
@@ -57,7 +57,7 @@ var _debug_mesh: MeshInstance3D
 var _debug_mat: StandardMaterial3D
 var _debug_anim_mat: StandardMaterial3D
 
-## 彈簧骨骼組件（使用統一封裝，參數記錄在 spring_bone_rig.gd）
+## 弹簧骨骼组件（使用统一封装，参数记录在 spring_bone_rig.gd）
 var _spring: SpringBoneRig
 
 func _ready() -> void:
@@ -69,7 +69,7 @@ func _ready() -> void:
 	_render_skel = _find_skeleton(_render_model)
 	_driver_anim = _find_animation_player(_driver_model)
 	if not _driver_skel or not _render_skel or not _driver_anim:
-		push_error("ActiveRagdollDemo: 模型缺骨架或動畫")
+		push_error("ActiveRagdollDemo: 模型缺骨架或动画")
 		return
 	var render_anim := _find_animation_player(_render_model)
 	if render_anim:
@@ -81,7 +81,7 @@ func _ready() -> void:
 	_init_debug_overlay()
 	_update_hint()
 
-## 建立彈簧骨骼組件，綁定輸出骨架(Render)與目標動畫骨架(Driver)
+## 建立弹簧骨骼组件，绑定输出骨架(Render)与目标动画骨架(Driver)
 func _build_spring_rig() -> void:
 	_spring = SpringBoneRig.new()
 	_spring.name = "SpringBoneRig"
@@ -89,7 +89,7 @@ func _build_spring_rig() -> void:
 	_spring.skeleton = _render_skel
 	_spring.target_skeleton = _driver_skel
 	_spring.animation_player = _driver_anim
-	# 套用「常态」預設（後續以此為基準調軟糯）
+	# 套用「常态」预设（后续以此为基准调软糯）
 	_spring.apply_preset("normal")
 	_spring.setup(_render_skel, _driver_anim)
 
@@ -141,8 +141,8 @@ func _physics_process(delta: float) -> void:
 	if _spring:
 		_spring.velocity_hints = Vector2(velocity.x, velocity.z)
 		_spring.root_velocity = velocity
-	# 彈簧模式 → 組件在自身 _physics_process 寫 render 骨架；
-	# 純動畫 → 關組件 + 拷貝 driver pose 到 render
+	# 弹簧模式 → 组件在自身 _physics_process 写 render 骨架；
+	# 纯动画 → 关组件 + 拷贝 driver pose 到 render
 	if _mode == Mode.ANIM or not _spring:
 		if _spring:
 			_spring.set_active(false)
@@ -194,7 +194,7 @@ func _set_mode(m: Mode) -> void:
 		_spring.wobble_scale = 1.0 if m == Mode.SOFT else 1.8
 	_update_hint()
 
-## 切換命名的彈簧預設（kowtow 特殊 / normal 常态 / jello 果凍）
+## 切换命名的弹簧预设（kowtow 特殊 / normal 常态 / jello 果冻）
 func _apply_preset(name: String) -> void:
 	_preset = name
 	if _spring:
@@ -203,7 +203,7 @@ func _apply_preset(name: String) -> void:
 		_spring.set_active(true)
 	_update_hint()
 
-## 微調 head 骨剛度（自定義常态手感用）
+## 微调 head 骨刚度（自定义常态手感用）
 func _nudge_head_k(dk: float) -> void:
 	if not _spring:
 		return
@@ -213,7 +213,7 @@ func _nudge_head_k(dk: float) -> void:
 	_preset = "custom"
 	_update_hint()
 
-## 微調步頻正弦幅度
+## 微调步频正弦幅度
 func _nudge_pulse(dp: float) -> void:
 	if not _spring:
 		return
@@ -221,7 +221,7 @@ func _nudge_pulse(dp: float) -> void:
 	_preset = "custom"
 	_update_hint()
 
-## 純動畫：直接把 Driver 局部 pose 複製到 Render 骨架
+## 纯动画：直接把 Driver 局部 pose 复制到 Render 骨架
 func _copy_anim_to_render() -> void:
 	for bone_name in BONES:
 		var idx := _render_skel.find_bone(bone_name)
@@ -231,7 +231,7 @@ func _copy_anim_to_render() -> void:
 		_render_skel.set_bone_pose_rotation(idx, _driver_skel.get_bone_pose_rotation(d_idx))
 	_render_skel.force_update_all_bone_transforms()
 
-## F2 可視化：青=動畫基準骨架，橙=渲染骨架
+## F2 可视化：青=动画基准骨架，橙=渲染骨架
 func _rebuild_debug_lines() -> void:
 	var imm: ImmediateMesh = _debug_mesh.mesh as ImmediateMesh
 	imm.clear_surfaces()
@@ -287,11 +287,11 @@ func _find_animation_player(n: Node) -> AnimationPlayer:
 func _update_hint() -> void:
 	if not _hint:
 		return
-	var names := {Mode.ANIM: "1=動畫", Mode.SOFT: "2=軟糯", Mode.SOFT_STRONG: "3=大軟糯"}
-	var dbg := "F2骨骼線開" if _show_debug else "F2骨骼線關"
+	var names := {Mode.ANIM: "1=动画", Mode.SOFT: "2=软糯", Mode.SOFT_STRONG: "3=大软糯"}
+	var dbg := "F2骨骼线开" if _show_debug else "F2骨骼线关"
 	var k_head := 0.0
 	var pa := 0.0
 	if _spring:
 		k_head = _spring.spring_k.get("head", 0.0)
 		pa = _spring.pulse_amp
-	_hint.text = "[%s|%s] kHead=%.0f pulse=%.2f | %s\n4/5/6預設 kowtow/normal/jello  +/-調kHead  [ ]調pulse  WASD R" % [names.get(_mode, "?"), _preset, k_head, pa, dbg]
+	_hint.text = "[%s|%s] kHead=%.0f pulse=%.2f | %s\n4/5/6预设 kowtow/normal/jello  +/-调kHead  [ ]调pulse  WASD R" % [names.get(_mode, "?"), _preset, k_head, pa, dbg]

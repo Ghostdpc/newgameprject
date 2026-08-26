@@ -1,4 +1,4 @@
-## 職責：驗證 ragdoll 站起插值是否平滑（無瞬移）
+## 职责：验证 ragdoll 站起插值是否平滑（无瞬移）
 
 extends GutTest
 
@@ -26,12 +26,12 @@ func test_stand_up_interpolates_smoothly() -> void:
 	# 倒地
 	player.state_machine.transition_to("Stunned")
 	await wait_physics_frames(30)
-	# 擊飛造成位移 + 倒地姿勢
+	# 击飞造成位移 + 倒地姿势
 	player.knockback(Vector3(2.0, 1.0, 0.0))
 	await wait_physics_frames(20)
 	var hips_down: Vector3 = skeleton.get_bone_global_pose(0).origin
 	print("hips at land = ", hips_down)
-	# 站起，第1幀(delayed stop)前 hips
+	# 站起，第1帧(delayed stop)前 hips
 	player.stand_up()
 	await wait_physics_frames(1)
 	var hips_after_stop: Vector3 = _find_skeleton(player.get_node("Model")).get_bone_global_pose(0).origin
@@ -40,10 +40,10 @@ func test_stand_up_interpolates_smoothly() -> void:
 	print("hips before stop = ", hips_down)
 	print("hips after begin stand = ", hips_after_stop)
 	print("hips after 1 frame = ", hips_after_1frame)
-	# 站起不應瞬移：相鄰幀位移小
+	# 站起不应瞬移：相邻帧位移小
 	var step := absf(hips_after_1frame.y - hips_after_stop.y)
 	print("step = ", step)
-	assert_lt(step, 0.5, "站起首幀不應瞬移")
+	assert_lt(step, 0.5, "站起首帧不应瞬移")
 
 func _find_skeleton(n: Node) -> Skeleton3D:
 	if n is Skeleton3D:

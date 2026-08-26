@@ -1,4 +1,4 @@
-## 職責：banana_slide 效果 —— 踩到香蕉皮时进入倒地滑行（玩家侧 BananaSlideState 处理）
+## 职责：banana_slide 效果 —— 踩到香蕉皮时进入倒地滑行（玩家侧 BananaSlideState 处理）
 ## 倒地后沿行进方向滑行，沿途撞到玩家则将其击飞并停下（类似飞扑），否则滑到终点起身。
 
 class_name BananaSlideEffect

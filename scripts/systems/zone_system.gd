@@ -1,4 +1,4 @@
-## 職責：區域系統，追蹤哪些玩家在結算區域內
+## 职责：区域系统，追踪哪些玩家在结算区域内
 
 class_name ZoneSystem
 extends Node

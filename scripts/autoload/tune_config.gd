@@ -1,20 +1,20 @@
-## 職責：飛撲/擊飛/布娃娃 運行時可調參數 + 屏幕調參面板（F3 開關）
-## 快速調試手感用：F3 顯示，[ ] 選參數，- = 減/加，0 重置當前
+## 职责：飞扑/击飞/布娃娃 运行时可调参数 + 屏幕调参面板（F3 开关）
+## 快速调试手感用：F3 显示，[ ] 选参数，- = 减/加，0 重置当前
 
 extends CanvasLayer
 
-# ---- 可調參數（各狀態直接讀 TuneConfig.xxx）----
-var move_speed: float = 5.0        ## 角色移動速度
-var dive_force: float = 9.0        ## 自己飛撲衝刺速度
-var hit_force: float = 6.0         ## 擊飛目標水平力
-var hit_upward: float = 7.0        ## 擊飛目標上拋初速
-var stun_gravity: float = 45.0     ## 被擊飛期間重力（大=上升下降快）
-var ground_brake: float = 30.0     ## 倒地落地水平刹車（大=立刻停）
-var ragdoll_linear_damp: float = 0.3   ## 布娃娃線性阻尼（小=軟）
-var ragdoll_angular_damp: float = 0.3  ## 布娃娃角阻尼（小=擺動大）
-var stun_duration: float = 1.8         ## 倒地（Stunned）時長，秒
-var head_scale: float = 1.0            ## 頭部放大倍率（服裝效果）
-var body_scale: float = 1.0            ## 身軀放大倍率（服裝效果）
+# ---- 可调参数（各状态直接读 TuneConfig.xxx）----
+var move_speed: float = 5.0        ## 角色移动速度
+var dive_force: float = 9.0        ## 自己飞扑冲刺速度
+var hit_force: float = 6.0         ## 击飞目标水平力
+var hit_upward: float = 7.0        ## 击飞目标上抛初速
+var stun_gravity: float = 45.0     ## 被击飞期间重力（大=上升下降快）
+var ground_brake: float = 30.0     ## 倒地落地水平刹车（大=立刻停）
+var ragdoll_linear_damp: float = 0.3   ## 布娃娃线性阻尼（小=软）
+var ragdoll_angular_damp: float = 0.3  ## 布娃娃角阻尼（小=摆动大）
+var stun_duration: float = 1.8         ## 倒地（Stunned）时长，秒
+var head_scale: float = 1.0            ## 头部放大倍率（服装效果）
+var body_scale: float = 1.0            ## 身躯放大倍率（服装效果）
 
 const _DEFAULTS: Dictionary = {
 	"move_speed": 5.0, "dive_force": 9.0, "hit_force": 6.0, "hit_upward": 7.0,
@@ -26,17 +26,17 @@ const _DEFAULTS: Dictionary = {
 const CONFIG_PATH: String = "res://data/configs/tune.json"
 
 var _params: Array = [
-	{"name": "move_speed", "step": 0.5, "desc": "角色移動速度（大=跑更快）"},
-	{"name": "dive_force", "step": 0.5, "desc": "自己飛撲衝刺速度（大=衝更遠）"},
-	{"name": "hit_force", "step": 0.5, "desc": "擊飛目標水平力（大=撞出更遠）"},
-	{"name": "hit_upward", "step": 0.5, "desc": "擊飛上拋初速（大=飛更高）"},
-	{"name": "stun_gravity", "step": 2.0, "desc": "被擊飛期間重力（大=上升下降快）"},
-	{"name": "ground_brake", "step": 2.0, "desc": "倒地落地水平刹車（大=立刻停）"},
-	{"name": "ragdoll_linear_damp", "step": 0.1, "desc": "布娃娃線性阻尼（小=更軟更滑）"},
-	{"name": "ragdoll_angular_damp", "step": 0.1, "desc": "布娃娃角阻尼（小=擺動更誇張）"},
-	{"name": "stun_duration", "step": 0.5, "desc": "倒地癱軟時長，秒"},
-	{"name": "head_scale", "step": 0.1, "desc": "頭部放大倍率（1=正常，>1 頭變大）"},
-	{"name": "body_scale", "step": 0.1, "desc": "身軀放大倍率（1=正常，>1 身體變大）"},
+	{"name": "move_speed", "step": 0.5, "desc": "角色移动速度（大=跑更快）"},
+	{"name": "dive_force", "step": 0.5, "desc": "自己飞扑冲刺速度（大=冲更远）"},
+	{"name": "hit_force", "step": 0.5, "desc": "击飞目标水平力（大=撞出更远）"},
+	{"name": "hit_upward", "step": 0.5, "desc": "击飞上抛初速（大=飞更高）"},
+	{"name": "stun_gravity", "step": 2.0, "desc": "被击飞期间重力（大=上升下降快）"},
+	{"name": "ground_brake", "step": 2.0, "desc": "倒地落地水平刹车（大=立刻停）"},
+	{"name": "ragdoll_linear_damp", "step": 0.1, "desc": "布娃娃线性阻尼（小=更软更滑）"},
+	{"name": "ragdoll_angular_damp", "step": 0.1, "desc": "布娃娃角阻尼（小=摆动更夸张）"},
+	{"name": "stun_duration", "step": 0.5, "desc": "倒地瘫软时长，秒"},
+	{"name": "head_scale", "step": 0.1, "desc": "头部放大倍率（1=正常，>1 头变大）"},
+	{"name": "body_scale", "step": 0.1, "desc": "身躯放大倍率（1=正常，>1 身体变大）"},
 ]
 var _selected: int = 0
 var _label: Label
@@ -106,7 +106,7 @@ func _adjust(dir: int) -> void:
 func _refresh() -> void:
 	if not _label:
 		return
-	var head := "[F3] 調參面板   [ ] 選  - = 調值  0 重置  Enter 保存"
+	var head := "[F3] 调参面板   [ ] 选  - = 调值  0 重置  Enter 保存"
 	if _status != "":
 		head += "   ★ " + _status
 	var lines: Array[String] = [head]
@@ -114,14 +114,14 @@ func _refresh() -> void:
 		var pname: String = _params[i]["name"]
 		var mark := ">" if i == _selected else " "
 		lines.append("%s %-20s %.2f" % [mark, pname, float(get(pname))])
-	# 當前選中參數的中文說明
+	# 当前选中参数的中文说明
 	if _params.size() > 0:
 		var cur: Dictionary = _params[_selected]
 		lines.append("")
 		lines.append("≻ %s：%s" % [cur["name"], cur.get("desc", "")])
 	_label.text = "\n".join(lines)
 
-## 從 res://data/configs/tune.json 讀取覆蓋默認值
+## 从 res://data/configs/tune.json 读取覆盖默认值
 func _load() -> void:
 	if not FileAccess.file_exists(CONFIG_PATH):
 		return
@@ -135,16 +135,16 @@ func _load() -> void:
 			if _DEFAULTS.has(k):
 				set(k, float((parsed as Dictionary)[k]))
 
-## 保存當前參數到 res://data/configs/tune.json（持久化）
+## 保存当前参数到 res://data/configs/tune.json（持久化）
 func _save() -> void:
 	var data: Dictionary = {}
 	for k in _DEFAULTS:
 		data[k] = float(get(k))
 	var f := FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
 	if f == null:
-		_status = "保存失敗（無法寫入）"
+		_status = "保存失败（无法写入）"
 		_refresh()
-		push_error("TuneConfig: 無法寫入 %s" % CONFIG_PATH)
+		push_error("TuneConfig: 无法写入 %s" % CONFIG_PATH)
 		return
 	f.store_string(JSON.stringify(data, "\t"))
 	f.close()

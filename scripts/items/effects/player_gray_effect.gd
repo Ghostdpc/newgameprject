@@ -1,5 +1,5 @@
-## 職責：player_gray 效果 —— 灰頭土臉，在目標玩家身上疊臟污貼花，隨時間褪去
-## params.duration（可選，默認 6.0）：貼花持續秒數
+## 职责：player_gray 效果 —— 灰头土脸，在目标玩家身上叠脏污贴花，随时间褪去
+## params.duration（可选，默认 6.0）：贴花持续秒数
 
 class_name PlayerGrayEffect
 extends ItemEffect

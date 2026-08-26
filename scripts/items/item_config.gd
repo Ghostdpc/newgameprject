@@ -1,4 +1,4 @@
-## 職責：道具配置表，從 items.json 讀取，提供 get_item(id) 查詢
+## 职责：道具配置表，从 items.json 读取，提供 get_item(id) 查询
 
 class_name ItemConfig
 extends ConfigTable
@@ -13,7 +13,7 @@ func _defaults() -> Dictionary:
 		"traps": [],
 	}
 
-## 按 id 返回道具定義，不存在回傳 null
+## 按 id 返回道具定义，不存在回传 null
 func get_item(id: String) -> ItemDef:
 	var records: Array = get_records("items")
 	for r in records:
@@ -40,7 +40,7 @@ func all_ids() -> Array[String]:
 func get_spawn_config() -> Dictionary:
 	return get_dict("spawn_config")
 
-## 返回所有放置物定義
+## 返回所有放置物定义
 func all_trap_defs() -> Array[TrapDef]:
 	var result: Array[TrapDef] = []
 	for r in get_records("traps"):
@@ -48,7 +48,7 @@ func all_trap_defs() -> Array[TrapDef]:
 			result.append(TrapDef.from_dict(r))
 	return result
 
-## 按 id 返回放置物定義，不存在回傳 null
+## 按 id 返回放置物定义，不存在回传 null
 func get_trap(id: String) -> TrapDef:
 	for r in get_records("traps"):
 		if r is Dictionary and r.get("id", "") == id:

@@ -132,7 +132,7 @@ custom_minimum_size = Vector2(400, 0)
 theme_override_constants/separation = 24
 
 [node name="TitleLabel" type="Label" parent="ResultsOverlay/Panel/Center/VBox"]
-text = "結算"
+text = "结算"
 theme_override_font_sizes/font_size = 48
 horizontal_alignment = 1
 
@@ -149,5 +149,5 @@ theme_override_font_sizes/font_size = 24
 
 [node name="QuitButton" type="Button" parent="ResultsOverlay/Panel/Center/VBox"]
 custom_minimum_size = Vector2(400, 60)
-text = "退出遊戲"
+text = "退出游戏"
 theme_override_font_sizes/font_size = 24

@@ -1,4 +1,4 @@
-## 驗證：表情貼到服裝（蜗牛服）流程
+## 验证：表情贴到服装（蜗牛服）流程
 extends GutTest
 
 func test_garment_attach_applies_texture() -> void:
@@ -21,7 +21,7 @@ func test_garment_attach_applies_texture() -> void:
 	assert_true(ok, "attach 成功")
 	if host._garment_host:
 		var m := host._garment_host
-		assert_not_null(m.get_surface_override_material(0), "材質 override 已設")
+		assert_not_null(m.get_surface_override_material(0), "材质 override 已设")
 		var mat := m.get_surface_override_material(0) as StandardMaterial3D
-		assert_not_null(mat.albedo_texture, "材質有表情貼圖")
+		assert_not_null(mat.albedo_texture, "材质有表情贴图")
 		print("mat tex=", mat.albedo_texture)

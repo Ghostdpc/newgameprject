@@ -1,4 +1,4 @@
-## 職責：待機狀態，等待移動或跳躍輸入
+## 职责：待机状态，等待移动或跳跃输入
 
 class_name IdleState
 extends BaseState

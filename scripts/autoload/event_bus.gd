@@ -1,8 +1,8 @@
-## 職責：全局信號總線，系統間解耦通訊
+## 职责：全局信号总线，系统间解耦通讯
 
 extends Node
 
-# 遊戲階段
+# 游戏阶段
 signal stage_changed(stage: int)
 signal stage_timer_updated(seconds_remaining: float)
 signal battle_started()
@@ -42,6 +42,6 @@ signal faces_received(faces: Array)
 # 联机单个角色表情变化（host 动作触发，如二段跳换表情；client 应用到对应 puppet）
 signal face_changed(player_index: int, face_index: int)
 
-# 相機
+# 相机
 signal camera_behavior_push_requested(camera_target: String, behavior: Object)
 signal camera_behavior_pop_requested(camera_target: String, behavior: Object)

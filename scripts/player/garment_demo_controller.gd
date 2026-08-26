@@ -1,7 +1,7 @@
-## 職責：服裝系統測試場景控制
-## - 開場延遲觸發 battle_started，讓 GarmentSpawner 自動刷新全部服裝（從天而降）
-## - P1 WASD 移動 + 長按 F（0.8s）拾取服裝；同槽替換；Esc 觸發 battle_ended 清場
-## - 熒幕即時顯示已裝備件數與各效果開關
+## 职责：服装系统测试场景控制
+## - 开场延迟触发 battle_started，让 GarmentSpawner 自动刷新全部服装（从天而降）
+## - P1 WASD 移动 + 长按 F（0.8s）拾取服装；同槽替换；Esc 触发 battle_ended 清场
+## - 荧幕即时显示已装备件数与各效果开关
 
 extends Node3D
 
@@ -12,11 +12,11 @@ var _battle_active: bool = false
 var _spring_on: bool = true
 
 func _ready() -> void:
-	# 等一幀讓 GarmentSpawner ready 完成連線，再觸發混戰開始刷服裝
+	# 等一帧让 GarmentSpawner ready 完成连线，再触发混战开始刷服装
 	await get_tree().process_frame
 	EventBus.battle_started.emit()
 	_battle_active = true
-	_feedback.text = "混戰開始：服裝已從天而降！長按 E 拾取"
+	_feedback.text = "混战开始：服装已从天而降！长按 E 拾取"
 	_refresh_hint()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -37,17 +37,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		KEY_6: _wear("guitar")
 		KEY_0: _clear_p1()
 		KEY_R: _reset_demo()
-		# 調參：用 [ ] / I J K L 微調當前裝備的帽子大小與位置（避免與 p2 方向鍵衝突）
+		# 调参：用 [ ] / I J K L 微调当前装备的帽子大小与位置（避免与 p2 方向键冲突）
 		KEY_BRACKETRIGHT: _tune_scale(0.05)
 		KEY_BRACKETLEFT: _tune_scale(-0.05)
 		KEY_I: _tune_pos(Vector3(0, 0.05, 0))
 		KEY_K: _tune_pos(Vector3(0, -0.05, 0))
 		KEY_J: _tune_pos(Vector3(0, 0, -0.05))
 		KEY_L: _tune_pos(Vector3(0, 0, 0.05))
-		# T：暫停/恢復彈簧軟糯（調參時停晃方便看）
+		# T：暂停/恢复弹簧软糯（调参时停晃方便看）
 		KEY_T: _toggle_spring()
 
-## 微調：改當前帽子 item 的整體縮放（[ 增 / ] 減）→ 設 user_hat_scale_mult（受 head 補償相乘）
+## 微调：改当前帽子 item 的整体缩放（[ 增 / ] 减）→ 设 user_hat_scale_mult（受 head 补偿相乘）
 func _tune_scale(delta: float) -> void:
 	var p1 := get_node_or_null("Player") as PlayerController
 	if p1 == null:
@@ -56,11 +56,11 @@ func _tune_scale(delta: float) -> void:
 	_feedback.text = "帽子 scaleMult=" + str(p1.user_hat_scale_mult)
 	_refresh_hint()
 
-## 微調：改當前帽子 item 的掛點位置（方向鍵）
+## 微调：改当前帽子 item 的挂点位置（方向键）
 func _tune_pos(delta: Vector3) -> void:
 	var item := _current_hat_item()
 	if item == null:
-		_feedback.text = "無帽子可調（先穿一件）"
+		_feedback.text = "无帽子可调（先穿一件）"
 		return
 	item.position += delta
 	_feedback.text = "帽子 pos=" + str(item.position)
@@ -72,17 +72,17 @@ func _current_hat_item() -> Node3D:
 		return null
 	return p1.outfit_manager.get_item("hat_slot")
 
-## T：暫停/恢復彈簧骨骼軟糯（調參/看位置時停晃）
+## T：暂停/恢复弹簧骨骼软糯（调参/看位置时停晃）
 func _toggle_spring() -> void:
 	var p1 := get_node_or_null("Player") as PlayerController
 	if p1 == null or p1.spring_rig == null:
 		return
 	_spring_on = not _spring_on
 	p1.spring_rig.set_active(_spring_on)
-	_feedback.text = "彈簧軟糯 " + ("開" if _spring_on else "關（已暫停，調參方便）")
+	_feedback.text = "弹簧软糯 " + ("开" if _spring_on else "关（已暂停，调参方便）")
 	_refresh_hint()
 
-## 打印當前微調值供寫回 garments.json
+## 打印当前微调值供写回 garments.json
 func _hint_tune_values() -> String:
 	var p1 := get_node_or_null("Player") as PlayerController
 	if p1 == null:
@@ -127,7 +127,7 @@ func _reset_demo() -> void:
 	if p1:
 		p1.global_position = Vector3(-4, 1, 0)
 		p1.velocity = Vector3.ZERO
-	# 重新触发混戰刷新服装
+	# 重新触发混战刷新服装
 	call_deferred("_restart_battle")
 	_feedback.text = "已重置：服装清空、重新刷新、玩家回出生点"
 	_refresh_hint()
@@ -138,25 +138,25 @@ func _restart_battle() -> void:
 	EventBus.battle_started.emit()
 	_battle_active = true
 
-## 玩家長按拾取服裝後即時反饋（每幀偵測）
+## 玩家长按拾取服装后即时反馈（每帧侦测）
 func _process(_delta: float) -> void:
 	if not _battle_active:
 		return
 	_refresh_hint()
 
-## 結束混戰：清場所有服裝效果（測試 revert）
+## 结束混战：清场所有服装效果（测试 revert）
 func _end_battle() -> void:
 	if not _battle_active:
 		return
 	_battle_active = false
 	EventBus.battle_ended.emit()
-	_feedback.text = "混戰結束：所有服裝效果已還原（Esc 可切換）"
+	_feedback.text = "混战结束：所有服装效果已还原（Esc 可切换）"
 
 func _refresh_hint() -> void:
 	var p1 := get_node_or_null("Player") as PlayerController
 	if p1 == null:
 		return
-	# 讀取已裝備槽位
+	# 读取已装备槽位
 	var eq: Dictionary = p1.equipped_garments
 	var score := 0.0
 	if _battle_active:
@@ -165,9 +165,9 @@ func _refresh_hint() -> void:
 	var shirt: String = str(eq.get("shirt_slot", ""))
 	var acc: String = str(eq.get("accessory_slot", ""))
 	_hint.text = (
-		"[P1] WASD移動 + E長按(0.8s)拾取    Esc=結束混戰清場\n"
-		+ "穿戴: [1]蘑菇 [2]光環 [3]閃電T [4]蝸牛 [5]氣球 [6]吉他  [0]清空  [R]重置\n"
-		+ "微調帽子: [ ]大小  I↑ K↓ J← L→  [T]停晃\n"
-		+ "已裝備  頭:%s  上衣:%s  配飾:%s\n"
+		"[P1] WASD移动 + E长按(0.8s)拾取    Esc=结束混战清场\n"
+		+ "穿戴: [1]蘑菇 [2]光环 [3]闪电T [4]蜗牛 [5]气球 [6]吉他  [0]清空  [R]重置\n"
+		+ "微调帽子: [ ]大小  I↑ K↓ J← L→  [T]停晃\n"
+		+ "已装备  头:%s  上衣:%s  配饰:%s\n"
 		+ "outfit分: %.2f"
-	) % [hat if not hat.is_empty() else "無", shirt if not shirt.is_empty() else "無", acc if not acc.is_empty() else "無", score]
+	) % [hat if not hat.is_empty() else "无", shirt if not shirt.is_empty() else "无", acc if not acc.is_empty() else "无", score]

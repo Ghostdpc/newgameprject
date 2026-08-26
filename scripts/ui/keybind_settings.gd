@@ -1,45 +1,46 @@
-## 職責：鍵位設置界面 —— 列出可改鍵 action，點擊後錄入新鍵（鍵盤/手柄），
-## 修改 InputMap 並持久化到 data/configs/keybindings.json
-## 鍵盤 P1/P2 分開；手柄為全局一組（改一次全手柄生效，不綁 device）
+## 职责：键位设置界面 —— 列出可改键 action，点击后录入新键（键盘/手柄），
+## 修改 InputMap 并持久化到 data/configs/keybindings.json
+## 键盘 P1/P2 分开；手柄为全局一组（改一次全手柄生效，不绑 device）
 
 class_name KeybindSettings
 extends Control
 
 const CONFIG_PATH: String = "res://data/configs/keybindings.json"
+const JoypadGlyph = preload("res://scripts/ui/joypad_glyph.gd")
 
-## 可改鍵項：group 為分組標題，其餘為 {action, label}
+## 可改键项：group 为分组标题，其余为 {action, label}
 const _ENTRIES: Array = [
-	{"group": "玩家 1（鍵盤）"},
+	{"group": "玩家 1（键盘）"},
 	{"action": "move_up_p1", "label": "上"},
 	{"action": "move_down_p1", "label": "下"},
 	{"action": "move_left_p1", "label": "左"},
 	{"action": "move_right_p1", "label": "右"},
-	{"action": "jump_p1", "label": "跳躍"},
-	{"action": "dive_p1", "label": "飛撲"},
+	{"action": "jump_p1", "label": "跳跃"},
+	{"action": "dive_p1", "label": "飞扑"},
 	{"action": "pickup_p1", "label": "拾取／使用"},
 	{"action": "use_item_p1", "label": "使用道具"},
-	{"action": "grab_p1", "label": "抓取場景物"},
-	{"action": "suicide_p1", "label": "自殺（測試）"},
+	{"action": "grab_p1", "label": "抓取场景物"},
+	{"action": "suicide_p1", "label": "自杀（测试）"},
 
-	{"group": "玩家 2（鍵盤）"},
+	{"group": "玩家 2（键盘）"},
 	{"action": "move_up_p2", "label": "上"},
 	{"action": "move_down_p2", "label": "下"},
 	{"action": "move_left_p2", "label": "左"},
 	{"action": "move_right_p2", "label": "右"},
-	{"action": "jump_p2", "label": "跳躍"},
-	{"action": "dive_p2", "label": "飛撲"},
+	{"action": "jump_p2", "label": "跳跃"},
+	{"action": "dive_p2", "label": "飞扑"},
 	{"action": "pickup_p2", "label": "拾取／使用"},
 	{"action": "use_item_p2", "label": "使用道具"},
-	{"action": "grab_p2", "label": "抓取場景物"},
-	{"action": "suicide_p2", "label": "自殺（測試）"},
+	{"action": "grab_p2", "label": "抓取场景物"},
+	{"action": "suicide_p2", "label": "自杀（测试）"},
 
 	{"group": "手柄（全局）"},
-	{"action": "joy_jump", "label": "跳躍"},
-	{"action": "joy_dive", "label": "飛撲"},
+	{"action": "joy_jump", "label": "跳跃"},
+	{"action": "joy_dive", "label": "飞扑"},
 	{"action": "joy_pickup", "label": "拾取／使用"},
 	{"action": "joy_use", "label": "使用道具"},
-	{"action": "joy_grab", "label": "抓取場景物"},
-	{"action": "joy_suicide", "label": "自殺（測試）"},
+	{"action": "joy_grab", "label": "抓取场景物"},
+	{"action": "joy_suicide", "label": "自杀（测试）"},
 ]
 
 var _list: VBoxContainer
@@ -49,9 +50,9 @@ var _recording_action: String = ""
 var _recording_row: HBoxContainer = null
 
 func _ready() -> void:
-	_list_container = $Panel/Scroll
-	_list = $Panel/Scroll/List
-	_hint_label = $Panel/HintLabel
+	_list_container = $Panel/Margin/VBox/Scroll
+	_list = $Panel/Margin/VBox/Scroll/List
+	_hint_label = $Panel/Margin/VBox/HintLabel
 	_build_rows()
 
 func _build_rows() -> void:
@@ -73,7 +74,7 @@ func _build_rows() -> void:
 		label.custom_minimum_size = Vector2(180, 0)
 		label.add_theme_font_size_override("font_size", 22)
 		var btn := Button.new()
-		btn.text = _action_display(entry["action"])
+		_set_button_display(btn, entry["action"])
 		btn.custom_minimum_size = Vector2(240, 44)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.add_theme_font_size_override("font_size", 22)
@@ -82,42 +83,45 @@ func _build_rows() -> void:
 		row.add_child(btn)
 		_list.add_child(row)
 
-## action 的當前綁定顯示（多事件全列）
-func _action_display(action: String) -> String:
+## 按钮显示：手柄面键用图标，其余（键盘/肩键/扳机等）回退文字
+func _set_button_display(btn: Button, action: String) -> void:
 	var events := InputMap.action_get_events(action)
+	btn.icon = null
+	btn.expand_icon = false
+	btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	btn.text = ""
 	if events.is_empty():
-		return "（未綁定）"
-	var names: Array[String] = []
-	for ev in events:
-		names.append(_event_display(ev))
-	return " / ".join(names)
-
-## 單個事件的簡短顯示名
-func _event_display(ev: InputEvent) -> String:
+		btn.text = "（未绑定）"
+		return
+	var ev: InputEvent = events[0]
 	if ev is InputEventKey:
-		return OS.get_keycode_string((ev as InputEventKey).physical_keycode)
-	if ev is InputEventJoypadButton:
-		return "手柄按鈕 %d" % (ev as InputEventJoypadButton).button_index
-	if ev is InputEventJoypadMotion:
-		return "手柄軸 %d" % (ev as InputEventJoypadMotion).axis
-	return str(ev)
+		btn.text = OS.get_keycode_string((ev as InputEventKey).physical_keycode)
+		return
+	var icon := JoypadGlyph.icon_for_event(ev)
+	if icon != null:
+		btn.icon = icon
+		btn.expand_icon = true
+		return
+	btn.text = JoypadGlyph.text_for_event(ev)
+	if btn.text.is_empty():
+		btn.text = str(ev)
 
 func _on_bind_pressed(action: String, btn: Button) -> void:
 	if _recording_action != "":
 		_cancel_recording()
 	_recording_action = action
 	_recording_row = btn.get_parent() as HBoxContainer
-	btn.text = "按下新鍵…"
+	btn.icon = null
+	btn.expand_icon = false
+	btn.text = "按下新键…"
 	btn.modulate = Color(1, 0.85, 0.4)
 	_refresh_hint()
 
 func _cancel_recording() -> void:
 	if _recording_action == "":
 		return
-	var evs := InputMap.action_get_events(_recording_action)
-	var text := "（未綁定）" if evs.is_empty() else _event_display(evs[0])
 	var btn := _recording_row.get_child(1) as Button
-	btn.text = text
+	_set_button_display(btn, _recording_action)
 	btn.modulate = Color.WHITE
 	_recording_action = ""
 	_recording_row = null
@@ -125,9 +129,9 @@ func _cancel_recording() -> void:
 
 func _refresh_hint() -> void:
 	if _recording_action != "":
-		_hint_label.text = "正在為「%s」錄入新鍵…按 Esc 取消，按 Enter 清除綁定" % _recording_action
+		_hint_label.text = "正在为「%s」录入新键…按 Esc 取消，按 Enter 清除绑定" % _recording_action
 	else:
-		_hint_label.text = "點擊按鈕後按下新鍵；Backspace 清除綁定；Esc 返回標題"
+		_hint_label.text = "点击按钮后按下新键；Backspace 清除绑定；Esc 返回标题"
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _recording_action != "":
@@ -135,8 +139,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("ui_cancel"):
 		_save()
-		GameManager.enter_title()
 		get_viewport().set_input_as_handled()
+		GameManager.enter_title()
 
 func _handle_recording(event: InputEvent) -> void:
 	var action := _recording_action
@@ -163,20 +167,20 @@ func _handle_recording(event: InputEvent) -> void:
 			_bind_event(action, event)
 		get_viewport().set_input_as_handled()
 
-## 綁定新事件到 action（event 為 null 代表清空）。替換全部現有事件。
+## 绑定新事件到 action（event 为 null 代表清空）。替换全部现有事件。
 func _bind_event(action: String, event: InputEvent) -> void:
 	InputMap.action_erase_events(action)
 	if event != null:
 		InputMap.action_add_event(action, event)
 	var btn := _recording_row.get_child(1) as Button
-	btn.text = _action_display(action)
+	_set_button_display(btn, action)
 	btn.modulate = Color.WHITE
 	_recording_action = ""
 	_recording_row = null
 	_refresh_hint()
 	SoundMgr.play("confirm")
 
-## 保存到 JSON：action → [事件數據]
+## 保存到 JSON：action → [事件数据]
 func _save() -> void:
 	var data: Dictionary = {}
 	for entry in _ENTRIES:
@@ -189,12 +193,12 @@ func _save() -> void:
 		data[action] = events
 	var f := FileAccess.open(CONFIG_PATH, FileAccess.WRITE)
 	if f == null:
-		push_error("KeybindSettings: 無法寫入 keybindings.json")
+		push_error("KeybindSettings: 无法写入 keybindings.json")
 		return
 	f.store_string(JSON.stringify(data, "\t"))
 	f.close()
 
-## 事件 → 可持久化數據
+## 事件 → 可持久化数据
 func _event_to_data(ev: InputEvent) -> Dictionary:
 	if ev is InputEventKey:
 		return {"type": "key", "physical_keycode": (ev as InputEventKey).physical_keycode}
@@ -204,7 +208,7 @@ func _event_to_data(ev: InputEvent) -> Dictionary:
 		return {"type": "joy_motion", "axis": (ev as InputEventJoypadMotion).axis, "axis_value": (ev as InputEventJoypadMotion).axis_value}
 	return {"type": "unknown"}
 
-## 啟動時從配置恢復綁定（autoload 或入口調用）
+## 启动时从配置恢复绑定（autoload 或入口调用）
 static func load_bindings() -> void:
 	var path := "res://data/configs/keybindings.json"
 	if not FileAccess.file_exists(path):

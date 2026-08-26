@@ -1,4 +1,4 @@
-## 職責：玩家狀態機，管理狀態切換
+## 职责：玩家状态机，管理状态切换
 
 class_name PlayerStateMachine
 extends Node
