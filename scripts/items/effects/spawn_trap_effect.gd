@@ -23,8 +23,12 @@ func apply(ctx: ItemContext) -> void:
 	var instance := TrapInstance.new()
 	# setup 先於 add_child，確保 collision_layer/mask 在進入物理世界前設置好
 	instance.setup(trap_def, placer)
+	instance.spawn_id = NetManager.next_entity_id()
 	placer.get_tree().current_scene.add_child(instance)
 	var spawn_pos := placer.global_position
 	if params.has("spawn_y"):
 		spawn_pos.y = float(params["spawn_y"])
 	instance.global_position = spawn_pos
+	# 联机：host 广播陷阱生成
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_trap_spawn(trap_id, spawn_pos, instance.spawn_id)

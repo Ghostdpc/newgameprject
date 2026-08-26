@@ -6,6 +6,8 @@ extends Area3D
 
 ## 由 GarmentSpawner 在生成后赋值
 var garment_id: String = ""
+## 联机实体唯一 id（host 分配，用于拾取时广播 despawn 对齐）
+var spawn_id: int = -1
 
 ## 落地动画参数
 const DROP_HEIGHT: float    = 3.5   # 生成点相对热点的额外高度（米）

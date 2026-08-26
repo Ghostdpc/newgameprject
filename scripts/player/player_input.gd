@@ -7,10 +7,39 @@
 class_name PlayerInput
 extends RefCounted
 
+## 按键 level 位掩码（联机上行用；host 侧 RemoteInputProvider 从 level 推导边缘）
+const BIT_JUMP := 1 << 0
+const BIT_DIVE := 1 << 1
+const BIT_PICKUP := 1 << 2
+const BIT_USE := 1 << 3
+const BIT_GRAB := 1 << 4
+const BIT_SUICIDE := 1 << 5
+
 var player_index: int
 
 func _init(index: int) -> void:
 	player_index = index
+
+## 键位集索引（0=P1 WASD，1=P2 方向键）。联机时取「本端已加入键盘角色」的本地序号
+## （手柄不占键盘序号），使本端第一个键盘角色固定用 P1 键位、第二个用 P2；本地模式按席位索引。
+func _keybind_index() -> int:
+	if NetManager.is_online:
+		var kb: Array[int] = []
+		for s in NetManager.get_my_seats():
+			if GameManager.player_devices.size() > s and GameManager.player_devices[s] < 0:
+				kb.append(s)
+		var idx := kb.find(player_index)
+		if idx >= 0:
+			return idx
+	return clampi(player_index, 0, 1)
+
+## 按键位集拼动作名（`jump_p1`/`jump_p2` …）
+func _kb_action(base: String) -> String:
+	return "%s_p%d" % [base, _keybind_index() + 1]
+
+## 键位集后缀（`_p1`/`_p2`），供 _keyboard_move 拼轴动作名
+func _kb_suffix() -> String:
+	return "_p%d" % (_keybind_index() + 1)
 
 ## 槽位綁定設備（缺省 -2 未綁定）
 func _assigned_device() -> int:
@@ -18,12 +47,15 @@ func _assigned_device() -> int:
 		return GameManager.player_devices[player_index]
 	return -2
 
-## 是否啟用鍵盤（僅 P1/P2，明確鍵盤或未綁定自動）
+## 是否啟用鍵盤。明確綁定鍵盤(-1)即在任何席位都可用（聯機 client 的鍵盤角色落在高號席位也可用）；
+## 未綁定(-2)時僅 P1/P2(席位 0/1) 自動鍵盤。
 func _keyboard_enabled() -> bool:
-	if player_index > 1:
-		return false
 	var d := _assigned_device()
-	return d == -1 or d == -2
+	if d == -1:
+		return true
+	if d == -2:
+		return player_index <= 1
+	return false
 
 ## 是否啟用手把（明確手把或未綁定回退；明確鍵盤則關閉）
 func _gamepad_enabled() -> bool:
@@ -38,7 +70,7 @@ func _device() -> int:
 
 func get_move_direction() -> Vector2:
 	if _keyboard_enabled():
-		var kb := _keyboard_move("_p%d" % (player_index + 1))
+		var kb := _keyboard_move(_kb_suffix())
 		if kb.length_squared() > 0.0:
 			return kb
 	if _gamepad_enabled():
@@ -46,47 +78,73 @@ func get_move_direction() -> Vector2:
 	return Vector2.ZERO
 
 func is_jump_just_pressed() -> bool:
-	if _keyboard_enabled() and Input.is_action_just_pressed("jump_p%d" % (player_index + 1)):
+	if _keyboard_enabled() and Input.is_action_just_pressed(_kb_action("jump")):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_A)
+	return _gamepad_enabled() and Input.is_action_just_pressed("joy_jump")
 
 func is_dive_just_pressed() -> bool:
-	if _keyboard_enabled() and Input.is_action_just_pressed("dive_p%d" % (player_index + 1)):
+	if _keyboard_enabled() and Input.is_action_just_pressed(_kb_action("dive")):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_Y)
+	return _gamepad_enabled() and Input.is_action_just_pressed("joy_dive")
 
 func is_pickup_just_pressed() -> bool:
-	if _keyboard_enabled() and Input.is_action_just_pressed("pickup_p%d" % (player_index + 1)):
+	if _keyboard_enabled() and Input.is_action_just_pressed(_kb_action("pickup")):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_B)
+	return _gamepad_enabled() and Input.is_action_just_pressed("joy_pickup")
 
 ## 拾取按鍵是否持續按住（長按拾取用）
 func is_pickup_held() -> bool:
-	if _keyboard_enabled() and Input.is_action_pressed("pickup_p%d" % (player_index + 1)):
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("pickup")):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_B)
+	return _gamepad_enabled() and Input.is_action_pressed("joy_pickup")
 
 func is_use_item_just_pressed() -> bool:
-	if _keyboard_enabled() and Input.is_action_just_pressed("use_item_p%d" % (player_index + 1)):
+	if _keyboard_enabled() and Input.is_action_just_pressed(_kb_action("use_item")):
 		return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_B)
+	return _gamepad_enabled() and Input.is_action_just_pressed("joy_use")
 
-## R 鍵抓取場景物理物件（P1=R / P2=T）。探索性功能，可刪
+## 抓取場景物理物件：鍵盤 grab_p1/p2、手把 joy_grab。探索性功能，可刪
 func is_grab_pressed() -> bool:
-	if player_index == 0:
-		return Input.is_key_pressed(KEY_R)
-	if player_index == 1:
-		return Input.is_key_pressed(KEY_T)
-	return false
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("grab")):
+		return true
+	return _gamepad_enabled() and Input.is_action_pressed("joy_grab")
 
-## 自殺（測試用）：鍵盤 P1=O / P2=4，手把=方塊鍵（JOY_BUTTON_X）
+## 自殺（測試用）：鍵盤 suicide_p1/p2、手把 joy_suicide
 func is_suicide_just_pressed() -> bool:
-	if _keyboard_enabled():
-		if player_index == 0 and Input.is_physical_key_pressed(KEY_O):
-			return true
-		if player_index == 1 and Input.is_physical_key_pressed(KEY_4):
-			return true
-	return _gamepad_enabled() and Input.is_joy_button_pressed(_device(), JOY_BUTTON_X)
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("suicide")):
+		return true
+	return _gamepad_enabled() and Input.is_action_just_pressed("joy_suicide")
+
+## 輸入 level 快照（供聯機上行：移動向量 + 按鍵按住位掩碼）
+func get_input_level() -> Dictionary:
+	var buttons := 0
+	if _is_jump_held(): buttons |= BIT_JUMP
+	if _is_dive_held(): buttons |= BIT_DIVE
+	if is_pickup_held(): buttons |= BIT_PICKUP
+	if _is_use_held(): buttons |= BIT_USE
+	if is_grab_pressed(): buttons |= BIT_GRAB
+	if _is_suicide_held(): buttons |= BIT_SUICIDE
+	return {"move": get_move_direction(), "buttons": buttons}
+
+func _is_jump_held() -> bool:
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("jump")):
+		return true
+	return _gamepad_enabled() and Input.is_action_pressed("joy_jump")
+
+func _is_dive_held() -> bool:
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("dive")):
+		return true
+	return _gamepad_enabled() and Input.is_action_pressed("joy_dive")
+
+func _is_use_held() -> bool:
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("use_item")):
+		return true
+	return _gamepad_enabled() and Input.is_action_pressed("joy_use")
+
+func _is_suicide_held() -> bool:
+	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("suicide")):
+		return true
+	return _gamepad_enabled() and Input.is_action_pressed("joy_suicide")
 
 func _keyboard_move(suffix: String) -> Vector2:
 	var dir := Vector2.ZERO

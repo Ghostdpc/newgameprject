@@ -303,6 +303,9 @@ func _fb_in(src: Skeleton3D, bone_name: String) -> int:
 
 ## 彈簧骨骼主迴圈
 func _tick_springs(delta: float) -> void:
+	# 弹簧积分固定步长：显式欧拉在低帧率（双开/卡顿，delta 大）下会越过稳定性边界
+	# （h*ω<2，ω=√k），导致弹簧自激振荡发散、骨骼乱颤。clamp 到 1/60 与 60fps 行为等价。
+	var step := minf(delta, 1.0 / 60.0)
 	_time += delta
 	# 加速度 lean（用外部 root_velocity 差分，與原 demo 行為一致）
 	var acc := (root_velocity - _prev_velocity) / maxf(delta, 0.0001)
@@ -370,11 +373,11 @@ func _tick_springs(delta: float) -> void:
 		var err_angle := rel.get_angle()
 		var err_axis := rel.get_axis()
 		var ang_acc := err_axis * (k * err_angle) - (_spring_vel.get(bone_name) as Vector3) * damp
-		var vel: Vector3 = (_spring_vel.get(bone_name) as Vector3) + ang_acc * delta
-		vel *= exp(-extra_damp * delta)
+		var vel: Vector3 = (_spring_vel.get(bone_name) as Vector3) + ang_acc * step
+		vel *= exp(-extra_damp * step)
 		_spring_vel[bone_name] = vel
 
-		var ang: Vector3 = vel * delta
+		var ang: Vector3 = vel * step
 		var dv := Quaternion.IDENTITY
 		if ang.length() > 0.000001:
 			dv = Quaternion(ang.normalized(), ang.length())

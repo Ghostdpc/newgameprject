@@ -23,6 +23,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	EventBus.stage_changed.connect(_on_stage_changed)
 	EventBus.stage_timer_updated.connect(_on_timer_updated)
+	EventBus.game_paused_changed.connect(_on_game_paused_changed)
 	_continue_btn.pressed.connect(resume)
 	_lobby_btn.pressed.connect(_return_lobby)
 	_theme_screen.hide()
@@ -66,10 +67,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if is_pause_key:
 		if stage != GameManager.GameStage.BATTLE and stage != GameManager.GameStage.THEME_ANNOUNCE:
 			return
-		if _paused:
-			resume()
-		else:
-			pause()
+		_toggle_pause()
 		return
 	# 暂停界面：手柄 A / ui_accept → 继续；手柄 B → 返回大厅
 	if _paused:
@@ -83,21 +81,42 @@ func _unhandled_input(event: InputEvent) -> void:
 			_return_lobby()
 			get_viewport().set_input_as_handled()
 
+## 切换暂停：联机走 NetManager（host 权威广播，两端一起停），本地直接切
+func _toggle_pause() -> void:
+	var target := not _paused
+	if NetManager.is_online:
+		NetManager.set_paused(target)
+	else:
+		_on_game_paused_changed(target)
+
+## 统一应用暂停/恢复（本地输入与联机广播共用入口）
+func _on_game_paused_changed(paused: bool) -> void:
+	if paused:
+		pause()
+	else:
+		unpause()
+
 func pause() -> void:
 	_paused = true
 	_pause_screen.show()
-	_continue_btn.grab_focus()
+	if _continue_btn:
+		_continue_btn.grab_focus()
 	get_tree().paused = true
-	EventBus.game_paused_changed.emit(true)
 
 func resume() -> void:
+	_toggle_pause()
+
+func unpause() -> void:
 	_paused = false
 	_pause_screen.hide()
 	get_tree().paused = false
-	EventBus.game_paused_changed.emit(false)
 
 func _return_lobby() -> void:
 	_paused = false
+	_pause_screen.hide()
 	get_tree().paused = false
-	EventBus.game_paused_changed.emit(false)
+	if NetManager.is_online:
+		NetManager.set_paused(false)
+	else:
+		EventBus.game_paused_changed.emit(false)
 	GameManager.enter_lobby()

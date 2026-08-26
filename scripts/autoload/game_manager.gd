@@ -35,9 +35,38 @@ var lobby_player_count: int = 4
 ## 加载完成后要进入的关卡场景（goto_level 先展示加载界面）
 var pending_level_path: String = "res://scenes/levels/room_stage_battle.tscn"
 
+## 联机角色：host 权威驱动流程，client 跟随广播
+func _is_net_host() -> bool:
+	return NetManager.is_online and NetManager.is_host
+
+func _is_net_client() -> bool:
+	return NetManager.is_online and not NetManager.is_host
+
 ## 进入关卡：先展示加载界面，加载界面后台真实预加载关卡，完成后跳关
 func goto_level(path: String) -> void:
+	if _is_net_client():
+		# client 无权推进流程：请求 host 权威切换，host 广播回来再统一走加载
+		_request_goto_level.rpc_id(1, path)
+		return
 	pending_level_path = path
+	NetManager.zone_index = -1  # 重置分区索引，client 等待 host 新广播
+	if _is_net_host():
+		_rpc_goto_level.rpc(path, lobby_player_count)
+	get_tree().change_scene_to_file("res://scenes/ui/loading_screen.tscn")
+
+## client → host：请求进入指定关卡（client 点「再来一局」等）
+@rpc("any_peer", "reliable")
+func _request_goto_level(path: String) -> void:
+	if not _is_net_host():
+		return
+	goto_level(path)
+
+## host → client：同步关卡加载与玩家数
+@rpc("authority", "reliable")
+func _rpc_goto_level(path: String, player_count: int) -> void:
+	pending_level_path = path
+	lobby_player_count = player_count
+	NetManager.zone_index = -1  # 重置，等待 host 新分区广播
 	get_tree().change_scene_to_file("res://scenes/ui/loading_screen.tscn")
 
 ## 加载界面完成时调用（真实加载失败时兜底）
@@ -49,13 +78,21 @@ func enter_pending_level() -> void:
 ##   >=0 = 手柄 device id
 var player_devices: Array[int] = [-2, -2, -2, -2]
 
-## 已加入的槽位索引（0-3），供关卡按槽位生成对应玩家与面板
+## 已加入的槽位索引（0-3），供关卡按槽位生成对应玩家与面板。
+## 联机：以 host 发的席位表为准（host 权威），两端都看到同批在场玩家。
 func get_joined_slots() -> Array[int]:
-	var slots: Array[int] = []
+	if NetManager.is_online:
+		var slots: Array[int] = []
+		for i in NetManager.seat_owners.size():
+			var o: Dictionary = NetManager.seat_owners[i]
+			if o["kind"] != NetManager.SeatKind.EMPTY:
+				slots.append(i)
+		return slots
+	var slots2: Array[int] = []
 	for i in player_devices.size():
 		if player_devices[i] != -2:
-			slots.append(i)
-	return slots
+			slots2.append(i)
+	return slots2
 
 var _stage_index: int = -1
 var _timer_active: bool = false
@@ -63,9 +100,12 @@ var _timer_active: bool = false
 func _ready() -> void:
 	config = GameConfig.new()
 	config.load()
+	KeybindSettings.load_bindings()
 
 ## 從主界面進入遊戲，重置流程
 func start_game() -> void:
+	if _is_net_client():
+		return
 	_stage_index = -1
 	time_rate = 1.0
 	_advance_stage()
@@ -76,6 +116,8 @@ func finish_scoring() -> void:
 	_advance_stage()
 
 func _advance_stage() -> void:
+	if _is_net_client():
+		return
 	_stage_index += 1
 	if _stage_index >= STAGE_ORDER.size():
 		_transition_to(GameStage.MAIN_MENU)
@@ -83,8 +125,15 @@ func _advance_stage() -> void:
 	_transition_to(STAGE_ORDER[_stage_index])
 
 func _transition_to(stage: GameStage) -> void:
+	if _is_net_client():
+		return
 	current_stage = stage
 	EventBus.stage_changed.emit(stage)
+	# 返回大厅前先重置全员就绪（host 权威，再广播），避免 client 收到 LOBBY 时带上旧就绪态
+	if stage == GameStage.LOBBY:
+		NetManager.enter_lobby_reset_ready()
+	if _is_net_host():
+		_rpc_transition.rpc(stage)
 
 	if stage == GameStage.MAIN_MENU:
 		_timer_active = false
@@ -114,6 +163,21 @@ func _transition_to(stage: GameStage) -> void:
 	stage_time_remaining = duration
 	_timer_active = true
 
+## host → client：阶段推进复制（场景切换 + 事件）
+@rpc("authority", "reliable")
+func _rpc_transition(stage: int) -> void:
+	current_stage = stage as GameStage
+	EventBus.stage_changed.emit(stage)
+	match stage:
+		GameStage.MAIN_MENU:
+			_timer_active = false
+			get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+		GameStage.LOBBY:
+			_timer_active = false
+			get_tree().change_scene_to_file("res://scenes/ui/lobby.tscn")
+		GameStage.BATTLE:
+			EventBus.battle_started.emit()
+
 func _get_stage_duration(stage: GameStage) -> float:
 	match stage:
 		GameStage.THEME_ANNOUNCE: return config.theme_announce_duration
@@ -123,17 +187,27 @@ func _get_stage_duration(stage: GameStage) -> float:
 	return 0.0
 
 func _process(delta: float) -> void:
+	if _is_net_client():
+		return  # client 计时由 host 广播驱动
 	if not _timer_active:
 		return
 	stage_time_remaining -= delta * time_rate
 	stage_time_remaining = maxf(stage_time_remaining, 0.0)
 	EventBus.stage_timer_updated.emit(stage_time_remaining)
+	if _is_net_host():
+		_rpc_timer.rpc(stage_time_remaining)
 	if stage_time_remaining <= 0.0:
 		_timer_active = false
 		time_rate = 1.0
 		if current_stage == GameStage.BATTLE:
 			EventBus.battle_ended.emit()
 		_advance_stage()
+
+## host → client：倒计时同步
+@rpc("authority", "unreliable")
+func _rpc_timer(seconds: float) -> void:
+	stage_time_remaining = seconds
+	EventBus.stage_timer_updated.emit(seconds)
 
 ## 加时/减时（交互文档：减时最低保留 1 秒）。返回实际变化量（供飞字显示）
 func add_time(delta_seconds: float) -> float:
@@ -148,10 +222,21 @@ func add_time(delta_seconds: float) -> float:
 
 ## 进入大厅（返回房间 / 标题→进入）
 func enter_lobby() -> void:
+	if _is_net_client():
+		# client 无权推进流程：请求 host 权威返回大厅，host 广播回来
+		_request_enter_lobby.rpc_id(1)
+		return
 	get_tree().paused = false
 	time_rate = 1.0
 	_timer_active = false
 	_transition_to(GameStage.LOBBY)
+
+## client → host：请求返回大厅
+@rpc("any_peer", "reliable")
+func _request_enter_lobby() -> void:
+	if not _is_net_host():
+		return
+	enter_lobby()
 
 ## 返回标题
 func enter_title() -> void:
@@ -159,3 +244,7 @@ func enter_title() -> void:
 	time_rate = 1.0
 	_timer_active = false
 	_transition_to(GameStage.MAIN_MENU)
+
+## 进入键位设置
+func enter_settings() -> void:
+	get_tree().change_scene_to_file("res://scenes/ui/keybind_settings.tscn")

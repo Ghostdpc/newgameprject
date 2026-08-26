@@ -43,6 +43,9 @@ var _suspended_effects: Array = []   # 掩码渲染期间挂起处理的 Charact
 var _main_cull_saved: Array = []     # 掩码渲染期间临时排除 MASK 层的主相机 cull_mask
 
 func _ready() -> void:
+	# 联机：结算只在 host 执行（mask 渲染读 host 真实场景），client 收广播结果
+	if NetManager.is_online and not NetManager.is_host:
+		return
 	EventBus.photo_taken.connect(_on_photo_taken)
 	_score_config = ConfigLoader.load_config("score_config")
 	_build_mask_viewport()
@@ -118,6 +121,13 @@ func _analyze_async(texture: ViewportTexture) -> void:
 
 	_save_photo_png(photo_image)
 
+	# 联机：拍照完成立即把照片同步给 client（分数未出，只先展示照片），
+	# 不等 mask/分析完成，避免 client 一直等到结算分析全部跑完。
+	var round := -1
+	if NetManager.is_online and NetManager.is_host:
+		round = NetManager.next_settlement_round()
+		NetManager.broadcast_settlement_preview(photo_image, round)
+
 	var cam := _get_photo_camera()
 	if cam == null:
 		push_warning("SettlementSystem: 找不到攝影相機，無法結算")
@@ -158,6 +168,8 @@ func _analyze_async(texture: ViewportTexture) -> void:
 		photo_vp.render_target_update_mode = prev_photo_mode
 
 	var results := _analyze(photo_image, mask_image, cam, actors)
+	if round > 0:
+		results["round"] = round
 	_busy = false
 	settlement_completed.emit(results)
 

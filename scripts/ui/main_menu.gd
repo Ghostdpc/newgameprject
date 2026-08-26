@@ -52,11 +52,24 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_ESCAPE:
 		get_tree().quit()
 		return
+	if event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_F2:
+		SoundMgr.play("confirm")
+		GameManager.enter_settings()
+		return
+	if event is InputEventKey and (event as InputEventKey).physical_keycode == KEY_F10:
+		# 联机测试面板
+		SoundMgr.play("confirm")
+		get_tree().change_scene_to_file("res://scenes/ui/net_test_panel.tscn")
+		return
 	if event is InputEventJoypadButton:
 		get_viewport().set_input_as_handled()
-		# 手柄○（PS 上映射为 JOY_BUTTON_B）→ 退出，其余按钮 → 开始
-		if (event as InputEventJoypadButton).button_index == JOY_BUTTON_B:
+		var jb := event as InputEventJoypadButton
+		# 手柄○（PS 上映射為 JOY_BUTTON_B）→ 退出；BACK（select）→ 設置；其餘 → 開始
+		if jb.button_index == JOY_BUTTON_B:
 			get_tree().quit()
+		elif jb.button_index == JOY_BUTTON_BACK:
+			SoundMgr.play("confirm")
+			GameManager.enter_settings()
 		else:
 			SoundMgr.play("confirm")
 			GameManager.enter_lobby()

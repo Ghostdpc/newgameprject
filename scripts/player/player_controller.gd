@@ -60,6 +60,8 @@ const GRAB_LERP: float = 8.0
 ## 本空中週期是否可用二段跳（JumpState 管理）
 var double_jump_available: bool = false
 @export var player_index: int = 0
+## 远端 puppet（client 侧渲染的玩家）：不跑本地物理/状态机，只插值 host 快照
+@export var is_puppet: bool = false
 @export var player_color: Color = Color.WHITE
 ## human 模型本體 Y 軸朝向補償（deg）。若走路側身，在 player.tscn 調整讓模型正面朝移動方向。
 @export var human_model_yaw_deg: float = -90.0
@@ -89,7 +91,12 @@ func cycle_face() -> void:
 	var next: int = int(face.get("_current_index")) + 1
 	if next >= face.count():
 		next = 0
+	if is_puppet:
+		return  # client 端表情由 host 广播同步，puppet 不本地轮换
 	face.show_expression(next)
+	# host（联机）：把表情变化同步给 client 对应 puppet
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_face_changed(player_index, next)
 
 ## 持有的道具 id，空字符串表示无道具（每次最多持有一个）
 var held_item_id: String = ""
@@ -110,6 +117,10 @@ var _current_anim: String = ""
 var frozen: bool = false
 var _is_human_model: bool = false
 var _suicide_was_pressed: bool = false
+## puppet 插值目标（client 侧远端表现）
+var _puppet_target_pos: Vector3 = Vector3.ZERO
+var _puppet_target_yaw: float = 0.0
+var _puppet_has_target: bool = false
 var _model_skeleton: Skeleton3D
 var _head_bone_idx: int = -1
 var _body_bone_idx: int = -1
@@ -125,6 +136,8 @@ var _head_icon: PlayerHeadIcon
 
 ## 是否處於死亡/復活流程（非正常對戰狀態）
 func is_dead() -> bool:
+	if state_machine == null:
+		return false
 	var st := state_machine.current_state_name
 	return st == "Death" or st == "RespawnWaiting" or st == "RespawnFall"
 
@@ -135,16 +148,32 @@ func start_banana_slide() -> void:
 	state_machine.transition_to("BananaSlide")
 
 func _ready() -> void:
-	player_input = PlayerInput.new(player_index)
+	player_input = _create_input_provider()
 	# 身材缩放要排在动画(priority 0)与弹簧骨骼(100)之后，避免骨骼 scale 被动画覆盖
 	process_priority = 100
-	_setup_state_machine()
-	_setup_outfit()
-	_setup_model()
+	if is_puppet:
+		_setup_outfit()  # 先就绪 character_effects，供 _setup_model 的表情贴头材质使用
+		_setup_model()
+	else:
+		_setup_state_machine()
+		_setup_outfit()
+		_setup_model()
 	_head_icon = get_node_or_null("PlayerHeadIcon") as PlayerHeadIcon
 	apply_player_color(player_color)
 	add_to_group("players")
 	EventBus.battle_started.connect(func(): score_penalty = 0)
+
+## 依据席位所有权选择输入源：host 上远端席位用 RemoteInputProvider，其余本地直读
+func _create_input_provider() -> PlayerInput:
+	if is_puppet:
+		return PlayerInput.new(player_index)  # puppet 不读输入，仅占位
+	if NetManager.is_online and NetManager.is_host:
+		var owner := NetManager.get_seat_owner(player_index)
+		if owner["kind"] == NetManager.SeatKind.REMOTE:
+			var remote := RemoteInputProvider.new(player_index)
+			NetManager.register_remote_input(player_index, remote)
+			return remote
+	return PlayerInput.new(player_index)
 
 ## 開關布娃娃（被擊倒時進入物理倒地）
 func set_ragdoll(enabled: bool) -> void:
@@ -204,6 +233,9 @@ func pickup_item(item_id: String) -> void:
 	_use_gap_time = PICKUP_USE_GAP
 	item_picked_up.emit(item_id)
 	EventBus.item_picked_up.emit(player_index, item_id)
+	# 联机：host 广播拾取，client 同步 HUD/图标
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_item_picked_up(player_index, item_id)
 	_show_head_icon(item_id)
 	var def := ItemSystem._item_config.get_item(item_id) if ItemSystem else null
 	if def and def.trigger == ItemTypes.Trigger.ON_PICKUP:
@@ -239,6 +271,8 @@ func clear_item() -> void:
 	item_cleared.emit()
 
 func _process(delta: float) -> void:
+	if is_puppet:
+		return
 	if is_dead():
 		return
 	if frozen:
@@ -261,9 +295,16 @@ func _process(delta: float) -> void:
 		else:
 			# 身上無道具：嘗試拾取附近道具
 			_try_pickup()
+	# 长按拾取兜底：联机按下沿（edge）依赖上行推导，双开/卡顿下行上行频率低，
+	# 快速按键覆盖帧少、edge 易丢；held(level) 对丢帧免疫，按住 0.8s 兜底拾取
+	_update_pickup_hold(delta)
 
 ## 长按拾取逻辑：按住 0.8s 触发；移动/受控 打断
 func _update_pickup_hold(delta: float) -> void:
+	# 已有道具时不再拾取（避免即时拾取成功后长按再覆盖一次）
+	if not held_item_id.is_empty():
+		_pickup_hold_time = 0.0
+		return
 	# 拾取可被打断：移动 / 非 Idle/Move 状态
 	var st := state_machine.current_state_name
 	var can_pickup := (st == "Idle" or st == "Move") and _pickup_movement_blocked() == false
@@ -280,7 +321,9 @@ func _update_pickup_hold(delta: float) -> void:
 
 ## 拾取長按時如果正在移動則中斷（策划：移動會打斷拾取）
 func _pickup_movement_blocked() -> bool:
-	return player_input.get_move_direction().length_squared() > 0.0
+	# 阈值 0.04（约 0.2 速）：联机 _move 为网络值可能有残留/噪声，
+	# 键盘 WASD(1.0) 正常打断，微小残留不误打断
+	return player_input.get_move_direction().length_squared() > 0.04
 
 func _try_pickup() -> void:
 	var result := _pickup_nearest()
@@ -334,10 +377,16 @@ func _pickup_nearest() -> Dictionary:
 	var id: String = nearest.pickup_for(self)
 	if id.is_empty():
 		return {}
+	# 联机：host 广播实体消失，client 释放对应道具箱/服装
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_entity_despawn(int(nearest.get("spawn_id")))
 	var is_garment := nearest.is_in_group("garment_pickups")
 	return { "id": id, "is_garment": is_garment }
 
 func _physics_process(delta: float) -> void:
+	if is_puppet:
+		_puppet_physics(delta)
+		return
 	# 死亡/復活狀態也需物理幀推進（Death→Waiting→Fall），故不整體跳過
 	_apply_gravity(delta)
 	if is_dead():
@@ -355,6 +404,32 @@ func _physics_process(delta: float) -> void:
 	_check_dive_hit()
 	_push_contacted_props()
 	_update_grab(delta)
+
+# ---------------------------------------------------------------- 远端 puppet
+
+## 写入远端快照（client 侧，由 NetManager 广播驱动）
+func apply_remote_state(pos: Vector3, vel: Vector3, state_name: String, yaw: float) -> void:
+	_puppet_target_pos = pos
+	_puppet_target_yaw = yaw
+	_puppet_has_target = true
+	_puppet_update_animation(state_name)
+
+## puppet 插值：位置/朝向向 host 快照目标平滑逼近（一期 lerp，后续换缓冲插值）
+func _puppet_physics(delta: float) -> void:
+	if not _puppet_has_target:
+		return
+	var k := minf(1.0, delta * 12.0)
+	global_position = global_position.lerp(_puppet_target_pos, k)
+	rotation.y = lerp_angle(rotation.y, _puppet_target_yaw, k)
+
+## puppet 动画：按 host 状态名切动画（远端不做 ragdoll，用 canned 动画）
+func _puppet_update_animation(state_name: String) -> void:
+	if not _animation_player:
+		return
+	var anim := _anim_for_state(state_name)
+	if anim != _current_anim:
+		_animation_player.play(anim)
+		_current_anim = anim
 
 ## 自殺快捷鍵（測試用）：P1=O / P2=P，按下立即觸發完整死亡+重生流程
 func _handle_suicide() -> void:
@@ -592,6 +667,17 @@ func _setup_model() -> void:
 		_set_animation_looping(ANIM_MOVE)
 		_set_animation_looping(ANIM_JUMP)
 		_set_animation_looping(ANIM_DIVE)
+	# 远端 puppet：仅渲染模型与动画，不建布娃娃/弹簧骨骼/身材缩放（物理由 host 权威模拟）
+	if is_puppet:
+		_model_skeleton = _find_skeleton(model)
+		face = get_node_or_null("Face") as PlayerFaceController
+		if face and _model_skeleton:
+			face.setup(_model_skeleton)
+			# 与 host 同渲染路径：表情贴头部材质（Sprite3D 贴骨在部分模型上不可见/穿帮）
+			face.use_head_texture = true
+			if not face.apply_head_texture():
+				face.use_head_texture = false
+		return
 	# 初始化布娃娃（綁定模型骨架）
 	ragdoll_rig = get_node_or_null("RagdollRig") as RagdollRig
 	if ragdoll_rig:

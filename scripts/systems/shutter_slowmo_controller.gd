@@ -42,6 +42,9 @@ func _process(_delta: float) -> void:
 	var t := clampf(_phase_elapsed / decel_time, 0.0, 1.0)
 	var cur := lerpf(1.0, min_scale, ease(t, decel_curve))
 	Engine.time_scale = cur
+	# 联机：host 广播慢放流速（client 不本地驱动）
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_time_scale(cur)
 	if t >= 1.0 and stop_at_zero:
 		Engine.time_scale = 0.0
 

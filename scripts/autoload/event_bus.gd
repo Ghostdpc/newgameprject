@@ -33,6 +33,15 @@ signal time_effect_applied(effect_type: int, value: float)
 # 暂停开关（Esc / 房主触发）
 signal game_paused_changed(paused: bool)
 
+# 联机结算结果送达（client 由 NetManager 转发；关卡就绪后连接并展示）
+signal settlement_received(results: Dictionary)
+# 结算照片预览先到（分数未出），用于 client 提前显示最终照片
+signal settlement_preview_received(image: Image, round: int)
+# 联机表情同步（host 广播每轮各角色表情索引，client 应用）
+signal faces_received(faces: Array)
+# 联机单个角色表情变化（host 动作触发，如二段跳换表情；client 应用到对应 puppet）
+signal face_changed(player_index: int, face_index: int)
+
 # 相機
 signal camera_behavior_push_requested(camera_target: String, behavior: Object)
 signal camera_behavior_pop_requested(camera_target: String, behavior: Object)

@@ -18,7 +18,13 @@ func _ready() -> void:
 	EventBus.battle_started.connect(_on_battle_started)
 	EventBus.battle_ended.connect(_on_battle_ended)
 
+## 联机 client 不本地生成（host 权威生成后广播）
+func _is_client() -> bool:
+	return NetManager.is_online and not NetManager.is_host
+
 func _on_battle_started() -> void:
+	if _is_client():
+		return
 	var cfg: Dictionary = ItemSystem._item_config.get_spawn_config()
 	_max_active         = int(cfg.get("max_active", 5))
 	_respawn_interval   = float(cfg.get("respawn_interval", 8.0))
@@ -67,8 +73,25 @@ func _try_spawn() -> void:
 	box.set_script(box_script)
 	var chosen_id: String = _item_ids[randi() % _item_ids.size()]
 	box.item_id = chosen_id
+	box.spawn_id = NetManager.next_entity_id()
 	var pos := DropPlacement.pick_position() + Vector3(0.0, 0.25, 0.0)
 	get_tree().current_scene.add_child(box)
 	box.global_position = pos
 	_active_boxes.append(box)
 	EventBus.item_spawned.emit(chosen_id, box.global_position)
+	# 联机：host 广播道具生成，client 在同一位置生成同款（带 id 对齐拾取 despawn）
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_item_spawn(chosen_id, box.global_position, box.spawn_id)
+
+## client：收到 host 广播后在指定位置生成指定道具箱
+func spawn_box_at(item_id: String, pos: Vector3, spawn_id: int) -> void:
+	var box_script := load(ITEM_BOX_SCRIPT) as Script
+	if box_script == null:
+		return
+	var box := Area3D.new()
+	box.set_script(box_script)
+	box.item_id = item_id
+	box.spawn_id = spawn_id
+	get_tree().current_scene.add_child(box)
+	box.global_position = pos
+	_active_boxes.append(box)

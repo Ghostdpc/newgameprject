@@ -75,7 +75,7 @@ func _on_flow_finished(action: String) -> void:
 	GameManager.time_rate = 1.0
 	if action == "restart":
 		# 重开：直接进入下一轮主题展示，保留当前玩家（大厅人数不变）
-		get_tree().change_scene_to_file("res://scenes/levels/demo_stage.tscn")
+		GameManager.goto_level("res://scenes/levels/demo_stage.tscn")
 	else:
 		# 返回房间：回到加入状态，保留设备识别
 		GameManager.enter_lobby()

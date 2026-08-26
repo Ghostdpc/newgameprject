@@ -5,6 +5,10 @@ extends Area3D
 
 var trap_def: TrapDef
 var owner_player: PlayerController
+## 联机实体唯一 id（host 分配，用于触发时广播对齐）
+var spawn_id: int = -1
+## client 视觉陷阱：不检测、不应用效果，仅展示 + 由 host 广播触发移除
+var is_visual_only: bool = false
 
 var _lifetime_timer: float = 0.0
 var _triggered: bool = false
@@ -83,7 +87,68 @@ func _on_body_entered(body: Node3D) -> void:
 			effect.apply(ctx)
 
 	EventBus.trap_triggered.emit(trap_def.id, player.player_index)
+	# 联机：host 广播触发，client 移除对应视觉陷阱 + 播 VFX
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_trap_triggered(spawn_id, trap_def.id, player.player_index, player.global_position)
 	queue_free()
+
+## client：生成纯视觉陷阱（host 广播触发）
+static func spawn_visual(trap_id: String, pos: Vector3, spawn_id: int) -> void:
+	var def: TrapDef = ItemSystem._item_config.get_trap(trap_id)
+	if def == null:
+		return
+	var inst := TrapInstance.new()
+	inst.trap_def = def
+	inst.spawn_id = spawn_id
+	inst.is_visual_only = true
+	inst._lifetime_timer = def.lifetime
+	inst._activation_timer = 0.0  # 不激活，纯视觉
+	inst.collision_layer = 0
+	inst.collision_mask = 0
+	inst.monitoring = false
+
+	var visual: Node3D = null
+	if not def.model.is_empty():
+		visual = PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale, true)
+	if visual == null:
+		var mesh_inst := MeshInstance3D.new()
+		var box := BoxMesh.new()
+		box.size = Vector3(0.6, 0.6, 0.6)
+		mesh_inst.mesh = box
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.6, 0.1, 1.0)
+		mesh_inst.material_override = mat
+		mesh_inst.position.y = 0.3
+		visual = mesh_inst
+	inst.add_child(visual)
+	inst.add_to_group("traps")
+	inst.global_position = pos
+	var scene: Node = Engine.get_main_loop().current_scene
+	if scene:
+		scene.add_child(inst)
+
+## client：播放陷阱触发 VFX（host 广播触发）
+static func spawn_trigger_vfx_static(trap_id: String, pos: Vector3) -> void:
+	var def: TrapDef = ItemSystem._item_config.get_trap(trap_id)
+	if def == null or def.use_vfx.is_empty():
+		return
+	var scene: PackedScene = load(def.use_vfx)
+	if scene == null:
+		return
+	var vfx: Node3D = scene.instantiate() as Node3D
+	if vfx == null:
+		return
+	if "autoplay" in vfx:
+		vfx.autoplay = false
+	if "one_shot" in vfx:
+		vfx.one_shot = true
+	var current: Node = Engine.get_main_loop().current_scene
+	if current == null:
+		return
+	current.add_child(vfx)
+	vfx.global_position = pos
+	if vfx.has_method("play"):
+		vfx.play()
 
 func _spawn_trigger_vfx(spawn_pos: Vector3) -> void:
 	if trap_def.use_vfx.is_empty():

@@ -14,6 +14,8 @@ const BOUNCE_DURATION: float = 0.15
 
 ## 由 ItemSpawner 在生成后赋值
 var item_id: String = ""
+## 联机实体唯一 id（host 分配，用于拾取时广播 despawn 对齐）
+var spawn_id: int = -1
 var _landed: bool = false
 
 func _ready() -> void:

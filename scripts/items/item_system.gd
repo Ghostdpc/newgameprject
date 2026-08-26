@@ -96,6 +96,23 @@ func use_item(source_player: PlayerController, item_id: String, extra: Dictionar
 
 	var src_index: int = source_player.player_index if source_player else -1
 	EventBus.item_used.emit(src_index, item_id)
+	# 联机：host 广播道具使用，client 只播 VFX 不应用效果（效果已由 host 权威模拟）
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_item_used(src_index, item_id)
+
+## client：仅播放使用 VFX（host 广播触发，不应用效果逻辑）
+func play_use_vfx_only(item_id: String, player_index: int) -> void:
+	var def := _item_config.get_item(item_id)
+	if def == null:
+		return
+	_spawn_use_vfx(def, _find_player(player_index))
+
+func _find_player(player_index: int) -> PlayerController:
+	for node in get_tree().get_nodes_in_group("players"):
+		var p := node as PlayerController
+		if p and p.player_index == player_index:
+			return p
+	return null
 
 ## 在使用者位置實例化並播放一次性特效，播完自動銷毀
 func _spawn_use_vfx(def: ItemDef, source_player: PlayerController) -> void:

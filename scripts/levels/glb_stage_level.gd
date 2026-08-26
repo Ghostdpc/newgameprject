@@ -98,7 +98,7 @@ func _random_spawn_position() -> Vector3:
 
 ## 先选相机分组再走基类流程，保证 _setup_cameras 读到的就是选中相机的位姿
 func _ready() -> void:
-	_select_zone()
+	await _select_zone()
 	super._ready()
 
 func _setup_level() -> void:
@@ -150,13 +150,26 @@ func _setup_cameras() -> void:
 	if not rigs.is_empty():
 		_photo_rig = rigs[0] as PhotoCameraRig
 
-## 收集所有相机分组并随机选一个；无分组则回退旧单组结构。
+## 收集所有相机分组并选一个；无分组则回退旧单组结构。
 ## 在 _setup_cameras 前调用（_onready 变量此时可能尚未初始化，勿依赖）。
+## 联机：host 权威选分区并广播，client 用同一分区（避免相机/出生点/道具点错位）。
 func _select_zone() -> void:
 	_collect_zones()
 	if _zones.is_empty():
 		return
-	_active_zone = _zones.pick_random()
+	if NetManager.is_online and not NetManager.is_host:
+		# client：等待 host 广播的分区索引（最多约 3 秒）
+		var guard := 0
+		while NetManager.zone_index < 0 and guard < 600:
+			await get_tree().process_frame
+			guard += 1
+		var idx := clampi(NetManager.zone_index, 0, _zones.size() - 1)
+		_active_zone = _zones[idx]
+	else:
+		var idx := randi() % _zones.size()
+		_active_zone = _zones[idx]
+		if NetManager.is_online and NetManager.is_host:
+			NetManager.broadcast_zone_index(idx)
 	_apply_active_zone()
 
 ## 收集关卡里的 CameraZone（含根/子节点挂 CameraZone 脚本的）
@@ -284,14 +297,22 @@ func _on_level_battle_ended() -> void:
 		_shutter_slowmo.cancel()
 	Engine.time_scale = 0.5
 	_slowmo_end_msec = Time.get_ticks_msec() + SHUTTER_SLOWMO_MS
+	# 联机：广播慢放流速
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_time_scale(0.5)
 
 func _process(delta: float) -> void:
+	# 联机 client：慢放由 host 权威，client 收广播（不本地驱动）
+	if NetManager.is_online and not NetManager.is_host:
+		return
 	# 倒數至拍照前 3 秒 → 逐步减速慢放（道具加時回升時 controller 內部會取消復原）
 	if _shutter_slowmo and GameManager.current_stage == GameManager.GameStage.BATTLE:
 		_shutter_slowmo.update_trigger(GameManager.stage_time_remaining)
 	if _slowmo_end_msec > 0 and Time.get_ticks_msec() >= _slowmo_end_msec:
 		_slowmo_end_msec = 0
 		Engine.time_scale = 1.0
+		if NetManager.is_online and NetManager.is_host:
+			NetManager.broadcast_time_scale(1.0)
 
 func _on_level_settlement(_results: Dictionary) -> void:
 	if _hud:

@@ -41,6 +41,10 @@ var _photo_rig: PhotoCameraRig = null
 func _ready() -> void:
 	await get_tree().process_frame
 
+	# 联机 client：加载期间 host 可能已推进到 BATTLE（广播先到、关卡未就绪），记录下来补发
+	var battle_already_active := _is_client() \
+			and GameManager.current_stage == GameManager.GameStage.BATTLE
+
 	_setup_cameras()
 	_setup_capture_highlight()
 	_spawn_players()
@@ -55,6 +59,26 @@ func _ready() -> void:
 
 	# 进入对局（流程由 GameManager/匹配同事控制，关卡只在场景加载后准备好）
 	_on_level_ready()
+
+	# client：若结算/表情在关卡就绪前已送达（NetManager 缓存），此处补收
+	if _is_client():
+		# 表情
+		var faces := NetManager.take_faces()
+		if not faces.is_empty():
+			call_deferred("_on_faces_received", faces)
+		# 结算
+		var buffered := NetManager.take_settlement()
+		if not buffered.is_empty():
+			call_deferred("_on_settlement_received", buffered)
+		else:
+			# 最终结果未到但照片预览已到：先补显照片
+			var pv := NetManager.take_preview_photo()
+			if not pv.is_empty():
+				call_deferred("_on_settlement_preview_received", pv["photo"], pv["round"])
+
+	# 联机 client：补发错过的 battle_started
+	if battle_already_active:
+		EventBus.battle_started.emit()
 
 # ---------------------------------------------------------------
 # 子类扩展点
@@ -121,6 +145,14 @@ func get_spawn_points() -> Array[Vector3]:
 		Vector3(0.0, 0.5, -2.4),
 	]
 
+## 是否聯機 client 端（远端表现：不模拟、只渲染 puppet）
+func _is_client() -> bool:
+	return NetManager.is_online and not NetManager.is_host
+
+## 是否聯機 host 端（权威模拟）
+func _is_net_host() -> bool:
+	return NetManager.is_online and NetManager.is_host
+
 func _spawn_players() -> void:
 	var spawns := get_spawn_points()
 	var slots := get_player_slots()
@@ -131,6 +163,7 @@ func _spawn_players() -> void:
 		player.player_index = slot
 		player.player_color = PlayerConfig.get_color(slot)
 		player.position = spawns[slot % spawns.size()]
+		player.is_puppet = _is_client()
 		player.add_to_group("settlement_actor")
 		(_actors_root if _actors_root else self).add_child(player)
 
@@ -145,6 +178,8 @@ func _setup_player_hud() -> void:
 # ---------------------------------------------------------------
 
 func _physics_process(_delta: float) -> void:
+	if _is_client():
+		return  # 出界/重生由 host 权威判定，client 不跑
 	var actors := _actors_root if _actors_root else self
 	for child in actors.get_children():
 		var player := child as PlayerController
@@ -270,6 +305,11 @@ func _connect_signals() -> void:
 	EventBus.battle_ended.connect(_on_battle_ended)
 	EventBus.stage_timer_updated.connect(_on_stage_timer)
 	EventBus.photo_taken.connect(_on_photo_taken)
+	if _is_client():
+		EventBus.settlement_received.connect(_on_settlement_received)
+		EventBus.settlement_preview_received.connect(_on_settlement_preview_received)
+		EventBus.faces_received.connect(_on_faces_received)
+		EventBus.face_changed.connect(_on_face_changed)
 	if _settlement and _settlement.has_signal("settlement_completed"):
 		_settlement.settlement_completed.connect(_on_settlement_completed)
 	if _scoring_screen and _scoring_screen.has_signal("flow_finished"):
@@ -284,12 +324,49 @@ func _on_flow_finished(action: String) -> void:
 
 func _on_battle_started() -> void:
 	_on_level_battle_started()
-	# 每轮开始：给每个玩家随机一个表情
-	var actors := _actors_root if _actors_root else self
-	for child in actors.get_children():
+	if NetManager.is_online and not NetManager.is_host:
+		return  # client 表情由 host 广播同步，不自行随机
+	# 每轮开始：随机表情（本地或联机 host 权威）。联机 host 再把结果广播给 client。
+	var list: Array = []
+	for child in (_actors_root if _actors_root else self).get_children():
 		var p := child as PlayerController
-		if p:
-			p.enter_match_random_face()
+		if not p:
+			continue
+		var idx := -1
+		if p.face and p.face.count() > 0:
+			idx = randi() % p.face.count()
+			p.face.show_expression(idx)
+		list.append({"i": p.player_index, "f": idx})
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_faces(list)
+
+## client：应用 host 广播的本轮表情（每角色）
+func _on_faces_received(faces: Array) -> void:
+	var root := _actors_root if _actors_root else self
+	var actors := root.get_children()
+	for e in faces:
+		var p := _find_actor_by_index(actors, int(e.get("i", -1)))
+		if p == null or p.face == null:
+			continue
+		var idx := int(e.get("f", -1))
+		if idx >= 0 and p.face.count() > 0:
+			p.face.show_expression(idx)
+
+func _find_actor_by_index(actors: Array, idx: int) -> PlayerController:
+	for child in actors:
+		var p := child as PlayerController
+		if p and p.player_index == idx:
+			return p
+	return null
+
+## client：应用 host 广播的单个角色表情变化（动作触发）
+func _on_face_changed(player_index: int, face_index: int) -> void:
+	if face_index < 0:
+		return
+	var root := _actors_root if _actors_root else self
+	var p := _find_actor_by_index(root.get_children(), player_index)
+	if p and p.face and p.face.count() > 0:
+		p.face.show_expression(face_index)
 
 func _on_battle_ended() -> void:
 	_on_level_battle_ended()
@@ -319,6 +396,12 @@ func _do_shutter_flash() -> void:
 	tween.tween_property(_flash, "color:a", 0.0, 0.3)
 
 func _on_settlement_completed(results: Dictionary) -> void:
+	if _is_net_host():
+		NetManager.broadcast_settlement(results)
+	_show_settlement(results)
+
+## 展示结算（host 本地 & client 收到广播后共用）
+func _show_settlement(results: Dictionary) -> void:
 	if _scoring_screen:
 		var hud := get_node_or_null("HUD/PlayerLayer/PlayerHUD")
 		if hud and _scoring_screen.has_method("setup"):
@@ -326,6 +409,30 @@ func _on_settlement_completed(results: Dictionary) -> void:
 		if _scoring_screen.has_method("show_results"):
 			_scoring_screen.show_results(results)
 	_on_level_settlement(results)
+
+## client：NetManager（autoload）转发结算结果；关卡就绪后连接即收
+func _on_settlement_received(results: Dictionary) -> void:
+	NetManager.mark_settlement_played(int(results.get("round", 0)))
+	_show_settlement(results)
+	var photo_img: Image = results.get("photo")
+	if photo_img is Image:
+		_save_photo_client(photo_img)
+
+## client：照片预览先到（分数未出），先显示照片，分数到了再刷分
+func _on_settlement_preview_received(photo: Image, round: int) -> void:
+	if round <= NetManager._played_round:
+		return
+	if _scoring_screen and _scoring_screen.has_method("show_photo_preview"):
+		(_scoring_screen as Node).call("show_photo_preview", photo)
+
+## client：保存 host 下发的权威照片（不自行截屏，避免插值偏差）
+func _save_photo_client(img: Image) -> void:
+	if img == null or img.is_empty():
+		return
+	var dir := "user://photos"
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	img.save_png("%s/photo_%s.png" % [dir, stamp])
 
 func _on_level_settlement(_results: Dictionary) -> void:
 	pass

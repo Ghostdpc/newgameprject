@@ -26,6 +26,7 @@ const BADGES: Array[Texture2D] = [
 @onready var _prompt_join: Control = $PromptJoin
 @onready var _prompt_ready: Control = $PromptReady
 @onready var _prompt_cancel_ready: Control = $PromptCancelReady
+@onready var _device_label: Label = $DeviceLabel
 
 var color := Color.WHITE
 
@@ -33,6 +34,13 @@ func setup(index: int, c: Color) -> void:
 	color = c
 	_badge.texture = BADGES[index % BADGES.size()]
 	set_state(State.EMPTY)
+
+## 卡片下方显示本角色操作方式（如「键盘1」「手柄2」）；text 为空则隐藏
+func set_device(text: String) -> void:
+	if _device_label == null:
+		return
+	_device_label.text = text
+	_device_label.visible = not text.is_empty()
 
 func set_state(s: State) -> void:
 	var joined := s != State.EMPTY

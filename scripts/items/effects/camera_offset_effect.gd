@@ -30,6 +30,9 @@ func apply(ctx: ItemContext) -> void:
 	focus.target_player = invoker
 	controller.push_behavior(focus)
 	ctx.extra[KEY_BEHAVIOR] = focus
+	# 联机：host 广播相机聚焦，client 主相机跟随对应 puppet
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_camera_focus(invoker.player_index, duration)
 
 func revert(ctx: ItemContext) -> void:
 	var controller: CameraController = CameraSystem.get_main_controller() as CameraController

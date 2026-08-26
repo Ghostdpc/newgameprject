@@ -95,6 +95,23 @@ func _build_mask_panel() -> void:
 func setup(player_hud: PlayerHUD) -> void:
 	_player_hud = player_hud
 
+## 结算照片预览：仅先显示最终照片（分数未出，不启动刷分），最终 show_results 到达后刷分
+func show_photo_preview(image: Image) -> void:
+	if image == null or image.get_width() <= 0:
+		return
+	_results = _results.duplicate(true) if _results else {}
+	_results["photo"] = image
+	if _player_hud:
+		_player_hud.reset_scoreboards()
+		_player_hud.enter_scoring_style()
+	_photo_rect.texture = ImageTexture.create_from_image(image)
+	_film.scale = Vector2(0.7, 0.7)
+	_film.modulate.a = 0.0
+	_root.show()
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(_film, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_film, "modulate:a", 1.0, 0.25)
+
 func show_results(results: Dictionary) -> void:
 	_results = results
 	_skip_requested = false

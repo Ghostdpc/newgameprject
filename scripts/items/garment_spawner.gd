@@ -16,7 +16,13 @@ func _ready() -> void:
 	EventBus.battle_started.connect(_on_battle_started)
 	EventBus.battle_ended.connect(_on_battle_ended)
 
+## 联机 client 不本地生成（host 权威生成后广播）
+func _is_client() -> bool:
+	return NetManager.is_online and not NetManager.is_host
+
 func _on_battle_started() -> void:
+	if _is_client():
+		return
 	_active_pickups.clear()
 	_spawned_ids.clear()
 
@@ -46,6 +52,7 @@ func _spawn_one(garment_id: String, pickup_script: Script) -> void:
 	var pickup := Area3D.new()
 	pickup.set_script(pickup_script)
 	pickup.garment_id = garment_id
+	pickup.spawn_id = NetManager.next_entity_id()
 	var pos := DropPlacement.pick_position()
 	var host: Node = get_tree().current_scene if get_tree().current_scene else get_parent()
 	host.add_child(pickup)
@@ -55,6 +62,23 @@ func _spawn_one(garment_id: String, pickup_script: Script) -> void:
 
 	_active_pickups.append(pickup)
 	_spawned_ids[garment_id] = true
+	# 联机：host 广播服装生成
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_garment_spawn(garment_id, pickup.global_position, pickup.spawn_id)
+
+## client：收到 host 广播后在指定位置生成服装
+func spawn_pickup_at(garment_id: String, pos: Vector3, spawn_id: int) -> void:
+	var pickup_script := load(GARMENT_PICKUP_SCRIPT) as Script
+	if pickup_script == null:
+		return
+	var pickup := Area3D.new()
+	pickup.set_script(pickup_script)
+	pickup.garment_id = garment_id
+	pickup.spawn_id = spawn_id
+	var host: Node = get_tree().current_scene if get_tree().current_scene else get_parent()
+	host.add_child(pickup)
+	pickup.global_position = pos
+	_active_pickups.append(pickup)
 
 func _on_pickup_removed(garment_id: String) -> void:
 	_spawned_ids.erase(garment_id)
