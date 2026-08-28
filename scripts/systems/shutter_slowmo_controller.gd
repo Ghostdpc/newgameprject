@@ -1,5 +1,5 @@
 ## 职责：主世界快门前 3 秒逐步减速慢放（正式版）
-## 在 BATTLE 阶段倒数至 trigger_seconds 时，启动逐步减速流程，将 Engine.time_scale 降到 min_scale。
+## 在 BATTLE 阶段倒数至 trigger_seconds 时，启动逐步减速流程，将 NetManager.gameplay_time_scale 降到 min_scale。
 ## 若期间道具加时使剩余时间回升（> trigger_seconds + hysteresis），恢复 time_scale=1，
 ## 直到再次进入 trigger 区间才重新减速。
 ##
@@ -41,12 +41,9 @@ func _process(_delta: float) -> void:
 	_phase_elapsed = (Time.get_ticks_msec() - _start_msec) / 1000.0
 	var t := clampf(_phase_elapsed / decel_time, 0.0, 1.0)
 	var cur := lerpf(1.0, min_scale, ease(t, decel_curve))
-	Engine.time_scale = cur
-	# 联机：host 广播慢放流速（client 不本地驱动）
-	if NetManager.is_online and NetManager.is_host:
-		NetManager.broadcast_time_scale(cur)
+	NetManager.set_time_scale(cur)
 	if t >= 1.0 and stop_at_zero:
-		Engine.time_scale = 0.0
+		NetManager.set_time_scale(0.0)
 
 func _enable() -> void:
 	if _active:
@@ -54,7 +51,7 @@ func _enable() -> void:
 	_active = true
 	_phase_elapsed = 0.0
 	_start_msec = Time.get_ticks_msec()
-	Engine.time_scale = 1.0
+	NetManager.set_time_scale(1.0)
 	set_process(true)
 
 ## 取消减速，恢复正常时间流（加时回升 / 战争结束 / 关卡离开时）
@@ -63,10 +60,10 @@ func cancel() -> void:
 		return
 	_active = false
 	set_process(false)
-	Engine.time_scale = 1.0
+	NetManager.set_time_scale(1.0)
 
 func _exit_tree() -> void:
-	Engine.time_scale = 1.0
+	NetManager.set_time_scale(1.0)
 
 ## 供 Level 在 BATTLE 内每帧注入剩余秒；倒数至阈值即启动减速
 func update_trigger(seconds_remaining: float) -> void:

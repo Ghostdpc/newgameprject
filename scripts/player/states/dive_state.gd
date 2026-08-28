@@ -19,6 +19,10 @@ var _phase_timer: float = 0.0
 var _dive_direction: Vector3 = Vector3.ZERO
 var _has_hit: bool = false
 
+## 是否已命中（供 _check_dive_hit 判断是否需要广播命中事件）
+func is_hit() -> bool:
+	return _has_hit
+
 func enter() -> void:
 	SoundMgr.play("dive", true)
 	_phase = Phase.PREPARE

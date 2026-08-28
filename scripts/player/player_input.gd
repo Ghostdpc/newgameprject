@@ -126,6 +126,16 @@ func get_input_level() -> Dictionary:
 	if _is_suicide_held(): buttons |= BIT_SUICIDE
 	return {"move": get_move_direction(), "buttons": buttons}
 
+## 本帧「刚按下」沿位掩码（联机上行：host 直接 OR 进边缘，避免同一 idle 帧多包压沿丢失）
+func get_input_edge() -> int:
+	var edge := 0
+	if is_jump_just_pressed(): edge |= BIT_JUMP
+	if is_dive_just_pressed(): edge |= BIT_DIVE
+	if is_pickup_just_pressed(): edge |= BIT_PICKUP
+	if is_use_item_just_pressed(): edge |= BIT_USE
+	if is_suicide_just_pressed(): edge |= BIT_SUICIDE
+	return edge
+
 func _is_jump_held() -> bool:
 	if _keyboard_enabled() and Input.is_action_pressed(_kb_action("jump")):
 		return true

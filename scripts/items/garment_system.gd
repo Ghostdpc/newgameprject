@@ -104,31 +104,51 @@ func equip_garment(player: PlayerController, garment_id: String) -> void:
 	# 通知 EventBus（HUD / PickupBubbles 监听）
 	var slot_int := _slot_to_int(def.slot)
 	EventBus.outfit_changed.emit(player.player_index, slot_int, garment_id)
-	# 联机：host 广播穿戴，client 只挂外观
+	# 联机：host 广播穿戴，client 同步外观与效果
 	if NetManager.is_online and NetManager.is_host:
 		NetManager.broadcast_outfit_changed(player.player_index, slot_int, garment_id)
 
-## client：仅挂载服装外观（host 广播触发，不应用效果、不记分）
+## client：挂载服装外观并同步全部效果（host 广播触发，不记分、不广播）。
+## 玩法效果（如 player_speed）与视觉效果（身材缩放/弹簧/发光）都应用，与 host 端
+## equip_garment 保持一致。client puppet 的移速仍由 host 快照驱动，本地应用只保证状态一致。
 func equip_garment_visual(player: PlayerController, garment_id: String) -> void:
 	var def := _garment_config.get_garment(garment_id)
 	if def == null or player == null or not player.outfit_manager:
 		return
-	if def.model.is_empty():
-		return
-	var scene := load(def.model) as PackedScene
-	if scene == null:
-		return
-	var item: Node3D = null
-	if not def.texture.is_empty():
-		var built := PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale)
-		if built:
-			item = player.outfit_manager.equip_garment_node(def.slot, built, garment_id)
-	if item == null:
-		item = player.outfit_manager.equip(def.slot, scene, garment_id)
-	if item and def.texture.is_empty() and def.tint != Color.WHITE:
-		_tint_model(item, def.tint)
-	if item and def.mount_offset != Vector3.ZERO:
-		item.position = def.mount_offset
+
+	# 卸下同槽旧件（revert 旧效果 + 移除旧节点）
+	_unequip_slot(player, def.slot)
+
+	# 挂载外观
+	if not def.model.is_empty():
+		var scene := load(def.model) as PackedScene
+		if scene:
+			var item: Node3D = null
+			if not def.texture.is_empty():
+				var built := PropModelBuilder.build(def.model, def.texture, 0.6, def.model_scale)
+				if built:
+					item = player.outfit_manager.equip_garment_node(def.slot, built, garment_id)
+			if item == null:
+				item = player.outfit_manager.equip(def.slot, scene, garment_id)
+			if item and def.texture.is_empty() and def.tint != Color.WHITE:
+				_tint_model(item, def.tint)
+			if item and def.mount_offset != Vector3.ZERO:
+				item.position = def.mount_offset
+
+	# 应用全部效果（与 host 端 equip_garment 一致）
+	var ctx := ItemContext.new()
+	ctx.source_player = player
+	ctx.item_id = garment_id
+	for effect in def.effects:
+		effect.apply(ctx)
+
+	# 记录装备状态（供下次同槽替换时 revert；结算评分仍只在 host 端读取）
+	var pid := player.get_instance_id()
+	if not _equipped.has(pid):
+		_equipped[pid] = {}
+	_equipped[pid][def.slot] = { "def": def, "ctx": ctx }
+	player.equipped_garments[def.slot] = garment_id
+	player.refresh_body_scale()
 
 ## 计算玩家服装得分（0~1），供 ScoreAnalyzer 的 outfit 字段
 func get_equipped_score(player: PlayerController) -> float:

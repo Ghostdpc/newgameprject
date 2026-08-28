@@ -62,6 +62,8 @@ var double_jump_available: bool = false
 @export var player_index: int = 0
 ## 远端 puppet（client 侧渲染的玩家）：不跑本地物理/状态机，只插值 host 快照
 @export var is_puppet: bool = false
+## 本端预测角色（client 自己的席位）：本地模拟移动 + 宿主快照校正；道具/死亡等事件仍宿主权威
+@export var is_predicted: bool = false
 @export var player_color: Color = Color.WHITE
 ## human 模型本体 Y 轴朝向补偿（deg）。若走路侧身，在 player.tscn 调整让模型正面朝移动方向。
 @export var human_model_yaw_deg: float = -90.0
@@ -117,10 +119,15 @@ var _current_anim: String = ""
 var frozen: bool = false
 var _is_human_model: bool = false
 var _suicide_was_pressed: bool = false
-## puppet 插值目标（client 侧远端表现）
-var _puppet_target_pos: Vector3 = Vector3.ZERO
-var _puppet_target_yaw: float = 0.0
-var _puppet_has_target: bool = false
+## puppet 快照缓冲（client 侧远端表现插值：缓冲 + 双快照插值，吸收网络抖动）
+const PUPPET_INTERP_DELAY_MS: int = 100
+const PUPPET_BUFFER_MAX_MS: int = 500
+var _puppet_buffer: Array = []  # {t: int, pos: Vector3, vel: Vector3, yaw: float}
+## 本端预测：宿主校正阈值（米），超阈值才拉回，避免连续移动橡皮筋
+const PREDICTION_CORRECTION_THRESHOLD: float = 1.5
+var _prediction_active: bool = true
+## 待未确认输入（reconciliation：idle 阶段只快照拉回，物理帧再重放补位）
+var _reconcile_queue: Array = []
 var _model_skeleton: Skeleton3D
 var _head_bone_idx: int = -1
 var _body_bone_idx: int = -1
@@ -161,7 +168,11 @@ func _ready() -> void:
 	_head_icon = get_node_or_null("PlayerHeadIcon") as PlayerHeadIcon
 	apply_player_color(player_color)
 	add_to_group("players")
+	NetManager.register_player(self)
 	EventBus.battle_started.connect(func(): score_penalty = 0)
+
+func _exit_tree() -> void:
+	NetManager.unregister_player(self)
 
 ## 依据席位所有权选择输入源：host 上远端席位用 RemoteInputProvider，其余本地直读
 func _create_input_provider() -> PlayerInput:
@@ -277,16 +288,26 @@ func _process(delta: float) -> void:
 		return
 	if frozen:
 		return
+	# 本端预测：死亡/复活期间本地模拟暂停，按宿主快照插值表现
+	if is_predicted and not _prediction_active:
+		return
 	if spring_rig:
 		spring_rig.velocity_hints = Vector2(velocity.x, velocity.z)
 		spring_rig.root_velocity = velocity
 	if GameManager.current_stage == GameManager.GameStage.SCORING:
 		return
-	state_machine.update(delta)
+	# 玩法慢放：只影响玩家状态机/动画，不动 UI（Engine.time_scale 全局慢放已被替换）
+	var scale := NetManager.gameplay_time_scale
+	if _animation_player:
+		_animation_player.speed_scale = scale
+	state_machine.update(delta * scale)
 	_update_animation()
 	_apply_body_scale()
 	if _use_gap_time > 0.0:
-		_use_gap_time -= delta
+		_use_gap_time -= delta * scale
+	# 本端预测：道具拾取/使用由宿主权威广播，不本地执行
+	if is_predicted:
+		return
 	if player_input.is_use_item_just_pressed():
 		if not held_item_id.is_empty():
 			# 身上有道具：捡起后需过间隔才能使用
@@ -297,7 +318,7 @@ func _process(delta: float) -> void:
 			_try_pickup()
 	# 长按拾取兜底：联机按下沿（edge）依赖上行推导，双开/卡顿下行上行频率低，
 	# 快速按键覆盖帧少、edge 易丢；held(level) 对丢帧免疫，按住 0.8s 兜底拾取
-	_update_pickup_hold(delta)
+	_update_pickup_hold(delta * scale)
 
 ## 长按拾取逻辑：按住 0.8s 触发；移动/受控 打断
 func _update_pickup_hold(delta: float) -> void:
@@ -387,10 +408,24 @@ func _physics_process(delta: float) -> void:
 	if is_puppet:
 		_puppet_physics(delta)
 		return
+	var scale := NetManager.gameplay_time_scale
+	# 本端预测：只本地模拟移动（重力和状态机），自杀/飞扑撞击/推物/抓取/拾取等由宿主权威
+	if is_predicted:
+		if not _prediction_active:
+			_puppet_physics(delta)
+			return
+		if not _reconcile_queue.is_empty():
+			# 校正重放补位：本帧重放未确认输入，跳过常规模拟（下帧继续）
+			_replay_pending()
+			return
+		_apply_gravity(delta * scale)
+		state_machine.physics_update(delta * scale)
+		move_and_slide()
+		return
 	# 死亡/复活状态也需物理帧推进（Death→Waiting→Fall），故不整体跳过
-	_apply_gravity(delta)
+	_apply_gravity(delta * scale)
 	if is_dead():
-		state_machine.physics_update(delta)
+		state_machine.physics_update(delta * scale)
 		move_and_slide()
 		return
 	_handle_suicide()
@@ -399,7 +434,7 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0.0, ACCELERATION * delta)
 		move_and_slide()
 		return
-	state_machine.physics_update(delta)
+	state_machine.physics_update(delta * scale)
 	move_and_slide()
 	_check_dive_hit()
 	_push_contacted_props()
@@ -407,20 +442,97 @@ func _physics_process(delta: float) -> void:
 
 # ---------------------------------------------------------------- 远端 puppet
 
-## 写入远端快照（client 侧，由 NetManager 广播驱动）
-func apply_remote_state(pos: Vector3, vel: Vector3, state_name: String, yaw: float) -> void:
-	_puppet_target_pos = pos
-	_puppet_target_yaw = yaw
-	_puppet_has_target = true
+## 写入远端快照（client 侧，由 NetManager 广播驱动；缓冲后延迟插值 + 速度外推）。
+## t_msec 为宿主时间戳换算到本端时间线，非本端到达时刻（网络抖动不进插值轴）。
+func apply_remote_state(pos: Vector3, vel: Vector3, state_name: String, yaw: float, t_msec: int) -> void:
+	_puppet_buffer.append({"t": t_msec, "pos": pos, "vel": vel, "yaw": yaw})
+	while not _puppet_buffer.is_empty() and t_msec - int(_puppet_buffer[0]["t"]) > PUPPET_BUFFER_MAX_MS:
+		_puppet_buffer.pop_front()
 	_puppet_update_animation(state_name)
 
-## puppet 插值：位置/朝向向 host 快照目标平滑逼近（一期 lerp，后续换缓冲插值）
-func _puppet_physics(delta: float) -> void:
-	if not _puppet_has_target:
+## 本端预测可本地模拟的基础移动状态（其余战斗/死亡状态由宿主权威，暂停本地模拟并插值表现）。
+## Dive 不在列：飞扑命中是宿主权威，本地预测位移会在命中瞬间被拉回，改为宿主权威插值 + 命中事件。
+const PREDICTED_LOCAL_STATES: Array = ["Idle", "Move", "Jump"]
+
+## 本端预测校正：宿主快照拉回（非基础移动状态暂停本地模拟，其余超阈值才拉回 + 输入重放）
+func apply_prediction_correction(pos: Vector3, vel: Vector3, state_name: String, yaw: float, t_msec: int, ack_seq: int = -1) -> void:
+	if not PREDICTED_LOCAL_STATES.has(state_name):
+		_prediction_active = false
+		_puppet_buffer.append({"t": t_msec, "pos": pos, "vel": vel, "yaw": yaw})
+		while not _puppet_buffer.is_empty() and t_msec - int(_puppet_buffer[0]["t"]) > PUPPET_BUFFER_MAX_MS:
+			_puppet_buffer.pop_front()
+		_puppet_update_animation(state_name)
 		return
-	var k := minf(1.0, delta * 12.0)
-	global_position = global_position.lerp(_puppet_target_pos, k)
-	rotation.y = lerp_angle(rotation.y, _puppet_target_yaw, k)
+	_prediction_active = true
+	_puppet_buffer.clear()
+	if global_position.distance_to(pos) > PREDICTION_CORRECTION_THRESHOLD:
+		global_position = pos
+		velocity = vel
+		rotation.y = yaw
+		NetManager.drop_acked_inputs(player_index, ack_seq)
+		_reconcile_queue = NetManager.take_pending_inputs(player_index)
+
+## reconciliation 重放：宿主权威快照已拉回，本物理帧把未确认输入重放补位（catch-up）。
+## 必须在 _physics_process 内跑（move_and_slide 仅物理帧合法），故由 idle 阶段的校正只入队。
+## 用固定物理 tick 逐条重演（非当前帧 delta，避免帧率漂移），单帧步数设上限防尖峰。
+const REPLAY_MAX_STEPS: int = 12  # 单帧最多重放步数，超出的旧输入丢弃（下轮校正再收敛）
+
+func _replay_pending() -> void:
+	var pending := _reconcile_queue
+	_reconcile_queue = []
+	if pending.is_empty():
+		return
+	var start := 0
+	if pending.size() > REPLAY_MAX_STEPS:
+		start = pending.size() - REPLAY_MAX_STEPS
+	var tick := get_physics_process_delta_time() * NetManager.gameplay_time_scale
+	var real_input := player_input
+	var replay := ReplayInputProvider.new(player_index)
+	replay.set_entries(pending)
+	player_input = replay
+	for i in range(start, pending.size()):
+		replay.step(i)
+		_apply_gravity(tick)
+		state_machine.physics_update(tick)
+		move_and_slide()
+	player_input = real_input
+
+## 远端 puppet：宿主广播的飞扑命中反馈（true=被击飞切 Fly，false=撞物自己倒地切 Stunned）
+func apply_dive_hit_feedback(target_was_player: bool) -> void:
+	if target_was_player:
+		_puppet_update_animation("Fly")
+	else:
+		_puppet_update_animation("Stunned")
+
+## puppet 插值：按延迟缓冲在相邻快照间插值（抖动吸收）；单快照时用速度外推
+func _puppet_physics(_delta: float) -> void:
+	if _animation_player:
+		_animation_player.speed_scale = NetManager.gameplay_time_scale
+	var now := Time.get_ticks_msec()
+	var target_t := now - PUPPET_INTERP_DELAY_MS
+	if _puppet_buffer.is_empty():
+		return
+	if _puppet_buffer.size() == 1 or target_t >= int(_puppet_buffer[-1]["t"]):
+		var latest: Dictionary = _puppet_buffer[-1]
+		var ahead := maxf(0.0, float(target_t - int(latest["t"])) / 1000.0)
+		global_position = (latest["pos"] as Vector3) + (latest["vel"] as Vector3) * ahead
+		rotation.y = latest["yaw"]
+		return
+	if target_t <= int(_puppet_buffer[0]["t"]):
+		global_position = _puppet_buffer[0]["pos"]
+		rotation.y = _puppet_buffer[0]["yaw"]
+		return
+	for i in range(_puppet_buffer.size() - 1):
+		var a: Dictionary = _puppet_buffer[i]
+		var b: Dictionary = _puppet_buffer[i + 1]
+		var ta: int = a["t"]
+		var tb: int = b["t"]
+		if ta <= target_t and target_t <= tb:
+			var span := tb - ta
+			var alpha := 0.5 if span <= 0 else clampf(float(target_t - ta) / float(span), 0.0, 1.0)
+			global_position = (a["pos"] as Vector3).lerp(b["pos"] as Vector3, alpha)
+			rotation.y = lerp_angle(a["yaw"], b["yaw"], alpha)
+			return
 
 ## puppet 动画：按 host 状态名切动画（远端不做 ragdoll，用 canned 动画）
 func _puppet_update_animation(state_name: String) -> void:
@@ -519,6 +631,7 @@ func _find_nearest_prop() -> PhysicalProp:
 	return null
 
 ## 飞扑状态碰撞检测：撞到玩家→击飞对方倒地；撞到场景物理物→击飞物品 + 自己倒地
+## 命中纯宿主物理：host 侧广播命中事件，client 靠事件同步 VFX/反馈时序（不靠 state 名+位置推断）
 func _check_dive_hit() -> void:
 	if state_machine.current_state_name != "Dive":
 		return
@@ -526,12 +639,17 @@ func _check_dive_hit() -> void:
 	for i in get_slide_collision_count():
 		var collider := get_slide_collision(i).get_collider()
 		if collider is PlayerController:
+			var was_hit := dive.is_hit()
 			dive.hit_target(collider as PlayerController)
+			if not was_hit and NetManager.is_online and NetManager.is_host:
+				NetManager.broadcast_dive_hit(player_index, (collider as PlayerController).player_index, false, global_position)
 		elif collider is PhysicalProp:
 			dive.knock_prop(collider as PhysicalProp)
 			# 撞到物品自己也立刻停下并进入倒地（与被撞同等）
 			SoundMgr.play("hit")
 			_knocked_down_by_prop(dive)
+			if NetManager.is_online and NetManager.is_host:
+				NetManager.broadcast_dive_hit(player_index, -1, true, global_position)
 			return
 
 ## 撞到物品后自己倒地：立即停下 + 进入 Stunned（布娃娃瘫软）
@@ -542,8 +660,9 @@ func _knocked_down_by_prop(dive: DiveState) -> void:
 func apply_move(direction: Vector2) -> void:
 	var world_dir := to_world_dir(direction)
 	var target_velocity := world_dir * TuneConfig.move_speed * speed_multiplier
-	velocity.x = move_toward(velocity.x, target_velocity.x, ACCELERATION * get_physics_process_delta_time())
-	velocity.z = move_toward(velocity.z, target_velocity.z, ACCELERATION * get_physics_process_delta_time())
+	var dt := get_physics_process_delta_time() * NetManager.gameplay_time_scale
+	velocity.x = move_toward(velocity.x, target_velocity.x, ACCELERATION * dt)
+	velocity.z = move_toward(velocity.z, target_velocity.z, ACCELERATION * dt)
 	if direction.length_squared() > 0.0:
 		_turn_toward(world_dir)
 
@@ -586,7 +705,7 @@ func _turn_toward(direction: Vector3) -> void:
 	var cur_yaw := rotation.y
 	if is_equal_approx(cur_yaw, target_yaw):
 		return
-	rotation.y = lerp_angle(cur_yaw, target_yaw, minf(1.0, TURN_RATE * get_physics_process_delta_time()))
+	rotation.y = lerp_angle(cur_yaw, target_yaw, minf(1.0, TURN_RATE * get_physics_process_delta_time() * NetManager.gameplay_time_scale))
 
 func _apply_gravity(delta: float) -> void:
 	if is_dead():
@@ -845,6 +964,11 @@ func _apply_collision_scale() -> void:
 		var shape := _body_collision.shape as CapsuleShape3D
 		if shape:
 			shape.radius = 0.4 * maxf(1.0, maxf(body_width, body_scale))
+
+## 外部（联机 client 换装同步等）变更身材缩放后，显式刷新骨架缩放。
+## puppet 的 _process 会跳过 _apply_body_scale，需手动触发一次。
+func refresh_body_scale() -> void:
+	_apply_body_scale()
 
 ## 磕头布娃娃（服装演出）：临时开启 ragdoll，对 head 骨施向前下方冲量让角色叩头，
 ## 一段时间后自动关闭 ragdoll 恢复站姿。不进入 Stunned/倒地状态。

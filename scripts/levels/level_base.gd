@@ -62,6 +62,8 @@ func _ready() -> void:
 
 	# client：若结算/表情在关卡就绪前已送达（NetManager 缓存），此处补收
 	if _is_client():
+		# 补收加载期间漏掉的实体生成广播（道具/服装/陷阱全量对账，host 权威）
+		NetManager.request_entity_state()
 		# 表情
 		var faces := NetManager.take_faces()
 		if not faces.is_empty():
@@ -157,13 +159,21 @@ func _spawn_players() -> void:
 	var spawns := get_spawn_points()
 	var slots := get_player_slots()
 	var count: int = mini(get_player_count(), spawns.size())
+	var my_seats: Array[int] = []
+	if NetManager.is_online and not NetManager.is_host:
+		my_seats = NetManager.get_my_seats()
 	for k in count:
 		var slot: int = slots[k] if k < slots.size() else k
 		var player: PlayerController = PLAYER_SCENE.instantiate() as PlayerController
 		player.player_index = slot
 		player.player_color = PlayerConfig.get_color(slot)
 		player.position = spawns[slot % spawns.size()]
-		player.is_puppet = _is_client()
+		# 联机 client：本端席位=本地预测（移动模拟+宿主校正），其他席位=puppet（纯插值表现）
+		if _is_client():
+			player.is_puppet = not my_seats.has(slot)
+			player.is_predicted = my_seats.has(slot)
+		else:
+			player.is_puppet = false
 		player.add_to_group("settlement_actor")
 		(_actors_root if _actors_root else self).add_child(player)
 

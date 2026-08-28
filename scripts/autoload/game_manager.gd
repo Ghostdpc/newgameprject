@@ -96,6 +96,8 @@ func get_joined_slots() -> Array[int]:
 
 var _stage_index: int = -1
 var _timer_active: bool = false
+## 倒计时广播分桶去重（0.1s 粒度）
+var _last_timer_bucket: int = -1
 
 func _ready() -> void:
 	config = GameConfig.new()
@@ -127,46 +129,32 @@ func _advance_stage() -> void:
 func _transition_to(stage: GameStage) -> void:
 	if _is_net_client():
 		return
-	current_stage = stage
-	EventBus.stage_changed.emit(stage)
 	# 返回大厅前先重置全员就绪（host 权威，再广播），避免 client 收到 LOBBY 时带上旧就绪态
 	if stage == GameStage.LOBBY:
 		NetManager.enter_lobby_reset_ready()
 	if _is_net_host():
 		_rpc_transition.rpc(stage)
-
-	if stage == GameStage.MAIN_MENU:
-		_timer_active = false
-		get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+	_apply_stage(stage)
+	# MAIN_MENU / LOBBY 无计时，_apply_stage 已切场景
+	if stage == GameStage.MAIN_MENU or stage == GameStage.LOBBY:
 		return
-
-	if stage == GameStage.LOBBY:
-		_timer_active = false
-		get_tree().change_scene_to_file("res://scenes/ui/lobby.tscn")
-		return
-
-	if stage == GameStage.BATTLE:
-		EventBus.battle_started.emit()
-
 	var duration := _get_stage_duration(stage)
-
 	# SCORING 且 duration = 0：停留直到 finish_scoring() 被呼叫
 	if stage == GameStage.SCORING and duration <= 0.0:
 		_timer_active = false
 		return
-
 	# 其他阶段 duration = 0：跳过
 	if duration <= 0.0:
 		call_deferred("_advance_stage")
 		return
-
 	stage_time_remaining = duration
+	_last_timer_bucket = -1
 	_timer_active = true
 
-## host → client：阶段推进复制（场景切换 + 事件）
-@rpc("authority", "reliable")
-func _rpc_transition(stage: int) -> void:
-	current_stage = stage as GameStage
+## 阶段落地（host 本地 / client 广播 / catchup 三路共用）：状态 + 事件 + 场景切换。
+## 不含 host 独有逻辑（就绪重置 / 计时），避免 host/client 双写分叉。
+func _apply_stage(stage: GameStage) -> void:
+	current_stage = stage
 	EventBus.stage_changed.emit(stage)
 	match stage:
 		GameStage.MAIN_MENU:
@@ -177,6 +165,28 @@ func _rpc_transition(stage: int) -> void:
 			get_tree().change_scene_to_file("res://scenes/ui/lobby.tscn")
 		GameStage.BATTLE:
 			EventBus.battle_started.emit()
+
+## host → client：阶段推进复制（场景切换 + 事件）
+@rpc("authority", "reliable")
+func _rpc_transition(stage: int) -> void:
+	_apply_stage(stage as GameStage)
+
+## host → 单个 peer：迟到加入/断线重连的状态追赶（当前阶段 + 关卡 + 人数 + 相机分区）
+@rpc("authority", "reliable")
+func _rpc_catchup(stage: int, level_path: String, player_count: int, zone: int) -> void:
+	NetManager.zone_index = zone
+	lobby_player_count = player_count
+	match stage:
+		GameStage.MAIN_MENU, GameStage.LOBBY:
+			_apply_stage(stage as GameStage)
+		_:
+			# 正在对局中：走统一加载流程进入当前关卡（实体状态由 NetManager.request_entity_state 补收）
+			current_stage = stage as GameStage
+			EventBus.stage_changed.emit(stage)
+			if level_path.is_empty():
+				level_path = pending_level_path
+			pending_level_path = level_path
+			get_tree().change_scene_to_file("res://scenes/ui/loading_screen.tscn")
 
 func _get_stage_duration(stage: GameStage) -> float:
 	match stage:
@@ -195,7 +205,11 @@ func _process(delta: float) -> void:
 	stage_time_remaining = maxf(stage_time_remaining, 0.0)
 	EventBus.stage_timer_updated.emit(stage_time_remaining)
 	if _is_net_host():
-		_rpc_timer.rpc(stage_time_remaining)
+		# 节流到 ~10Hz（按 0.1s 分桶去重），避免每渲染帧高频发 + 抖动
+		var bucket := int(stage_time_remaining * 10.0)
+		if bucket != _last_timer_bucket:
+			_last_timer_bucket = bucket
+			_rpc_timer.rpc(stage_time_remaining)
 	if stage_time_remaining <= 0.0:
 		_timer_active = false
 		time_rate = 1.0
@@ -203,8 +217,8 @@ func _process(delta: float) -> void:
 			EventBus.battle_ended.emit()
 		_advance_stage()
 
-## host → client：倒计时同步
-@rpc("authority", "unreliable")
+## host → client：倒计时同步（ordered 防倒退；10Hz 节流后丢失自愈）
+@rpc("authority", "unreliable_ordered")
 func _rpc_timer(seconds: float) -> void:
 	stage_time_remaining = seconds
 	EventBus.stage_timer_updated.emit(seconds)

@@ -57,13 +57,13 @@ func _on_level_ready() -> void:
 
 ## S5 快门：最后帧定格前 0.5x 慢放（白闪由基类处理）
 func _on_level_battle_ended() -> void:
-	Engine.time_scale = 0.5
+	NetManager.set_time_scale(0.5)
 	_slowmo_end_msec = Time.get_ticks_msec() + SHUTTER_SLOWMO_MS
 
 func _process(_delta: float) -> void:
 	if _slowmo_end_msec > 0 and Time.get_ticks_msec() >= _slowmo_end_msec:
 		_slowmo_end_msec = 0
-		Engine.time_scale = 1.0
+		NetManager.set_time_scale(1.0)
 
 ## S6/S7：结算完成 → 隐藏战斗 HUD 顶部/取景框（show_results 由 level_base 统一调用）
 func _on_level_settlement(_results: Dictionary) -> void:
@@ -71,7 +71,7 @@ func _on_level_settlement(_results: Dictionary) -> void:
 		_hud.enter_scoring_mode()
 
 func _on_flow_finished(action: String) -> void:
-	Engine.time_scale = 1.0
+	NetManager.set_time_scale(1.0)
 	GameManager.time_rate = 1.0
 	if action == "restart":
 		# 重开：直接进入下一轮主题展示，保留当前玩家（大厅人数不变）

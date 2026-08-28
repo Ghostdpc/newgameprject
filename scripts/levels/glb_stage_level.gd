@@ -295,11 +295,8 @@ func _on_level_battle_ended() -> void:
 	# 拍照触发：取消减速慢放，回到正常再进 0.5x 定格快门
 	if _shutter_slowmo and _shutter_slowmo.active:
 		_shutter_slowmo.cancel()
-	Engine.time_scale = 0.5
+	NetManager.set_time_scale(0.5)
 	_slowmo_end_msec = Time.get_ticks_msec() + SHUTTER_SLOWMO_MS
-	# 联机：广播慢放流速
-	if NetManager.is_online and NetManager.is_host:
-		NetManager.broadcast_time_scale(0.5)
 
 func _process(delta: float) -> void:
 	# 联机 client：慢放由 host 权威，client 收广播（不本地驱动）
@@ -310,16 +307,14 @@ func _process(delta: float) -> void:
 		_shutter_slowmo.update_trigger(GameManager.stage_time_remaining)
 	if _slowmo_end_msec > 0 and Time.get_ticks_msec() >= _slowmo_end_msec:
 		_slowmo_end_msec = 0
-		Engine.time_scale = 1.0
-		if NetManager.is_online and NetManager.is_host:
-			NetManager.broadcast_time_scale(1.0)
+		NetManager.set_time_scale(1.0)
 
 func _on_level_settlement(_results: Dictionary) -> void:
 	if _hud:
 		_hud.enter_scoring_mode()
 
 func _on_flow_finished(action: String) -> void:
-	Engine.time_scale = 1.0
+	NetManager.set_time_scale(1.0)
 	GameManager.time_rate = 1.0
 	if action == "restart":
 		GameManager.goto_level(get_tree().current_scene.scene_file_path)
