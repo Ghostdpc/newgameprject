@@ -25,9 +25,13 @@ func _ready() -> void:
 	call_deferred("_start_drop")
 
 ## 被 PlayerController 拾取，返回道具 id 并消除自身
+## 未落地时返回空但不销毁：联机下 host 判定与 player 视觉存在偏差，避免箱凭空消失，
+## 箱落地后玩家再按拾取即可拾到（箱仍在 pickup_items group，可重试）
 func pickup_for(_player: PlayerController) -> String:
-	if item_id.is_empty() or not _landed:
+	if item_id.is_empty():
 		queue_free()
+		return ""
+	if not _landed:
 		return ""
 	var id := item_id
 	queue_free()
