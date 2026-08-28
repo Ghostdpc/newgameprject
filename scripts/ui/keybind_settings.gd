@@ -20,7 +20,7 @@ const _ENTRIES: Array = [
 	{"action": "pickup_p1", "label": "拾取／使用"},
 	{"action": "use_item_p1", "label": "使用道具"},
 	{"action": "grab_p1", "label": "抓取场景物"},
-	{"action": "suicide_p1", "label": "自杀（测试）"},
+			{"action": "suicide_p1", "label": "自爆"},
 
 	{"group": "玩家 2（键盘）"},
 	{"action": "move_up_p2", "label": "上"},
@@ -32,7 +32,7 @@ const _ENTRIES: Array = [
 	{"action": "pickup_p2", "label": "拾取／使用"},
 	{"action": "use_item_p2", "label": "使用道具"},
 	{"action": "grab_p2", "label": "抓取场景物"},
-	{"action": "suicide_p2", "label": "自杀（测试）"},
+			{"action": "suicide_p2", "label": "自爆"},
 
 	{"group": "手柄（全局）"},
 	{"action": "joy_jump", "label": "跳跃"},
@@ -40,7 +40,7 @@ const _ENTRIES: Array = [
 	{"action": "joy_pickup", "label": "拾取／使用"},
 	{"action": "joy_use", "label": "使用道具"},
 	{"action": "joy_grab", "label": "抓取场景物"},
-	{"action": "joy_suicide", "label": "自杀（测试）"},
+			{"action": "joy_suicide", "label": "自爆"},
 ]
 
 var _list: VBoxContainer

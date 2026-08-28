@@ -52,6 +52,14 @@ const GRAB_LIFT: float = 1.6
 const THROW_SPEED: float = 5.0
 ## 抓取吸向手的速度（大=更快抓到；小=缓慢飞来）
 const GRAB_LERP: float = 8.0
+## 自爆：软倒后多久爆炸（秒）
+const SELF_DESTRUCT_DELAY: float = 1.2
+## 自爆波及半径（米）
+const SELF_DESTRUCT_RADIUS: float = 3.0
+## 自爆积分惩罚
+const SELF_DESTRUCT_PENALTY: int = 30
+## 自爆灰头土脸时长（秒）
+const SELF_DESTRUCT_GRAY: float = 6.0
 
 @export var jump_force: float = 8.16
 ## 二段跳高度（相对 jump_force 的比例；0 = 关闭二段跳）
@@ -119,6 +127,8 @@ var _current_anim: String = ""
 var frozen: bool = false
 var _is_human_model: bool = false
 var _suicide_was_pressed: bool = false
+## 自爆进行中（软倒→爆炸之间防止重复触发）
+var _self_destructing: bool = false
 ## puppet 快照缓冲（client 侧远端表现插值：缓冲 + 双快照插值，吸收网络抖动）
 const PUPPET_INTERP_DELAY_MS: int = 100
 const PUPPET_BUFFER_MAX_MS: int = 500
@@ -543,13 +553,60 @@ func _puppet_update_animation(state_name: String) -> void:
 		_animation_player.play(anim)
 		_current_anim = anim
 
-## 自杀快捷键（测试用）：P1=O / P2=P，按下立即触发完整死亡+重生流程
+## 自爆（原自杀，测试用）：按下后先软倒，然后爆炸，再走死亡+复活流程
 func _handle_suicide() -> void:
 	var pressed := player_input.is_suicide_just_pressed()
-	if pressed and not _suicide_was_pressed:
-		# 把玩家移到出界下方，让 LevelBase._physics_process 接管重生流程
-		global_position.y = -100.0
+	if pressed and not _suicide_was_pressed and not _self_destructing and not is_dead():
+		_start_self_destruct()
 	_suicide_was_pressed = pressed
+
+## 自爆：进入软倒(Stunned)，延迟后爆炸并触发死亡复活
+func _start_self_destruct() -> void:
+	_self_destructing = true
+	state_machine.transition_to("Stunned")
+	if not is_dead():
+		# 软倒片刻后爆炸
+		var timer := get_tree().create_timer(SELF_DESTRUCT_DELAY)
+		timer.timeout.connect(_explode_self)
+
+## 自爆爆炸：复用炸弹爆炸特效 + 波及周边玩家，随后走死亡复活
+func _explode_self() -> void:
+	_self_destructing = false
+	SoundMgr.play("explode")
+	var scene := get_tree().current_scene
+	if scene:
+		BombInstance.spawn_explosion_fx(global_position, scene, SELF_DESTRUCT_RADIUS)
+	# 波及范围内其他玩家（复用炸弹的灰头土脸+积分惩罚+击飞）
+	for node in get_tree().get_nodes_in_group("players"):
+		var other := node as PlayerController
+		if other == null or other == self:
+			continue
+		var d := global_position.distance_to(other.global_position)
+		if d > SELF_DESTRUCT_RADIUS:
+			continue
+		if other.character_effects:
+			other.character_effects.apply_dirt_decal(SELF_DESTRUCT_GRAY)
+		other.score_penalty += SELF_DESTRUCT_PENALTY
+		_blast_knockback(other, d)
+	# 自爆者自己：出界下方交 LevelBase 走死亡+复活流程
+	global_position.y = -100.0
+
+## 自爆击飞周边玩家（复用炸弹的 _knockback_player 逻辑）
+func _blast_knockback(player: PlayerController, dist: float) -> void:
+	if player == null or player.state_machine == null:
+		return
+	var to_player := player.global_position - global_position
+	to_player.y = 0.0
+	var dir := to_player.normalized()
+	if dir.length_squared() < 0.0001:
+		dir = Vector3(0.1, 0.0, 0.1).normalized()
+	var falloff := clampf(1.0 - dist / maxf(SELF_DESTRUCT_RADIUS, 0.01), 0.4, 1.0)
+	var blast := TuneConfig.hit_force * 1.4 * falloff
+	var up := TuneConfig.hit_upward * 1.3 * falloff
+	player.state_machine.transition_to("Fly")
+	var fly := player.state_machine.get_current_state() as FlyState
+	if fly:
+		fly.launch(dir * blast + Vector3.UP * up)
 
 ## 玩家移动时推动接触到的场景物理物（解决 move_and_slide 卡住不推）
 func _push_contacted_props() -> void:

@@ -148,7 +148,7 @@ func _refresh_hints() -> void:
 	_apply_hint($Screen/HintsRow/HintPickup, "joy_pickup", "拾取\\使用 道具")
 	_apply_hint($Screen/HintsRow/HintDive, "joy_dive", "飞扑")
 	_apply_hint($Screen/HintsRow/HintGrab, "joy_grab", "抓取场景物")
-	_apply_hint($Screen/HintsRow/HintSuicide, "joy_suicide", "自杀")
+	_apply_hint($Screen/HintsRow/HintSuicide, "joy_suicide", "自爆")
 
 ## 该 action 有手柄绑定 → 面键显示图标；肩键/扳机等无图标回退文字；无绑定仅显示操作名
 func _apply_hint(row: Node, action: String, label: String) -> void:

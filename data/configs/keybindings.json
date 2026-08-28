@@ -17,9 +17,9 @@
 			"type": "key"
 		}
 	],
-	"grab_p2": [
-		{
-			"physical_keycode": 4194441,
+		"grab_p2": [
+			{
+				"physical_keycode": 4194442,
 			"type": "key"
 		}
 	],
@@ -138,9 +138,9 @@
 			"type": "key"
 		}
 	],
-	"suicide_p2": [
-		{
-			"physical_keycode": 4194442,
+		"suicide_p2": [
+			{
+				"physical_keycode": 4194443,
 			"type": "key"
 		}
 	],
