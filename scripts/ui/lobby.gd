@@ -20,9 +20,8 @@ var _ready_flags: Array[bool] = [false, false, false, false]
 ## 槽位绑定设备：-2 空位 / -1 键盘 / >=0 手柄 device id
 var _slot_devices: Array[int] = [-2, -2, -2, -2]
 var _cards: Array[LobbyCard] = []
-## client：申请加入时暂存的待绑定设备（host 分配到席位后写入对应槽位）
-var _pending_join_device: int = -2
-## client：已在途的加入申请设备（防止同设备在 host 确认前重复申请）
+## client：已在途的加入申请设备（-1 键盘 / >=0 手柄），防同设备在 host 确认前重复申请。
+## 键盘与手柄各占一项，互不阻塞；席位确认后移除。
 var _pending_join_devices: Array[int] = []
 ## client：本端各键盘席位的设备（-1 统一键盘），供编号与战斗输入
 var _client_devices: Dictionary = {}
@@ -84,7 +83,6 @@ func _on_net_seats_changed() -> void:
 ## 联机：加入被拒（房间满），清除本端在途申请
 func _on_join_rejected() -> void:
 	_pending_join_devices.clear()
-	_pending_join_device = -2
 
 # ---------------------------------------------------------------- 差分滚动背景
 func _build_scroll_rows() -> void:
@@ -233,7 +231,8 @@ func _set_joined(index: int, device: int) -> void:
 		# client：先不落槽位（席位编号由 host 分配/确认），暂存设备并申请期望槽位
 		_joined[index] = false
 		_slot_devices[index] = -2
-		_pending_join_device = device
+		if not _pending_join_devices.has(device):
+			_pending_join_devices.append(device)
 		NetManager.join_seat(device, index)
 		return
 	SoundMgr.play("join", true)
@@ -248,6 +247,11 @@ func _leave_slot(index: int) -> void:
 		NetManager.free_seat(index)
 	elif NetManager.is_online and not NetManager.is_host:
 		NetManager.leave_my_seat(index)
+		# 退出本端席位：清除该设备对应的在途申请，允许同一设备立即重新加入
+		if dev >= 0:
+			_pending_join_devices.erase(dev)
+		else:
+			_pending_join_devices.erase(-1)
 	_client_devices.erase(index)
 	SoundMgr.play("ui_click")
 
@@ -266,19 +270,24 @@ func _reconcile_client_seats() -> void:
 		if is_mine and not _joined[i]:
 			_joined[i] = true
 			_ready_flags[i] = false
-			var dev := int(_pending_join_device) if _pending_join_device != -2 else _slot_devices[i]
+			var dev: int = _slot_devices[i]
+			if not _pending_join_devices.is_empty():
+				dev = int(_pending_join_devices[0])
 			_slot_devices[i] = dev
 			_client_devices[i] = dev
 			GameManager.player_devices[i] = dev
-			if dev >= 0:
-				_pending_join_devices.erase(dev)
-			_pending_join_device = -2
+			_pending_join_devices.erase(dev)
 			SoundMgr.play("join", true)
 		elif not is_mine and _joined[i]:
+			var old_dev := _slot_devices[i]
 			_joined[i] = false
 			_ready_flags[i] = false
 			_slot_devices[i] = -2
 			_client_devices.erase(i)
+			if old_dev >= 0:
+				_pending_join_devices.erase(old_dev)
+			else:
+				_pending_join_devices.erase(-1)
 
 ## 数字键 / 鼠标：循环 空位 → 已加入 → 已就绪 → 空位（键盘类操作）
 func _cycle_slot(index: int) -> void:
@@ -332,15 +341,10 @@ func _on_join(device: int) -> void:
 	if _slot_for_device(device) >= 0:
 		return
 	if _is_net_client():
-		# client 加入是异步的（host 分配），防在途重复：同手柄设备、或键盘已有一个在途申请
-		if device < 0 and not _pending_join_devices.is_empty():
+		# client 加入是异步的（host 分配），防在途重复：同设备（键盘 -1 / 手柄 dev）已申请则忽略
+		if device in _pending_join_devices:
 			return
-		if device < 0 and _pending_join_device != -2:
-			return
-		if device >= 0 and device in _pending_join_devices:
-			return
-		if device >= 0:
-			_pending_join_devices.append(device)
+		_pending_join_devices.append(device)
 	_join_next(device)
 
 ## △ 三角：加入后准备

@@ -146,6 +146,9 @@ var _body_collision: CollisionShape3D
 var _body_mask_saved: int = -1
 
 var _pickup_hold_time: float = 0.0
+## 长按期间已锁定的拾取目标 spawn_id（-1=未锁定）。拾取判定帧锁定并豁免朝向门槛，
+## 避免转身稍偏就丢失目标、白按 0.8s 拾不到（联机远端尤为常见）
+var _pickup_target_spawn_id: int = -1
 ## 捡起后剩余的使用冷却（秒），>0 时 O 键不触发使用
 var _use_gap_time: float = 0.0
 var _grabbed_prop: PhysicalProp = null
@@ -335,20 +338,28 @@ func _update_pickup_hold(delta: float) -> void:
 	# 已有道具时不再拾取（避免即时拾取成功后长按再覆盖一次）
 	if not held_item_id.is_empty():
 		_pickup_hold_time = 0.0
+		_pickup_target_spawn_id = -1
 		return
 	# 拾取可被打断：移动 / 非 Idle/Move 状态
 	var st := state_machine.current_state_name
 	var can_pickup := (st == "Idle" or st == "Move") and _pickup_movement_blocked() == false
 	if not can_pickup:
 		_pickup_hold_time = 0.0
+		_pickup_target_spawn_id = -1
 		return
 	if player_input.is_pickup_held():
+		# 长按期间在范围内锁定一个目标（只在未锁定时选，避免每帧跳目标）
+		if _pickup_target_spawn_id == -1:
+			var target := _find_candidate()
+			if target != null:
+				_pickup_target_spawn_id = int(target.get("spawn_id"))
 		_pickup_hold_time += delta
 		if _pickup_hold_time >= PICKUP_HOLD_TIME:
 			_pickup_hold_time = 0.0
 			_try_pickup()
 	else:
 		_pickup_hold_time = 0.0
+		_pickup_target_spawn_id = -1
 
 ## 拾取长按时如果正在移动则中断（策划：移动会打断拾取）
 func _pickup_movement_blocked() -> bool:
@@ -359,21 +370,51 @@ func _pickup_movement_blocked() -> bool:
 func _try_pickup() -> void:
 	var result := _pickup_nearest()
 	if result.is_empty():
+		# 已锁定目标但瞬时判定失败（目标刚离场/触发后落地中）：清锁，等下次长按重试
+		if _pickup_target_spawn_id != -1:
+			_pickup_target_spawn_id = -1
 		return
 	var id: String = result["id"]
 	var is_garment: bool = result.get("is_garment", false)
+	_pickup_target_spawn_id = -1
 	if is_garment:
 		GarmentSystem.equip_garment(self, id)
 	else:
 		pickup_item(id)
 
-## 拾取：找最近的 pickup_items 成员，返回 { id, is_garment } 或 {}
+## 拾取：找最近的 pickup_items 成员，返回 { id, is_garment, spawn_id } 或 {}
 func _pickup_nearest() -> Dictionary:
+	var nearest := _find_candidate()
+	if nearest == null:
+		return {}
+	var id: String = nearest.pickup_for(self)
+	if id.is_empty():
+		return {}
+	# 联机：host 广播实体消失，client 释放对应道具箱/服装
+	if NetManager.is_online and NetManager.is_host:
+		NetManager.broadcast_entity_despawn(int(nearest.get("spawn_id")))
+	var is_garment := nearest.is_in_group("garment_pickups")
+	return { "id": id, "is_garment": is_garment, "spawn_id": int(nearest.get("spawn_id")) }
+
+## 找当前可拾取的候选节点（不销毁、不调用 pickup_for），长按锁定与最终拾取共用
+func _find_candidate() -> Node3D:
 	var items := get_tree().get_nodes_in_group("pickup_items")
 	if items.is_empty():
-		return {}
+		return null
 	var fwd := global_basis.z
 	var range_sq := PICKUP_RANGE * PICKUP_RANGE
+	# 已锁定目标：优先直接找它（豁免朝向门槛，长按中转身不丢目标）
+	if _pickup_target_spawn_id != -1:
+		for item in items:
+			var locked := item as Node3D
+			if locked and int(locked.get("spawn_id")) == _pickup_target_spawn_id:
+				var lto := locked.global_position - global_position
+				lto.y = 0.0
+				if lto.length_squared() <= range_sq and locked.has_method("pickup_for"):
+					return locked
+				break
+		# 锁定目标失效：清锁，走常规评分
+		_pickup_target_spawn_id = -1
 	var nearest: Node3D = null
 	var best_score := -INF
 	for item in items:
@@ -403,16 +444,7 @@ func _pickup_nearest() -> Dictionary:
 		if score > best_score:
 			best_score = score
 			nearest = n
-	if nearest == null or not nearest.has_method("pickup_for"):
-		return {}
-	var id: String = nearest.pickup_for(self)
-	if id.is_empty():
-		return {}
-	# 联机：host 广播实体消失，client 释放对应道具箱/服装
-	if NetManager.is_online and NetManager.is_host:
-		NetManager.broadcast_entity_despawn(int(nearest.get("spawn_id")))
-	var is_garment := nearest.is_in_group("garment_pickups")
-	return { "id": id, "is_garment": is_garment }
+	return nearest
 
 func _physics_process(delta: float) -> void:
 	if is_puppet:

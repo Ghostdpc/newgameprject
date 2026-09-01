@@ -88,8 +88,13 @@ var _last_ip: String = ""
 var _last_port: int = DEFAULT_PORT
 var _last_password: String = ""
 var _intentional_leave: bool = false
+## client：收到 host 主动关房广播（区别于意外断线，跳过重连）
+var _host_closed: bool = false
 var _reconnecting: bool = false
 var _reconnect_attempts: int = 0
+## client：加入连接看门狗起点（ms）。非 0 表示加入在途，超时未连上则报失败
+var _connect_started_msec: int = 0
+const CONNECT_TIMEOUT_MS: int = 5000
 ## 断线前的本端席位（重连后按此重新申请）
 var _saved_my_seats: Array = []
 ## 断线前的本端 peer_id（重连恢复原座时向 host 证明身份）
@@ -108,6 +113,13 @@ func _ready() -> void:
 	multiplayer.connection_failed.connect(_on_connection_failed)
 
 func _physics_process(_delta: float) -> void:
+	# 加入连接看门狗：ENet create_client 已返回但连接未建立（不可达 IP 等）时，
+	# 超时强制报失败，避免 UI 卡「正在连接...」无反馈（重连路径由 _on_connection_failed 接管，这里不重复触发）
+	if not is_host and _connect_started_msec != 0:
+		if Time.get_ticks_msec() - _connect_started_msec > CONNECT_TIMEOUT_MS:
+			_connect_started_msec = 0
+			_force_fail_connect()
+			return
 	# 注意：RemoteInputProvider 的边缘推进在 apply_input（RPC 到达）时完成。
 	# 不能在 physics 每帧无条件 prev=cur —— RPC 在 idle 阶段更新 cur，physics 阶段的
 	# 无条件推进会在状态机查询前把新 level 移入 prev，导致 cur==prev、边缘恒 false。
@@ -261,14 +273,23 @@ func join_game(ip: String, port: int = DEFAULT_PORT, p_password: String = "") ->
 	multiplayer.multiplayer_peer = _enet
 	is_online = true
 	password = p_password
+	_connect_started_msec = Time.get_ticks_msec()  # 起连接看门狗（reconnect 也走此，由 _try_reconnect 保留重置）
 	return OK
 
 func leave_game() -> void:
 	_intentional_leave = true
+	_host_closed = false
 	_reconnecting = false
 	_reconnect_attempts = 0
+	_connect_started_msec = 0
 	_remote_inputs.clear()
 	_lobby_entered = false
+	# host 主动关房：先广播关房信号（reliable），flush 确保送出后再 close
+	# （必须在 is_host/is_online 复位前广播，否则客户端当成意外掉线走进重连）
+	if is_host and is_online:
+		rpc("_host_closed_notice")
+		if multiplayer.multiplayer_peer:
+			multiplayer.multiplayer_peer.flush()
 	is_host = false
 	is_online = false
 	my_peer_id = 0
@@ -372,6 +393,12 @@ func _join_request(device: int, preferred: int = -1, old_peer: int = -1) -> void
 		return
 	var peer := multiplayer.get_remote_sender_id()
 	_log_net("host", "_join_request peer=%d dev=%d pref=%d old=%d" % [peer, device, preferred, old_peer])
+	# 同一 peer 已占座（非重连中）→ 直接回已占座，防快速点击重复分配席位
+	for i in MAX_SEATS:
+		var own: Dictionary = seat_owners[i]
+		if own["kind"] == SeatKind.REMOTE and own["peer_id"] == peer and not own.get("reconnecting", false):
+			_join_ok.rpc_id(peer, i)
+			return
 	# 重连恢复原座：preferred 席位正被旧 peer 标记「掉线」，且身份匹配
 	if preferred >= 0 and preferred < MAX_SEATS:
 		var po: Dictionary = seat_owners[preferred]
@@ -499,6 +526,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 
 func _on_connected_to_server() -> void:
 	my_peer_id = multiplayer.get_unique_id()
+	_connect_started_msec = 0  # 连接建立，清看门狗
 	_log_net("client", "ENet 连接成功, my_peer_id=%d reconnecting=%s" % [my_peer_id, str(_reconnecting)])
 	# 连接建立后上报密码，host 校验通过后分配席位
 	_submit_password.rpc_id(1, password)
@@ -521,6 +549,13 @@ func _on_connected_to_server() -> void:
 func _on_server_disconnected() -> void:
 	if _intentional_leave:
 		return  # 主动离开：leave_game 已清理，UI 自行处理
+	if _host_closed:
+		# host 主动关房：非意外断线，跳过重连直接回标题
+		_host_closed = false
+		leave_game()
+		server_stopped.emit()
+		GameManager.enter_title()
+		return
 	if not is_online and _enet == null:
 		return  # 已清理，不重复处理
 	# 意外断线：缓存席位与 peer_id 并尝试重连（peer_id 用于恢复原座）
@@ -535,10 +570,29 @@ func _on_server_disconnected() -> void:
 
 func _on_connection_failed() -> void:
 	is_online = false
+	_connect_started_msec = 0
 	if _reconnecting:
 		_schedule_reconnect_retry()
 		return
 	connection_failed.emit("connection_failed")
+
+## 加入连接超时强制失败：清理 ENet，非重连时按失败处理（重连路径由 _on_connection_failed 接管）
+func _force_fail_connect() -> void:
+	is_online = false
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
+	multiplayer.multiplayer_peer = null
+	_enet = null
+	if _reconnecting:
+		_schedule_reconnect_retry()
+		return
+	connection_failed.emit("timeout")
+
+## host → client：host 主动关房。client 标记 _host_closed，socket 断开时跳过重连
+@rpc("authority", "reliable")
+func _host_closed_notice() -> void:
+	_log_net("client", "收到 host 主动关房广播")
+	_host_closed = true
 
 # ---------------------------------------------------------------- 断线重连
 
@@ -566,6 +620,7 @@ func _try_reconnect() -> void:
 		return
 	multiplayer.multiplayer_peer = _enet
 	is_online = true
+	_connect_started_msec = Time.get_ticks_msec()  # 重连也走看门狗
 	# 连接成功：_on_connected_to_server 重发密码并重新申请席位
 
 func _schedule_reconnect_retry() -> void:
@@ -593,6 +648,8 @@ func _submit_password(pw: String) -> void:
 		multiplayer.multiplayer_peer.disconnect_peer(peer)
 		return
 	_accept_join.rpc_id(peer, room_name)
+	# 新加入 peer 先同步当前席位表（否则其本地 seat_owners 保持全空，大厅看不到已占用席位）
+	_apply_seat_owners.rpc_id(peer, seat_owners)
 	# 迟到加入/重连追赶：把当前阶段、关卡路径、人数、分区同步给该 peer
 	GameManager._rpc_catchup.rpc_id(peer, GameManager.current_stage, GameManager.pending_level_path, GameManager.lobby_player_count, zone_index)
 

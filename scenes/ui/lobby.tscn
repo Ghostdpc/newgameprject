@@ -99,6 +99,7 @@ offset_top = 150.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="CardRow" type="HBoxContainer" parent="Center" unique_id=380130844]
 layout_mode = 2
